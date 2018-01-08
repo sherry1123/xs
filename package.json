@@ -1,0 +1,16 @@
+{
+	"name": "storm-storage",
+	"version": "1.0.0",
+	"description": "",
+	"author": "",
+	"dependencies": {
+		"cluster": "^0.7.7",
+		"koa": "^2.4.1",
+		"koa-bodyparser": "^4.2.0",
+		"koa-router": "^7.3.0",
+		"log4js": "^2.4.1",
+		"mongoose": "^5.0.0-rc2"
+	},
+	"repository": {},
+	"license": ""
+}
