@@ -3,12 +3,12 @@ const logger = require('./server/module/logger');
 const startNewAgent = () => {
 	cluster.fork({ name: 'agent' });
 	cluster.workers[1].on('message', messageHandler);
-	cluster.workers[1].on('exit', () => cluster.fork({ name: 'agent' }));
+	cluster.workers[1].on('exit', cluster.fork.bind(this, {name: 'agent'}));
 }
 const startNewWorker = () => {
 	cluster.fork({ name: 'worker' });
 	cluster.workers[2].on('message', messageHandler);
-	cluster.workers[2].on('exit', () => cluster.fork({ name: 'worker' }));
+	cluster.workers[2].on('exit', cluster.fork.bind(this, {name: 'worker'}));
 }
 const getWorkerName = (worker) => {
 	return worker.process.env.name;
