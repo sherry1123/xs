@@ -3,7 +3,7 @@ const model = {
   runCommandInPromise(command) {
     return new Promise(resolve => {
       child.exec(command, (error, stdout, stderr) => {
-        error ? resolve({result: false, message: stderr}):resolve({result: true, message: stdout})
+        resolve(error ? {result: false, message: stderr} : {result: true, message: stdout});
       });
     });
   }
