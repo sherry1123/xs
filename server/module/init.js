@@ -1,15 +1,23 @@
 let init = false;
 const model = {
-    getInitStatus() {
-        return init;
+    status: {
+        get() {
+            return init;
+        },
+        check() {
+            //todo
+            model.status.set(true);
+            return init;
+        },
+        set(status) {
+            init = status;
+        }
     },
-    checkInitStatus() {
-        //todo
-        model.setInitStatus(true);
-        return init;
+    process: {
+
     },
-    setInitStatus(status) {
-        init = status;
+    step: {
+        
     }
 }
 module.exports = model;

@@ -30,7 +30,7 @@ const messageHandler = (msg) => {
 	}
 };
 if (cluster.isMaster) {
-	let initStatus = init.checkInitStatus();
+	let initStatus = init.status.check();
 	cluster.settings.init = initStatus;
 	logger.info('master ready');
 	startNewWorker(1);
