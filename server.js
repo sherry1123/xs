@@ -6,7 +6,7 @@ const getWorkerNameFromConf = id => ({ name: workerNameList[id] });
 const getWorkerNameFromProc = worker => (worker.process.env.name);
 const startNewWorker = id => {
 	let { init } = cluster.settings;
-	if (id !== 1 && !init) {
+	if (id === 3 && !init) {
 		logger.info('system not init, no more worker need to run');
 	} else {
 		cluster.fork(getWorkerNameFromConf(id));
