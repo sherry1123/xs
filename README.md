@@ -1,6 +1,6 @@
 ### storm-storage
 #### server 目录结构
- - agent 硬件状态监控
+ - agentd 硬件状态监控
  - config 配置文件
  - contronller 控制器
  - middleware 中间件
