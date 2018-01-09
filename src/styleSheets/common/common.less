@@ -1,0 +1,79 @@
+@import url('./fn.less');
+@import url('./var.less');
+
+@font-face {
+    font-family: 'anticon';
+    src: url(./font/font_zck90zmlh7hf47vi.eot); /* IE9*/
+    src:
+                /* chrome、firefox */
+            url(./font/font_zck90zmlh7hf47vi.woff) format('woff'),
+                /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+            url(./font/font_zck90zmlh7hf47vi.ttf) format('truetype'),
+                /* iOS 4.1- */
+            url(./font/font_zck90zmlh7hf47vi.svg) format('svg');
+}
+body {
+    height: 100%;
+    width: 100%;
+    #container {
+        height: 100%;
+        background-color: @page-bg;
+        .ceph-logged-wrapper {
+            margin-top: 60px;
+            background-color: @page-bg;
+            .ceph-page-wrapper {
+                padding: 20px;
+                .ceph-page-title {
+                    padding: 15px;
+                    background-color: @white;
+                }
+                .ceph-page-content {
+                    margin-top: 10px;
+                    padding: 10px;
+                    background-color: @white;
+                    .ceph-table-title-wrapper {
+                        .clearfix();
+                    }
+                    &.no-mt {
+                        margin-top: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.ceph-clearfix {
+    .clearfix();
+}
+
+.ceph-info-icon {
+    color: @light-blue;
+    &.m-l {
+        margin-left: 15px;
+    }
+    &.m-r {
+        margin-right: 15px;
+    }
+}
+
+.danger-info {
+    color: @red;
+}
+
+.ok-info {
+    color: @green;
+}
