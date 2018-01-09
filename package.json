@@ -2,8 +2,17 @@
 	"name": "storm-storage",
 	"version": "1.0.0",
 	"description": "",
-	"author": "",
+	"author": "orca",
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject"
+	},
 	"dependencies": {
+		"react": "^16.2.0",
+		"react-dom": "^16.2.0",
+		"react-scripts": "1.0.17",
 		"cluster": "^0.7.7",
 		"koa": "^2.4.1",
 		"koa-bodyparser": "^4.2.0",
