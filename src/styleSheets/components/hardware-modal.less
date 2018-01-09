@@ -1,0 +1,23 @@
+.hardware-status{
+
+  .ant-tabs-content{
+    div{
+      margin-bottom: 10px;
+    }
+  }
+  .ant-row{
+    >div:first-child{
+      &.ant-col-12{
+        &:after{
+          content: '   :';
+        }
+      }
+    }
+    .ant-col-6{
+      >div>p:first-child{
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+    }
+  }
+}

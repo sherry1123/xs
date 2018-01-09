@@ -1,0 +1,269 @@
+.init-container {
+    box-sizing: border-box;
+    padding-bottom: 100px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url("../../images/init-bg@2x.jpg") no-repeat;
+    background-size: cover;
+
+    .init-step-0, .init-step-1, .init-step-2, .init-step-3, .init-step-4, .init-step-5, .init-step-6, .init-step-7, .init-step-8, .init-step-9 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .company-logo {
+         margin-top: 40px;
+    }
+
+    .init-header {
+        color: #31aeaa;
+        margin-top: 60px;
+        font-size: 24px;
+    }
+
+    .init-title {
+        margin-top: 45px;
+        width: 600px;
+        text-align: center;
+        line-height: 1.4;
+        font-size: 18px;
+        color: white;
+    }
+
+    .form-title {
+        margin: 10px 0 30px;
+        width: 100%;
+        text-align: center;
+        line-height: 1.4;
+        font-size: 18px;
+        color: white;
+    }
+
+    .init-language {
+        position: fixed;
+        right: 50px;
+        top: 20px;
+    }
+
+    .init-start-btn {
+        margin: 90px 0 0;
+        min-width: 150px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .init-row-title {
+        color: white;
+        font-size: 18px;
+        text-align: right;
+    }
+
+    .step-1-form-group, .step-2-form-group, .step-4-form-group, .step-5-form-group {
+        display: flex;
+        flex-direction: column;
+        margin-top: 60px;
+        > div {
+            margin: 5px 0;
+            > div {
+                button {
+                    width: 280px;
+                    height: 32px;
+                    text-align: left;
+                    > i {
+                        display: block;
+                        float: right;
+                    }
+                }        
+            }
+            > div:last-child {
+                color: red;
+                min-height: 20px;
+                max-width: 280px;
+            }
+            > div:first-child {
+                width: 280px;
+            }
+            #dropdown {
+                .ant-dropdown-menu {
+                    height: 290px;
+                    overflow: auto;
+                }
+            }
+        }
+    }
+
+    .bottom-btn-group {
+        justify-content: space-between;
+        align-items: baseline;
+        width: 50vw;
+        margin-top: 50px;
+        > * {
+            height: 34px;
+            width: 100px;
+        }
+    }
+
+    .init-step-8 {
+        .bottom-btn-group {
+            flex-direction: row-reverse;
+        }
+    }
+
+    .node-ip-header {
+        color: white;
+        font-size: 18px;
+        margin:0 0 7px 3px;
+    }
+
+    .step-2-form-group {
+        >div {
+            >div {
+                position: relative;
+                i {
+                    position: absolute;
+                    left: 282px;
+                    top: 10px;
+                    color: white;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .step-3-form-group {
+        display: flex;
+        flex-direction: column;
+        margin-top: 60px;
+        .license-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            height: 35px;
+            border-top: 1px solid #31aeaa;       
+
+        }
+        color: white;
+        >div {
+            height: 80px;
+            display: flex;
+            width: 600px;
+            >div {
+                border: 1px solid #31aeaa;
+                border-top: none;
+                color: white;
+                // padding: 8px 0 8px 0;
+            }
+            >div:first-child {
+                flex:1;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            >div:last-child {
+                flex:2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-left: none;
+            }
+        }
+        .license-header>div:last-child {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        textarea {
+            height: 80%;
+            width:95%;
+            color:black;
+        }
+    }
+
+    .init-network-precheck-info {
+        width: 280px;
+        >div {
+            display: flex;
+            flex-direction: column;
+            >div {
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    .step-6-form-group {
+        display: flex;
+        flex-direction: column;
+        margin-top: 60px;
+        color: white;
+        font-size: 18px;
+        >div {
+            min-height: 30px;
+            display: flex;
+            width: 600px;
+            >div:first-child {
+                flex:1;
+                padding-right: 20px;
+                text-align: left;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+
+            }
+            >div:last-child {
+                display: flex;
+                flex-direction: column;
+                align-items: left;               
+                flex:2;
+                padding-left: 40px;
+                display: flex;
+                justify-content: flex-start;
+                border-left: none;
+            }
+        }
+    }
+
+    .step-7-form-group {
+        margin-top: 60px;
+        width: 600px;
+        .init-step {
+            width: 567px;
+            margin-top: 10px;
+            text-align: center;
+            line-height: 1.4;
+            font-size: 18px;
+            color: white;
+        }
+        .ant-progress-text {
+            color: white;
+            .anticon {
+                color: #f04134;
+            }
+        }
+    }
+
+    .step-8-form-group {
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+        color: white;
+        font-size: 18px;
+        width: 550px;
+        >div {
+            >div {
+                margin-top: 20px;
+            }
+            >div:nth-child(2) {
+                margin-left: 50px;
+            }
+        }
+    }
+
+    .hide {
+        visibility: hidden;
+    }
+}
