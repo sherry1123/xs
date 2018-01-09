@@ -1,6 +1,6 @@
 const cluster = require('cluster');
 const logger = require('./server/module/logger');
-const workerNameList = ['master', 'agent', 'job', 'task'];
+const workerNameList = ['master', 'agentd', 'job', 'task'];
 const getWorkerNameFromConf = id => ({ name: workerNameList[id] });
 const getWorkerNameFromProc = worker => (worker.process.env.name);
 const startNewWorker = id => {
@@ -10,7 +10,7 @@ const startNewWorker = id => {
 };
 const messageHandler = (msg) => {
 	switch (msg) {
-		case 'agent ready':
+		case 'agentd ready':
 			startNewWorker(2);
 			break;
 		case 'job ready':
@@ -29,10 +29,10 @@ if (cluster.isMaster) {
 } else {
 	let workerName = getWorkerNameFromProc(cluster.worker);
 	switch (workerName) {
-		case 'agent':
-			require('./server/agent/index');
-			logger.info('agent ready');
-			process.send('agent ready');
+		case 'agentd':
+			require('./server/agentd/index');
+			logger.info('agentd ready');
+			process.send('agentd ready');
 			break;
 		case 'job':
 			require('./server/index');

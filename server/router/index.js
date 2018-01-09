@@ -1,8 +1,8 @@
 const router = new require('koa-router')();
-const testController = require('../controller/test');
+const controller = require('../controller');
 
-router.get('/test', testController.index);
-router.get('/test/get', testController.get);
-router.post('/test/post', testController.post);
+router.get('/test', controller.test.index);
+router.get('/test/get', controller.test.get);
+router.post('/test/post', controller.test.post);
 
 module.exports = router;

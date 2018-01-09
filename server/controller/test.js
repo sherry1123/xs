@@ -1,14 +1,16 @@
+const service = require('../service');
 const model = {
 	index(ctx) {
 		ctx.body = 'Home Page';
 	},
-	get(ctx) {
-		let param = ctx.param;
-		ctx.body = param;
+	async get(ctx) {
+		let result = await service.test.get();
+		ctx.body = result;
 	},
-	post(ctx) {
+	async post(ctx) {
 		let param = ctx.param;
-		ctx.body = param
+		let result = await service.test.post(param);
+		ctx.body = result;
 	}
 }
 
