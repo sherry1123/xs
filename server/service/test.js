@@ -6,7 +6,7 @@ const model = {
         try {
             result = await dao.findSome(test, param);
         } catch (error) {
-            result.result = {}
+            result.result = {};
         }
         return result.result;
     },
