@@ -17,7 +17,7 @@ const startNewWorker = id => {
 		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerNameFromConf(id)));
 	}
 };
-const messageHandler = (msg) => {
+const messageHandler = msg => {
 	switch (msg) {
 		case 'agentd ready':
 			startNewWorker(2);
