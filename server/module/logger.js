@@ -6,7 +6,8 @@ log4js.configure({
 	},
 	categories: {
 		default: { appenders: ['out'], level: 'info' }
-	}
+	},
+	disableClustering: true
 });
 const logger = log4js.getLogger('console');
 
