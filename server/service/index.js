@@ -11,7 +11,7 @@ const model = {
         }
         return result;
     },
-    async createUser(param) {
+    async addUser(param) {
         let result = {};
         try {
             await database.addUser(param)

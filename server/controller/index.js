@@ -5,7 +5,7 @@ const model = {
 		let result = await service.getUser(param);
 		ctx.body = result;
     },
-    '/api/createuser': async ctx => {
+    '/api/adduser': async ctx => {
         let param = ctx.param;
 		let result = await service.addUser(param);
 		ctx.body = result;
