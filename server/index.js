@@ -6,5 +6,6 @@ const bodyParser = require('koa-bodyparser');
 
 app.use(bodyParser());
 app.use(middleware.initParam());
+app.use(middleware.getInitStatus());
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(3456);

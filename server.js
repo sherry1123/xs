@@ -1,23 +1,23 @@
 const cluster = require('cluster');
-const node = require('./server/module/node');
-const init = require('./server/module/init');
+const service = require('./server/service');
+const init = require('./server/service/initialize');
 const logger = require('./server/module/logger');
 const workerNameList = ['master', 'agentd', 'job', 'task'];
-const getWorkerNameFromConf = id => ({ name: workerNameList[id] });
-const getWorkerNameFromProc = worker => (worker.process.env.name);
+const getWorkerFromConf = (id, initStatus) => ({ name: workerNameList[id], initStatus });
+const getWorkerFromProc = worker => ({ name: worker.process.env.name, initStatus: worker.process.env.initStatus });
 const startNewWorker = id => {
-	let { isMaster, init } = cluster.settings;
-	if (!init && id === 3) {
+	let { isMaster, initStatus } = cluster.settings;
+	if (!initStatus && id === 3) {
 		logger.info('system not init, no more worker need to run');
-	} else if (!isMaster && init && id === 2) {
+	} else if (!isMaster && initStatus && id === 2) {
 		logger.info('node not master, no more worker need to run');
 	} else {
-		cluster.fork(getWorkerNameFromConf(id));
+		cluster.fork(getWorkerFromConf(id, initStatus));
 		cluster.workers[id].on('message', messageHandler);
-		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerNameFromConf(id)));
+		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerFromConf(id, initStatus)));
 	}
 };
-const messageHandler = (msg) => {
+const messageHandler = msg => {
 	switch (msg) {
 		case 'agentd ready':
 			startNewWorker(2);
@@ -33,27 +33,28 @@ const messageHandler = (msg) => {
 	}
 };
 if (cluster.isMaster) {
-	let isMaster = node.isMaster();
-	let initStatus = init.status.check();
-	cluster.settings.isMaster = isMaster;
-	cluster.settings.init = initStatus;
+	cluster.settings.isMaster = service.isMaster();
+	cluster.settings.initStatus = init.checkInitStatus();
 	logger.info('master ready');
 	startNewWorker(1);
 } else {
-	let workName = getWorkerNameFromProc(cluster.worker);
-	switch (workName) {
+	let { name, initStatus } = getWorkerFromProc(cluster.worker);
+	switch (name) {
 		case 'agentd':
 			require('./server/agentd/index');
+			init.setInitStatus(initStatus);
 			logger.info('agentd ready');
 			process.send('agentd ready');
 			break;
 		case 'job':
 			require('./server/index');
+			init.setInitStatus(initStatus);
 			logger.info('job ready');
 			process.send('job ready');
 			break;
 		case 'task':
 			require('./server/schedule/index');
+			init.setInitStatus(initStatus);
 			logger.info('task ready');
 			process.send('task ready');
 			break;

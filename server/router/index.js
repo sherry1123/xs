@@ -1,8 +1,9 @@
 const router = new require('koa-router')();
 const controller = require('../controller');
 
-router.get('/test', controller.test.index);
-router.get('/test/get', controller.test.get);
-router.post('/test/post', controller.test.post);
+router.all('/api/getuser', controller['/api/getuser']);
+router.all('/api/adduser', controller['/api/adduser']);
+router.all('/api/updateuser', controller['/api/updateuser']);
+router.all('/api/deleteuser', controller['/api/deleteuser']);
 
 module.exports = router;
