@@ -1,6 +1,6 @@
 const cluster = require('cluster');
-const node = require('./server/module/node');
-const init = require('./server/module/init');
+const service = require('./server/service');
+const init = require('./server/service/initialize');
 const logger = require('./server/module/logger');
 const workerNameList = ['master', 'agentd', 'job', 'task'];
 const getWorkerNameFromConf = id => ({ name: workerNameList[id] });
@@ -33,8 +33,8 @@ const messageHandler = msg => {
 	}
 };
 if (cluster.isMaster) {
-	let isMaster = node.isMaster();
-	let initStatus = init.status.check();
+	let isMaster = service.isMaster();
+	let initStatus = init.checkInitStatus();
 	cluster.settings.isMaster = isMaster;
 	cluster.settings.init = initStatus;
 	logger.info('master ready');

@@ -2,23 +2,23 @@ const fs = require('fs');
 const child = require('child_process');
 const model = {
   runCommandInPromise(command) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       child.exec(command, (error, stdout, stderr) => {
-        resolve(error ? {result: false, message: stderr} : {result: true, message: stdout});
+        error ? reject(stderr) : resolve(stdout);
       });
     });
   },
   readFileInPromise(path) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       fs.readFile(path, 'utf8', (error, data) => {
-        resolve(error ? {result: false, message: error} : {result: true, message: data}); 
+        error ? reject(error) : resolve(data);
       });
     });
   },
   writeFileInPromise(path, data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       fs.writeFile(path, data, 'utf8', error => {
-        resolve(error? {result: false, message: error} : {result: true, message: 'write file success'});
+        error ? reject(error) : resolve();
       });
     });
   }
