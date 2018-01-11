@@ -39,3 +39,7 @@ task进程负责定时任务的执行。
 
 #### server处理请求过程                                  
 request/response <=> nginx <=> job port <=> middleware <=> router <=> controller <=> service <=> module
+
+#### 初始化状态管理
+1.启动master进程 => 调用service接口获取status => 将status存入内存 => 将status存入cluster.settings
+2.master进程fork worker进程, 并将status存入process.env => 将status存入内存
