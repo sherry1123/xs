@@ -1,1 +1,0 @@
-exports.response = (code, result) => (code === 0 ? {code, data: result} : {code, message: result});
