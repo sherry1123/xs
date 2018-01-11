@@ -1,127 +1,22 @@
-.ceph-top-bar-wrapper {
-    box-sizing: border-box;
-    height: 60px;
-    position: fixed;
-    width:100%;
-    z-index: 3;
-    top:0;
-    display: flex;
-    flex-direction: row;
-    background-color: #51739a;
-    .ceph-top-item {
-        position: relative;
-        z-index: 2;
-        &.logo-wrapper {
-            .logo-link {
-                img {
-                    display: block;
-                    margin: 0 auto;
-                    height: 60px;
-                    max-width: 100%;
-                }
+.fs-top-bar-wrapper {
+    min-height: 60px;
+    background: @white;
+    .logo-wrapper {
+        float: left;
+        width: 200px;
+        .logo-link {
+            img {
+                display: block;
+                margin: 0 auto;
+                width: 200px;
+                height: 60px;
+                max-width: 100%;
             }
         }
-        &.menu-wrapper {
-            flex: 6;
-            padding-left: 10px;
-            line-height: 60px;
-            color: #fff;
-            border-bottom: none;
-            background-color: transparent;
-            display: flex;
-            > li {
-                flex:1;
-
-                &.ant-menu-item {
-                    padding: 0 !important;
-                }
-                text-align: center;
-                .ant-menu-submenu-title {
-                    padding: 0;
-                    span {
-                        line-height: 15px;
-                    }
-                }
-                .ant-menu-sub {
-                    .ant-menu-item {
-                        font-size: 15px !important;
-
-                    }
-                }
-                i.anticon {
-                    @media screen and (max-width:1365px) {
-                        display: none;
-                    }
-
-                }
-            }
-
-            .ant-menu-submenu-title, .ant-menu-item {
-                font-weight: bold !important;
-                font-size: 16px !important;
-            }
-            .ant-menu-item,.ant-menu-submenu {
-                border-bottom: 0 !important;
-            }
-        }
-        &.lan-alarm-wrapper {
-
-            @media screen and (min-width:1366px) and (max-width:1600px){
-                min-width: 130px;
-            }
-            @media screen and (min-width:1600px) and (max-width:1920px){
-                min-width: 175px;
-            }
-            @media screen and (min-width:800px) and (max-width:1365px){
-                min-width: 120px;
-            }
-
-            line-height: 60px;
-            text-align: center;
-
-            #change-language-button:focus,#change-language-button:hover {
-                color: #fff;
-                border: 1px solid #fff;
-
-            }
-            .alarm-wrapper {
-                cursor: pointer;
-                margin-left: 15px;
-                .alarm-bell-icon {
-                    font-size: 22px;
-                    color: #fff;
-                }
-            }
-        }
-        &.user-wrapper {
-            flex: 1;
-            display: flex;
-            line-height: 60px;
-            .name-wrapper {
-                min-width: 120px;
-                text-align: center;
-                font-size: 15px;
-                font-weight: bold;
-                color: #fff;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                span {
-                    cursor: pointer;
-                }
-            }
-            .avatar-wrapper {
-                margin: 15px 15px 0 0;
-                display: inline-block;
-                width: 30px;
-                height: 30px;
-                img {
-                    display: block;
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 100%;
-                }
-            }
-        }
+    }
+    .login-user-wrapper {
+        float: right;
+        padding-right: 20px;
+        line-height: 60px;
     }
 }
