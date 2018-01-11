@@ -1,6 +1,6 @@
-import store from '../../index';
+import store from '../../redux';
 
-export const lang = (chinese, english) => {
+const lang = (chinese, english) => {
     let localLanguage = localStorage.getItem('language');
     if (!store){
         if (localLanguage){
@@ -19,3 +19,5 @@ export const lang = (chinese, english) => {
         return english ? english : chinese;
     }
 };
+
+export default lang;

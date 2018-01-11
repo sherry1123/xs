@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Menu, Icon} from 'antd';
+import lang from '../../components/Language/lang';
 
-export default class SideBar extends Component {
+class SideBar extends Component {
     render (){
         return (
             <aside className='fs-side-bar-wrapper'>
@@ -11,32 +13,39 @@ export default class SideBar extends Component {
                     defaultOpenKeys={['sub1']}
                     mode="inline"
                 >
-                    <Menu.SubMenu title={<span><Icon type="file-text" /><span>元数据节点</span></span>}>
-                        <Menu.Item key="1">概述</Menu.Item>
-                        <Menu.Item key="2">节点详情</Menu.Item>
+                    <Menu.SubMenu title={<span><Icon type="file-text" /><span>{lang('元数据节点', 'Metadata Nodes')}</span></span>}>
+                        <Menu.Item key="1">{lang('概述', 'Overview')}</Menu.Item>
+                        <Menu.Item key="2">{lang('节点详情', 'Node Details')}</Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.SubMenu title={<span><Icon type="hdd" /><span>存储节点</span></span>}>
-                        <Menu.Item key="3">概述</Menu.Item>
-                        <Menu.Item key="4">节点详情</Menu.Item>
+                    <Menu.SubMenu title={<span><Icon type="hdd" /><span>{lang('存储节点', 'Storage Nodes')}</span></span>}>
+                        <Menu.Item key="3">{lang('概述', 'Overview')}</Menu.Item>
+                        <Menu.Item key="4">{lang('节点详情', 'Node Details')}</Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.SubMenu title={<span><Icon type="line-chart" /><span>客户端统计信息</span></span>}>
-                        <Menu.Item key="5">元数据</Menu.Item>
-                        <Menu.Item key="6">存储</Menu.Item>
+                    <Menu.SubMenu title={<span><Icon type="line-chart" /><span>{lang('客户端统计数据', 'Client Statistics')}</span></span>}>
+                        <Menu.Item key="5">{lang('元数据', 'Metadata')}</Menu.Item>
+                        <Menu.Item key="6">{lang('存储', 'Storage')}</Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.SubMenu title={<span><Icon type="dot-chart" /><span>用户统计信息</span></span>}>
-                        <Menu.Item key="7">元数据</Menu.Item>
-                        <Menu.Item key="8">存储</Menu.Item>
+                    <Menu.SubMenu title={<span><Icon type="dot-chart" /><span>{lang('用户统计信息', 'User Statistics')}</span></span>}>
+                        <Menu.Item key="7">{lang('元数据', 'Metadata')}</Menu.Item>
+                        <Menu.Item key="8">{lang('存储', 'Storage')}</Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.SubMenu title={<span><Icon type="appstore-o" /><span>管理</span></span>}>
-                        <Menu.Item key="8">已知问题</Menu.Item>
-                        <Menu.Item key="9">查看日志文件</Menu.Item>
+                    <Menu.SubMenu title={<span><Icon type="appstore-o" /><span>{lang('管理', 'Management')}</span></span>}>
+                        <Menu.Item key="8">{lang('已知问题', 'Known Problems')}</Menu.Item>
+                        <Menu.Item key="9">{lang('日志文件', 'Log File')}</Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.SubMenu title={<span><Icon type="setting" /><span>文件系统操作</span></span>}>
-                        <Menu.Item key="10">条带设置</Menu.Item>
-                        <Menu.Item key="11">浏览文件</Menu.Item>
+                    <Menu.SubMenu title={<span><Icon type="setting" /><span>{lang('文件系统操作', 'FS Operation')}</span></span>}>
+                        <Menu.Item key="10">{lang('条带设置', 'Stripe Settings')}</Menu.Item>
+                        <Menu.Item key="11">{lang('文件浏览器', 'File Browser')}</Menu.Item>
                     </Menu.SubMenu>
                 </Menu>
             </aside>
         );
     }
 }
+
+const mapStateToProps = state => {
+    let {language} = state;
+    return {language};
+};
+
+export default connect(mapStateToProps)(SideBar);

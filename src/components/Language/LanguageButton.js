@@ -1,9 +1,7 @@
-import {Button} from 'antd';
-import {connect} from 'react-redux';
 import React, {Component}from 'react';
-import Language from '../../actions/Language-action';
-
-import store from '../../index';
+import {connect} from 'react-redux';
+import {Button} from 'antd';
+import LanguageAction from '../../redux/actions/languageAction';
 import lang from './lang';
 
 class LanguageButton extends Component {
@@ -18,11 +16,11 @@ class LanguageButton extends Component {
     render (){
         const {changeLanguage, language} = this.props;
         return (
-            <Button id="change-language-button" className="change-language-button" title={lang('切换语言', 'switch language')}
-                style={{width: this.state.width}} type={this.state.type} ghost={this.state.ghost}
+            <Button className="change-language-button" title={lang('切换语言', 'switch language')}
+                style={{width: this.state.width, border: 'none'}} type={this.state.type} ghost={this.state.ghost}
                 onClick={changeLanguage.bind(this, language === 'chinese' ? 'english' : 'chinese')}
             >
-                {lan('English', '中文')}
+                {lang('English', '中文')}
             </Button>
         );
     }
@@ -36,7 +34,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
     return {
         changeLanguage: language => {
-            dispatch(Language.changeLan(language));
+            dispatch(LanguageAction.changeLan(language));
             // keep current language to localStorage, read from localStorage firstly when next browser refresh done
             localStorage.setItem('language', language);
         }
