@@ -14,6 +14,6 @@ export default {
 
     // below paths all have a common prefix '/storm-fs',
     // the corresponding views of these paths will render after Main('/storm-fs') rendering is completed.
-    User: '/user',
-
+    MetadataNodesOverview: '/metadata-nodes-overview',
+    MetadataNodesDetail: '/metadata-nodes-detail',
 };

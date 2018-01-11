@@ -6,8 +6,9 @@ import routerPath from '../routerPath';
 import TopBar from '../Bar/TopBar';
 import SideBar from '../Bar/SideBar';
 
-// usr
-import User from '../User/User';
+// metadata nodes
+import MetadataNodesOverview from '../MetadataNodes/MetadataNodesOverview';
+import MetadataNodesDetail from '../MetadataNodes/MetadataNodesDetail';
 
 export default class Main extends Component {
     render (){
@@ -18,7 +19,8 @@ export default class Main extends Component {
                 <div className='fs-body-wrapper'>
                     <SideBar />
                     <main className='fs-page-wrapper'>
-                        <Route path={`${Main}${routerPath.User}`} component={User} />
+                        <Route path={`${Main}${routerPath.MetadataNodesOverview}`} component={MetadataNodesOverview} />
+                        <Route path={`${Main}${routerPath.MetadataNodesDetail}`} component={MetadataNodesDetail} />
                     </main>
                 </div>
             </div>

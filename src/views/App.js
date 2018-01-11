@@ -9,7 +9,7 @@ export default class App extends Component {
     constructor (props){
         super(props);
         this.state = {
-            defaultPath: `${routerPath.Main}${routerPath.User}`
+            defaultPath: `${routerPath.Main}${routerPath.MetadataNodesOverview}`
         };
     }
 
