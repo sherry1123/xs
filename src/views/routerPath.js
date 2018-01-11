@@ -9,12 +9,11 @@ export default {
     Error: '/error',
 
     // initialized and logged in (normal state)
-    LoggedIndex: '/storm-storage',
+    Main: '/storm-storage',
 
-    // below paths all have a common prefix '/storm-storage',
-    // will render after LoggedIndex('/storm-storage') is rendered.
 
-    StorageOverview: '/storage-overview',
-    Users: '/users',
+    // below paths all have a common prefix '/storm-fs',
+    // the corresponding views of these paths will render after Main('/storm-fs') rendering is completed.
+    User: '/user',
 
 };
