@@ -7,8 +7,8 @@ exports.database = {
     name: 'storage'
 };
 exports.errors = {
-    1: 'test error 1',
-    2: 'test error 2'
+    1: 'error 1',
+    2: 'error 2'
 };
 exports.cookies = {
     maxAge: 1000 * 60 * 15,
