@@ -1,11 +1,15 @@
 exports.env = {
     root: process.env.PWD,
     name: process.env.name,
-    init: process.env.initStatus,
-    log: '/log/log4js.log'
+    init: process.env.initStatus
 };
 exports.database = {
     name: 'storage'
+};
+exports.logs = {
+    path: '/logs/server.log',
+    maxSize: 1024 * 1024 * 10,
+    backup: 3
 };
 exports.errors = {
     1: 'error 1',

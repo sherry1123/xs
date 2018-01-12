@@ -8,9 +8,9 @@ log4js.configure({
 		},
 		file: {
 			type: 'file',
-			filename: `${config.env.root}/${config.env.log}`,
-			maxLogSize: 1024 * 1024 * 10,
-			backups: 3
+			filename: `${config.env.root}/${config.logs.path}`,
+			maxLogSize: config.logs.maxSize,
+			backups: config.logs.backup
 		}
 	},
 	categories: {
