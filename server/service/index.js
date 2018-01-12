@@ -11,7 +11,7 @@ const responseHandler = (code, result, param) => {
     }
 };
 const errorHandler = (code, message, param) => {
-    logger.error(`${config.errors[code]}, reason: ${message}, param: ${JSON.stringify(param)}`);
+    logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
 };
 const model = {
     async getUser(param) {
