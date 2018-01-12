@@ -1,7 +1,8 @@
 exports.env = {
     root: process.env.PWD,
     name: process.env.name,
-    init: process.env.initStatus
+    init: process.env.initStatus,
+    log: '/log/log4js.log'
 };
 exports.database = {
     name: 'storage'
