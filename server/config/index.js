@@ -2,7 +2,7 @@ exports.env = {
     root: process.env.PWD,
     name: process.env.name,
     init: process.env.initStatus
-}
+};
 exports.database = {
     name: 'storage'
 };
