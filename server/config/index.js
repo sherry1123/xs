@@ -1,3 +1,4 @@
+exports.root = process.env.PWD;
 exports.database = {
     name: 'storage'
 };
