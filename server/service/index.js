@@ -55,6 +55,7 @@ const model = {
         return result;
     },
     isMaster() {
+        //todo
         return true;
     },
     async updateNginxConfig(ip) {
