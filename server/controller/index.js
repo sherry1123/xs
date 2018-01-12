@@ -20,6 +20,15 @@ const model = {
         let param = ctx.param;
 		let result = await service.deleteUser(param);
 		ctx.body = result;
+    },
+    '/api/login': async ctx => {
+        let param = ctx.param;
+        let result = await service.login(param);
+        ctx.body = result;
+    },
+    '/api/logout': ctx => {
+        let result = service.logout();
+        ctx.body = result;
     }
 }
 module.exports = model;

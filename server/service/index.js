@@ -11,7 +11,7 @@ const responseHandler = (code, result, param) => {
     }
 };
 const errorHandler = (code, message, param) => {
-    logger.error(`${config.errorType[code]}, param: ${JSON.stringify(param)}, reason: ${message}`);
+    logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
 };
 const model = {
     async getUser(param) {
@@ -55,6 +55,7 @@ const model = {
         return result;
     },
     isMaster() {
+        //todo
         return true;
     },
     async updateNginxConfig(ip) {
@@ -68,6 +69,20 @@ const model = {
         } catch (error) {
             errorHandler(1, error, ip);
         }
+    },
+    async login(param) {
+        let result = {};
+        try {
+            let data = await database.getUser(param);
+            result = data.length ? responseHandler(0, 'login success') : responseHandler(1, 'username or password error', param);
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
+    },
+    logout() {
+        let result = responseHandler(0, 'logout success');
+        return result;
     }
 }
 module.exports = model;

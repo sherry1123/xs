@@ -1,7 +1,7 @@
 const cluster = require('cluster');
 const service = require('./server/service');
-const init = require('./server/service/initialize');
 const logger = require('./server/module/logger');
+const init = require('./server/service/initialize');
 const workerNameList = ['master', 'agentd', 'job', 'task'];
 const getWorkerFromConf = (id, initStatus) => ({ name: workerNameList[id], initStatus });
 const getWorkerFromProc = worker => ({ name: worker.process.env.name, initStatus: worker.process.env.initStatus });

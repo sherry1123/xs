@@ -1,11 +1,20 @@
 const log4js = require('log4js');
+const config = require('../config');
 
 log4js.configure({
 	appenders: {
-		out: { type: 'console' }
+		console: { 
+			type: 'console'
+		},
+		file: {
+			type: 'file',
+			filename: `${config.env.root}/${config.logs.path}`,
+			maxLogSize: config.logs.maxSize,
+			backups: config.logs.backup
+		}
 	},
 	categories: {
-		default: { appenders: ['out'], level: 'info' }
+		default: { appenders: ['console', 'file'], level: 'info' },
 	},
 	disableClustering: true
 });
