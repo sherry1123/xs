@@ -1,4 +1,4 @@
-const mongoose = require('../config/database');
+const mongoose = require('../model');
 module.exports = mongoose.model('user',
     new mongoose.Schema({
         username: String,
