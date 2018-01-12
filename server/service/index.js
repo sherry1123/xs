@@ -68,6 +68,20 @@ const model = {
         } catch (error) {
             errorHandler(1, error, ip);
         }
+    },
+    async login(param) {
+        let result = {};
+        try {
+            let data = await database.getUser(param);
+            result = data.length ? responseHandler(0, 'login success') : responseHandler(1, 'username or password error', param);
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
+    },
+    logout() {
+        let result = responseHandler(0, 'logout success');
+        return result;
     }
 }
 module.exports = model;
