@@ -1,0 +1,27 @@
+body {
+    width: 100%;
+    height: 100%;
+    #container {
+        height: 100%;
+        .fs-main-wrapper {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            .fs-top-bar-wrapper {
+                height: 60px;
+            }
+            .fs-body-wrapper {
+                flex: 1;
+                display: flex;
+                flex-direction: row;
+                background-color: @page-bg;
+                .fs-side-bar-wrapper {
+                    width: 200px;
+                }
+                .fs-page-wrapper {
+                    flex: 1;
+                }
+            }
+        }
+    }
+}

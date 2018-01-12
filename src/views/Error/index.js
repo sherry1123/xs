@@ -10,6 +10,8 @@ export default class Error extends Component {
     }
 
     componentDidMount (){
-
+        setTimeout(() => {
+            this.props.history.goBack();
+        }, 5000);
     }
 }

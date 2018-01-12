@@ -1,3 +1,23 @@
 export default {
-    language: 'chinese'
+    // global
+    language: 'chinese',
+
+    // initialize
+    initialize: {
+
+    },
+
+    // login
+    login: {
+
+    },
+
+    // logged
+    main: {
+        activeMenu: [],
+        activePage: '',
+        userInfo: {
+            name: 'admin'
+        }
+    }
 }

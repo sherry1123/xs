@@ -1,10 +1,10 @@
 export const languageActionTypes = {
-    CHANGE: 'CHANGE-LANGUAGE'
+    CHANGE_LANGUAGE: 'CHANGE_LANGUAGE'
 };
 
 export default {
     changeLan: language => ({
-        type: languageActionTypes.CHANGE,
+        type: languageActionTypes.CHANGE_LANGUAGE,
         language
     })
 };
