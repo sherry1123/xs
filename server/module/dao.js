@@ -26,6 +26,13 @@ exports.createOne = (model, param) => {
         });
     });
 };
+exports.createSome = (model, params) => {
+    return new Promise((resolve, reject) => {
+        model.insertMany(params, (error, docs) => {
+            error ? reject(error) : resolve(docs);
+        });
+    });
+};
 exports.updateOne = (model, query, param) => {
     return new Promise((resolve, reject) => {
         model.findOneAndUpdate(query, param, (error, docs) => {
@@ -33,7 +40,21 @@ exports.updateOne = (model, query, param) => {
         });
     });
 };
+exports.updateSome = (model, query, param) => {
+    return new Promise((resolve, reject) => {
+        model.update(query, param, (error, docs) => {
+            error ? reject(error): resolve(docs);
+        });
+    });
+};
 exports.deleteOne = (model, param) => {
+    return new Promise((resolve, reject) => {
+        model.findOneAndRemove(param, (error, docs) => {
+            error ? reject(error) : resolve(docs);
+        });
+    });
+};
+exports.deleteSome = (model, param) => {
     return new Promise((resolve, reject) => {
         model.remove(param, (error, docs) => {
             error ? reject(error) : resolve(docs);
