@@ -1,10 +1,13 @@
 const service = require('./service');
 const model = {
-    '/api/getcpuusage': ctx => {
-        ctx.body = service.getCpuUsage();
+    '/api/getcpu': ctx => {
+        ctx.body = service.getCpu();
     },
-    '/api/getmemoryusage': ctx => {
-        ctx.body = service.getMemoryUsage();
+    '/api/getmemory': ctx => {
+        ctx.body = service.getMemory();
+    },
+    '/api/getiops': ctx => {
+        ctx.body = service.getIops();
     }
 };
 module.exports = model;
