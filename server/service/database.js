@@ -2,7 +2,7 @@ const dao = require('../module/dao');
 const user = require('../model/user');
 const model = {
     async getUser(param) {
-        return await dao.findSome(user, param);
+        return await dao.findOne(user, param);
     },
     async addUser(param) {
         return await dao.createOne(user, param);
