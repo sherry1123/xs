@@ -17,22 +17,22 @@ const getCpuInfo = () => {
     });
     return { core, total, used, usage };
 };
-const compareCpuInfo = () => {
+const getCpuUsage = () => {
     let cpu = getCpuInfo();
     let usage = (cpu.used - CPU.used) / (cpu.total - CPU.total) * 100;
     CPU.total = cpu.total;
     CPU.used = cpu.used;
     CPU.usage = usage;
 };
-const getIopsInfo = () => {
+const getIopsUsage = () => {
     let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
     promise.runCommandInPromise(cmd).then(iops => IOPS = iops * 1);
 }
 let CPU = getCpuInfo();
 let IOPS = 0;
 new CronJob('*/15 * * * * *', () => {
-    compareCpuInfo();
-    getIopsInfo();
+    getCpuUsage();
+    getIopsUsage();
 }, null, true);
 exports.getCpu = () => {
     return CPU;
