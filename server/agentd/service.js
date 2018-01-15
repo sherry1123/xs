@@ -7,19 +7,19 @@ const getCpuInfo = () => {
     let usage = 0;
     let core = cpus.length;
     cpus.forEach(cpu => {
-    let {times} = cpu;
-    for (let i of Object.keys(times)) {
-        total += times[i];
-        usage += current.includes(i) ? times[i] : 0;
+        let { times } = cpu;
+        for (let i of Object.keys(times)) {
+            total += times[i];
+            usage += current.includes(i) ? times[i] : 0;
         }
     });
-    return {core, total, usage};
+    return { core, total, usage };
 };
 const getMemoryInfo = () => {
     let total = os.totalmem();
     let free = os.freemem();
     let usage = (1 - free / total) * 100;
-    return {total, free, usage};
+    return { total, free, usage };
 };
 let CPU = getCpuInfo();
 let _core = CPU.core;
@@ -35,7 +35,7 @@ new CronJob('*/15 * * * * *', () => {
 }, null, true);
 let MEMORY = getMemoryInfo();
 exports.getCpuUsage = () => {
-    return {core: _core, usage: CPUUSAGE}
+    return { core: _core, usage: CPUUSAGE }
 };
 exports.getMemoryUsage = () => {
     return MEMORY;
