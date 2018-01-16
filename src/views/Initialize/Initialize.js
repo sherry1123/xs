@@ -11,17 +11,24 @@ class Initialize extends Component {
         super(props);
         this.state = {
             current: 0,
-            steps: [
-                {title: lang('定义角色', 'Define Roles')},
-                {title: lang('信息确认', 'Information Confirm')},
-                {title: lang('开始安装', 'Start Installing')},
-                {title: lang('完成', 'Completed')}
-            ],
+            stepNum: 4,
         };
     }
 
     removeIP (category, ip){
         console.info(category, ip);
+    }
+
+    addIP (category){
+        console.info(category);
+    }
+
+    changeIP (){
+
+    }
+
+    validateIP (){
+
     }
 
     prev (){
@@ -65,36 +72,57 @@ class Initialize extends Component {
                                     {this.props.metadataServerIPs.map((ip, i) =>
                                         <section className="fs-ip-input-item" key={i}>
                                             <Input className="fs-ip-input" value={ip}
-                                               addonAfter={<Button title={lang('移除', 'Remove')} icon="minus" size="small" />}
-                                               onChange={this.removeIP.bind(this, 'metadataServers', ip)}
+                                                onChange={value => {
+                                                    this.changeIP.bind(this, 'metadataServers', value)();
+                                                    this.validateIP.bind(this, 'metadataServers', value)();
+                                                }}
+                                                addonAfter={
+                                                    <Button title={lang('移除', 'Remove')} icon="minus" size="small"
+                                                        onChange={this.removeIP.bind(this, 'metadataServers', ip)} />
+                                                }
                                             />
                                         </section>)
                                     }
-                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small" />
+                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small"
+                                        onChange={this.addIP.bind(this, 'client')} />
                                 </section>
                                 <section className="fs-ip-input-wrapper">
                                     <Divider className="fs-ip-input-title">{lang('存储服务器', 'Storage Servers')}</Divider>
                                     {this.props.storageServerIPs.map((ip, i) =>
                                         <section className="fs-ip-input-item" key={i}>
                                             <Input className="fs-ip-input" value={ip}
-                                               addonAfter={<Button title={lang('移除', 'Remove')} icon="minus" size="small" />}
-                                               onChange={this.removeIP.bind(this, 'storageServers', ip)}
+                                                onChange={value => {
+                                                   this.changeIP.bind(this, 'metadataServers', value)();
+                                                   this.validateIP.bind(this, 'metadataServers', value)();
+                                                }}
+                                                addonAfter={
+                                                    <Button title={lang('移除', 'Remove')} icon="minus" size="small"
+                                                        onChange={this.removeIP.bind(this, 'storageServers', ip)} />
+                                                }
                                             />
                                         </section>)
                                     }
-                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small" />
+                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small"
+                                        onChange={this.addIP.bind(this, 'client')} />
                                 </section>
                                 <section className="fs-ip-input-wrapper">
                                     <Divider className="fs-ip-input-title">{lang('客户端', 'Client')}</Divider>
                                     {this.props.clientIPs.map((ip, i) =>
                                         <section className="fs-ip-input-item" key={i}>
                                             <Input className="fs-ip-input" value={ip}
-                                                addonAfter={<Button title={lang('移除', 'Remove')} icon="minus" size="small" />}
-                                                onChange={this.removeIP.bind(this, 'client', ip)}
+                                                onChange={value => {
+                                                   this.changeIP.bind(this, 'metadataServers', value)();
+                                                   this.validateIP.bind(this, 'metadataServers', value)();
+                                                }}
+                                                addonAfter={
+                                                    <Button title={lang('移除', 'Remove')} icon="minus" size="small"
+                                                        onChange={this.removeIP.bind(this, 'client', ip)}/>
+                                                }
                                             />
                                         </section>)
                                     }
-                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small" />
+                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small"
+                                        onChange={this.addIP.bind(this, 'client')} />
                                 </section>
                             </div>
                         </div>
@@ -103,21 +131,21 @@ class Initialize extends Component {
                 <section className="fs-initialize-step-action-wrapper">
                     {
                         this.state.current > 0 &&
-                        this.state.current !== this.state.steps.length - 1 &&
-                        this.state.current !== this.state.steps.length - 2 &&
+                        this.state.current !== this.state.stepNum - 1 &&
+                        this.state.current !== this.state.stepNum - 2 &&
                         <Button className="fs-initialize-btn prev" size="small" onClick={this.prev.bind(this)}>
                             <Icon type="left" /> {lang('上一步', 'Previous')}
                         </Button>
                     }
                     {
-                        this.state.current < this.state.steps.length - 1 &&
-                        this.state.current !== this.state.steps.length - 2 &&
+                        this.state.current < this.state.stepNum - 1 &&
+                        this.state.current !== this.state.stepNum - 2 &&
                         <Button className="fs-initialize-btn next" size="small" onClick={this.next.bind(this)}>
                             {lang('下一步', 'Next')} <Icon type="right" />
                         </Button>
                     }
                     {
-                        this.state.current === this.state.steps.length - 1 &&
+                        this.state.current === this.state.stepNum - 1 &&
                         <Button className="fs-initialize-btn done" size="small" onClick={this.forwardLogin.bind(this)}>
                             <Icon type="check" /> {lang('完成', 'Done')}
                         </Button>
@@ -135,9 +163,17 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setMetadataServerIPs: ips => dispatch(initializeAction.setMetadataServerIPs(ips)),
-        setStorageServerIPs: ips => dispatch(initializeAction.setMetadataServerIPs(ips)),
-        setClientIPs: ips => dispatch(initializeAction.setMetadataServerIPs(ips))
+        addMetadataServerIP: () => dispatch(initializeAction.addMetadataServerIP()),
+        addStorageServerIP: () => dispatch(initializeAction.addStorageServerIP()),
+        addClientIP: () => dispatch(initializeAction.addClientIP()),
+
+        removeMetadataServerIP: index => dispatch(initializeAction.removeMetadataServerIP(index)),
+        removeStorageServerIP: index => dispatch(initializeAction.removeStorageServerIP(index)),
+        removeClientIP: index => dispatch(initializeAction.removeClientIP(index)),
+
+        setMetadataServerIPs: (ip, index) => dispatch(initializeAction.setMetadataServerIPs(ip, index)),
+        setStorageServerIPs: (ip, index) => dispatch(initializeAction.setMetadataServerIPs(ip, index)),
+        setClientIPs: (ip, index) => dispatch(initializeAction.setMetadataServerIPs(ip, index))
     };
 };
 
