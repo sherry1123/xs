@@ -6,6 +6,9 @@ exports.env = {
 exports.database = {
     name: 'storage'
 };
+exports.nginx = {
+    path: '/etc/nginx/nginx.conf'
+};
 exports.logs = {
     path: '/logs/server.log',
     maxSize: 1024 * 1024 * 10,

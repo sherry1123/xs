@@ -32,33 +32,35 @@ const messageHandler = msg => {
 			logger.info(msg);
 	}
 };
-if (cluster.isMaster) {
-	cluster.settings.isMaster = service.isMaster();
-	cluster.settings.initStatus = init.checkInitStatus();
-	logger.info('master ready');
-	startNewWorker(1);
-} else {
-	let { name, initStatus } = getWorkerFromProc(cluster.worker);
-	switch (name) {
-		case 'agentd':
-			require('./server/agentd/index');
-			init.setInitStatus(initStatus);
-			logger.info('agentd ready');
-			process.send('agentd ready');
-			break;
-		case 'job':
-			require('./server/index');
-			init.setInitStatus(initStatus);
-			logger.info('job ready');
-			process.send('job ready');
-			break;
-		case 'task':
-			require('./server/schedule/index');
-			init.setInitStatus(initStatus);
-			logger.info('task ready');
-			process.send('task ready');
-			break;
-		default:
-			logger.info('no more worker need to run');
+(async () => {
+	if (cluster.isMaster) {
+		cluster.settings.isMaster = await service.isMaster();
+		cluster.settings.initStatus = init.checkInitStatus();
+		logger.info('master ready');
+		startNewWorker(1);
+	} else {
+		let { name, initStatus } = getWorkerFromProc(cluster.worker);
+		switch (name) {
+			case 'agentd':
+				require('./server/agentd/index');
+				init.setInitStatus(initStatus);
+				logger.info('agentd ready');
+				process.send('agentd ready');
+				break;
+			case 'job':
+				require('./server/index');
+				init.setInitStatus(initStatus);
+				logger.info('job ready');
+				process.send('job ready');
+				break;
+			case 'task':
+				require('./server/schedule/index');
+				init.setInitStatus(initStatus);
+				logger.info('task ready');
+				process.send('task ready');
+				break;
+			default:
+				logger.info('no more worker need to run');
+		}
 	}
-}
+})();
