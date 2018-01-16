@@ -8,7 +8,7 @@ const model = {
 			await next();
 		}
 	},
-	getInitStatus() {
+	syncInitStatus() {
 		return async (ctx, next) => {
 			let initStatus = init.getInitStatus();
 			let initCookie = ctx.cookies.get('init');
