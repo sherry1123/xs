@@ -13,7 +13,7 @@ class TopBar extends Component {
                     </a>
                 </section>
                 <section className="login-user-wrapper">
-                    <LanguageButton width={80}/>
+                    <LanguageButton width={80} border="none" />
                     <span style={{marginLeft: 10}}>{lang('您好', 'hello')}, admin</span>
                 </section>
             </header>

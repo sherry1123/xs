@@ -1,23 +1,26 @@
 import React, {Component}from 'react';
 import {connect} from 'react-redux';
 import {Button} from 'antd';
-import LanguageAction from '../../redux/actions/languageAction';
+import languageAction from '../../redux/actions/languageAction';
 import lang from './lang';
 
 class LanguageButton extends Component {
     constructor (props){
         super(props);
-        let {type = 'default', ghost = false, width = '100px'} = this.props;
+        let {type = 'default', ghost = false, width = '100px', border = ''} = this.props;
         this.state = {
-            type, ghost, width
+            type, ghost, width, border
         };
     }
 
     render (){
         const {changeLanguage, language} = this.props;
         return (
-            <Button className="change-language-button" title={lang('切换语言', 'switch language')}
-                style={{width: this.state.width, border: 'none'}} type={this.state.type} ghost={this.state.ghost}
+            <Button className="change-language-button"
+                title={lang('切换语言', 'switch language')}
+                style={{width: this.state.width, border: this.state.border}}
+                type={this.state.type}
+                ghost={this.state.ghost}
                 onClick={changeLanguage.bind(this, language === 'chinese' ? 'english' : 'chinese')}
             >
                 {lang('English', '中文')}
@@ -31,11 +34,11 @@ const mapStateToProps = state => {
     return {language};
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     return {
         changeLanguage: language => {
-            dispatch(LanguageAction.changeLan(language));
-            // keep current language to localStorage, read from localStorage firstly when next browser refresh done
+            dispatch(languageAction.changeLan(language));
+            // keep current language mode in localStorage, will read it from localStorage firstly after next browser refresh
             localStorage.setItem('language', language);
         }
     };
