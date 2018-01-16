@@ -10,7 +10,7 @@ const responseHandler = (code, result, param) => {
         return {code, data: result};
     }
 };
-const errorHandler = (code, message, param) => {
+const errorHandler = (code, message, param = {}) => {
     logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
 };
 const model = {
@@ -54,9 +54,16 @@ const model = {
         }
         return result;
     },
-    isMaster() {
-        //todo
-        return true;
+    async isMaster() {
+        let result = true;
+        // let path = config.nginx.path;
+        // try {
+        //     let file = await promise.readFileInPromise(path);
+        //     result = file.includes('127.0.0.1:3000') ? true : false;
+        // } catch (error) {
+        //     errorHandler(1, error);
+        // }
+        return result;
     },
     async updateNginxConfig(ip) {
         let path = '/etc/nginx/nginx.conf';
