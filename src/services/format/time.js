@@ -1,4 +1,4 @@
-import {lan} from '../../components/Language/';
+import {lang} from '../../components/Language/lang';
 
 export const formatTimeLeft = seconds => {
     let hour = 60 * 60;
@@ -14,16 +14,16 @@ export const formatTimeLeft = seconds => {
     let minutes = ((seconds % week % day % hour) / minute);
 
     if (weekNum >= 1){
-        result += (parseInt(weekNum, 0) + lan('星期', 'week(s)'));
+        result += (parseInt(weekNum, 0) + lang('星期', 'week(s)'));
     }
     if (dayNum >= 1){
-        result += (parseInt(dayNum, 0) + lan('天', 'day(s)'));
+        result += (parseInt(dayNum, 0) + lang('天', 'day(s)'));
     }
     if (hourNum >= 1){
-        result += (parseInt(hourNum, 0) + lan('小时', 'hour(s)'));
+        result += (parseInt(hourNum, 0) + lang('小时', 'hour(s)'));
     }
     if (minutes >= 1){
-        result += (parseInt(minutes, 0) + lan('分钟', 'minute(s)'));
+        result += (parseInt(minutes, 0) + lang('分钟', 'minute(s)'));
     }
     return result;
 };

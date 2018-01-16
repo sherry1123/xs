@@ -1,34 +1,81 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Divider, Icon, Input, Steps} from 'antd';
+import update from "react-addons-update";
+import {Button, Divider, Form, Icon, Input, Steps} from 'antd';
 import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
+import {validateIpv4} from '../../services';
 import lang from '../../components/Language/lang';
 import routerPath from '../routerPath';
 
 class Initialize extends Component {
     constructor (props){
         super(props);
+        let {metadataServerIPs, storageServerIPs, clientIPs} = props;
         this.state = {
             current: 0,
             stepNum: 4,
+            metadataServerIPsError: metadataServerIPs.map(() => ({status: '', help: ''})),
+            storageServerIPsError: storageServerIPs.map(() => ({status: '', help: ''})),
+            clientIPsError: clientIPs.map(() => ({status: '', help: ''})),
         };
     }
 
-    removeIP (category, ip){
-        console.info(category, ip);
+    async addIP (category){
+        this.props.addIP(category);
+        // add corresponding validation obj
+        let errorArr = this.state[category + 'Error'];
+        await this.setErrorArr(category, errorArr.length, {status: '', help: ''}, 0);
     }
 
-    addIP (category){
-        console.info(category);
+    async removeIP (category, i){
+        this.props.removeIP(category, i);
+        // remove corresponding validation obj
+        let errorArr = Object.assign([], this.state[category + 'Error']);
+        errorArr.splice(i, 1);
+        await this.setErrorArr(category, i, 'remove');
     }
 
-    changeIP (){
-
+    setIP (category, i, value){
+        this.props.setIP(category, i, value);
     }
 
-    validateIP (){
+    async setErrorArr (category, i, errorObj){
+        // 在state中修改嵌套数组或者对象是什么沉重的，可移到redux里面进行维护
+        let newState;
+        let mutation = errorObj === 'remove' ? [i, 1] : [i, 1, errorObj];
+        switch (category){
+            case 'metadataServerIPs':
+                newState = update(this.state, {metadataServerIPsError: {$splice: [mutation]}});
+                break;
+            case 'storageServerIPs':
+                newState = update(this.state, {storageServerIPsError: {$splice: [mutation]}});
+                break;
+            case 'clientIPs':
+                newState = update(this.state, {clientIPsError: {$splice: [mutation]}});
+                break;
+            default:
+                break;
+        }
+        await this.setState(Object.assign(this.state, newState));
+        console.info(this.state);
+    }
 
+    async validateIP (category, i, value) {
+        // reset to successfully firstly
+        await this.setErrorArr(category, i, {status: '', help: ''});
+
+        // validate ipv4 address pattern
+        if (!validateIpv4(value)){
+            await this.setErrorArr(category, i, {status: 'error', help: lang('IP格式错误', 'pattern error')});
+        }
+
+        // validate whether this value is duplicated with one of the ips of current server category
+        let currentIPs = this.props[category];
+        let duplicated = currentIPs.some((ip, index) => (ip === value && index !== i));
+        if (duplicated){
+            await this.setErrorArr(category, i, {status: 'error', help: lang('IP在所在分类中有重复', 'duplicated')});
+        }
     }
 
     prev (){
@@ -59,7 +106,7 @@ class Initialize extends Component {
                 <section className="fs-initialize-step-content-wrapper">
                     {
                         this.state.current === 0 &&
-                        <div className="fs-initialize-step-content">
+                        <Form className="fs-initialize-step-content">
                             <section className="fs-ip-input-title">
                                 {lang(
                                     '请定义将作为元数据服务器、存储服务器和客户端的管理主机的IP。每个类别请在每一行提供一个IP。运行admon守护进程的管理主机的默认值是相同的IP。',
@@ -70,61 +117,117 @@ class Initialize extends Component {
                                 <section className="fs-ip-input-wrapper">
                                     <Divider className="fs-ip-input-title">{lang('元数据服务器', 'Metadata Servers')}</Divider>
                                     {this.props.metadataServerIPs.map((ip, i) =>
-                                        <section className="fs-ip-input-item" key={i}>
+                                        <Form.Item className="fs-ip-input-item" key={i}
+                                            validateStatus={this.state['metadataServerIPsError'][i].status}
+                                            help={this.state['metadataServerIPsError'][i].help}
+                                        >
                                             <Input className="fs-ip-input" value={ip}
-                                                onChange={value => {
-                                                    this.changeIP.bind(this, 'metadataServers', value)();
-                                                    this.validateIP.bind(this, 'metadataServers', value)();
+                                                onChange={({target: {value}}) => {
+                                                    this.setIP.bind(this, 'metadataServerIPs', i, value)();
+                                                    this.validateIP.bind(this, 'metadataServerIPs', i, value)();
                                                 }}
                                                 addonAfter={
-                                                    <Button title={lang('移除', 'Remove')} icon="minus" size="small"
-                                                        onChange={this.removeIP.bind(this, 'metadataServers', ip)} />
+                                                    <Button title={lang('移除', 'remove')} icon="minus" size="small"
+                                                        onClick={this.removeIP.bind(this, 'metadataServerIPs', i)} />
                                                 }
                                             />
-                                        </section>)
+                                        </Form.Item>)
                                     }
-                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small"
-                                        onChange={this.addIP.bind(this, 'client')} />
+                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
+                                        onClick={this.addIP.bind(this, 'metadataServerIPs')} />
                                 </section>
                                 <section className="fs-ip-input-wrapper">
                                     <Divider className="fs-ip-input-title">{lang('存储服务器', 'Storage Servers')}</Divider>
                                     {this.props.storageServerIPs.map((ip, i) =>
-                                        <section className="fs-ip-input-item" key={i}>
+                                        <Form.Item className="fs-ip-input-item" key={i}
+                                            validateStatus={this.state['storageServerIPsError'][i].status}
+                                            help={this.state['storageServerIPsError'][i].help}
+                                        >
                                             <Input className="fs-ip-input" value={ip}
-                                                onChange={value => {
-                                                   this.changeIP.bind(this, 'metadataServers', value)();
-                                                   this.validateIP.bind(this, 'metadataServers', value)();
+                                                onChange={({target: {value}}) => {
+                                                   this.setIP.bind(this, 'storageServerIPs', i, value)();
+                                                   this.validateIP.bind(this, 'storageServerIPs', i, value)();
                                                 }}
                                                 addonAfter={
-                                                    <Button title={lang('移除', 'Remove')} icon="minus" size="small"
-                                                        onChange={this.removeIP.bind(this, 'storageServers', ip)} />
+                                                    <Button title={lang('移除', 'remove')} icon="minus" size="small"
+                                                        onClick={this.removeIP.bind(this, 'storageServerIPs', i)} />
                                                 }
                                             />
-                                        </section>)
+                                        </Form.Item>)
                                     }
-                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small"
-                                        onChange={this.addIP.bind(this, 'client')} />
+                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
+                                        onClick={this.addIP.bind(this, 'metadataServerIPs')} />
                                 </section>
                                 <section className="fs-ip-input-wrapper">
                                     <Divider className="fs-ip-input-title">{lang('客户端', 'Client')}</Divider>
                                     {this.props.clientIPs.map((ip, i) =>
-                                        <section className="fs-ip-input-item" key={i}>
+                                        <Form.Item className="fs-ip-input-item" key={i}
+                                            validateStatus={this.state['clientIPsError'][i].status}
+                                            help={this.state['clientIPsError'][i].help}
+                                        >
                                             <Input className="fs-ip-input" value={ip}
-                                                onChange={value => {
-                                                   this.changeIP.bind(this, 'metadataServers', value)();
-                                                   this.validateIP.bind(this, 'metadataServers', value)();
+                                                onChange={({target: {value}}) => {
+                                                   this.setIP.bind(this, 'clientIPs', i, value)();
+                                                   this.validateIP.bind(this, 'clientIPs', i, value)();
                                                 }}
                                                 addonAfter={
-                                                    <Button title={lang('移除', 'Remove')} icon="minus" size="small"
-                                                        onChange={this.removeIP.bind(this, 'client', ip)}/>
+                                                    <Button title={lang('移除', 'remove')} icon="minus" size="small"
+                                                        onClick={this.removeIP.bind(this, 'clientIPs', i)}/>
                                                 }
                                             />
-                                        </section>)
+                                        </Form.Item>)
                                     }
-                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'Add')} icon="plus" size="small"
-                                        onChange={this.addIP.bind(this, 'client')} />
+                                    <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
+                                        onClick={this.addIP.bind(this, 'clientIPs')} />
                                 </section>
                             </div>
+                        </Form>
+                    }
+                    {
+                        this.state.current === 1 &&
+                        <div className="fs-initialize-step-content">
+                            <div className="fs-ip-input-group">
+                                <section className="fs-ip-input-wrapper">
+                                    <Divider className="fs-ip-input-title">{lang('元数据服务器', 'Metadata Servers')}</Divider>
+                                    {this.props.metadataServerIPs.map((ip, i) =>
+                                        <Form.Item className="fs-ip-input-item" key={i}>
+                                            <span>{ip}</span>
+                                        </Form.Item>)
+                                    }
+                                </section>
+                                <section className="fs-ip-input-wrapper">
+                                    <Divider className="fs-ip-input-title">{lang('存储服务器', 'Storage Servers')}</Divider>
+                                    {this.props.storageServerIPs.map((ip, i) =>
+                                        <Form.Item className="fs-ip-input-item" key={i}>
+                                            <span>{ip}</span>
+                                        </Form.Item>)
+                                    }
+                                </section>
+                                <section className="fs-ip-input-wrapper">
+                                    <Divider className="fs-ip-input-title">{lang('客户端', 'Client')}</Divider>
+                                    {this.props.clientIPs.map((ip, i) =>
+                                        <Form.Item className="fs-ip-input-item" key={i}>
+                                            <span>{ip}</span>
+                                        </Form.Item>)
+                                    }
+                                </section>
+                            </div>
+                        </div>
+                    }
+                    {
+                        this.state.current === 2 &&
+                        <div className="fs-initialize-step-content"
+                            style={{border: '1px solid #e9e9e9', height: 350}}>
+                            安装过程....，这里完成以后自动进入下一步
+                        </div>
+                    }
+                    {
+                        this.state.current === 3 &&
+                        <div className="fs-initialize-step-content"
+                             style={{border: '1px solid #e9e9e9', height: 350}}>
+                            安装完成<br />
+                            您的存储系统信息如下：
+
                         </div>
                     }
                 </section >
@@ -147,7 +250,7 @@ class Initialize extends Component {
                     {
                         this.state.current === this.state.stepNum - 1 &&
                         <Button className="fs-initialize-btn done" size="small" onClick={this.forwardLogin.bind(this)}>
-                            <Icon type="check" /> {lang('完成', 'Done')}
+                            <Icon type="check" /> {lang('开始使用', 'Start Using')}
                         </Button>
                     }
                 </section >
@@ -163,17 +266,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        addMetadataServerIP: () => dispatch(initializeAction.addMetadataServerIP()),
-        addStorageServerIP: () => dispatch(initializeAction.addStorageServerIP()),
-        addClientIP: () => dispatch(initializeAction.addClientIP()),
-
-        removeMetadataServerIP: index => dispatch(initializeAction.removeMetadataServerIP(index)),
-        removeStorageServerIP: index => dispatch(initializeAction.removeStorageServerIP(index)),
-        removeClientIP: index => dispatch(initializeAction.removeClientIP(index)),
-
-        setMetadataServerIPs: (ip, index) => dispatch(initializeAction.setMetadataServerIPs(ip, index)),
-        setStorageServerIPs: (ip, index) => dispatch(initializeAction.setMetadataServerIPs(ip, index)),
-        setClientIPs: (ip, index) => dispatch(initializeAction.setMetadataServerIPs(ip, index))
+        addIP: category => dispatch(initializeAction.addIP(category)),
+        removeIP: (category, index) => dispatch(initializeAction.removeIP(category, index)),
+        setIP: (category, index, ip) => dispatch(initializeAction.setIP(category, index, ip)),
     };
 };
 

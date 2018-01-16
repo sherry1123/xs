@@ -1,42 +1,29 @@
 import MockData from '../../mockData';
 import {initializeActionTypes} from '../actions/initializeAction';
 
-const initializeReducer = (state = MockData['initialize'], action) => {
-    let {metadataServerIPs, storageServerIPs, clientIPs} = state;
+const initializeReducer = (state = MockData.initialize, action) => {
+    let {category, index, ip} = action;
+    let rawIPs = state[category] || [];
+    let IPs = Object.assign([], rawIPs);
+    let newIPs = {};
 
     switch (action.type){
         // add
-        case initializeActionTypes.ADD_METADATA_SERVER_IP:
-            metadataServerIPs.push('');
-            return Object.assign({}, state, {metadataServerIPs});
-        case initializeActionTypes.ADD_STORAGE_SERVER_IP:
-            storageServerIPs.push('');
-            return Object.assign({}, state, {storageServerIPs});
-        case initializeActionTypes.ADD_CLIENT_IP:
-            clientIPs.push('');
-            return Object.assign({}, state, {clientIPs});
-
+        case initializeActionTypes.ADD_IP:
+            IPs.push('');
+            newIPs[category] = IPs;
+            return Object.assign({}, state, newIPs);
         // remove
-        case initializeActionTypes.REMOVE_METADATA_SERVER_IP:
-            metadataServerIPs.splice(metadataServerIPs.findIndex(action.index), 1);
-            return Object.assign({}, state, {metadataServerIPs});
-        case initializeActionTypes.REMOVE_STORAGE_SERVER_IP:
-            storageServerIPs.splice(storageServerIPs.findIndex(action.index), 1);
-            return Object.assign({}, state, {storageServerIPs});
-        case initializeActionTypes.REMOVE_CLIENT_IP:
-            clientIPs.splice(clientIPs.findIndex(action.index), 1);
-            return Object.assign({}, state, {clientIPs});
+        case initializeActionTypes.REMOVE_IP:
+            IPs.splice(index, 1);
+            newIPs[category] = IPs;
+            return Object.assign({}, state, newIPs);
 
         // set
-        case initializeActionTypes.SET_METADATA_SERVER_IPS:
-            metadataServerIPs[action.index] = action.ip;
-            return Object.assign({}, state, {metadataServerIPs});
-        case initializeActionTypes.SET_STORAGE_SERVER_IPS:
-            storageServerIPs[action.index] = action.ip;
-            return Object.assign({}, state, {storageServerIPs});
-        case initializeActionTypes.SET_CLIENT_IPS:
-            clientIPs[action.index] = action.ip;
-            return Object.assign({}, state, {clientIPs});
+        case initializeActionTypes.SET_IP:
+            IPs[index] = ip;
+            newIPs[category] = IPs;
+            return Object.assign({}, state, newIPs);
 
         default:
             return state;

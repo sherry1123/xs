@@ -14,7 +14,6 @@ export default class App extends Component {
         super(props);
         let isInitialized = Cookie.get('init');
         let defaultPath = '';
-        console.info(isInitialized);
         if (isInitialized === 'true'){
             defaultPath = `${routerPath.Main}${routerPath.MetadataNodesOverview}`;
         } else {

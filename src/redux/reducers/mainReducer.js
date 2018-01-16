@@ -1,7 +1,7 @@
 import MockData from '../../mockData';
 import {mainActionTypes} from '../actions/mainAction';
 
-const mainReducer = (state = MockData['main'], action) => {
+const mainReducer = (state = MockData.main, action) => {
     switch (action.type){
         case mainActionTypes.CHANGE_ACTIVE_MENU:
             return Object.assign({}, state, {activeMenu: action.key});

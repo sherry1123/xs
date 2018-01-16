@@ -1,56 +1,25 @@
 export const initializeActionTypes = {
-    ADD_METADATA_SERVER_IP: 'ADD_METADATA_SERVER_IP',
-    ADD_STORAGE_SERVER_IP: 'ADD_STORAGE_SERVER_IP',
-    ADD_CLIENT_IP: 'ADD_CLIENT_IP',
-
-    REMOVE_METADATA_SERVER_IP: 'REMOVE_METADATA_SERVER_IP',
-    REMOVE_STORAGE_SERVER_IP: 'REMOVE_METADATA_SERVER_IP',
-    REMOVE_CLIENT_IP: 'REMOVE_CLIENT_IP',
-
-    SET_METADATA_SERVER_IPS: 'CHANGE_METADATA_SERVER_IPS',
-    SET_STORAGE_SERVER_IPS: 'CHANGE_STORAGE_SERVER_IPS',
-    SET_CLIENT_IPS: 'CLIENT_IPS',
-
-
+    ADD_IP: 'ADD_IP',
+    REMOVE_IP: 'REMOVE_IP',
+    SET_IP: 'SET_IP',
 };
 
 export default {
-    addMetadataServerIP: () => ({
-        type: initializeActionTypes.ADD_METADATA_SERVER_IP,
-    }),
-    addStorageServerIP: () => ({
-        type: initializeActionTypes.ADD_STORAGE_SERVER_IP,
-    }),
-    addClientIP: () => ({
-        type: initializeActionTypes.ADD_CLIENT_IP,
+    addIP: category => ({
+        type: initializeActionTypes.ADD_IP,
+        category
     }),
 
-    removeMetadataServerIP: index => ({
-        type: initializeActionTypes.REMOVE_METADATA_SERVER_IP,
-        index
-    }),
-    removeStorageServerIP: index => ({
-        type: initializeActionTypes.REMOVE_STORAGE_SERVER_IP,
-        index
-    }),
-    removeClientIP: index => ({
-        type: initializeActionTypes.REMOVE_CLIENT_IP,
+    removeIP: (category, index) => ({
+        type: initializeActionTypes.REMOVE_IP,
+        category,
         index
     }),
 
-    setMetadataServerIPs: (ip, index) => ({
-        type: initializeActionTypes.SET_METADATA_SERVER_IPS,
-        ip,
-        index
+    setIP: (category, index, ip) => ({
+        type: initializeActionTypes.SET_IP,
+        category,
+        index,
+        ip
     }),
-    setStorageServerIPs: (ip, index) => ({
-        type: initializeActionTypes.SET_STORAGE_SERVER_IPS,
-        ip,
-        index
-    }),
-    setClientIPs: (ip, index) => ({
-        type: initializeActionTypes.SET_CLIENT_IPS,
-        ip,
-        index
-    })
 };

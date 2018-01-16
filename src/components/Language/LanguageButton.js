@@ -14,14 +14,13 @@ class LanguageButton extends Component {
     }
 
     render (){
-        const {changeLanguage, language} = this.props;
         return (
             <Button className="change-language-button"
                 title={lang('切换语言', 'switch language')}
                 style={{width: this.state.width, border: this.state.border}}
                 type={this.state.type}
                 ghost={this.state.ghost}
-                onClick={changeLanguage.bind(this, language === 'chinese' ? 'english' : 'chinese')}
+                onClick={this.props.changeLanguage.bind(this, this.props.language === 'chinese' ? 'english' : 'chinese')}
             >
                 {lang('English', '中文')}
             </Button>
