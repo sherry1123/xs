@@ -1,3 +1,4 @@
+const config = require('../config');
 const init = require('../service/initialize');
 const model = {
 	initParam() {
@@ -10,7 +11,10 @@ const model = {
 	getInitStatus() {
 		return async (ctx, next) => {
 			let initStatus = init.getInitStatus();
-			//todo
+			let initCookie = ctx.cookies.get('init');
+			if (!initCookie || initCookie !== initStatus) {
+				ctx.cookies.set('init', initStatus, config.cookies);
+			}
 			await next();
 		}
 	}
