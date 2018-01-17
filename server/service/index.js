@@ -72,22 +72,46 @@ const model = {
             let data = file.replace(/127\.0\.0\.1/g, `${param}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
             await promise.writeFileInPromise(path, data);
         } catch (error) {
-            errorHandler(1, error, ip);
+            errorHandler(1, error, param);
         }
     },
     async login(param) {
         let result = {};
         try {
             let data = await database.getUser(param);
-            result = data.length ? responseHandler(0, 'login success') : responseHandler(1, 'username or password error', param);
+            if (data.length) {
+                await model.addAuditLog({user: param.username, desc: 'login success'});
+                result = responseHandler(0, 'login success');
+            } else {
+                result = responseHandler(1, 'username or password error', param);
+            }
         } catch (error) {
             result = responseHandler(1, error, param);
         }
         return result;
     },
-    logout() {
+    async logout(param) {
         let result = responseHandler(0, 'logout success');
+        await model.addAuditLog({user: param.username, desc: 'logout success'});
         return result;
+    },
+    async getEventLog(param) {
+        let result = {};
+        try {
+            let data = await database.getEventLog(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
+    },
+    async addEventLog(param) {
+        let {time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false} = param;
+        try {
+            await database.addEventLog({time, node, desc, level, source, read});
+        } catch (error) {
+            errorHandler(1, error, param);
+        }
     },
     async updateEventLog(querys, param) {
         let result = {};
@@ -100,6 +124,24 @@ const model = {
             result = responseHandler(1, error, {querys, param});
         }
         return result;
+    },
+    async getAuditLog(param) {
+        let result = {};
+        try {
+            let data = await database.getAuditLog(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
+    },
+    async addAuditLog(param) {
+        let {time = new Date(), user, group = 'admin', desc, level = 1, ip = '127.0.0.1'} = param;
+        try {
+            await database.addAuditLog({time, user, group, desc, level, ip});
+        } catch (error) {
+            errorHandler(1, error, param);
+        }
     }
 }
 module.exports = model;
