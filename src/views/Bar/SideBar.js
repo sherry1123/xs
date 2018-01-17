@@ -36,12 +36,7 @@ class SideBar extends Component {
         this.props.changeActiveMenu(openKeys)
     }
 
-    componentWillReceiveProps (){
-        console.info(123);
-    }
-
     render (){
-        console.info(111);
         return (
             <aside className='fs-side-bar-wrapper'>
                 <Menu className="fs-side-bar-menu-wrapper"

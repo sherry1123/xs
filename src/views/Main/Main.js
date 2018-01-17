@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
+import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
 
 // bar
@@ -31,6 +32,18 @@ import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings'
 import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
 
 export default class Main extends Component {
+    componentWillMount (){
+        let isInitialized = Cookie.get('init');
+        if (isInitialized === 'true'){
+            let isLoggedIn = Cookie.get('user');
+            if (!isLoggedIn || (isLoggedIn === 'false')){
+                this.props.history.replace(routerPath.Login);
+            }
+        } else {
+            this.props.history.replace(routerPath.Init);
+        }
+    }
+
     render (){
         const Main = routerPath.Main;
         return (

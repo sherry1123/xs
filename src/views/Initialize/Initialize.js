@@ -4,8 +4,9 @@ import update from "react-addons-update";
 import {Button, Divider, Form, Icon, Input, Progress, message, Steps} from 'antd';
 import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
-import {validateIpv4} from '../../services';
 import lang from '../../components/Language/lang';
+import {validateIpv4} from '../../services';
+import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
 
 class Initialize extends Component {
@@ -22,6 +23,20 @@ class Initialize extends Component {
             initProgress: 0,
             initializationInfo: [lang('安装已开始，请稍候...', 'Initialization started, pleas wait for moment...')]
         };
+    }
+
+    componentWillMount (){
+        let isInitialized = Cookie.get('init');
+        if (isInitialized === 'true'){
+            let isLoggedIn = Cookie.get('user');
+            let path = '';
+            if (!isLoggedIn || (isLoggedIn === 'false')){
+                path = routerPath.Login;
+            } else {
+                path = routerPath.Main + routerPath.MetadataNodesOverview;
+            }
+            this.props.history.replace(path);
+        }
     }
 
     async addIP (category){
@@ -138,6 +153,9 @@ class Initialize extends Component {
             if (initProgress === 100){
                 clearInterval(initTimer);
                 setTimeout(() => this.setState({current: 3}), 3000);
+                if (process.env.NODE_ENV === 'development'){
+                    Cookie.set('init', 'true');
+                }
             }
         }, 300);
     }

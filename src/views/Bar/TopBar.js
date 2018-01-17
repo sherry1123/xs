@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {Popover} from 'antd';
+import UserSettingPopover from './UserSettingPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 
@@ -14,7 +16,12 @@ class TopBar extends Component {
                 </section>
                 <section className="login-user-wrapper">
                     <LanguageButton width={80} border="none" />
-                    <span style={{marginLeft: 10}}>{lang('您好', 'hello')}, admin</span>
+                    <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="hover">
+                        <span style={{marginLeft: 10}}>
+                            {lang('您好, ', 'hello, ')}
+                            <span className="fs-login-user">admin</span>
+                        </span>
+                    </Popover>
                 </section>
             </header>
         );
