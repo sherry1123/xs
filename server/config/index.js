@@ -1,3 +1,6 @@
+exports.process = {
+    name: ['master', 'agentd', 'job', 'task']
+};
 exports.env = {
     root: process.env.PWD,
     name: process.env.name,
