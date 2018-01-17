@@ -65,13 +65,11 @@ const model = {
         // }
         return result;
     },
-    async updateNginxConfig(ip) {
-        let path = '/etc/nginx/nginx.conf';
+    async updateNginxConfig(param) {
+        let path = config.nginx.path;
         try {
             let file = await promise.readFileInPromise(path);
-            let data = file.replace(/127\.0\.0\.1/g, `${ip}`)
-                .replace(/try_files\s\$uri\s\/index\.html;/, 
-                "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
+            let data = file.replace(/127\.0\.0\.1/g, `${param}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
             await promise.writeFileInPromise(path, data);
         } catch (error) {
             errorHandler(1, error, ip);
@@ -89,6 +87,18 @@ const model = {
     },
     logout() {
         let result = responseHandler(0, 'logout success');
+        return result;
+    },
+    async updateEventLog(querys, param) {
+        let result = {};
+        try {
+            for (let query of querys) {
+                await database.updateEventLog(query, param);
+            }
+            result = responseHandler(0, 'update event log success');
+        } catch (error) {
+            result = responseHandler(1, error, {querys, param});
+        }
         return result;
     }
 }

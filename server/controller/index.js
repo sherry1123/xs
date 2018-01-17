@@ -1,5 +1,9 @@
+const config = require('../config');
 const service = require('../service');
 const model = {
+    '/api/testapi': ctx => {
+        ctx.body = ctx;
+    },
     '/api/getuser': async ctx => {
         let param = ctx.param;
 		let result = await service.getUser(param);
@@ -24,10 +28,21 @@ const model = {
     '/api/login': async ctx => {
         let param = ctx.param;
         let result = await service.login(param);
+        if (!result.code) {
+            ctx.cookies.set('login', 'true', config.cookies);
+        }
         ctx.body = result;
     },
     '/api/logout': ctx => {
         let result = service.logout();
+        ctx.cookies.set('login', 'false', config.cookies);
+        ctx.body = result;
+    },
+    '/api/updateeventlog': async ctx => {
+        let param = ctx.param;
+        let {ids, read} = param;
+        ids.map(id => ({_id: id}));
+        let result = await service.updateEventLog(ids, {read});
         ctx.body = result;
     }
 }
