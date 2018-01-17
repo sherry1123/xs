@@ -309,7 +309,7 @@ class Initialize extends Component {
                                     'Initializing has just begun! Go grab a coffee or a snack and we will be done when you come back.'
                                 )}
                             </section>
-                            <Progress percent={this.state.initProgress} status={this.state.initProgress === 100 ? 'normal' : 'active'} />
+                            <Progress percent={this.state.initProgress} status={this.state.initProgress === 100 ? 'success' : 'active'} />
                             <section className="fs-initialization-wrapper" ref={ref => this.initInfoWrapper = ref}>
                                 {this.state.initializationInfo.map((info, i) => <p className="fs-initialization-info" key={i}>{info}</p>)}
                             </section>
