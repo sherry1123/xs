@@ -4,8 +4,8 @@ const service = require('./server/service');
 const logger = require('./server/module/logger');
 const init = require('./server/service/initialize');
 const workerNameList = config.process.name;
-const getWorkerFromConf = (id, initStatus) => ({ name: workerNameList[id], initStatus });
-const getWorkerFromProc = worker => ({ name: worker.process.env.name, initStatus: worker.process.env.initStatus });
+const getWorkerFromConfig = (id, initStatus) => ({ name: workerNameList[id], initStatus });
+const getWorkerFromProcess = worker => ({ name: worker.process.env.name, initStatus: worker.process.env.initStatus });
 const startNewWorker = id => {
 	let { isMaster, initStatus } = cluster.settings;
 	if (!initStatus && id === 3) {
@@ -13,9 +13,9 @@ const startNewWorker = id => {
 	} else if (!isMaster && initStatus && id === 2) {
 		logger.info('node not master, no more worker need to run');
 	} else {
-		cluster.fork(getWorkerFromConf(id, initStatus));
+		cluster.fork(getWorkerFromConfig(id, initStatus));
 		cluster.workers[id].on('message', messageHandler);
-		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerFromConf(id, initStatus)));
+		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerFromConfig(id, initStatus)));
 	}
 };
 const messageHandler = msg => {
@@ -40,7 +40,7 @@ const messageHandler = msg => {
 		logger.info('master ready');
 		startNewWorker(1);
 	} else {
-		let { name, initStatus } = getWorkerFromProc(cluster.worker);
+		let { name, initStatus } = getWorkerFromProcess(cluster.worker);
 		switch (name) {
 			case 'agentd':
 				require('./server/agentd/index');
