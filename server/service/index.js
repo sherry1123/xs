@@ -90,6 +90,28 @@ const model = {
     logout() {
         let result = responseHandler(0, 'logout success');
         return result;
+    },
+    async updateEventLog(query, param) {
+        let result = {};
+        try {
+            await database.updateEventLog(query, param);
+            result = responseHandler(0, 'update event log success');
+        } catch (error) {
+            result = responseHandler(1, error, {query, param});
+        }
+        return result;
+    },
+    async updateSomeEventLog(querys, param) {
+        let result = {};
+        try {
+            for (let query of querys) {
+                await database.updateEventLog(query, param);
+            }
+            result = responseHandler(0, 'update some event log success');
+        } catch (error) {
+            result = responseHandler(1, error, {querys, param});
+        }
+        return result;
     }
 }
 module.exports = model;

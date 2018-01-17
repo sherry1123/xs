@@ -1,5 +1,7 @@
 const dao = require('../module/dao');
 const user = require('../model/user');
+const eventlog = require('../model/eventlog');
+const auditlog = require('../model/auditlog');
 const model = {
     async getUser(param) {
         return await dao.findSome(user, param);
@@ -12,6 +14,15 @@ const model = {
     },
     async deleteUser(param) {
         return await dao.deleteOne(user, param);
-    }
+    },
+    async addEventLog(param) {
+        return await dao.createOne(eventlog, param);
+    },
+    async updateEventLog(query, param) {
+        return await dao.updateOne(eventlog, query, param);
+    },
+    async addAuditLog(param) {
+        return await dao.createOne(auditlog, param);
+    } 
 }
 module.exports = model;

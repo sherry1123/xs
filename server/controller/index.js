@@ -1,5 +1,8 @@
 const service = require('../service');
 const model = {
+    '/api/testapi': ctx => {
+        ctx.body = ctx;
+    },
     '/api/getuser': async ctx => {
         let param = ctx.param;
 		let result = await service.getUser(param);
@@ -28,6 +31,19 @@ const model = {
     },
     '/api/logout': ctx => {
         let result = service.logout();
+        ctx.body = result;
+    },
+    '/api/updateeventlog': async ctx => {
+        let param = ctx.param;
+        let {id, read} = param;
+        let result = await service.updateEventLog({_id: id}, {read});
+        ctx.body = result;
+    },
+    '/api/updatesomeeventlog': async ctx => {
+        let param = ctx.param;
+        let {ids, read} = param;
+        ids.map(id => ({_id: id}));
+        let result = await service.updateSomeEventLog(ids, {read});
         ctx.body = result;
     }
 }
