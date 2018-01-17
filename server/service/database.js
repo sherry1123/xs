@@ -15,11 +15,17 @@ const model = {
     async deleteUser(param) {
         return await dao.deleteOne(user, param);
     },
+    async getEventLog(param) {
+        return await dao.findSome(eventlog, param);
+    },
     async addEventLog(param) {
         return await dao.createOne(eventlog, param);
     },
     async updateEventLog(query, param) {
         return await dao.updateOne(eventlog, query, param);
+    },
+    async getAuditLog(param) {
+        return await dao.findSome(auditlog, param);
     },
     async addAuditLog(param) {
         return await dao.createOne(auditlog, param);

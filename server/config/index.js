@@ -29,3 +29,8 @@ exports.cookies = {
     signed: false,
     rolling: true
 };
+exports.settings = {
+    initParam: 'initparam',
+    uiSetting: 'uisetting',
+    emailSetting: 'emailsetting'
+};

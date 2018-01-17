@@ -33,9 +33,15 @@ const model = {
         }
         ctx.body = result;
     },
-    '/api/logout': ctx => {
-        let result = service.logout();
+    '/api/logout': async ctx => {
+        let param = ctx.param;
+        let result = await service.logout(param);
         ctx.cookies.set('login', 'false', config.cookies);
+        ctx.body = result;
+    },
+    '/api/geteventlog': async ctx => {
+        let param = ctx.param;
+        let result = await service.getEventLog(param);
         ctx.body = result;
     },
     '/api/updateeventlog': async ctx => {
@@ -43,6 +49,11 @@ const model = {
         let {ids, read} = param;
         ids.map(id => ({_id: id}));
         let result = await service.updateEventLog(ids, {read});
+        ctx.body = result;
+    },
+    '/api/getauditlog': async ctx => {
+        let param = ctx.param;
+        let result = await service.getAuditLog(param);
         ctx.body = result;
     }
 }

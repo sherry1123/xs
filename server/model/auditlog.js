@@ -3,7 +3,7 @@ module.exports = mongoose.model('auditlog',
     new mongoose.Schema({
         time: Date,
         user: String,
-        type: String,
+        group: String,
         desc: String,
         level: Number,
         ip: String

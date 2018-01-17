@@ -8,6 +8,8 @@ router.all('/api/updateuser', controller['/api/updateuser']);
 router.all('/api/deleteuser', controller['/api/deleteuser']);
 router.all('/api/login', controller['/api/login']);
 router.all('/api/logout', controller['/api/logout']);
+router.all('/api/geteventlog', controller['/api/geteventlog']);
 router.all('/api/updateeventlog', controller['/api/updateeventlog']);
+router.all('/api/getauditlog', controller['/api/getauditlog']);
 
 module.exports = router;
