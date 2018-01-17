@@ -13,7 +13,7 @@ const model = {
 			let initStatus = init.getInitStatus();
 			let initCookie = ctx.cookies.get('init');
 			if (!initCookie || initCookie !== initStatus) {
-				ctx.cookies.set('init', initStatus, config.cookies);
+				ctx.cookies.set('init', String(initStatus), config.cookies);
 			}
 			await next();
 		}

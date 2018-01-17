@@ -1,3 +1,4 @@
+const config = require('../config');
 const service = require('../service');
 const model = {
     '/api/testapi': ctx => {
@@ -27,10 +28,14 @@ const model = {
     '/api/login': async ctx => {
         let param = ctx.param;
         let result = await service.login(param);
+        if (!result.code) {
+            ctx.cookies.set('login', 'true', config.cookies);
+        }
         ctx.body = result;
     },
     '/api/logout': ctx => {
         let result = service.logout();
+        ctx.cookies.set('login', 'false', config.cookies);
         ctx.body = result;
     },
     '/api/updateeventlog': async ctx => {
