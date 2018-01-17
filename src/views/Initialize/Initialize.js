@@ -20,7 +20,6 @@ class Initialize extends Component {
             storageServerIPsError: storageServerIPs.map(() => ({status: '', help: ''})),
             clientIPsError: clientIPs.map(() => ({status: '', help: ''})),
             initProgress: 0,
-            showInstStepNextBtn: false,
             initializationInfo: [lang('安装已开始，请稍候...', 'Initialization started, pleas wait for moment...')]
         };
     }
@@ -126,27 +125,21 @@ class Initialize extends Component {
     startInitialization (){
         let initProgress = this.state.initProgress;
         let initTimer = setInterval(async () => {
-            initProgress += 5;
+            initProgress += (initProgress === 10 || initProgress === 40 || initProgress === 70 ? 10 : 1);
             let info = `initialize xxx file, ${lang('进度:', 'progress:')} ${initProgress}%`;
-            let newState;
-            if (initProgress === 100){
-                clearInterval(initTimer);
-                newState = update(this.state, {
-                    initializationInfo: {$push: [info]},
-                    initProgress: {$set: initProgress},
-                    showInstStepNextBtn: {$set: true},
-                    current: {$set: 3}
-                });
-            } else {
-                newState = update(this.state, {
-                    initializationInfo: {$push: [info]},
-                    initProgress: {$set: initProgress}
-                });
-            }
+            let infoArr = initProgress === 100 ? [info, lang('初始化已完成!', 'Initialization done!')] : [info];
+            let newState =  update(this.state, {
+                initializationInfo: {$push: infoArr},
+                initProgress: {$set: initProgress}
+            });
             await this.setState(Object.assign(this.state, newState));
             let list = this.initInfoWrapper;
             list && (list.scrollTop = list.scrollHeight);
-        }, 500);
+            if (initProgress === 100){
+                clearInterval(initTimer);
+                setTimeout(() => this.setState({current: 3}), 3000);
+            }
+        }, 300);
     }
 
     forwardLogin (){
@@ -158,6 +151,12 @@ class Initialize extends Component {
             <section className="fs-initialize-wrapper">
                 <section className="fs-initialize-language-btn-wrapper">
                     <LanguageButton />
+                </section>
+                <section className="fs-initialize-welcome-wrapper">
+                    {lang(
+                        '欢迎进入OrcaFS初始化向导。您将通过以下步骤初始化您的存储集群：',
+                        'Welcome to the OrcaFS initialization wizard. You will initialize your storage cluster just follow the steps below: '
+                    )}
                 </section>
                 <Steps className="fs-initialize-step-index-wrapper" current={this.state.current}>
                     <Steps.Step title={lang('定义角色', 'Define Roles')} />
@@ -292,7 +291,7 @@ class Initialize extends Component {
                                     'Initializing has just begun! Go grab a coffee or a snack and we will be done when you come back.'
                                 )}
                             </section>
-                            <Progress percent={this.state.initProgress} status={this.state.initProgress === 100 ? '' : 'active'} />
+                            <Progress percent={this.state.initProgress} status={this.state.initProgress === 100 ? 'normal' : 'active'} />
                             <section className="fs-initialization-wrapper" ref={ref => this.initInfoWrapper = ref}>
                                 {this.state.initializationInfo.map((info, i) => <p className="fs-initialization-info" key={i}>{info}</p>)}
                             </section>
@@ -300,11 +299,28 @@ class Initialize extends Component {
                     }
                     {
                         this.state.current === 3 &&
-                        <div className="fs-initialize-step-content"
-                            style={{border: '1px solid #e9e9e9', height: 350}}>
-                            初始化过程已完成，您的服务器已经准备好了<br />
-                            您的存储系统信息如下：
-
+                        <div className="fs-initialize-step-content">
+                            <section className="fs-ip-input-title">
+                                <p>
+                                    {lang(
+                                        '初始化已完成，您的存储集群已经准备好了!',
+                                        'The initialization is complete and your storage cluster is ready!'
+                                    )}
+                                </p>
+                            </section>
+                            <section className="fs-done-wrapper">
+                                <p>
+                                    {lang(
+                                        '以下是为您生成的登录账号，请将其记录并保存到一个安全的地方：',
+                                        'The following is a login account generated for you, please keep a record of it at a safe place: '
+                                    )}
+                                </p>
+                                <p>{lang('管理员帐号', 'Admin Account')}: admin</p>
+                                <p>{lang('管理员密码', 'Admin Password')}: 123456</p>
+                                <p>
+                                    {lang('您可以随时在设置界面中修改密码。', 'You can modify the password at any time on the settings page.')}
+                                </p>
+                            </section>
                         </div>
                     }
                 </section >
@@ -318,9 +334,7 @@ class Initialize extends Component {
                         </Button>
                     }
                     {
-                        (this.state.current === 0 ||
-                        this.state.current === 1 ||
-                        (this.state.current === this.state.stepNum - 2 && this.state.showInstStepNextBtn)) &&
+                        (this.state.current === 0 || this.state.current === 1) &&
                         <Button className="fs-initialize-btn next" size="small" onClick={this.next.bind(this)}>
                             {lang('下一步', 'Next')} <Icon type="right" />
                         </Button>
