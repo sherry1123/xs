@@ -35,15 +35,9 @@ const model = {
     },
     '/api/updateeventlog': async ctx => {
         let param = ctx.param;
-        let {id, read} = param;
-        let result = await service.updateEventLog({_id: id}, {read});
-        ctx.body = result;
-    },
-    '/api/updatesomeeventlog': async ctx => {
-        let param = ctx.param;
         let {ids, read} = param;
         ids.map(id => ({_id: id}));
-        let result = await service.updateSomeEventLog(ids, {read});
+        let result = await service.updateEventLog(ids, {read});
         ctx.body = result;
     }
 }

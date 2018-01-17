@@ -9,6 +9,5 @@ router.all('/api/deleteuser', controller['/api/deleteuser']);
 router.all('/api/login', controller['/api/login']);
 router.all('/api/logout', controller['/api/logout']);
 router.all('/api/updateeventlog', controller['/api/updateeventlog']);
-router.all('/api/updatesomeeventlog', controller['/api/updatesomeeventlog']);
 
 module.exports = router;
