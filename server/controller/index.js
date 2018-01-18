@@ -60,6 +60,11 @@ const model = {
         let param = ctx.param;
         let result = await service.getHardware(param);
         ctx.body = result;
+    },
+    '/api/testmail': async ctx => {
+        let param = ctx.param;
+        let result = await service.testMail(param);
+        ctx.body = result;
     }
 }
 module.exports = model;

@@ -1,3 +1,4 @@
+const email = require('./email');
 const config = require('../config');
 const database = require('./database');
 const logger = require('../module/logger');
@@ -163,6 +164,23 @@ const model = {
         } catch (error) {
             errorHandler(1, error, url);
         }
+    },
+    async sendMail(param) {
+        try {
+            await email.sendMail(param);
+        } catch (error) {
+            errorHandler(1, error, param);
+        }
+    },
+    async testMail(param) {
+        let result = {};
+        try {
+            await email.sendMail(param);
+            result = responseHandler(0, 'test mail success');
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
     }
 }
 module.exports = model;

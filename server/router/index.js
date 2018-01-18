@@ -12,5 +12,6 @@ router.all('/api/geteventlog', controller['/api/geteventlog']);
 router.all('/api/updateeventlog', controller['/api/updateeventlog']);
 router.all('/api/getauditlog', controller['/api/getauditlog']);
 router.all('/api/gethardware', controller['/api/gethardware']);
+router.all('/api/testmail', controller['/api/testmail']);
 
 module.exports = router;
