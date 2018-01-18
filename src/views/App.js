@@ -3,9 +3,10 @@ import {HashRouter, Switch, Route, Redirect} from 'react-router-dom';
 import {LocaleProvider} from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
 import lang from '../components/Language/lang';
-import Login from './Login/Login';
 import Init from './Initialize/Initialize';
+import Login from './Login/Login';
 import Main from './Main/Main';
+import Error from './Error/Error';
 import Cookie from 'js-cookie';
 import routerPath from './routerPath';
 

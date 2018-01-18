@@ -101,6 +101,7 @@ class Login extends Component {
                                 help={this.state.passwordHelp}
                             >
                                 <Input placeholder={lang('请输入密码', 'enter password')}
+                                   type="password"
                                     prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .25)'}} />}
                                     value={this.state.password}
                                     onChange={this.changePassword.bind(this)}

@@ -9,7 +9,7 @@ const routerPath = {
     Error: '/error',
 
     // initialized and logged in (normal state)
-    Main: '/storm-storage',
+    Main: '/orca-fs',
 
 
     // below paths all have a common prefix '/storm-fs',

@@ -9,17 +9,39 @@ body {
             flex-direction: column;
             .fs-top-bar-wrapper {
                 height: 60px;
+                box-sizing: border-box;
+                border-bottom: 1px solid @page-bg;
             }
             .fs-body-wrapper {
                 flex: 1;
                 display: flex;
                 flex-direction: row;
-                background-color: @page-bg;
                 .fs-side-bar-wrapper {
                     width: 200px;
                 }
                 .fs-page-wrapper {
                     flex: 1;
+                    box-sizing: border-box;
+                    border-left: 1px solid @page-bg;
+                    overflow: hidden;
+                    .fs-page-content {
+                        height: 100%;
+                        .fs-page-title-wrapper {
+                            padding: 10px 20px;
+                            font-size: 12px;
+                            border-bottom: 1px solid @page-bg;
+                            background-color: @white;
+                            h3 {
+                                margin: 0;
+                                padding-left: 10px;
+                                color: #999;
+                                border-left: 5px solid #00c49f;
+                            }
+                        }
+                        .fs-table-title-wrapper {
+                            .clearfix();
+                        }
+                    }
                 }
             }
         }

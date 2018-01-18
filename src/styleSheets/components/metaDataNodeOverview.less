@@ -1,0 +1,47 @@
+.fs-metadata-node-overview-wrapper {
+    .fs-metadata-node-basic-info-wrapper {
+        .fs-metadata-node-basic-info-content {
+            padding: 20px 35px;
+            text-align: center;
+            border-bottom: 1px solid @page-bg;
+            .fs-info-item {
+                &:nth-child(2) {
+                    margin-left: 80px;
+                }
+                .fs-info-label {
+                    margin-right: 10px;
+                }
+                .fs-node-status {
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 100%;
+                    &.up {
+                        background-color: @green;
+                        animation: 2s node-up infinite 1s;
+                    }
+                    &.down {
+                        margin-left: 30px;
+                        background-color: @red;
+                        animation: 2s node-down infinite 1.5s;
+                    }
+                }
+            }
+        }
+    }
+    .fs-metadata-work-request-wrapper {
+        .fs-metadata-work-request-content {
+            padding: 20px;
+        }
+    }
+}
+
+@keyframes node-up {
+    from {background: @white;}
+    to {background: @green;}
+}
+
+@keyframes node-down {
+    from {background: @white;}
+    to {background: @red;}
+}
