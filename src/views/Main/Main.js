@@ -6,6 +6,7 @@ import routerPath from '../routerPath';
 // bar
 import TopBar from '../Bar/TopBar';
 import SideBar from '../Bar/SideBar';
+import FooterBar from '../Bar/FooterBar';
 
 // metadata nodes
 import MetadataNodesOverview from '../MetadataNodes/MetadataNodesOverview';
@@ -71,6 +72,7 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.FSOperationFileBrowser}`} component={FSOperationFileBrowser} />
                     </main>
                 </div>
+                <FooterBar />
             </div>
         );
     }
