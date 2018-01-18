@@ -33,7 +33,7 @@ const getCpuUsage = () => {
 const getIopsUsage = async () => {
     // let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
     let random = ~~(Math.random() * 1000 * 1000);
-    let cmd =  `echo ${random}`;
+    let cmd = `echo ${random}`;
     IOPS.used = Number(String(await promise.runCommandInPromise(cmd)).replace('\n', ''));
 }
 const getMemoryUsage = () => {
@@ -43,7 +43,7 @@ const getMemoryUsage = () => {
     return { total, free, usage };
 };
 let CPU = getCpuInfo();
-let IOPS = {used: 0};
+let IOPS = { used: 0 };
 new CronJob('*/15 * * * * *', () => {
     getCpuUsage();
     getIopsUsage();
@@ -52,7 +52,7 @@ const getHardware = () => {
     let cpu = CPU;
     let iops = IOPS;
     let memory = getMemoryUsage();
-    return {iplist: ['127.0.0.1'], data: [{cpu, iops, memory}]};
+    return { iplist: ['127.0.0.1'], data: [{ cpu, iops, memory }] };
 }
 //controller
 const getAll = ctx => {
