@@ -35,7 +35,7 @@ const getIopsUsage = async () => {
     let random = ~~(Math.random() * 1000 * 1000);
     let cmd = `echo ${random}`;
     IOPS.used = Number(String(await promise.runCommandInPromise(cmd)).replace('\n', ''));
-}
+};
 const getMemoryUsage = () => {
     let total = os.totalmem();
     let free = os.freemem();
@@ -53,7 +53,7 @@ const getHardware = () => {
     let iops = IOPS;
     let memory = getMemoryUsage();
     return { iplist: ['127.0.0.1'], data: [{ cpu, iops, memory }] };
-}
+};
 //controller
 const getAll = ctx => {
     ctx.body = getHardware();
