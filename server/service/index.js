@@ -1,7 +1,9 @@
+const email = require('./email');
 const config = require('../config');
 const database = require('./database');
 const logger = require('../module/logger');
 const promise = require('../module/promise');
+const request = require('../module/request');
 const responseHandler = (code, result, param) => {
     if (code) {
         errorHandler(code, result, param);
@@ -142,6 +144,43 @@ const model = {
         } catch (error) {
             errorHandler(1, error, param);
         }
+    },
+    async getHardware(param) {
+        let result = {};
+        try {
+            let data = await database.getHardware(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
+    },
+    async addHardware() {
+        let url = 'http://localhost:3457/hardware/getall';
+        try {
+            let res = await request.get(url);
+            let {iplist, data} = res;
+            await database.addHardware({date: new Date, iplist, data});
+        } catch (error) {
+            errorHandler(1, error, url);
+        }
+    },
+    async sendMail(param) {
+        try {
+            await email.sendMail(param);
+        } catch (error) {
+            errorHandler(1, error, param);
+        }
+    },
+    async testMail(param) {
+        let result = {};
+        try {
+            await email.sendMail(param);
+            result = responseHandler(0, 'test mail success');
+        } catch (error) {
+            result = responseHandler(1, error, param);
+        }
+        return result;
     }
 }
 module.exports = model;
