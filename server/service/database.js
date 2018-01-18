@@ -2,6 +2,7 @@ const dao = require('../module/dao');
 const user = require('../model/user');
 const eventlog = require('../model/eventlog');
 const auditlog = require('../model/auditlog');
+const hardware = require('../model/hardware');
 const model = {
     async getUser(param) {
         return await dao.findSome(user, param);
@@ -29,6 +30,12 @@ const model = {
     },
     async addAuditLog(param) {
         return await dao.createOne(auditlog, param);
-    } 
+    },
+    async getHardware(param) {
+        return await dao.findSome(hardware, param);
+    },
+    async addHardware(param) {
+        return await dao.createOne(hardware, param);
+    }
 }
 module.exports = model;

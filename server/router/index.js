@@ -11,5 +11,6 @@ router.all('/api/logout', controller['/api/logout']);
 router.all('/api/geteventlog', controller['/api/geteventlog']);
 router.all('/api/updateeventlog', controller['/api/updateeventlog']);
 router.all('/api/getauditlog', controller['/api/getauditlog']);
+router.all('/api/gethardware', controller['/api/gethardware']);
 
 module.exports = router;

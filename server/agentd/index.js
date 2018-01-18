@@ -53,7 +53,7 @@ const getAll = ctx => {
     let cpu = CPU;
     let iops = IOPS;
     let memory = getMemoryUsage();
-    ctx.body = {cpu, iops, memory};
+    ctx.body = {iplist: ['127.0.0.1'], data: [{cpu, iops, memory}]};
 };
 //router
 router.all('/hardware/getall', getAll);

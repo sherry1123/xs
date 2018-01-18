@@ -55,6 +55,11 @@ const model = {
         let param = ctx.param;
         let result = await service.getAuditLog(param);
         ctx.body = result;
+    },
+    '/api/gethardware': async ctx => {
+        let param = ctx.param;
+        let result = await service.getHardware(param);
+        ctx.body = result;
     }
 }
 module.exports = model;
