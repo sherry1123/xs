@@ -48,12 +48,15 @@ new CronJob('*/15 * * * * *', () => {
     getCpuUsage();
     getIopsUsage();
 }, null, true);
-//controller
-const getAll = ctx => {
+const getHardware = () => {
     let cpu = CPU;
     let iops = IOPS;
     let memory = getMemoryUsage();
-    ctx.body = {iplist: ['127.0.0.1'], data: [{cpu, iops, memory}]};
+    return {iplist: ['127.0.0.1'], data: [{cpu, iops, memory}]};
+}
+//controller
+const getAll = ctx => {
+    ctx.body = getHardware();
 };
 //router
 router.all('/hardware/getall', getAll);
