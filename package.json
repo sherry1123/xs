@@ -2,8 +2,13 @@
   "name": "storm-storage",
   "version": "1.0.0",
   "description": "storm storage ui code",
-  "author": "orcadt",
+  "contributors":[
+    "Wei Cao <wei.cao@orcadt.com>",
+    "Xiaoyu Liu <xiaoyu.liu@orcadt.com>",
+    "Yang Xiang <yang.xiang@orcadt.com>"
+  ],
   "private": true,
+  "repository": "tsaowe/storm-storage",
   "scripts": {
     "start": "gulp copyImage && node scripts/start.js",
     "build": "gulp copyImage && node scripts/build.js",
@@ -57,8 +62,8 @@
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "less-plugin-autoprefix": "^1.5.1",
-    "log4js": "^2.4.1",
-    "mongoose": "^5.0.0-rc2",
+    "log4js": "^2.5.1",
+    "mongoose": "^5.0.0",
     "nodemailer": "^4.4.1",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
@@ -85,8 +90,6 @@
     "webpack-manifest-plugin": "1.3.2",
     "whatwg-fetch": "2.0.3"
   },
-  "repository": {},
-  "license": "",
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,mjs}"
