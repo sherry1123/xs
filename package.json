@@ -2,7 +2,7 @@
   "name": "orcafs-gui",
   "version": "1.0.0",
   "description": "gui for orcafs, powered by the web development team of orcadt.",
-  "contributors":[
+  "contributors": [
     "Wei Cao <wei.cao@orcadt.com>",
     "Xiaoyu Liu <xiaoyu.liu@orcadt.com>",
     "Yang Xiang <yang.xiang@orcadt.com>"
@@ -64,7 +64,7 @@
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "less-plugin-autoprefix": "^1.5.1",
-    "log4js": "^2.5.1",
+    "log4js": "^2.5.2",
     "mongoose": "^5.0.0",
     "nodemailer": "^4.4.1",
     "object-assign": "4.1.1",
