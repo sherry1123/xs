@@ -5,8 +5,6 @@ body {
         height: 100%;
         .fs-main-wrapper {
             height: 100%;
-            display: flex;
-            flex-direction: column;
             .fs-top-bar-wrapper {
                 height: 60px;
                 box-sizing: border-box;
@@ -16,6 +14,7 @@ body {
                 flex: 1;
                 display: flex;
                 flex-direction: row;
+                min-height: 650px;
                 .fs-side-bar-wrapper {
                     width: 200px;
                 }
@@ -23,7 +22,7 @@ body {
                     flex: 1;
                     box-sizing: border-box;
                     border-left: 1px solid @page-bg;
-                    overflow: hidden;
+                    overflow-x: hidden;
                     .fs-page-content {
                         height: 100%;
                         .fs-page-title-wrapper {

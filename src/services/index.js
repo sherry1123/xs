@@ -20,3 +20,7 @@ export {
     getPassStrengthRegs, subnetValidation, checkOverLap, subnetOverlap, checkIpInSubnet, numberToNetmask,
     checkSerialNumberDup, validateNFSV4MountPath,  checkPortInput, validatePassword, checkImageNumber, validataTargetName
 } from './validation';
+
+// random
+
+export {randomBoolean} from './random';
