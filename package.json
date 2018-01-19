@@ -1,7 +1,7 @@
 {
-  "name": "OrcaFS-GUI",
+  "name": "orcafs-gui",
   "version": "1.0.0",
-  "description": "GUI for OrcaFS, powered by the web development team of Orcadt.",
+  "description": "gui for orcafs, powered by the web development team of orcadt.",
   "contributors":[
     "Wei Cao <wei.cao@orcadt.com>",
     "Xiaoyu Liu <xiaoyu.liu@orcadt.com>",
