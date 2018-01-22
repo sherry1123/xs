@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 
-export default class Error extends Component {
+export default class Error extends PureComponent {
     render (){
         return (
             <div className="fs-page-content fs-error-wrapper">

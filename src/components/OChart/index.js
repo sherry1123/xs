@@ -5,7 +5,7 @@ import lang from '../../components/Language/lang';
 export default class OChart extends Component {
     constructor (props){
         super(props);
-        let {data, scale, position, color, height = 400} = this.props;
+        let {data, scale, position, color, height = 500} = this.props;
         this.state = {
             data, scale, position, color, height
         };
@@ -14,7 +14,6 @@ export default class OChart extends Component {
     componentWillReceiveProps (nextProps){
         let {data} = nextProps;
         this.setState({data});
-        console.info(this.chart);
     }
 
     render (){
@@ -22,10 +21,11 @@ export default class OChart extends Component {
         const style = `background-color: {color};width: 8px;height: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;`;
         return (
             <div>
-                <Chart height={height} data={data} scale={scale} forceFit animate={false} ref={ref => this.chart = ref}>
+                <Chart data={data} scale={scale} height={height} forceFit animate>
                     <Tooltip itemTpl={`<li data-index="{index}"><span style="${style}"> </span> {value}</li>`} crosshairs={{type: 'Y'}} hideMarkers={true} />
-                    <Axis />
-                    <Legend itemFormatter={text => text === 'workRequest' ? lang('工作请求', 'Work Request') : lang('排队的工作请求', 'Queued Work Request')} />
+                    <Axis dataKey="number" />
+                    <Axis dataKey="time" />
+                    <Legend itemFormatter={text => text === 'workRequest' ? lang('工作请求', 'Work Request') : lang('排队的工作请求', 'Queued Work Request')} position="top" />
                     <Line position={position} color={color} />
                     {/*<Point position="time*number" color="type" size={0} style={{stroke: '#fff', lineWidth: 0}} shape="circle" />*/}
                 </Chart>

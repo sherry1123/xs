@@ -1,6 +1,13 @@
 .fs-top-bar-wrapper {
-    min-height: 60px;
-    background: @white;
+    height: 60px;
+    transition: transform 0.25s ease-in-out;
+    will-change: transform;
+    &.up {
+        transform: translateY(-100%);
+    }
+    &.down {
+        transform: translateY(0);
+    }
     .logo-wrapper {
         float: left;
         width: 200px;

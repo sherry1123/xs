@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Menu, Icon} from 'antd';
+import {Affix, Menu, Icon} from 'antd';
 import mainAction from '../../redux/actions/mainAction';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
@@ -38,6 +38,7 @@ class SideBar extends Component {
 
     render (){
         return (
+            <Affix>
             <aside className='fs-side-bar-wrapper'>
                 <Menu className="fs-side-bar-menu-wrapper"
                     selectedKeys={[this.props.activePage]}
@@ -90,6 +91,7 @@ class SideBar extends Component {
                     </Menu.SubMenu>
                 </Menu>
             </aside>
+            </Affix>
         );
     }
 }

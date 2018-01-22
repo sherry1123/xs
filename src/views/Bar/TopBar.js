@@ -6,9 +6,31 @@ import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 
 class TopBar extends Component {
+    constructor (props){
+        super(props);
+        this.state = {
+            cls: 'down'
+        };
+    }
+
+    componentDidMount (){
+        let prevScrollTop = 0;
+        let prevDirection = 'down';
+        window.addEventListener('scroll', ({target: {scrollingElement: {scrollTop}}}) => {
+            let direction = scrollTop - prevScrollTop > 0 ? 'up' : 'down';
+            prevScrollTop = scrollTop;
+            if (direction !== prevDirection){
+                prevDirection = direction;
+                this.setState({
+                    cls: direction
+                });
+            }
+        });
+    }
+
     render (){
         return (
-            <header className="fs-top-bar-wrapper">
+            <header className={`fs-top-bar-wrapper ${this.state.cls}`}>
                 <section className="logo-wrapper">
                     <a className="logo-link" >
                         <img alt="" src="../../images/logo.jpeg" />
