@@ -9,35 +9,22 @@ class TopBar extends Component {
     constructor (props){
         super(props);
         this.state = {
-            cls: 'down'
+            direction: 'down'
         };
     }
 
-    componentDidMount (){
-        let prevScrollTop = 0;
-        let prevDirection = 'down';
-        window.addEventListener('scroll', ({target: {scrollingElement: {scrollTop}}}) => {
-            let direction = scrollTop - prevScrollTop > 0 ? 'up' : 'down';
-            prevScrollTop = scrollTop;
-            if (direction !== prevDirection){
-                prevDirection = direction;
-                this.setState({
-                    cls: direction
-                });
-            }
-        });
+    switchScrollDirection (direction){
+        this.setState({direction});
     }
 
     render (){
         return (
-            <header className={`fs-top-bar-wrapper ${this.state.cls}`}>
+            <header className={`fs-top-bar-wrapper ${this.state.direction}`}>
                 <section className="logo-wrapper">
-                    <a className="logo-link" >
-                        <img alt="" src="../../images/logo.jpeg" />
-                    </a>
+                    <i className="logo-link" />
                 </section>
                 <section className="login-user-wrapper">
-                    <LanguageButton width={80} border="none" />
+                    <LanguageButton width={80} border="none" transparentBg />
                     <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="hover">
                         <span style={{marginLeft: 10}}>
                             {lang('您好, ', 'hello, ')}
@@ -55,4 +42,12 @@ const mapStateToProps = state => {
     return {language};
 };
 
-export default connect(mapStateToProps)(TopBar);
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+    return Object.assign({}, stateProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(TopBar);

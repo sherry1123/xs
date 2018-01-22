@@ -7,15 +7,15 @@ import lang from './lang';
 class LanguageButton extends Component {
     constructor (props){
         super(props);
-        let {type = 'default', ghost = false, width = '100px', border = ''} = this.props;
+        let {type = 'default', ghost = false, width = '100px', border = '', transparentBg = false} = this.props;
         this.state = {
-            type, ghost, width, border
+            type, ghost, width, border, transparentBg
         };
     }
 
     render (){
         return (
-            <Button className="change-language-button"
+            <Button className={`change-language-button ${this.state.transparentBg && 'transparent-bg'}`}
                 title={lang('切换语言', 'switch language')}
                 style={{width: this.state.width, border: this.state.border}}
                 type={this.state.type}

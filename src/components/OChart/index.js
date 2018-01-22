@@ -5,7 +5,7 @@ import lang from '../../components/Language/lang';
 export default class OChart extends Component {
     constructor (props){
         super(props);
-        let {data, scale, position, color, height = 500} = this.props;
+        let {data, scale, position, color, height = 450} = this.props;
         this.state = {
             data, scale, position, color, height
         };

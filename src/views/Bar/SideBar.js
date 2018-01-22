@@ -12,6 +12,13 @@ class SideBar extends Component {
         let key = pathname.replace(routerPath.Main, '');
         this.props.changeActivePage(key);
         this.getSubMenuByPath(key);
+        this.state = {
+            direction: 'down'
+        };
+    }
+
+    switchScrollDirection (direction){
+        this.setState({direction});
     }
 
     forwardPage ({key}){
@@ -38,8 +45,8 @@ class SideBar extends Component {
 
     render (){
         return (
-            <Affix>
-            <aside className='fs-side-bar-wrapper'>
+            <Affix className={`fs-side-bar-wrapper ${this.state.direction}`}>
+            <aside >
                 <Menu className="fs-side-bar-menu-wrapper"
                     selectedKeys={[this.props.activePage]}
                     openKeys={this.props.activeMenu}
@@ -108,4 +115,10 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SideBar);
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+    return Object.assign({}, stateProps, dispatchProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SideBar);

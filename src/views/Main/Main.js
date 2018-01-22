@@ -45,13 +45,32 @@ export default class Main extends Component {
         }
     }
 
+    componentDidMount (){
+        let prevScrollTop = 0;
+        let prevDirection = 'down';
+        this.scrollHandler = ({target: {scrollingElement: {scrollTop}}}) => {
+            let direction = scrollTop - prevScrollTop > 0 ? 'up' : 'down';
+            prevScrollTop = scrollTop;
+            if (direction !== prevDirection){
+                prevDirection = direction;
+                this.TopBar.getWrappedInstance().switchScrollDirection(direction);
+                this.SideBar.getWrappedInstance().switchScrollDirection(direction);
+            }
+        };
+        window.addEventListener('scroll', this.scrollHandler);
+    }
+
+    componentWillUnmount (){
+        window.removeEventListener('scroll', this.scrollHandler);
+    }
+
     render (){
         const Main = routerPath.Main;
         return (
             <div className="fs-main-wrapper">
-                <TopBar history={this.props.history} />
-                <div className='fs-body-wrapper'>
-                    <SideBar history={this.props.history} />
+                <TopBar history={this.props.history} ref={ref => this.TopBar = ref} />
+                <div className="fs-body-wrapper">
+                    <SideBar history={this.props.history} ref={ref => this.SideBar = ref} />
                     <main className='fs-page-wrapper'>
                         <Route path={`${Main}${routerPath.MetadataNodesOverview}`} component={MetadataNodesOverview} />
                         <Route path={`${Main}${routerPath.MetadataNodesDetail}`} component={MetadataNodesDetail} />
