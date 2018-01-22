@@ -12,8 +12,8 @@ const model = {
     async initMongoDB(iplist) {
         let master = iplist[0];
         let slaves = iplist.splice(1, 3);
-        let masterCmd = 'sudo mongod -f /usr/local/mongodb/mongodb.conf --master';
-        let slaveCmd = `sudo mongod -f /usr/local/mongodb/mongodb.conf --slave --source ${master}:27017`;
+        let masterCmd = `sudo mongod -f ${config.database.conf} --master`;
+        let slaveCmd = `sudo mongod -f ${config.database.conf} --slave --source ${master}:27017`;
         await promise.runCommandInPromise(masterCmd);
         for(let slave of slaves) {
             await promise.runCommandInRemoteNode(slave, slaveCmd);
@@ -21,7 +21,7 @@ const model = {
         mongoose.connect(`mongodb://localhost/${config.database.name}`);
     },
     async antiInitMongoDB() {
-        let commands = ['sudo service mongodb stop', 'sudo rm -rf /usr/local/mongodb/data/db/*', 'sudo cp /usr/local/mongodb/mongodb.conf.bak /usr/local/mongodb/mongodb.conf'];
+        let commands = ['sudo service mongodb stop', `sudo rm -rf ${config.database.path}/*`, `sudo cp ${config.database.back} ${config.database.conf}`];
         for (let command of commands) {
             await promise.runCommandInPromise(command);
         }
