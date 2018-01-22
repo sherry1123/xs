@@ -1,5 +1,6 @@
 const email = require('./email');
 const config = require('../config');
+const init = require('./initialize');
 const database = require('./database');
 const logger = require('../module/logger');
 const promise = require('../module/promise');
@@ -181,6 +182,31 @@ const model = {
             result = responseHandler(1, error, param);
         }
         return result;
+    },
+    getInitStatus() {
+        let result = false;
+        try {
+            result = false;
+        } catch (error) {
+            errorHandler(1, error);
+        }
+        init.setInitStatus(result);
+        return result;
+    },
+    async initCluster(param) {
+        let {iplist} = param;
+        try {
+            //await init.initMongoDB(iplist);
+        } catch (error) {
+            errorHandler(1, error, param);
+        }
+    },
+    async antiInitCluster() {
+        try {
+            //await init.antiInitMongoDB();
+        } catch (error) {
+            errorHandler(1, error);
+        }
     }
 }
 module.exports = model;

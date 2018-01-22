@@ -7,7 +7,10 @@ exports.env = {
     init: process.env.initStatus
 };
 exports.database = {
-    name: 'storage'
+    name: 'storage',
+    conf: '/usr/local/mongodb/mongodb.conf',
+    back: '/usr/local/mongodb/mongodb.conf.bak',
+    path: '/usr/local/mongodb/data/db'
 };
 exports.nginx = {
     path: '/etc/nginx/nginx.conf',

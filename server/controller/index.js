@@ -65,6 +65,11 @@ const model = {
         let param = ctx.param;
         let result = await service.testMail(param);
         ctx.body = result;
+    },
+    '/api/init': ctx => {
+        let param = ctx.param;
+        service.initCluster(param);
+        ctx.body = {code: 0, data: 'start to initialize cluster'};
     }
 }
 module.exports = model;
