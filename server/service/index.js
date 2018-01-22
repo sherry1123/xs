@@ -198,7 +198,14 @@ const model = {
         try {
             //await init.initMongoDB(iplist);
         } catch (error) {
-            errorHandler(1, error, param)
+            errorHandler(1, error, param);
+        }
+    },
+    async antiInitCluster() {
+        try {
+            //await init.antiInitMongoDB();
+        } catch (error) {
+            errorHandler(1, error);
         }
     }
 }
