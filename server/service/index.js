@@ -33,7 +33,7 @@ const model = {
             await database.addUser(param)
             result = responseHandler(0, 'create user success');
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(2, error, param);
         }
         return result;
     },
@@ -43,7 +43,7 @@ const model = {
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user success');
         } catch (error) {
-            result = responseHandler(1, error, {query, param});
+            result = responseHandler(3, error, {query, param});
         }
         return result;
     },
@@ -53,7 +53,7 @@ const model = {
             await database.deleteUser(param);
             result = responseHandler(0, 'delete user success');
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(4, error, param);
         }
         return result;
     },
@@ -64,7 +64,7 @@ const model = {
         //     let file = await promise.readFileInPromise(path);
         //     result = file.includes('127.0.0.1:3000') ? true : false;
         // } catch (error) {
-        //     errorHandler(1, error);
+        //     errorHandler(5, error);
         // }
         return result;
     },
@@ -75,7 +75,7 @@ const model = {
             let data = file.replace(/127\.0\.0\.1/g, `${param}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
             await promise.writeFileInPromise(path, data);
         } catch (error) {
-            errorHandler(1, error, param);
+            errorHandler(6, error, param);
         }
     },
     async login(param) {
@@ -86,10 +86,10 @@ const model = {
                 await model.addAuditLog({user: param.username, desc: 'login success'});
                 result = responseHandler(0, 'login success');
             } else {
-                result = responseHandler(1, 'username or password error', param);
+                result = responseHandler(7, 'username or password error', param);
             }
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(7, error, param);
         }
         return result;
     },
@@ -104,7 +104,7 @@ const model = {
             let data = await database.getEventLog(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(8, error, param);
         }
         return result;
     },
@@ -113,7 +113,7 @@ const model = {
         try {
             await database.addEventLog({time, node, desc, level, source, read});
         } catch (error) {
-            errorHandler(1, error, param);
+            errorHandler(9, error, param);
         }
     },
     async updateEventLog(querys, param) {
@@ -124,7 +124,7 @@ const model = {
             }
             result = responseHandler(0, 'update event log success');
         } catch (error) {
-            result = responseHandler(1, error, {querys, param});
+            result = responseHandler(10, error, {querys, param});
         }
         return result;
     },
@@ -134,7 +134,7 @@ const model = {
             let data = await database.getAuditLog(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(11, error, param);
         }
         return result;
     },
@@ -143,7 +143,7 @@ const model = {
         try {
             await database.addAuditLog({time, user, group, desc, level, ip});
         } catch (error) {
-            errorHandler(1, error, param);
+            errorHandler(12, error, param);
         }
     },
     async getHardware(param) {
@@ -152,25 +152,25 @@ const model = {
             let data = await database.getHardware(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(13, error, param);
         }
         return result;
     },
     async addHardware() {
-        let url = 'http://localhost:3457/hardware/getall';
+        let url = config.api.agentd.hardware;
         try {
             let res = await request.get(url);
             let {iplist, data} = res;
             await database.addHardware({date: new Date, iplist, data});
         } catch (error) {
-            errorHandler(1, error, url);
+            errorHandler(14, error, url);
         }
     },
     async sendMail(param) {
         try {
             await email.sendMail(param);
         } catch (error) {
-            errorHandler(1, error, param);
+            errorHandler(15, error, param);
         }
     },
     async testMail(param) {
@@ -179,7 +179,7 @@ const model = {
             await email.sendMail(param);
             result = responseHandler(0, 'test mail success');
         } catch (error) {
-            result = responseHandler(1, error, param);
+            result = responseHandler(16, error, param);
         }
         return result;
     },
@@ -188,7 +188,7 @@ const model = {
         try {
             result = false;
         } catch (error) {
-            errorHandler(1, error);
+            errorHandler(17, error);
         }
         init.setInitStatus(result);
         return result;
@@ -198,14 +198,14 @@ const model = {
         try {
             //await init.initMongoDB(iplist);
         } catch (error) {
-            errorHandler(1, error, param);
+            errorHandler(18, error, param);
         }
     },
     async antiInitCluster() {
         try {
             //await init.antiInitMongoDB();
         } catch (error) {
-            errorHandler(1, error);
+            errorHandler(19, error);
         }
     }
 }
