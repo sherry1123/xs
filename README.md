@@ -1,4 +1,20 @@
-## storm-storage
+## OrcaFS UI Project
+
+### frontend folder directory structure
+ - config          configurations for cli tools
+ - public          production build destination
+ - scripts         npm scripts for running cli tools
+ - src             source code and static resource
+ - -
+ - src/component   common components and high-level abstractions of mature business views components
+ - src/images      image resource
+ - src/mockData    mock data for frontend development and debugging
+ - src/redux       state management
+ - src/services    some useful function or local data/map
+ - src/styleSheets common less and component less
+ - src/views       business views components placed by category
+ - src/index.js    the portal of build for whole frontend project
+
 
 ### server
 
