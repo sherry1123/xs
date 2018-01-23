@@ -4,11 +4,11 @@
 
 #### server多进程模型
 server的入口为server.js文件。
-采用Node.js的cluster模块实现多进程服务。
-整个server包含了四个进程，分别是master，agentd，job和task进程。
+整体采用Node.js的cluster模块和Koa实现多进程后端框架。
+server包含了四个进程，分别是master，agentd，job和task进程。
 master进程负责状态管理，包括系统的状态以及其他3个进程的状态。
 agentd进程负责系统硬件状态的监控，不直接操作数据库，仅向job进程提供API。
-job进程负责处理请求和实现业务逻辑。
+job进程负责处理请求，实现业务逻辑以及调用底层orcafs api接口。
 task进程负责定时任务的执行。
 进程的启动顺序如下：
   master       agentd        job         task 
