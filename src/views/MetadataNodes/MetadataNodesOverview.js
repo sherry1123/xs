@@ -30,7 +30,7 @@ class MetadataNodesOverview extends Component {
         this.setState({
             chartData: this.chartDataGenerator()
         });
-        setTimeout(() => {
+        this.mockTimer = setTimeout(() => {
             this.mockDataGenerator();
         }, 2000);
     }
@@ -55,6 +55,10 @@ class MetadataNodesOverview extends Component {
 
     componentDidMount (){
         this.mockDataGenerator();
+    }
+
+    componentWillUnmount (){
+        this.mockTimer && clearTimeout(this.this.mockTimer);
     }
 
     render (){
