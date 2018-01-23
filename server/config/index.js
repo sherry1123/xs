@@ -21,7 +21,7 @@ exports.api = {
         hardware: 'http://localhost:3457/hardware/getall'
     },
     orcafs: {
-        init: 'http://localhost:3458/init'
+        init: 'http://localhost:3000/orcafs/init'
     }
 }
 exports.logs = {
