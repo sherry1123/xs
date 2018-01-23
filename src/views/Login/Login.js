@@ -78,9 +78,7 @@ class Login extends Component {
             <section className="fs-login-wrapper">
                 <LanguageButton />
                 <section className="fs-login-content">
-                    <section className="fs-login-logo-wrapper">
-                        <img alt="" src="../../images/logo.jpeg" />
-                    </section>
+                    <i className="fs-login-logo-wrapper" />
                     <section className="fs-login-description-wrapper">
                         {lang('OrcaFS - 全闪存并行文件存储系统', 'OrcaFS - All flash parallel file storage system')}
                     </section>
@@ -107,12 +105,10 @@ class Login extends Component {
                                     onChange={this.changePassword.bind(this)}
                                 />
                             </Form.Item>
-                            <Button className="fs-login-btn"
-                                type="primary"
-                                onClick={this.doLogin.bind(this)}
-                            >
+                            <Button className="fs-login-btn" type="primary" onClick={this.doLogin.bind(this)}>
                                 {lang('登录', 'Login')}
                             </Button>
+                            {this.state.loginErrorInfo && <p className="fs-login-error-info-wrapper">{this.state.loginErrorInfo}</p>}
                         </Form>
                     </section>
                 </section>
