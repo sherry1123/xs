@@ -58,7 +58,7 @@ class MetadataNodesOverview extends Component {
     }
 
     componentWillUnmount (){
-        this.mockTimer && clearTimeout(this.this.mockTimer);
+        this.mockTimer && clearTimeout(this.mockTimer);
     }
 
     render (){
