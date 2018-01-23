@@ -37,7 +37,7 @@ exports.cookies = {
     rolling: true
 };
 exports.settings = {
-    initParam: 'initparam',
+    initSetting: 'initsetting',
     uiSetting: 'uisetting',
     emailSetting: 'emailsetting'
 };
