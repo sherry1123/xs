@@ -157,7 +157,7 @@ const model = {
         return result;
     },
     async addHardware() {
-        let url = 'http://localhost:3457/hardware/getall';
+        let url = config.api.agentd.hardware;
         try {
             let res = await request.get(url);
             let {iplist, data} = res;

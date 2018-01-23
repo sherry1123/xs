@@ -16,6 +16,14 @@ exports.nginx = {
     path: '/etc/nginx/nginx.conf',
     proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 };
+exports.api = {
+    agentd: {
+        hardware: 'http://localhost:3457/hardware/getall'
+    },
+    orcafs: {
+        init: 'http://localhost:3458/init'
+    }
+}
 exports.logs = {
     path: '/logs/server.log',
     maxSize: 1024 * 1024 * 10,
