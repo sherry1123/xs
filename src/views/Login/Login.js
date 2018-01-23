@@ -75,12 +75,12 @@ class Login extends Component {
 
     render (){
         return (
-            <section className="fs-login-wrapper">
+            <section className="fs-login-wrapper">-
                 <LanguageButton />
                 <section className="fs-login-content">
                     <i className="fs-login-logo-wrapper" />
                     <section className="fs-login-description-wrapper">
-                        {lang('OrcaFS - 全闪存并行文件存储系统', 'OrcaFS - All flash parallel file storage system')}
+                        {lang('全闪存并行文件存储系统', 'All flash parallel file storage system')}
                     </section>
                     <section>
                         <Form className="fs-login-form-wrapper">

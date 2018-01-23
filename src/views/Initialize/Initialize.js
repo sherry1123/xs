@@ -171,30 +171,28 @@ class Initialize extends Component {
                 <section className="fs-initialize-language-btn-wrapper">
                     <LanguageButton />
                 </section>
-                <QueueAnim type="scale">
-                    <section key="initialize-title" className="fs-initialize-welcome-wrapper">
-                        {lang(
-                            '欢迎进入OrcaFS初始化向导。您将通过以下步骤初始化您的存储集群：',
-                            'Welcome to the OrcaFS initialization wizard. You will initialize your storage cluster just follow the steps below: '
-                        )}
-                    </section>
-                    <Steps key="initialize-step" className="fs-initialize-step-index-wrapper" current={this.state.current}>
-                        <Steps.Step title={lang('定义角色', 'Define Roles')} />
-                        <Steps.Step title={lang('信息确认', 'Information Confirm')} />
-                        <Steps.Step title={lang('开始初始化', 'Start Initialization')} />
-                        <Steps.Step title={lang('完成', 'Completed')} />
-                    </Steps>
-                </QueueAnim>
+                <section key="initialize-title" className="fs-initialize-welcome-wrapper">
+                    {lang(
+                        '欢迎进入OrcaFS初始化向导。您将通过以下步骤初始化您的存储集群：',
+                        'Welcome to the OrcaFS initialization wizard. You will initialize your storage cluster just follow the steps below: '
+                    )}
+                </section>
+                <Steps key="initialize-step" className="fs-initialize-step-index-wrapper" current={this.state.current}>
+                    <Steps.Step title={lang('定义角色', 'Define Roles')} />
+                    <Steps.Step title={lang('信息确认', 'Information Confirm')} />
+                    <Steps.Step title={lang('开始初始化', 'Start Initialization')} />
+                    <Steps.Step title={lang('完成', 'Completed')} />
+                </Steps>
                 <Divider className="fs-initialize-divider-wrapper" dashed />
                 <section className="fs-initialize-step-content-wrapper">
                     {
                         this.state.current === 0 &&
                         <Form className="fs-initialize-step-content">
                             <QueueAnim type="top">
-                                <section key="ip-input-title" className="fs-ip-input-title">
+                                <section key="ip-inputå-title" className="fs-ip-input-title">
                                     {lang(
-                                        '请定义将作为元数据服务器、存储服务器和客户端的管理主机的IP。每个类别请在每一行提供一个IP。运行admon守护进程的管理主机的默认值是相同的IP。',
-                                        'Please define the management IP of the hosts which shall act as metadata servers, storage servers and clients. For each category provide one IP per line. The default value for the management daemon is the same IP, which runs the admon daemon.'
+                                        '步骤1：请定义将作为元数据服务器、存储服务器和客户端的管理主机的IP。每个类别请在每一行提供一个IP。运行admon守护进程的管理主机的默认值是相同的IP。',
+                                        'Step1: Please define the management IP of the hosts which shall act as metadata servers, storage servers and clients. For each category provide one IP per line. The default value for the management daemon is the same IP, which runs the admon daemon.'
                                     )}
                                 </section>
                             </QueueAnim>
@@ -282,8 +280,8 @@ class Initialize extends Component {
                             <QueueAnim type="top">
                                 <section className="fs-ip-input-title">
                                     {lang(
-                                        '请核对各项IP地址是否输入正确。若发现任何问题，请点击"上一步"进行修改；若确认无误，请点击"下一步"进行初始化。一旦开始初始化，将无法做任何修改。',
-                                        'Please check whether the IP addresses are all correct, if they are any correct, click "Next" to starting initializing. If there is any incorrect IP, click "Previous" and correct it. Once the initialization is started, no changes can be made.'
+                                        '步骤2：请核对各项IP地址是否输入正确。若发现任何问题，请点击"上一步"进行修改；若确认无误，请点击"下一步"进行初始化。一旦开始初始化，将无法做任何修改。',
+                                        'Step1: Please check whether the IP addresses are all correct, if they are any correct, click "Next" to starting initializing. If there is any incorrect IP, click "Previous" and correct it. Once the initialization is started, no changes can be made.'
                                     )}
                                 </section>
                             </QueueAnim>
@@ -323,8 +321,8 @@ class Initialize extends Component {
                             <QueueAnim type="left">
                                 <section key="fs-initializing-1" className="fs-ip-input-title">
                                     {lang(
-                                        '初始化已经开始！您可以去喝杯咖啡或者吃点点心，我们会在您回来之前搞定一切。',
-                                        'Initializing has just begun! Go grab a coffee or a snack and we will be done when you come back.'
+                                        '步骤3：初始化已经开始！您可以去喝杯咖啡或者吃点点心，我们会在您回来之前搞定一切。',
+                                        'Step3: Initializing has just begun! Go grab a coffee or a snack and we will be done when you come back.'
                                     )}
                                 </section>
                             </QueueAnim>
@@ -345,8 +343,8 @@ class Initialize extends Component {
                                 <section key="fs-initialized-1" className="fs-ip-input-title">
                                     <p>
                                         {lang(
-                                            '初始化已完成，您的存储集群已经准备好了!',
-                                            'The initialization is complete and your storage cluster is ready!'
+                                            '步骤4：初始化已完成，您的存储集群已经准备好了!',
+                                            'Step4: The initialization is complete and your storage cluster is ready!'
                                         )}
                                     </p>
                                 </section>
