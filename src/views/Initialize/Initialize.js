@@ -321,7 +321,7 @@ class Initialize extends Component {
                             <QueueAnim type="left">
                                 <section key="fs-initializing-1" className="fs-ip-input-title">
                                     {lang(
-                                        '步骤3：初始化已经开始！您可以去喝杯咖啡或者吃点点心，我们会在您回来之前搞定一切。',
+                                        '步骤3：初始化已经开始！您可以去喝杯咖啡或者吃些点心，我们会在您回来之前搞定一切。',
                                         'Step3: Initializing has just begun! Go grab a coffee or a snack and we will be done when you come back.'
                                     )}
                                 </section>

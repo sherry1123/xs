@@ -25,7 +25,7 @@ export default class OChart extends Component {
                     <Tooltip itemTpl={`<li data-index="{index}"><span style="${style}"> </span> {value}</li>`} crosshairs={{type: 'Y'}} hideMarkers={true} />
                     <Axis dataKey="number" />
                     <Axis dataKey="time" />
-                    <Legend itemFormatter={text => text === 'workRequest' ? lang('工作请求', 'Work Request') : lang('排队的工作请求', 'Queued Work Request')} position="top" />
+                    <Legend itemFormatter={text => text === 'workRequest' ? lang('工作请求', 'Work Request') : lang('排队的工作请求', 'Queued Work Request')} />
                     <Line position={position} color={color} />
                     {/*<Point position="time*number" color="type" size={0} style={{stroke: '#fff', lineWidth: 0}} shape="circle" />*/}
                 </Chart>

@@ -18,11 +18,22 @@
         float: left;
         width: 200px;
         .logo-link {
-            display: block;
+            position: relative;
             width: 200px;
             height: 60px;
             background: url(../../images/logo-h.png) 0 0 no-repeat;
             background-size: 100% 100%;
+            &:hover {
+                .rock-point {
+                    display: block;
+                    width: 4px;
+                    height: 4px;
+                    border-radius: 100%;
+                    background-color: #F79F07;
+                    opacity: 0;
+                    animation: fs-main-logo-point 5s ease 2s infinite alternate;
+                }
+            }
         }
     }
     .login-user-wrapper {
