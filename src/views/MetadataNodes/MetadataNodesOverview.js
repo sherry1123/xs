@@ -71,13 +71,13 @@ class MetadataNodesOverview extends Component {
                     </section>
                     <section className="fs-metadata-node-basic-info-content">
                         <span className="fs-info-item">
-                            <span className="fs-info-label">{lang('节点数量：', 'Node Number:')}</span>
+                            <span className="fs-info-label">{lang('节点数量：', 'Number Of Nodes: ')}</span>
                             5
                         </span>
                         <span className="fs-info-item">
-                            <span className="fs-info-label">{lang('状态：', 'Status: ')}</span>
+                            <span className="fs-info-label">{lang('状态：', 'Status of Nodes: ')}</span>
                             <i className="fs-node-status up" title={lang('正常', 'up')} /> 4
-                            <i className="fs-node-status down" title={lang('异常', 'error')} /> 1
+                            <i className="fs-node-status down" title={lang('异常', 'down')} /> 1
                         </span>
                     </section>
                 </section>

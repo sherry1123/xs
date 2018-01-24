@@ -21,7 +21,9 @@ class TopBar extends Component {
         return (
             <header className={`fs-top-bar-wrapper ${this.state.direction}`}>
                 <section className="logo-wrapper">
-                    <i className="logo-link" />
+                    <div className="logo-link" >
+                        <i className="rock-point" />
+                    </div>
                 </section>
                 <section className="login-user-wrapper">
                     <LanguageButton width={80} border="none" transparentBg />

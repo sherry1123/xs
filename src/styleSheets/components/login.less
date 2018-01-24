@@ -1,23 +1,61 @@
 .fs-login-wrapper {
-    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
-    align-items:center;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
     background-image: url(../../images/bg.svg);
     .change-language-button {
         position: absolute;
         top: 10px;
         right: 30px;
     }
+    > div {
+        margin: 0 auto; // animation wrapper
+    }
     .fs-login-content {
-        margin: 0 auto;
         width: 300px;
         .fs-login-logo-wrapper {
-            display: block;
             margin: 0 auto;
-            width: 150px;
-            height: 150px;
+            width: 100px;
+            height: 100px;
             background: url(../../images/logo-v.png) 0 0 no-repeat;
             background-size: 100% 100%;
+            .rock-bg {
+                position: relative;
+                height: 100%;
+                border-radius: 100%;
+                animation: fs-login-logo-bg 3s linear 0s infinite;
+                .rock-point {
+                    position: absolute;
+                    display: block;
+                    width: 4px;
+                    height: 4px;
+                    border-radius: 100%;
+                    background-color: #F79F07;
+                    animation: fs-login-logo-point 3s linear 0s infinite;
+                    &.a {
+                        top: 0;
+                        left: 0;
+                    }
+                    &.b {
+                        top: 0;
+                        right: 0;
+                    }
+                    &.c {
+                        left: 0;
+                        bottom: 0;
+                    }
+                    &.d {
+                        right: 0;
+                        bottom: 0;
+                    }
+                }
+            }
         }
         .fs-login-description-wrapper {
             margin-top: 0;
@@ -27,7 +65,7 @@
         }
         .fs-login-form-wrapper {
             .fs-login-username-input-wrapper {
-                margin-top: 20px;
+                margin-top: 30px;
             }
             .fs-login-btn {
                 margin-top: 20px;

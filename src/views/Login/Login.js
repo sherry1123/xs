@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message} from 'antd';
+import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import Cookie from 'js-cookie';
@@ -75,43 +76,52 @@ class Login extends Component {
 
     render (){
         return (
-            <section className="fs-login-wrapper">-
+            <section className="fs-login-wrapper">
                 <LanguageButton />
-                <section className="fs-login-content">
-                    <i className="fs-login-logo-wrapper" />
-                    <section className="fs-login-description-wrapper">
-                        {lang('全闪存并行文件存储系统', 'All flash parallel file storage system')}
+                <QueueAnim>
+                    <section key="fd" className="fs-login-content">
+                        <div className="fs-login-logo-wrapper" >
+                            <div className="rock-bg">
+                                <i className="rock-point a" />
+                                <i className="rock-point b" />
+                                <i className="rock-point c" />
+                                <i className="rock-point d" />
+                            </div>
+                        </div>
+                        {/*<section className="fs-login-description-wrapper">
+                            {lang('全闪存并行文件存储系统', 'All flash parallel file storage system')}
+                        </section>*/}
+                        <section>
+                            <Form className="fs-login-form-wrapper">
+                                <Form.Item className="fs-login-username-input-wrapper"
+                                    validateStatus={this.state.usernameStatus}
+                                    help={this.state.usernameHelp}
+                                >
+                                    <Input placeholder={lang('请输入用户名', 'enter username')}
+                                        prefix={<Icon type="user" style={{color: 'rgba(0, 0, 0, .25)'}} />}
+                                        value={this.state.username}
+                                        onChange={this.changeUsername.bind(this)}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    validateStatus={this.state.passwordStatus}
+                                    help={this.state.passwordHelp}
+                                >
+                                    <Input placeholder={lang('请输入密码', 'enter password')}
+                                       type="password"
+                                        prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .25)'}} />}
+                                        value={this.state.password}
+                                        onChange={this.changePassword.bind(this)}
+                                    />
+                                </Form.Item>
+                                <Button className="fs-login-btn" type="primary" onClick={this.doLogin.bind(this)}>
+                                    {lang('登录', 'Login')}
+                                </Button>
+                                {this.state.loginErrorInfo && <p className="fs-login-error-info-wrapper">{this.state.loginErrorInfo}</p>}
+                            </Form>
+                        </section>
                     </section>
-                    <section>
-                        <Form className="fs-login-form-wrapper">
-                            <Form.Item className="fs-login-username-input-wrapper"
-                                validateStatus={this.state.usernameStatus}
-                                help={this.state.usernameHelp}
-                            >
-                                <Input placeholder={lang('请输入用户名', 'enter username')}
-                                    prefix={<Icon type="user" style={{color: 'rgba(0, 0, 0, .25)'}} />}
-                                    value={this.state.username}
-                                    onChange={this.changeUsername.bind(this)}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                validateStatus={this.state.passwordStatus}
-                                help={this.state.passwordHelp}
-                            >
-                                <Input placeholder={lang('请输入密码', 'enter password')}
-                                   type="password"
-                                    prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .25)'}} />}
-                                    value={this.state.password}
-                                    onChange={this.changePassword.bind(this)}
-                                />
-                            </Form.Item>
-                            <Button className="fs-login-btn" type="primary" onClick={this.doLogin.bind(this)}>
-                                {lang('登录', 'Login')}
-                            </Button>
-                            {this.state.loginErrorInfo && <p className="fs-login-error-info-wrapper">{this.state.loginErrorInfo}</p>}
-                        </Form>
-                    </section>
-                </section>
+                </QueueAnim>
                 <footer className="fs-login-copyright-wrapper">
                     ©2018 Orcadt
                 </footer>
