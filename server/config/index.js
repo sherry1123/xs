@@ -41,6 +41,12 @@ exports.settings = {
     uiSetting: 'uisetting',
     emailSetting: 'emailsetting'
 };
+exports.keys = {
+    getuser: '88a8ee2321ca3ef6bf45dfe625402fe7',
+    adduser: 'a8d729744cce939323d37f1789be0d4f',
+    updateuser: '4f6505ab0b8ecee1f4bddcf0bfd003d3',
+    deleteuser: 'ca701625c04e4b73f8f761fa69b8dde7'
+};
 exports.errors = {
     1: 'get user error',
     2: 'add user error',
@@ -60,5 +66,6 @@ exports.errors = {
     16: 'test email error',
     17: 'get cluster init status error',
     18: 'init cluster error',
-    19: 'anti-init cluster error'
+    19: 'anti-init cluster error',
+    20: 'no key or key error'
 };
