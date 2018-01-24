@@ -57,11 +57,11 @@ export default class Main extends Component {
                 this.SideBar.getWrappedInstance().switchScrollDirection(direction);
             }
         };
-        window.addEventListener('scroll', this.scrollHandler);
+        window.addEventListener('scroll', this.scrollHandler, {passive: true});
     }
 
     componentWillUnmount (){
-        window.removeEventListener('scroll', this.scrollHandler);
+        window.removeEventListener('scroll', this.scrollHandler, {passive: true});
     }
 
     render (){
