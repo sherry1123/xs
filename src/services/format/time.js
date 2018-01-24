@@ -1,4 +1,4 @@
-import {lang} from '../../components/Language/lang';
+import lang from '../../components/Language/lang';
 
 export const formatTimeLeft = seconds => {
     let hour = 60 * 60;

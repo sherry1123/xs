@@ -30,7 +30,7 @@ class TopBar extends Component {
                     <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="hover">
                         <span style={{marginLeft: 10}}>
                             {lang('您好, ', 'hello, ')}
-                            <span className="fs-login-user">admin</span>
+                            <span className="fs-login-user">admin 3333322</span>
                         </span>
                     </Popover>
                 </section>
