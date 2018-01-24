@@ -27,12 +27,14 @@
             .fs-ip-input-title {
 
             }
-            .clearfix();
             .fs-ip-input-group {
                 margin-top: 40px;
-                .clearfix();
+                > div { // animation wrapper
+                    display: flex;
+                    flex-direction: row;
+                }
                 .fs-ip-input-member {
-                    .clearfix();
+                    flex: 1;
                     float: left;
                     box-sizing: border-box;
                     width: 300px;
