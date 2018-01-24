@@ -15,3 +15,17 @@ exports.post = (url, param) => {
         });
     });
 };
+exports.put = (url, param) => {
+    return new Promise((resolve, reject) => {
+        request.put(url, {form: param}, (error, response, body) => {
+            !error && response.statusCode === 200 ? resolve(JSON.parse(body)) : reject(error);
+        });
+    });
+};
+exports.delete = (url, param) => {
+    return new Promise((resolve, reject) => {
+        request.del(url, {form: param}, (error, response, body) => {
+            !error && response.statusCode === 200 ? resolve(JSON.parse(body)) : reject(error);
+        });
+    });
+};
