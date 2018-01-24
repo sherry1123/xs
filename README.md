@@ -6,6 +6,7 @@
  - scripts         npm scripts for running cli tools
  - src             source code and static resource
  - -
+ - |
  - src/component   common components and high-level abstractions of mature business views components
  - src/images      image resource
  - src/mockData    mock data for frontend development and debugging
