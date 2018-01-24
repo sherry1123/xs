@@ -44,16 +44,17 @@ const getMemoryUsage = () => {
 };
 let CPU = getCpuInfo();
 let IOPS = { used: 0 };
-new CronJob('*/15 * * * * *', () => {
-    getCpuUsage();
-    getIopsUsage();
-}, null, true);
 const getHardware = () => {
     let cpu = CPU;
     let iops = IOPS;
     let memory = getMemoryUsage();
     return { iplist: ['127.0.0.1'], data: [{ cpu, iops, memory }] };
 };
+//schedule
+new CronJob('*/15 * * * * *', () => {
+    getCpuUsage();
+    getIopsUsage();
+}, null, true);
 //controller
 const getAll = ctx => {
     ctx.body = getHardware();
