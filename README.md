@@ -1,11 +1,12 @@
 ## OrcaFS UI Project
 
-### frontend folder directory structure
+### frontend
+
+#### folder directory structure
  - config          configurations for cli tools
  - public          production build destination
  - scripts         npm scripts for running cli tools
  - src             source code and static resource
- - --
  - |
  - src/component   common components and high-level abstractions of mature business views components
  - src/images      image resource
@@ -17,7 +18,7 @@
  - src/index.js    the portal of build for whole frontend project fro webpack
 
 
-### server
+### backend
 
 #### server多进程模型
 server的入口为server.js文件。
