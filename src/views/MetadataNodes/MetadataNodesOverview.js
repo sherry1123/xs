@@ -65,11 +65,12 @@ class MetadataNodesOverview extends Component {
         let {data, scale, position, color} = this.state.chartData;
         return (
             <section className="fs-page-content fs-metadata-node-overview-wrapper">
-                <section className="fs-metadata-node-basic-info-wrapper">
-                    <section className="fs-page-title-wrapper">
-                        <h3>{lang('元数据节点基础信息', 'Metadata Nodes Basic Information')}</h3>
-                    </section>
-                    <section className="fs-metadata-node-basic-info-content">
+                <section className="fs-page-item-wrapper title">
+                    <h3 className="fs-page-title">{lang('元数据节点', 'Metadata Nodes')}</h3>
+                </section>
+                <section className="fs-page-item-wrapper fs-metadata-node-basic-info-wrapper">
+                    <h3 className="fs-page-title item">{lang('基础信息', 'Basic Information')}</h3>
+                    <section className="fs-page-item-content fs-metadata-node-basic-info-content">
                         <span className="fs-info-item">
                             <span className="fs-info-label">{lang('节点数量：', 'Number Of Nodes: ')}</span>
                             5
@@ -81,11 +82,9 @@ class MetadataNodesOverview extends Component {
                         </span>
                     </section>
                 </section>
-                <section className="fs-metadata-work-request-wrapper">
-                    <section className="fs-page-title-wrapper">
-                        <h3>{lang('工作请求', 'Work Request')}</h3>
-                    </section>
-                    <section className="fs-metadata-work-request-content">
+                <section className="fs-page-item-wrapper fs-metadata-work-request-wrapper">
+                    <h3 className="fs-page-title item">{lang('工作请求', 'Work Request')}</h3>
+                    <section className="fs-page-item-content fs-metadata-work-request-content">
                         <OChart data={data} scale={scale} position={position} color={color} />
                     </section>
                 </section>

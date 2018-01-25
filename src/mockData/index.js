@@ -22,10 +22,20 @@ export default {
 
     // logged
     main: {
+        // general
         activeMenu: [],
         activePage: '',
+        // login user
         userInfo: {
             name: 'admin'
-        }
+        },
+        // stripe
+        stripeInformation: {
+            path: '/opt/xxx/ada',
+            defaultTargetNumber: 1,
+            blockSize: 1024,
+            stripeMode: 'buddyMirror',
+            isMetadataImage: true,
+        },
     }
 }

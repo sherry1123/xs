@@ -101,6 +101,7 @@ class Login extends Component {
                                         prefix={<Icon type="user" style={{color: 'rgba(0, 0, 0, .25)'}} />}
                                         value={this.state.username}
                                         onChange={this.changeUsername.bind(this)}
+                                        onPressEnter={this.doLogin.bind(this)}
                                     />
                                 </Form.Item>
                                 <Form.Item
@@ -112,9 +113,12 @@ class Login extends Component {
                                         prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .25)'}} />}
                                         value={this.state.password}
                                         onChange={this.changePassword.bind(this)}
+                                        onPressEnter={this.doLogin.bind(this)}
                                     />
                                 </Form.Item>
-                                <Button className="fs-login-btn" type="primary" onClick={this.doLogin.bind(this)}>
+                                <Button className="fs-login-btn" type="primary"
+                                    onClick={this.doLogin.bind(this)}
+                                >
                                     {lang('登录', 'Login')}
                                 </Button>
                                 {this.state.loginErrorInfo && <p className="fs-login-error-info-wrapper">{this.state.loginErrorInfo}</p>}

@@ -153,7 +153,7 @@ class Initialize extends Component {
             list && (list.scrollTop = list.scrollHeight);
             if (initProgress === 100){
                 clearInterval(initTimer);
-                setTimeout(() => this.setState({current: 3}), 3000);
+                setTimeout(() => this.setState({current: 3}), 1500);
                 if (process.env.NODE_ENV === 'development'){
                     Cookie.set('init', 'true');
                 }
