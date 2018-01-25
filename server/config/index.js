@@ -21,7 +21,9 @@ exports.api = {
         hardware: 'http://localhost:3457/hardware/getall'
     },
     orcafs: {
-        init: 'http://localhost:3000/orcafs/init'
+        gettoken: 'http://localhost:9090/token/get',
+        createcluster: 'http://localhost:9090/cluster/create',
+        installstatus: 'http://localhost:9090/cluster/createinstallstatus'
     }
 }
 exports.logs = {
