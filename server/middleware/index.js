@@ -10,10 +10,9 @@ const model = {
 	},
 	checkKey() {
 		return async (ctx, next) => {
-			let { key } = ctx.param;
+			let key = ctx.header['api-key'];
 			let api = ctx.url.split('/').pop().replace(/\?\S+/, '');
 			if (key && key === config.keys[api]) {
-				delete ctx.param.key;
 				await next();
 			} else {
 				ctx.body = {code: 20, message: config.errors[20]};
