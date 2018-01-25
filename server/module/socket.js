@@ -5,3 +5,6 @@ io.on('connection', socket => {
     logger.info('socket connect success');
 });
 exports.io = io;
+exports.postInitStatus = status => {
+    io.broadcast('init status', status);
+};

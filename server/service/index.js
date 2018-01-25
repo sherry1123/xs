@@ -2,6 +2,7 @@ const email = require('./email');
 const config = require('../config');
 const init = require('./initialize');
 const database = require('./database');
+const socket = require('../module/socket');
 const logger = require('../module/logger');
 const promise = require('../module/promise');
 const request = require('../module/request');
