@@ -2,6 +2,7 @@ const email = require('./email');
 const config = require('../config');
 const init = require('./initialize');
 const database = require('./database');
+const socket = require('../module/socket');
 const logger = require('../module/logger');
 const promise = require('../module/promise');
 const request = require('../module/request');
@@ -197,6 +198,23 @@ const model = {
         let {iplist} = param;
         try {
             //await init.initMongoDB(iplist);
+            // let token = await request.get(config.api.orcafs.gettoken);
+            // let result = await request.post(config.api.orcafs.createcluster, param, token);
+            // if (result.errorid === 103) {
+            //     errorHandler(18, result.message, param);
+            // } else {
+            //     let data = {};
+            //     let getInitStatus = setInterval(() => {
+            //         data = await request.get(config.api.orcafs.installstatus, null, token);
+            //         if (data.errorid === 103) {
+            //             errorHandler(18, data.message, param);
+            //             clearInterval(getInitStatus);
+            //             await model.antiInitCluster();
+            //         } else {
+            //             socket.postInitStatus(data);
+            //         }
+            //     }, 1000);
+            // }
         } catch (error) {
             errorHandler(18, error, param);
         }
