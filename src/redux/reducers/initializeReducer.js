@@ -1,7 +1,7 @@
-import MockData from '../../mockData';
+import State from '../state';
 import {initializeActionTypes} from '../actions/initializeAction';
 
-const initializeReducer = (state = MockData.initialize, action) => {
+const initializeReducer = (state = State.initialize, action) => {
     let {category, index, ip} = action;
     let rawIPs = state[category] || [];
     let IPs = Object.assign([], rawIPs);
@@ -13,6 +13,7 @@ const initializeReducer = (state = MockData.initialize, action) => {
             IPs.push('');
             newIPs[category] = IPs;
             return Object.assign({}, state, newIPs);
+
         // remove
         case initializeActionTypes.REMOVE_IP:
             IPs.splice(index, 1);

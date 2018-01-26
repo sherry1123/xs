@@ -1,6 +1,6 @@
 import lang from '../../components/Language/lang';
 
-export const formatTimeLeft = seconds => {
+export const timeLeftFormat = seconds => {
     let hour = 60 * 60;
     let day = hour * 24;
     let week = day * 7;
@@ -28,7 +28,7 @@ export const formatTimeLeft = seconds => {
     return result;
 };
 
-export const formatDate = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+export const timeFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
     if (!date) return '--';
     let dateOrigin = new Date(date);
     let o = {

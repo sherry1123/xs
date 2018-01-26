@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Checkbox, Form, Input, Select} from 'antd';
-import lang from "../../components/Language/lang";
+import lang from '../../components/Language/lang';
 
 class FSOperationStripeSettings extends Component {
     constructor (props){

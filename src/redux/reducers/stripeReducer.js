@@ -1,7 +1,7 @@
-import MockData from '../../mockData';
+import State from '../state';
 import {stripeActionTypes} from '../actions/stripeAction';
 
-const stripeReducer = (state = MockData.main, action) => {
+const stripeReducer = (state = State.main, action) => {
     switch (action.type){
         // set
         case stripeActionTypes.SET_STRIPE_INFORMATION:

@@ -1,6 +1,7 @@
-import {lan} from '../../components/Language/';
+import moment from 'moment';
+import lang from '../../components/Language/lang';
 
-export const timeabcFilter = seconds => {
+export const timeLeft = seconds => {
     let hour = 60 * 60;
     let day = hour * 24;
     let week = day * 7;
@@ -14,22 +15,24 @@ export const timeabcFilter = seconds => {
     let minutes = ((seconds % week % day % hour) / minute);
 
     if (weekNum >= 1){
-        result += (parseInt(weekNum, 0) + lan('星期', 'week(s)'));
+        result += (parseInt(weekNum, 0) + lang('星期', 'week(s)'));
     }
     if (dayNum >= 1){
-        result += (parseInt(dayNum, 0) + lan('天', 'day(s)'));
+        result += (parseInt(dayNum, 0) + lang('天', 'day(s)'));
     }
     if (hourNum >= 1){
-        result += (parseInt(hourNum, 0) + lan('小时', 'hour(s)'));
+        result += (parseInt(hourNum, 0) + lang('小时', 'hour(s)'));
     }
     if (minutes >= 1){
-        result += (parseInt(minutes, 0) + lan('分钟', 'minute(s)'));
+        result += (parseInt(minutes, 0) + lang('分钟', 'minute(s)'));
     }
     return result;
 };
 
-export const formatDate = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+export const formatDate = (date, fmt = 'YYYY-MM-DD H:m:s') => {
     if (!date) return '--';
+    return moment(date).format(fmt);
+    /*
     let dateOrigin = new Date(date);
     let o = {
         "M+" : dateOrigin.getMonth() + 1,
@@ -49,4 +52,5 @@ export const formatDate = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
         }
     }
     return fmt;
+    */
 };

@@ -6,15 +6,15 @@
  - ./config          - configurations for cli tools
  - ./public          - production build destination
  - ./scripts         - npm scripts for running cli tools
- - ./src             - source code and static resource
+ - ./src             - source code and static resource for webpack
  - ./src/component   - common components and high-level abstractions of mature business views components
  - ./src/images      - image resource
- - ./src/mockData    - mock data for frontend development and debugging
  - ./src/redux       - state management
  - ./src/services    - useful functions and local data/map
- - ./src/styleSheets - less files for common use and specific components
+ - ./src/socket      - socket.io client
+ - ./src/styleSheets - less style sheets for common using and specific components
  - ./src/views       - business-view components placed by module or category
- - ./src/index.js    - the portal of build for whole frontend project fro webpack
+ - ./src/index.js    - the portal of build for whole frontend project for webpack
 
 
 ### backend

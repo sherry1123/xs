@@ -8,7 +8,7 @@ export {CAPACITY_UNIT_SIZE_MAP, Time_UNIT_MILLISECOND_MAP, INTERVAL_LIST} from '
 export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';
 
 // format digit to time, date
-export {formatTimeLeft, formatDate} from './format/time';
+export {timeLeftFormat, timeFormat} from './format/time';
 
 // validation
 export {
@@ -22,5 +22,4 @@ export {
 } from './validation';
 
 // random
-
 export {randomBoolean} from './random';
