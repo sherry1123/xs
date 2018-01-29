@@ -10,8 +10,11 @@ export default {
         storageServerIPs: [
             '192.168.100.110'
         ],
-        clientIPs: [
+        managementServerIPs: [
             '192.168.100.120'
+        ],
+        floatIPs: [
+            '192.168.100.130'
         ],
     },
 

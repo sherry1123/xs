@@ -1,6 +1,10 @@
 .fs-initialize-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     padding-top: 10px;
-    height: 100%;
     background-image: url(../../images/bg.svg);
     .fs-initialize-welcome-wrapper,
     .fs-initialize-step-index-wrapper,
@@ -24,27 +28,25 @@
     .fs-initialize-step-content-wrapper {
         margin-top: 16px;
         .fs-initialize-step-content {
-            .fs-ip-input-title {
-
-            }
             .fs-ip-input-group {
                 margin-top: 40px;
                 > div { // animation wrapper
+                    .fs-clear-fix();
                     display: flex;
                     flex-direction: row;
                 }
                 .fs-ip-input-member {
-                    float: left;
+                    width: 25%;
                     box-sizing: border-box;
-                    width: 300px;
                     min-height: 350px;
-                    border-left: 1px solid #e9e9e9;
-                    border-bottom: 1px solid #e9e9e9;
-                    &:nth-child(3) {
-                        border-right: 1px solid #e9e9e9;
+                    border-left: 1px solid @border;
+                    border-bottom: 1px solid @border;
+                    &:nth-child(4) {
+                        border-right: 1px solid @border;
                     }
                     .fs-ip-input-title {
                         margin-top: -12px;
+                        cursor: pointer;
                     }
                     .fs-ip-input-item {
                         margin: 0 10px 10px;

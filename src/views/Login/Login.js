@@ -75,10 +75,11 @@ class Login extends Component {
     }
 
     render (){
+        let {VERSION, NODE_ENV} = process.env;
         return (
             <section className="fs-login-wrapper">
                 <LanguageButton />
-                <QueueAnim>
+                <QueueAnim type="top">
                     <section key="fd" className="fs-login-content">
                         <div className="fs-login-logo-wrapper" >
                             <div className="rock-bg">
@@ -127,7 +128,7 @@ class Login extends Component {
                     </section>
                 </QueueAnim>
                 <footer className="fs-login-copyright-wrapper">
-                    ©2018 Orcadt
+                    ©2018 Orcadt {'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '')}
                 </footer>
             </section>
         );

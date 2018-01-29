@@ -7,7 +7,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 100%;
     background-image: url(../../images/bg.svg);
     .change-language-button {
         position: absolute;
@@ -21,39 +20,41 @@
         width: 300px;
         .fs-login-logo-wrapper {
             margin: 0 auto;
-            width: 100px;
-            height: 100px;
-            background: url(../../images/logo-v.png) 0 0 no-repeat;
+            width: 120px;
+            height: 120px;
+            background: url(../../images/logo-v.svg) 0 0 no-repeat;
             background-size: 100% 100%;
             .rock-bg {
                 position: relative;
                 height: 100%;
                 border-radius: 100%;
-                animation: fs-login-logo-bg 3s linear 1.5s infinite;
-                .rock-point {
-                    position: absolute;
-                    display: block;
-                    width: 4px;
-                    height: 4px;
-                    border-radius: 100%;
-                    background-color: #F79F07;
-                    opacity: 0;
-                    animation: fs-login-logo-point 3s linear 1.5s infinite;
-                    &.a {
-                        top: 0;
-                        left: 0;
-                    }
-                    &.b {
-                        top: 0;
-                        right: 0;
-                    }
-                    &.c {
-                        left: 0;
-                        bottom: 0;
-                    }
-                    &.d {
-                        right: 0;
-                        bottom: 0;
+                &:hover {
+                    animation: fs-login-logo-bg 3s linear 3s infinite;
+                    .rock-point {
+                        position: absolute;
+                        display: block;
+                        width: 4px;
+                        height: 4px;
+                        border-radius: 100%;
+                        background-color: #4d8cda;
+                        opacity: 0;
+                        animation: fs-login-logo-point 3s linear 3s infinite;
+                        &.a {
+                            top: 0;
+                            left: 0;
+                        }
+                        &.b {
+                            top: 0;
+                            right: 0;
+                        }
+                        &.c {
+                            left: 0;
+                            bottom: 0;
+                        }
+                        &.d {
+                            right: 0;
+                            bottom: 0;
+                        }
                     }
                 }
             }
