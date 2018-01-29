@@ -14,8 +14,8 @@
     "url": "http://192.168.100.97:10080/Orcadt/OrcaFS-UI.git"
   },
   "scripts": {
-    "start": "gulp copyImage && node scripts/start.js",
-    "build": "gulp copyImage && node scripts/build.js",
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
   "dependencies": {

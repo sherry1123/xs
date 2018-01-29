@@ -49,7 +49,6 @@ measureFileSizesBeforeBuild(paths.appBuild)
     fs.emptyDirSync(paths.appBuild);
     // Merge with the public folder
     copyPublicFolder();
-    // Start the webpack build
     return build(previousFileSizes);
   })
   .then(
@@ -143,6 +142,11 @@ function build(previousFileSizes) {
 }
 
 function copyPublicFolder() {
+  fs.copySync(paths.appSrc + '/images', paths.appPublic + '/images', {
+    dereference: true,
+    filter: file => file !== paths.appHtml,
+  });
+
   fs.copySync(paths.appPublic, paths.appBuild, {
     dereference: true,
     filter: file => file !== paths.appHtml,
