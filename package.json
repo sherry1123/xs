@@ -11,7 +11,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "http://192.168.100.97:10080/Orcadt/OrcaFS-UI.git"
+    "url": "http://gitlab.orcadt.com/Orcadt/OrcaFS-UI.git"
   },
   "scripts": {
     "start": "gulp copyImage && node scripts/start.js",
