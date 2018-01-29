@@ -128,7 +128,7 @@ class Login extends Component {
                     </section>
                 </QueueAnim>
                 <footer className="fs-login-copyright-wrapper">
-                    ©2018 Orcadt {'v' + VERSION + (NODE_ENV === 'development' && ' dev')}
+                    ©2018 Orcadt {'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '')}
                 </footer>
             </section>
         );
