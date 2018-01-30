@@ -17,6 +17,18 @@ class SideBar extends Component {
         };
     }
 
+    componentDidMount (){
+        window.onhashchange = () => {
+            let key = this.props.history.location.pathname.replace(routerPath.Main, '');
+            this.props.changeActivePage(key);
+            this.getSubMenuByPath(key);
+        };
+    }
+
+    componentWillUnmount (){
+        window.onhashchange = null;
+    }
+
     switchScrollDirection (direction){
         this.setState({direction});
     }
