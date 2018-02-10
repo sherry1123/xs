@@ -10,9 +10,7 @@ const bodyParser = require('koa-bodyparser');
 const getCpuInfo = () => {
     let cpus = os.cpus();
     let current = ['user', 'sys'];
-    let total = 0;
-    let used = 0;
-    let usage = 0;
+    let total = used = usage = 0;
     let core = cpus.length;
     cpus.forEach(cpu => {
         let { times } = cpu;
@@ -26,9 +24,7 @@ const getCpuInfo = () => {
 const getCpuUsage = () => {
     let cpu = getCpuInfo();
     let usage = (cpu.used - CPU.used) / (cpu.total - CPU.total) * 100;
-    CPU.total = cpu.total;
-    CPU.used = cpu.used;
-    CPU.usage = usage;
+    CPU.total = cpu.total, CPU.used = cpu.used, CPU.usage = usage;
 };
 const getIopsUsage = async () => {
     // let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
