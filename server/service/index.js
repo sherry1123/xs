@@ -41,9 +41,8 @@ const model = {
     async updateUser(param) {
         let result = {};
         try {
-            let query = {username, password} = param;
-            delete param.username;
-            delete param.password;
+            let {username, password} = param;
+            let query = {username, password};
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user success');
         } catch (error) {
