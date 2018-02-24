@@ -7,23 +7,26 @@ const model = {
         return init;
     },
     setInitStatus(status) {
-        init = status
+        init = status;
     },
-    async initMongoDB(iplist) {
-        let master = iplist[0];
-        let slaves = iplist.splice(1, 3);
-        let masterCmd = `sudo mongod -f ${config.database.conf} --master`;
-        let slaveCmd = `sudo mongod -f ${config.database.conf} --slave --source ${master}:27017`;
-        await promise.runCommandInPromise(masterCmd);
-        for(let slave of slaves) {
-            await promise.runCommandInRemoteNode(slave, slaveCmd);
+    async initMongoDB(ipList) {
+        let command = `sudo ${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
+        let conf = {
+            _id: config.database.replicaSet,
+            members: []
+        };
+        for (let i = 0; i < ipList.length; i++) {
+            i ? await promise.runCommandInRemoteNode(ipList[i], command) : await promise.runCommandInPromise(command);
+            conf.members.push({_id: i, host: ipList[i]});
         }
+        await promise.writeFileInPromise('/tmp/initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
+        await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/initiatedb.js`);
         mongoose.connect(`mongodb://localhost/${config.database.name}`);
     },
-    async antiInitMongoDB() {
-        let commands = ['sudo service mongodb stop', `sudo rm -rf ${config.database.path}/*`, `sudo cp ${config.database.back} ${config.database.conf}`];
-        for (let command of commands) {
-            await promise.runCommandInPromise(command);
+    async antiInitMongoDB(ipList) {
+        let command = `ps aux|grep mongod|grep grep -v|awk '{print $2}'|xargs sudo kill -9 && sudo rm -rf ${config.database.dbpath}/*`;
+        for (let i = 0; i < ipList.length; i++) {
+            i ? await promise.runCommandInRemoteNode(ipList[i], command) : await promise.runCommandInPromise(command); 
         }
     }
 }

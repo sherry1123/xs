@@ -188,7 +188,7 @@ const model = {
         }
         return result;
     },
-    getInitStatus() {
+    async getInitStatus() {
         let result = false;
         try {
             result = false;
@@ -199,9 +199,9 @@ const model = {
         return result;
     },
     async initCluster(param) {
-        let {iplist} = param;
+        let {ipList} = param;
         try {
-            //await init.initMongoDB(iplist);
+            await init.initMongoDB(ipList);
             // let token = await request.get(config.api.orcafs.gettoken);
             // let result = await request.post(config.api.orcafs.createcluster, param, token);
             // if (result.errorid === 103) {
@@ -223,11 +223,12 @@ const model = {
             errorHandler(18, error, param);
         }
     },
-    async antiInitCluster() {
+    async antiInitCluster(param) {
+        let {ipList} = param;
         try {
-            //await init.antiInitMongoDB();
+            await init.antiInitMongoDB(ipList);
         } catch (error) {
-            errorHandler(19, error);
+            errorHandler(19, error, param);
         }
     }
 }

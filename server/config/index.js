@@ -8,9 +8,10 @@ exports.env = {
 };
 exports.database = {
     name: 'storage',
-    conf: '/usr/local/mongodb/mongodb.conf',
-    back: '/usr/local/mongodb/mongodb.conf.bak',
-    path: '/usr/local/mongodb/data/db'
+    bin: '/usr/local/mongodb/bin',
+    dbpath: '/usr/local/mongodb/data/db',
+    logpath: '/usr/local/mongodb/log/mongodb.log',
+    replicaSet: 'orcafs'
 };
 exports.nginx = {
     path: '/etc/nginx/nginx.conf',
