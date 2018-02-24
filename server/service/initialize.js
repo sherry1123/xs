@@ -28,6 +28,12 @@ const model = {
         for (let i = 0; i < ipList.length; i++) {
             i ? await promise.runCommandInRemoteNode(ipList[i], command) : await promise.runCommandInPromise(command); 
         }
+    },
+    async initOrcaFS(param) {
+        //todo
+    },
+    async antiInitOrcaFS(param) {
+        //todo
     }
 }
 module.exports = model;
