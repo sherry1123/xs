@@ -3,8 +3,8 @@ exports.process = {
 };
 exports.env = {
     root: process.env.PWD,
-    name: process.env.name,
-    init: process.env.initStatus
+    name: process.env.NAME,
+    init: process.env.INIT_STATUS
 };
 exports.database = {
     name: 'storage',
