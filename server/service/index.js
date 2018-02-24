@@ -123,9 +123,8 @@ const model = {
     async updateEventLog(param) {
         let result = {};
         try {
-            let {ids, read} = param;
-            let query = ids.map(id => ({_id: id}));
-            delete param.ids;
+            let {ids, id, read} = param;
+            let querys = ids ? ids.map(id => ({_id: id})) : [{_id: id}];
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }

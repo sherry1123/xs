@@ -5,16 +5,9 @@ exports.findOne = (model, param) => {
         });
     });
 };
-exports.findSome = (model, param) => {
+exports.findAll = (model, param) => {
     return new Promise((resolve, reject) => {
         model.find(param, (error, docs) => {
-            error ? reject(error) : resolve(docs);
-        });
-    });
-};
-exports.findAll = model => {
-    return new Promise((resolve, reject) => {
-        model.find({}, (error, docs) => {
             error ? reject(error) : resolve(docs);
         });
     });
@@ -26,13 +19,6 @@ exports.createOne = (model, param) => {
         });
     });
 };
-exports.createSome = (model, params) => {
-    return new Promise((resolve, reject) => {
-        model.insertMany(params, (error, docs) => {
-            error ? reject(error) : resolve(docs);
-        });
-    });
-};
 exports.updateOne = (model, query, param) => {
     return new Promise((resolve, reject) => {
         model.findOneAndUpdate(query, param, (error, docs) => {
@@ -40,7 +26,7 @@ exports.updateOne = (model, query, param) => {
         });
     });
 };
-exports.updateSome = (model, query, param) => {
+exports.updateAll = (model, query, param) => {
     return new Promise((resolve, reject) => {
         model.update(query, param, (error, docs) => {
             error ? reject(error): resolve(docs);
@@ -54,16 +40,9 @@ exports.deleteOne = (model, param) => {
         });
     });
 };
-exports.deleteSome = (model, param) => {
+exports.deleteAll = (model, param) => {
     return new Promise((resolve, reject) => {
         model.remove(param, (error, docs) => {
-            error ? reject(error) : resolve(docs);
-        });
-    });
-};
-exports.deleteAll = model => {
-    return new Promise((resolve, reject) => {
-        model.remove({}, (error, docs) => {
             error ? reject(error) : resolve(docs);
         });
     });
