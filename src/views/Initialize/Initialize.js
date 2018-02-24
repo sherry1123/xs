@@ -194,8 +194,8 @@ class Initialize extends Component {
                             <QueueAnim type="top">
                                 <section key="ip-input-title" className="fs-ip-input-title">
                                     {lang(
-                                        '步骤1：请定义将作为元数据服务器、存储服务器以及管理服务器的管理主机的IP，以及为高可用性实现提供的一个浮动IP。运行admon守护进程管理主机的默认值是相同的IP。',
-                                        'Step1: Please define the management IP of the hosts which shall act as metadata servers, storage servers and management servers. And the float IP for HA implementation. The default value for the management daemon is the same IP, which runs the admon daemon.'
+                                        '步骤1：请定义存储集群相应的服务器IP和管理IP。',
+                                        'Step1: Please define service IP and management IP for the storage cluster.'
                                     )}
                                 </section>
                             </QueueAnim>
@@ -289,7 +289,7 @@ class Initialize extends Component {
                                     <section key="ip-input-4" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
                                             <Tooltip placement="top" title={lang('浮动IP允许1个', 'There is 1 float IP allowed')}>
-                                                {lang('浮动IP', 'Float IP')}
+                                                {lang('存储集群服务管理IP', 'Management IP')}
                                             </Tooltip>
                                         </Divider>
                                         <QueueAnim type={['right', 'left']}>
