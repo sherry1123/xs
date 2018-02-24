@@ -38,13 +38,15 @@ const model = {
         }
         return result;
     },
-    async updateUser(query, param) {
+    async updateUser(param) {
         let result = {};
         try {
+            let {username, password} = param;
+            let query = {username, password};
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user success');
         } catch (error) {
-            result = responseHandler(3, error, {query, param});
+            result = responseHandler(3, error, param);
         }
         return result;
     },
@@ -117,15 +119,17 @@ const model = {
             errorHandler(9, error, param);
         }
     },
-    async updateEventLog(querys, param) {
+    async updateEventLog(param) {
         let result = {};
         try {
+            let {ids, id, read} = param;
+            let querys = ids ? ids.map(id => ({_id: id})) : [{_id: id}];
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }
             result = responseHandler(0, 'update event log success');
         } catch (error) {
-            result = responseHandler(10, error, {querys, param});
+            result = responseHandler(10, error, param);
         }
         return result;
     },

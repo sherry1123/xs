@@ -16,8 +16,7 @@ const model = {
     },
     '/api/updateuser': async ctx => {
         let param = ctx.param;
-		let {username, password} = param;
-		let result = await service.updateUser({username}, {password});
+		let result = await service.updateUser(param);
 		ctx.body = result;
     },
     '/api/deleteuser': async ctx => {
@@ -46,9 +45,7 @@ const model = {
     },
     '/api/updateeventlog': async ctx => {
         let param = ctx.param;
-        let {ids, read} = param;
-        ids.map(id => ({_id: id}));
-        let result = await service.updateEventLog(ids, {read});
+        let result = await service.updateEventLog(param);
         ctx.body = result;
     },
     '/api/getauditlog': async ctx => {
