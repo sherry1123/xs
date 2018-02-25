@@ -19,12 +19,12 @@ const model = {
 			}
 		}
 	},
-	syncInitStatus() {
+	syncStatus() {
 		return async (ctx, next) => {
-			let initStatus = init.getInitStatus();
+			let initStatus = String(init.getInitStatus());
 			let initCookie = ctx.cookies.get('init');
 			if (!initCookie || initCookie !== initStatus) {
-				ctx.cookies.set('init', String(initStatus), config.cookies);
+				ctx.cookies.set('init', initStatus, config.cookies);
 			}
 			await next();
 		}

@@ -9,6 +9,6 @@ socket.io.attach(app);
 app.use(bodyParser());
 app.use(middleware.initParam());
 //app.use(middleware.checkKey());
-app.use(middleware.syncInitStatus());
+app.use(middleware.syncStatus());
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(3456);
