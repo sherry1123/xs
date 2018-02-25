@@ -33,7 +33,7 @@ const model = {
         let command = `${config.database.bin}/mongo --quiet --eval "rs.status()"`;
         let result = false;
         try {
-            result = String(await promise.runCommandInPromise(command)).includes('ok');
+            result = String(await promise.runCommandInPromise(command)).includes('PRIMARY');
         } catch (error) {
             result = false;
         }
