@@ -191,7 +191,7 @@ const model = {
     async getInitStatus() {
         let result = false;
         try {
-            result = false;
+            result = true;
         } catch (error) {
             errorHandler(17, error);
         }
