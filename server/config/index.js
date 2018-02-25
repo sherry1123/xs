@@ -3,14 +3,15 @@ exports.process = {
 };
 exports.env = {
     root: process.env.PWD,
-    name: process.env.name,
-    init: process.env.initStatus
+    name: process.env.NAME,
+    init: process.env.INIT_STATUS
 };
 exports.database = {
     name: 'storage',
-    conf: '/usr/local/mongodb/mongodb.conf',
-    back: '/usr/local/mongodb/mongodb.conf.bak',
-    path: '/usr/local/mongodb/data/db'
+    bin: '/usr/local/mongodb/bin',
+    dbpath: '/usr/local/mongodb/data/db',
+    logpath: '/usr/local/mongodb/log/mongodb.log',
+    replicaSet: 'orcafs'
 };
 exports.nginx = {
     path: '/etc/nginx/nginx.conf',

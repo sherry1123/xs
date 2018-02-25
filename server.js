@@ -4,8 +4,8 @@ const service = require('./server/service');
 const logger = require('./server/module/logger');
 const init = require('./server/service/initialize');
 const workerNameList = config.process.name;
-const getWorkerFromConfig = (id, initStatus) => ({ name: workerNameList[id], initStatus });
-const getWorkerFromProcess = worker => ({ name: worker.process.env.name, initStatus: worker.process.env.initStatus });
+const getWorkerFromConfig = (id, initStatus) => ({ NAME: workerNameList[id], INIT_STATUS: initStatus });
+const getWorkerFromProcess = worker => ({ name: worker.process.env.NAME, initStatus: worker.process.env.INIT_STATUS });
 const startNewWorker = id => {
 	let { isMaster, initStatus } = cluster.settings;
 	if (!initStatus && id === 3) {
@@ -35,12 +35,13 @@ const messageHandler = msg => {
 };
 (async () => {
 	if (cluster.isMaster) {
+		cluster.settings.initStatus = await service.getInitStatus();
 		cluster.settings.isMaster = await service.isMaster();
-		cluster.settings.initStatus = service.getInitStatus();
 		logger.info('master ready');
 		startNewWorker(1);
 	} else {
 		let { name, initStatus } = getWorkerFromProcess(cluster.worker);
+		initStatus = initStatus === 'true' ? true : false;
 		switch (name) {
 			case 'agentd':
 				require('./server/agentd/index');

@@ -9,9 +9,9 @@ const request = require('../module/request');
 const responseHandler = (code, result, param) => {
     if (code) {
         errorHandler(code, result, param);
-        return {code, message: result};
+        return { code, message: result };
     } else {
-        return {code, data: result};
+        return { code, data: result };
     }
 };
 const errorHandler = (code, message, param = {}) => {
@@ -41,8 +41,8 @@ const model = {
     async updateUser(param) {
         let result = {};
         try {
-            let {username, password} = param;
-            let query = {username, password};
+            let { username, password } = param;
+            let query = { username, password };
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user success');
         } catch (error) {
@@ -61,14 +61,14 @@ const model = {
         return result;
     },
     async isMaster() {
-        let result = true;
-        // let path = config.nginx.path;
-        // try {
-        //     let file = await promise.readFileInPromise(path);
-        //     result = file.includes('127.0.0.1:3000') ? true : false;
-        // } catch (error) {
-        //     errorHandler(5, error);
-        // }
+        let result = false;
+        let initStatus = init.getInitStatus();
+        if (!initStatus) {
+            result = true;
+        } else {
+            //todo
+            result = true;
+        }
         return result;
     },
     async updateNginxConfig(param) {
@@ -86,7 +86,7 @@ const model = {
         try {
             let data = await database.getUser(param);
             if (data.length) {
-                await model.addAuditLog({user: param.username, desc: 'login success'});
+                await model.addAuditLog({ user: param.username, desc: 'login success' });
                 result = responseHandler(0, 'login success');
             } else {
                 result = responseHandler(7, 'username or password error', param);
@@ -98,7 +98,7 @@ const model = {
     },
     async logout(param) {
         let result = responseHandler(0, 'logout success');
-        await model.addAuditLog({user: param.username, desc: 'logout success'});
+        await model.addAuditLog({ user: param.username, desc: 'logout success' });
         return result;
     },
     async getEventLog(param) {
@@ -112,9 +112,9 @@ const model = {
         return result;
     },
     async addEventLog(param) {
-        let {time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false} = param;
+        let { time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false } = param;
         try {
-            await database.addEventLog({time, node, desc, level, source, read});
+            await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
             errorHandler(9, error, param);
         }
@@ -122,8 +122,8 @@ const model = {
     async updateEventLog(param) {
         let result = {};
         try {
-            let {ids, id, read} = param;
-            let querys = ids ? ids.map(id => ({_id: id})) : [{_id: id}];
+            let { ids, id, read } = param;
+            let querys = ids ? ids.map(id => ({ _id: id })) : [{ _id: id }];
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }
@@ -144,9 +144,9 @@ const model = {
         return result;
     },
     async addAuditLog(param) {
-        let {time = new Date(), user, group = 'admin', desc, level = 1, ip = '127.0.0.1'} = param;
+        let { time = new Date(), user, group = 'admin', desc, level = 1, ip = '127.0.0.1' } = param;
         try {
-            await database.addAuditLog({time, user, group, desc, level, ip});
+            await database.addAuditLog({ time, user, group, desc, level, ip });
         } catch (error) {
             errorHandler(12, error, param);
         }
@@ -162,11 +162,18 @@ const model = {
         return result;
     },
     async addHardware() {
-        let url = config.api.agentd.hardware;
+        let date = new Date();
+        let api = config.api.agentd.hardware;
+        let url = api;
         try {
-            let res = await request.get(url);
-            let {iplist, data} = res;
-            await database.addHardware({date: new Date, iplist, data});
+            let iplist = ['127.0.0.1'];
+            let data = [];
+            for (let ip of iplist) {
+                url = api.replace('localhost', ip);
+                let res = await request.get(url);
+                data.push(res);
+            }
+            await database.addHardware({ date, iplist, data });
         } catch (error) {
             errorHandler(14, error, url);
         }
@@ -188,10 +195,12 @@ const model = {
         }
         return result;
     },
-    getInitStatus() {
+    async getInitStatus() {
         let result = false;
         try {
-            result = false;
+            let dbStatus = await init.getMongoDBStatus();
+            let fsStatus = await init.getOrcaFSStatus();
+            result = dbStatus && fsStatus;
         } catch (error) {
             errorHandler(17, error);
         }
@@ -199,35 +208,21 @@ const model = {
         return result;
     },
     async initCluster(param) {
-        let {iplist} = param;
+        let { ipList } = param;
         try {
-            //await init.initMongoDB(iplist);
-            // let token = await request.get(config.api.orcafs.gettoken);
-            // let result = await request.post(config.api.orcafs.createcluster, param, token);
-            // if (result.errorid === 103) {
-            //     errorHandler(18, result.message, param);
-            // } else {
-            //     let data = {};
-            //     let getInitStatus = setInterval(() => {
-            //         data = await request.get(config.api.orcafs.installstatus, null, token);
-            //         if (data.errorid === 103) {
-            //             errorHandler(18, data.message, param);
-            //             clearInterval(getInitStatus);
-            //             await model.antiInitCluster();
-            //         } else {
-            //             socket.postInitStatus(data);
-            //         }
-            //     }, 1000);
-            // }
+            await init.initMongoDB(ipList);
+            await init.initOrcaFS(param);
         } catch (error) {
             errorHandler(18, error, param);
         }
     },
-    async antiInitCluster() {
+    async antiInitCluster(param) {
+        let { ipList } = param;
         try {
-            //await init.antiInitMongoDB();
+            await init.antiInitMongoDB(ipList);
+            await init.antiInitOrcaFS(param);
         } catch (error) {
-            errorHandler(19, error);
+            errorHandler(19, error, param);
         }
     }
 }
