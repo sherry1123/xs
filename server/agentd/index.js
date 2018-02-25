@@ -44,7 +44,7 @@ const getHardware = () => {
     let cpu = CPU;
     let iops = IOPS;
     let memory = getMemoryUsage();
-    return { iplist: ['127.0.0.1'], data: [{ cpu, iops, memory }] };
+    return { cpu, iops, memory };
 };
 //schedule
 new CronJob('*/15 * * * * *', () => {

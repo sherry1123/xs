@@ -162,11 +162,16 @@ const model = {
         return result;
     },
     async addHardware() {
+        let date = new Date();
         let url = config.api.agentd.hardware;
         try {
-            let res = await request.get(url);
-            let { iplist, data } = res;
-            await database.addHardware({ date: new Date, iplist, data });
+            let iplist = ['127.0.0.1'];
+            let data = [];
+            for (let ip of iplist) {
+                let res = await request.get(url.replace('localhost', ip));
+                data.push(res);
+            }
+            await database.addHardware({ date, iplist, data });
         } catch (error) {
             errorHandler(14, error, url);
         }
