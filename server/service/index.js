@@ -61,14 +61,14 @@ const model = {
         return result;
     },
     async isMaster() {
-        let result = true;
-        // let path = config.nginx.path;
-        // try {
-        //     let file = await promise.readFileInPromise(path);
-        //     result = file.includes('127.0.0.1:3000') ? true : false;
-        // } catch (error) {
-        //     errorHandler(5, error);
-        // }
+        let result = false;
+        let initStatus = init.getInitStatus();
+        if (!initStatus) {
+            result = true;
+        } else {
+            //todo
+            result = true;
+        }
         return result;
     },
     async updateNginxConfig(param) {
@@ -164,11 +164,12 @@ const model = {
     async addHardware() {
         let date = new Date();
         let api = config.api.agentd.hardware;
+        let url = api;
         try {
             let iplist = ['127.0.0.1'];
             let data = [];
             for (let ip of iplist) {
-                let url = api.replace('localhost', ip);
+                url = api.replace('localhost', ip);
                 let res = await request.get(url);
                 data.push(res);
             }
@@ -197,7 +198,9 @@ const model = {
     async getInitStatus() {
         let result = false;
         try {
-            result = false;
+            let dbStatus = await init.getMongoDBStatus();
+            let fsStatus = await init.getOrcaFSStatus();
+            result = dbStatus && fsStatus;
         } catch (error) {
             errorHandler(17, error);
         }

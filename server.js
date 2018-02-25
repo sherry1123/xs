@@ -35,8 +35,8 @@ const messageHandler = msg => {
 };
 (async () => {
 	if (cluster.isMaster) {
-		cluster.settings.isMaster = await service.isMaster();
 		cluster.settings.initStatus = await service.getInitStatus();
+		cluster.settings.isMaster = await service.isMaster();
 		logger.info('master ready');
 		startNewWorker(1);
 	} else {
