@@ -9,9 +9,9 @@ const request = require('../module/request');
 const responseHandler = (code, result, param) => {
     if (code) {
         errorHandler(code, result, param);
-        return {code, message: result};
+        return { code, message: result };
     } else {
-        return {code, data: result};
+        return { code, data: result };
     }
 };
 const errorHandler = (code, message, param = {}) => {
@@ -41,8 +41,8 @@ const model = {
     async updateUser(param) {
         let result = {};
         try {
-            let {username, password} = param;
-            let query = {username, password};
+            let { username, password } = param;
+            let query = { username, password };
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user success');
         } catch (error) {
@@ -86,7 +86,7 @@ const model = {
         try {
             let data = await database.getUser(param);
             if (data.length) {
-                await model.addAuditLog({user: param.username, desc: 'login success'});
+                await model.addAuditLog({ user: param.username, desc: 'login success' });
                 result = responseHandler(0, 'login success');
             } else {
                 result = responseHandler(7, 'username or password error', param);
@@ -98,7 +98,7 @@ const model = {
     },
     async logout(param) {
         let result = responseHandler(0, 'logout success');
-        await model.addAuditLog({user: param.username, desc: 'logout success'});
+        await model.addAuditLog({ user: param.username, desc: 'logout success' });
         return result;
     },
     async getEventLog(param) {
@@ -112,9 +112,9 @@ const model = {
         return result;
     },
     async addEventLog(param) {
-        let {time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false} = param;
+        let { time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false } = param;
         try {
-            await database.addEventLog({time, node, desc, level, source, read});
+            await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
             errorHandler(9, error, param);
         }
@@ -122,8 +122,8 @@ const model = {
     async updateEventLog(param) {
         let result = {};
         try {
-            let {ids, id, read} = param;
-            let querys = ids ? ids.map(id => ({_id: id})) : [{_id: id}];
+            let { ids, id, read } = param;
+            let querys = ids ? ids.map(id => ({ _id: id })) : [{ _id: id }];
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }
@@ -144,9 +144,9 @@ const model = {
         return result;
     },
     async addAuditLog(param) {
-        let {time = new Date(), user, group = 'admin', desc, level = 1, ip = '127.0.0.1'} = param;
+        let { time = new Date(), user, group = 'admin', desc, level = 1, ip = '127.0.0.1' } = param;
         try {
-            await database.addAuditLog({time, user, group, desc, level, ip});
+            await database.addAuditLog({ time, user, group, desc, level, ip });
         } catch (error) {
             errorHandler(12, error, param);
         }
@@ -165,8 +165,8 @@ const model = {
         let url = config.api.agentd.hardware;
         try {
             let res = await request.get(url);
-            let {iplist, data} = res;
-            await database.addHardware({date: new Date, iplist, data});
+            let { iplist, data } = res;
+            await database.addHardware({ date: new Date, iplist, data });
         } catch (error) {
             errorHandler(14, error, url);
         }
@@ -199,7 +199,7 @@ const model = {
         return result;
     },
     async initCluster(param) {
-        let {ipList} = param;
+        let { ipList } = param;
         try {
             await init.initMongoDB(ipList);
             await init.initOrcaFS(param);
@@ -208,7 +208,7 @@ const model = {
         }
     },
     async antiInitCluster(param) {
-        let {ipList} = param;
+        let { ipList } = param;
         try {
             await init.antiInitMongoDB(ipList);
             await init.antiInitOrcaFS(param);

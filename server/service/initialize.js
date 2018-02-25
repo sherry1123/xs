@@ -17,7 +17,7 @@ const model = {
         };
         for (let i = 0; i < ipList.length; i++) {
             i ? await promise.runCommandInRemoteNode(ipList[i], command) : await promise.runCommandInPromise(command);
-            conf.members.push({_id: i, host: ipList[i]});
+            conf.members.push({ _id: i, host: ipList[i] });
         }
         await promise.writeFileInPromise('/tmp/initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
         await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/initiatedb.js`);
@@ -26,7 +26,7 @@ const model = {
     async antiInitMongoDB(ipList) {
         let command = `ps aux|grep mongod|grep grep -v|awk '{print $2}'|xargs sudo kill -9 && sudo rm -rf ${config.database.dbpath}/*`;
         for (let i = 0; i < ipList.length; i++) {
-            i ? await promise.runCommandInRemoteNode(ipList[i], command) : await promise.runCommandInPromise(command); 
+            i ? await promise.runCommandInRemoteNode(ipList[i], command) : await promise.runCommandInPromise(command);
         }
     },
     async initOrcaFS(param) {
