@@ -8,7 +8,7 @@ exports.runCommandInPromise = command => {
   });
 };
 exports.runCommandInRemoteNodeInPromise = (ip, command) => {
-  command = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no denali@${ip} -i /home/denali/denali/insecure_private_key '${command}'`;
+  command = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip} -i /home/denali/denali/insecure_private_key "${command}"`;
   return new Promise((resolve, reject) => {
     child.exec(command, (error, stdout, stderr) => {
       error ? reject(stderr) : resolve(stdout);
