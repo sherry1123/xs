@@ -2,6 +2,7 @@ export const initializeActionTypes = {
     ADD_IP: 'ADD_IP',
     REMOVE_IP: 'REMOVE_IP',
     SET_IP: 'SET_IP',
+    SET_ENABLE_HA: 'SET_ENABLE_HA',
 };
 
 export default {
@@ -21,5 +22,10 @@ export default {
         category,
         index,
         ip
+    }),
+
+    setEnableHA: enableHA => ({
+        type: initializeActionTypes.SET_ENABLE_HA,
+        enableHA
     }),
 };
