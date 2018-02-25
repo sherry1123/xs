@@ -6,23 +6,23 @@ const model = {
     },
     '/api/getuser': async ctx => {
         let param = ctx.param;
-		let result = await service.getUser(param);
-		ctx.body = result;
+        let result = await service.getUser(param);
+        ctx.body = result;
     },
     '/api/adduser': async ctx => {
         let param = ctx.param;
-		let result = await service.addUser(param);
-		ctx.body = result;
+        let result = await service.addUser(param);
+        ctx.body = result;
     },
     '/api/updateuser': async ctx => {
         let param = ctx.param;
-		let result = await service.updateUser(param);
-		ctx.body = result;
+        let result = await service.updateUser(param);
+        ctx.body = result;
     },
     '/api/deleteuser': async ctx => {
         let param = ctx.param;
-		let result = await service.deleteUser(param);
-		ctx.body = result;
+        let result = await service.deleteUser(param);
+        ctx.body = result;
     },
     '/api/login': async ctx => {
         let param = ctx.param;
@@ -66,7 +66,12 @@ const model = {
     '/api/init': ctx => {
         let param = ctx.param;
         service.initCluster(param);
-        ctx.body = {code: 0, data: 'start to initialize cluster'};
+        ctx.body = { code: 0, data: 'start to initialize cluster' };
+    },
+    '/api/antiinit': ctx => {
+        let param = ctx.param;
+        service.antiInitCluster(param);
+        ctx.body = { code: 0, data: 'start to anti-initialize cluster' };
     }
 }
 module.exports = model;
