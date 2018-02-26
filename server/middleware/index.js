@@ -7,15 +7,15 @@ const model = {
 			let api = ctx.url.split('/').pop().replace(/\?\S+/, '');
 			let initStatus = init.getInitStatus();
 			ctx.param = method === 'get' ? ctx.query : ctx.request.body;
-			ctx.api = api;
-			ctx.init = initStatus;
+			ctx.state.api = api;
+			ctx.state.init = initStatus;
 			await next();
 		}
 	},
 	checkKey() {
 		return async (ctx, next) => {
 			let key = ctx.get('api-key');
-			let api = ctx.api;
+			let api = ctx.state.api;
 			if (key && key === config.keys[api]) {
 				await next();
 			} else {
@@ -25,8 +25,8 @@ const model = {
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let api = ctx.api;
-			let initStatus = ctx.init;
+			let api = ctx.state.api;
+			let initStatus = ctx.state.init;
 			let initApi = ['init'];
 			if (!initStatus) {
 				if (initApi.includes(api)) {
@@ -45,7 +45,7 @@ const model = {
 	},
 	syncStatus() {
 		return async (ctx, next) => {
-			let initStatus = String(ctx.init);
+			let initStatus = String(ctx.state.init);
 			let initCookie = ctx.cookies.get('init');
 			if (!initCookie || initCookie !== initStatus) {
 				ctx.cookies.set('init', initStatus, config.cookies);
