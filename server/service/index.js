@@ -74,6 +74,7 @@ const model = {
     async updateNginxConfig(param) {
         let path = config.nginx.path;
         try {
+            await promise.runCommandInPromise(`sudo chmod 777 ${config.nginx.path}`);
             let file = await promise.readFileInPromise(path);
             let data = file.replace(/127\.0\.0\.1/g, `${param}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
             await promise.writeFileInPromise(path, data);
