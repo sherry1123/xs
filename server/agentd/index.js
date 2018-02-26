@@ -3,9 +3,7 @@ const Koa = require('koa');
 const app = new Koa();
 const CronJob = require('cron').CronJob;
 const router = new require('koa-router')();
-const middleware = require('../middleware');
 const promise = require('../module/promise');
-const bodyParser = require('koa-bodyparser');
 //service
 const getCpuInfo = () => {
     let cpus = os.cpus();
@@ -58,7 +56,5 @@ const getAll = ctx => {
 //router
 router.all('/hardware/getall', getAll);
 //app
-app.use(bodyParser());
-app.use(middleware.initParam());
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(3457);
