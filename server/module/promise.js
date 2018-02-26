@@ -29,6 +29,13 @@ exports.writeFileInPromise = (path, data) => {
     });
   });
 };
+exports.copyFileInPromise = (src, dest) => {
+  return new Promise((resolve, reject) => {
+    fs.copyFile(src, dest, error => {
+      error ? reject(error) : resolve();
+    });
+  });
+};
 exports.copyFileToRemoteNodeInPromise = (ip, src, dest) => {
   let command = `scp -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${src} denali@${ip}:${dest}`;
   return new Promise((resolve, reject) => {
