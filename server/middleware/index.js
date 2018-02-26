@@ -19,6 +19,26 @@ const model = {
 			}
 		}
 	},
+	filterRequest() {
+		return async (ctx, next) => {
+			let api = ctx.url.split('/').pop().replace(/\?\S+/, '');
+			let initStatus = init.getInitStatus();
+			let initApi = ['init'];
+			if (!initStatus) {
+				if (initApi.includes(api)) {
+					await next();
+				} else {
+					ctx.body = {code: 21, message: config.errors[21]};
+				}
+			} else {
+				if (!initApi.includes(api)) {
+					await next();
+				} else {
+					ctx.body = {code: 22, message: config.errors[22]};
+				}
+			}
+		}
+	},
 	syncStatus() {
 		return async (ctx, next) => {
 			let initStatus = String(init.getInitStatus());

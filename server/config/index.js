@@ -79,5 +79,7 @@ exports.errors = {
     17: 'get cluster init status error',
     18: 'init cluster error',
     19: 'anti-init cluster error',
-    20: 'no key or key error'
+    20: 'no key or key error',
+    21: 'cluster not initialize',
+    22: 'cluster initialized'
 };
