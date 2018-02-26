@@ -82,5 +82,6 @@ exports.errors = {
     19: 'anti-init cluster error',
     20: 'no key or key error',
     21: 'cluster not initialize',
-    22: 'cluster initialized'
+    22: 'cluster initialized',
+    23: 'get cluster is master or not error'
 };

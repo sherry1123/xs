@@ -39,6 +39,12 @@ const model = {
         }
         return result;
     },
+    async getMongoDBMasterOrNot() {
+        let command = `${config.database.bin}/mongo --quiet --eval "db.isMaster().ismaster"`;
+        let result = false;
+        result = String(await promise.runCommandInPromise(command)).replace('\n', '') === 'true';
+        return result;
+    },
     async initOrcaFS(param) {
         //todo
     },

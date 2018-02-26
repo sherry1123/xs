@@ -66,8 +66,12 @@ const model = {
         if (!initStatus) {
             result = true;
         } else {
-            //todo
-            result = true;
+            try {
+                result = await init.getMongoDBMasterOrNot();
+                //todo
+            } catch (error) {
+                errorHandler(23, error);
+            }
         }
         return result;
     },

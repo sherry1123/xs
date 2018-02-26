@@ -34,7 +34,7 @@ exports.chmodFileInPromise = (path, mode) => {
       error ? reject(stderr) : resolve(stdout);
     });
   });
-}
+};
 exports.runCommandInRemoteNodeInPromise = (ip, command) => {
   command = `ssh -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip} "${command}"`;
   return new Promise((resolve, reject) => {
