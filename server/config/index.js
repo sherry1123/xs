@@ -57,7 +57,8 @@ exports.keys = {
     getauditlog: '8d64c515f80f1f5840933ab4a71140d4',
     gethardware: '4a717d8d0a9f11097869871fafc60dc5',
     testmail: '4cdf930bd89937490d7bf7f1ce96b3dd',
-    init: 'e37f0136aa3ffaf149b351f6a4c948e9'
+    init: 'e37f0136aa3ffaf149b351f6a4c948e9',
+    antiinit: '186716b8d7c8ce050a0710ccf43c89c8'
 };
 exports.errors = {
     1: 'get user error',
