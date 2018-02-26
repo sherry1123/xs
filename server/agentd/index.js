@@ -25,9 +25,7 @@ const getCpuUsage = () => {
     CPU.total = cpu.total, CPU.used = cpu.used, CPU.usage = usage;
 };
 const getIopsUsage = async () => {
-    // let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
-    let random = ~~(Math.random() * 1000 * 1000);
-    let cmd = `echo ${random}`;
+    let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
     IOPS.used = Number(String(await promise.runCommandInPromise(cmd)).replace('\n', ''));
 };
 const getMemoryUsage = () => {
