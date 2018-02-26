@@ -8,7 +8,7 @@ exports.runCommandInPromise = command => {
   });
 };
 exports.runCommandInRemoteNodeInPromise = (ip, command) => {
-  command = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip} -i /home/denali/denali/insecure_private_key "${command}"`;
+  command = `ssh -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip} "${command}"`;
   return new Promise((resolve, reject) => {
     child.exec(command, (error, stdout, stderr) => {
       error ? reject(stderr) : resolve(stdout);
@@ -26,6 +26,22 @@ exports.writeFileInPromise = (path, data) => {
   return new Promise((resolve, reject) => {
     fs.writeFile(path, data, 'utf8', error => {
       error ? reject(error) : resolve();
+    });
+  });
+};
+exports.copyFileToRemoteNodeInPromise = (ip, src, dest) => {
+  let command = `scp -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${src} denali@${ip}:${dest}`;
+  return new Promise((resolve, reject) => {
+    child.exec(command, (error, stdout, stderr) => {
+      error ? reject(stderr) : resolve(stdout);
+    });
+  });
+};
+exports.copyFileFromRemoteNodeInPromise = (ip, src, dest) => {
+  let command = `scp -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip}:${dest} ${src} `;
+  return new Promise((resolve, reject) => {
+    child.exec(command, (error, stdout, stderr) => {
+      error ? reject(stderr) : resolve(stdout);
     });
   });
 };
