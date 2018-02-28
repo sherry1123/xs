@@ -58,7 +58,7 @@ const model = {
     },
     async getOrcaFSInitProgress() {
         //todo
-        let token = filesystem.getToken();
+        let token = await filesystem.getToken();
         let result = await request.get(config.api.orcafs.installstatus, '', token);
         return result;
     },
