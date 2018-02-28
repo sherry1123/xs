@@ -53,6 +53,5 @@ const model = {
 			await next();
 		}
 	}
-}
-
+};
 module.exports = model;

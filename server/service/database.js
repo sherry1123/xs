@@ -37,5 +37,5 @@ const model = {
     async addHardware(param) {
         return await dao.createOne(hardware, param);
     }
-}
+};
 module.exports = model;

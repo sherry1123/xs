@@ -1,6 +1,8 @@
 const config = require('../config');
 const mongoose = require('../model');
 const promise = require('../module/promise');
+const request = require('../module/request');
+const filesystem = require('../service/filesystem');
 let init = false;
 const model = {
     getInitStatus() {
@@ -47,14 +49,23 @@ const model = {
     },
     async initOrcaFS(param) {
         //todo
+        let token = await filesystem.getToken();
+        let result = await request.post(config.api.orcafs.createcluster, param, token);
+        return result;
     },
     async antiInitOrcaFS(param) {
         //todo
+    },
+    async getOrcaFSInitProgress() {
+        //todo
+        let token = filesystem.getToken();
+        let result = await request.get(config.api.orcafs.installstatus, '', token);
+        return result;
     },
     async getOrcaFSStatus() {
         //todo
         let result = true;
         return result;
     }
-}
+};
 module.exports = model;
