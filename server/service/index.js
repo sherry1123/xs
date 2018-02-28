@@ -66,14 +66,19 @@ const model = {
         if (!initStatus) {
             result = true;
         } else {
-            //todo
-            result = true;
+            try {
+                result = await init.getMongoDBMasterOrNot();
+                //todo
+            } catch (error) {
+                errorHandler(23, error);
+            }
         }
         return result;
     },
     async updateNginxConfig(param) {
         let path = config.nginx.path;
         try {
+            await promise.chmodFileInPromise(path, 777);
             let file = await promise.readFileInPromise(path);
             let data = file.replace(/127\.0\.0\.1/g, `${param}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
             await promise.writeFileInPromise(path, data);

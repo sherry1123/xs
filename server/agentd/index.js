@@ -3,9 +3,7 @@ const Koa = require('koa');
 const app = new Koa();
 const CronJob = require('cron').CronJob;
 const router = new require('koa-router')();
-const middleware = require('../middleware');
 const promise = require('../module/promise');
-const bodyParser = require('koa-bodyparser');
 //service
 const getCpuInfo = () => {
     let cpus = os.cpus();
@@ -27,9 +25,7 @@ const getCpuUsage = () => {
     CPU.total = cpu.total, CPU.used = cpu.used, CPU.usage = usage;
 };
 const getIopsUsage = async () => {
-    // let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
-    let random = ~~(Math.random() * 1000 * 1000);
-    let cmd = `echo ${random}`;
+    let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
     IOPS.used = Number(String(await promise.runCommandInPromise(cmd)).replace('\n', ''));
 };
 const getMemoryUsage = () => {
@@ -58,7 +54,5 @@ const getAll = ctx => {
 //router
 router.all('/hardware/getall', getAll);
 //app
-app.use(bodyParser());
-app.use(middleware.initParam());
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(3457);
