@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import update from "react-addons-update";
-import {Button, Divider, Form, Icon, Input, Progress, message, Steps, Switch, Tooltip} from 'antd';
+import {Button, Divider, Form, Icon, Input, message, notification, Progress, Steps, Switch, Tooltip} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
@@ -44,8 +44,18 @@ class Initialize extends Component {
         }
     }
 
-    setEnableHA (checked){
-        this.props.setEnableHA(checked);
+    async setEnableHA (checked){
+        if (checked){
+            await this.addIP('managementServerIPs');
+            notification.open({
+                message: '提示',
+                description: lang('您已为管理服务器启用HA，请配置两个有效的管理服务器IP，并配置存储集群服务管理IP以及HB IP',
+                    'You have enabled HA for management server, please configure two valid management server IPs, storage cluster service management IP and HB IP')
+            });
+        } else {
+            await this.removeIP('managementServerIPs', 1);
+        }
+        await this.props.setEnableHA(checked);
     }
 
     async addIP (category){
@@ -58,8 +68,6 @@ class Initialize extends Component {
     async removeIP (category, i){
         this.props.removeIP(category, i);
         // remove corresponding validation obj
-        let errorArr = Object.assign([], this.state[category + 'Error']);
-        errorArr.splice(i, 1);
         await this.setErrorArr(category, i, 'remove');
     }
 
@@ -197,7 +205,7 @@ class Initialize extends Component {
                                 <QueueAnim>
                                     <section key="ip-input-1" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('元数据服务器允许配置0至n个', 'There are 0 to n metadata servers allowed to configurate')}>
+                                            <Tooltip placement="top" title={lang('元数据服务器允许配置0至n个', 'There are 0 to n metadata servers allowed to configure')}>
                                                 {lang('元数据服务器', 'Metadata Servers')}
                                             </Tooltip>
                                         </Divider>
@@ -208,12 +216,13 @@ class Initialize extends Component {
                                                     help={this.state['metadataServerIPsError'][i].help}
                                                 >
                                                     <Input className="fs-ip-input" value={ip}
+                                                        placeholder={lang('请输入元数据服务器IP', 'please enter metadata sever IP')}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'metadataServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'metadataServerIPs', i, value)();
                                                         }}
                                                         addonAfter={
-                                                            <Button title={lang('移除', 'remove')} icon="minus" size="small"
+                                                            i !== 0 && <Button title={lang('移除', 'remove')} icon="minus" size="small"
                                                                 onClick={this.removeIP.bind(this, 'metadataServerIPs', i)} />
                                                         }
                                                     />
@@ -225,7 +234,7 @@ class Initialize extends Component {
                                     </section>
                                     <section key="ip-input-2" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('存储服务器允许0至n个', 'There are 0 to n storage servers allowed')}>
+                                            <Tooltip placement="top" title={lang('存储服务器允许配置0至n个', 'There are 0 to n storage servers allowed to configure')}>
                                                 {lang('存储服务器', 'Storage Servers')}
                                             </Tooltip>
                                         </Divider>
@@ -236,12 +245,13 @@ class Initialize extends Component {
                                                     help={this.state['storageServerIPsError'][i].help}
                                                 >
                                                     <Input className="fs-ip-input" value={ip}
+                                                        placeholder={lang('请输入存储服务器IP', 'please enter storage sever IP')}
                                                         onChange={({target: {value}}) => {
-                                                           this.setIP.bind(this, 'storageServerIPs', i, value)();
-                                                           this.validateIP.bind(this, 'storageServerIPs', i, value)();
+                                                            this.setIP.bind(this, 'storageServerIPs', i, value)();
+                                                            this.validateIP.bind(this, 'storageServerIPs', i, value)();
                                                         }}
                                                         addonAfter={
-                                                            <Button title={lang('移除', 'remove')} icon="minus" size="small"
+                                                            i !== 0 && <Button title={lang('移除', 'remove')} icon="minus" size="small"
                                                                 onClick={this.removeIP.bind(this, 'storageServerIPs', i)} />
                                                         }
                                                     />
@@ -249,77 +259,73 @@ class Initialize extends Component {
                                             }
                                         </QueueAnim>
                                         <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
-                                        onClick={this.addIP.bind(this, 'storageServerIPs')} />
+                                            onClick={this.addIP.bind(this, 'storageServerIPs')} />
                                     </section>
                                     <section key="ip-input-3" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('管理服务器节点允许1至2个', 'There are 1 to 2 management servers allowed')}>
+                                            <Tooltip placement="top" title={lang('管理服务器节点允许配置1至2个', 'There are 1 to 2 management servers allowed to configure')}>
                                                 {lang('管理服务器', 'Management Server')}
                                             </Tooltip>
                                         </Divider>
                                         <QueueAnim type={['right', 'left']}>
                                             {this.props.managementServerIPs.map((ip, i) =>
-                                                <Form.Item className="fs-ip-input-item" key={`client-${i}`}
+                                                <Form.Item className="fs-ip-input-item" key={`management-server-${i}`}
                                                     validateStatus={this.state['managementServerIPsError'][i].status}
                                                     help={this.state['managementServerIPsError'][i].help}
                                                 >
                                                     <Input className="fs-ip-input" value={ip}
+                                                        placeholder={lang('请输入管理服务器IP', 'please enter management server IP')}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'managementServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'managementServerIPs', i, value)();
                                                         }}
-                                                        addonAfter={
-                                                            <Button title={lang('移除', 'remove')} icon="minus" size="small"
-                                                                onClick={this.removeIP.bind(this, 'managementServerIPs', i)}/>
-                                                        }
                                                     />
                                                 </Form.Item>)
                                             }
-                                            {this.props.managementServerIPs.length < 2 &&
-                                                <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
-                                                    onClick={this.addIP.bind(this, 'managementServerIPs')} />}
-                                            <Divider dashed style={{margin: "12px 0"}} />
-                                            <div className="fs-ip-input-item">
-                                                <label>{lang('为管理服务器开启HA', 'Enable HA for Management Server')}</label>
-                                                <Switch size="small" style={{float: 'right'}} title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击开启', 'Click to enable')}
-                                                    checked={this.props.enableHA}
-                                                    onChange={this.setEnableHA.bind(this)}
-                                                />
-                                            </div>
-                                            {!this.props.enableHA && <Divider dashed style={{margin: "12px 0"}} />}
-                                            {this.props.enableHA &&
-                                                <div>
-                                                    {this.props.floatIPs.map((ip, i) =>
-                                                        <Form.Item className="fs-ip-input-item" key={`float-${i}`}
-                                                            label={i === 0 ? lang('存储集群服务管理IP', 'Cluster service management IP') : null}
-                                                            validateStatus={this.state['floatIPsError'][i].status}
-                                                            help={this.state['floatIPsError'][i].help}
-                                                        >
-                                                            <Input className="fs-ip-input" value={ip}
-                                                                onChange={({target: {value}}) => {
-                                                                    this.setIP.bind(this, 'floatIPs', i, value)();
-                                                                    this.validateIP.bind(this, 'floatIPs', i, value)();
-                                                                }}
-                                                            />
-                                                        </Form.Item>)
-                                                    }
-                                                    {this.props.hbIPs.map((ip, i) =>
-                                                        <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
-                                                            label={i === 0 ? lang('HB IP', 'HB IP') : null}
-                                                            validateStatus={this.state['hbIPsError'][i].status}
-                                                            help={this.state['hbIPsError'][i].help}
-                                                        >
-                                                            <Input className="fs-ip-input" value={ip}
-                                                                onChange={({target: {value}}) => {
-                                                                    this.setIP.bind(this, 'hbIPs', i, value)();
-                                                                    this.validateIP.bind(this, 'hbIPs', i, value)();
-                                                                }}
-                                                            />
-                                                        </Form.Item>)
-                                                    }
-                                                </div>
-                                            }
                                         </QueueAnim>
+                                        <Divider dashed style={{margin: "12px 0"}} />
+                                        <div className="fs-ip-input-item">
+                                            <label>{lang('为管理服务器启用HA', 'Enable HA for Management Server')}</label>
+                                            <Switch size="small" style={{float: 'right'}} title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击开启', 'Click to enable')}
+                                                checked={this.props.enableHA}
+                                                onChange={this.setEnableHA.bind(this)}
+                                            />
+                                        </div>
+                                        <Divider dashed style={{margin: "12px 0"}} />
+                                        {this.props.enableHA &&
+                                            <div>
+                                                {this.props.floatIPs.map((ip, i) =>
+                                                    <Form.Item className="fs-ip-input-item" key={`float-${i}`}
+                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster service management IP') : null}
+                                                        validateStatus={this.state['floatIPsError'][i].status}
+                                                        help={this.state['floatIPsError'][i].help}
+                                                    >
+                                                        <Input className="fs-ip-input" value={ip}
+                                                            placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
+                                                            onChange={({target: {value}}) => {
+                                                                this.setIP.bind(this, 'floatIPs', i, value)();
+                                                                this.validateIP.bind(this, 'floatIPs', i, value)();
+                                                            }}
+                                                        />
+                                                    </Form.Item>)
+                                                }
+                                                {this.props.hbIPs.map((ip, i) =>
+                                                    <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
+                                                        label={i === 0 ? lang('HB IP', 'HB IP') : null}
+                                                        validateStatus={this.state['hbIPsError'][i].status}
+                                                        help={this.state['hbIPsError'][i].help}
+                                                    >
+                                                        <Input className="fs-ip-input" value={ip}
+                                                            placeholder={lang('请输入HB IP', 'please enter HB IP')}
+                                                            onChange={({target: {value}}) => {
+                                                                this.setIP.bind(this, 'hbIPs', i, value)();
+                                                                this.validateIP.bind(this, 'hbIPs', i, value)();
+                                                            }}
+                                                        />
+                                                    </Form.Item>)
+                                                }
+                                            </div>
+                                        }
                                     </section>
                                 </QueueAnim>
                             </div>
@@ -341,7 +347,7 @@ class Initialize extends Component {
                                     <section key="ip-confirm-1" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">{lang('元数据服务器', 'Metadata Servers')}</Divider>
                                         {this.props.metadataServerIPs.map((ip, i) =>
-                                            <Form.Item className="fs-ip-input-item" key={i}>
+                                            <Form.Item className="fs-ip-input-item fs-t-c" key={i}>
                                                 <span>{ip}</span>
                                             </Form.Item>)
                                         }
@@ -349,7 +355,7 @@ class Initialize extends Component {
                                     <section key="ip-confirm-2" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">{lang('存储服务器', 'Storage Servers')}</Divider>
                                         {this.props.storageServerIPs.map((ip, i) =>
-                                            <Form.Item className="fs-ip-input-item" key={i}>
+                                            <Form.Item className="fs-ip-input-item fs-t-c" key={i}>
                                                 <span>{ip}</span>
                                             </Form.Item>)
                                         }
@@ -357,7 +363,7 @@ class Initialize extends Component {
                                     <section key="ip-confirm-3" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">{lang('管理服务器', 'Mangement Server')}</Divider>
                                         {this.props.managementServerIPs.map((ip, i) =>
-                                            <Form.Item className="fs-ip-input-item" key={i}>
+                                            <Form.Item className="fs-ip-input-item fs-t-c" key={i}>
                                                 <span>{ip}</span>
                                             </Form.Item>)
                                         }
@@ -367,18 +373,19 @@ class Initialize extends Component {
                                                 <div className="fs-ip-input-item">
                                                     <label>{lang('管理服务器HA配置', 'Management Server HA Configuration')}</label>
                                                 </div>
+                                                <Divider dashed style={{margin: "12px 0"}} />
                                                 {this.props.floatIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={i}
                                                         label={i === 0 ? lang('存储集群服务管理IP', 'Cluster service management IP') : null}
                                                     >
-                                                        <span>{ip}</span>
+                                                        <div className="fs-t-c">{ip}</div>
                                                     </Form.Item>)
                                                 }
                                                 {this.props.hbIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={i}
                                                         label={i === 0 ? lang('HB IP', 'HB IP') : null}
                                                     >
-                                                        <span>{ip}</span>
+                                                        <div className="fs-t-c">{ip}</div>
                                                     </Form.Item>)
                                                 }
                                             </div>
@@ -458,7 +465,7 @@ class Initialize extends Component {
                     {
                         this.state.current === this.state.stepNum - 1 &&
                         <Button className="fs-initialize-btn done" size="small" onClick={this.forwardLogin.bind(this)}>
-                            <Icon type="check" /> {lang('开始使用', 'Start Using')}
+                            <Icon type="check" style={{color: '#3bc374'}} /> {lang('开始使用', 'Start Using')}
                         </Button>
                     }
                 </section >

@@ -1,4 +1,4 @@
-## OrcaFS UI Project
+## OrcaFS Big Frontend Project
 
 ### frontend
 
@@ -7,7 +7,7 @@
  - ./public          - production build destination
  - ./scripts         - npm scripts for running cli tools
  - ./src             - source code and static resource for webpack
- - ./src/component   - common components and high-level abstractions of mature business views components
+ - ./src/component   - common components and high-level abstractions of mature business-view components
  - ./src/images      - image resource
  - ./src/redux       - state management
  - ./src/services    - useful functions and local data/map
