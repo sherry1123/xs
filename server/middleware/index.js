@@ -1,5 +1,5 @@
 const config = require('../config');
-const zlib = require('../module/zlib');
+const promise = require('../module/promise');
 const init = require('../service/initialize');
 const model = {
 	initRequest() {
@@ -60,7 +60,7 @@ const model = {
 			let acceptEncoding = ctx.state.encoding;
 			if (acceptEncoding && acceptEncoding.includes('gzip')) {
 				try {
-					body = await zlib.gzip(body, {});
+					body = await promise.gzipDataInPromise(body);
 					ctx.set('Content-Encoding', 'gzip');
 					ctx.body = body;
 				} catch (error) {

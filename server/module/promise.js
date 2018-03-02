@@ -1,4 +1,5 @@
 const fs = require('fs');
+const zlib = require('zlib');
 const child = require('child_process');
 exports.runCommandInPromise = command => {
   return new Promise((resolve, reject) => {
@@ -57,5 +58,12 @@ exports.copyFileFromRemoteNodeInPromise = (ip, src, dest) => {
     child.exec(command, (error, stdout, stderr) => {
       error ? reject(stderr) : resolve(stdout);
     });
+  });
+};
+exports.gzipDataInPromise = (data, option = {}) => {
+  return new Promise((resolve, reject) => {
+      zlib.gzip(JSON.stringify(data), option, (error, result) => {
+          error ? reject(error) : resolve(result);
+      });
   });
 };
