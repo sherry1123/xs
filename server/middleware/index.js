@@ -1,21 +1,22 @@
 const config = require('../config');
+const zlib = require('../module/zlib');
 const init = require('../service/initialize');
 const model = {
 	initRequest() {
 		return async (ctx, next) => {
 			let method = ctx.method.toLowerCase();
 			let api = ctx.url.split('/').pop().replace(/\?\S+/, '');
-			let initStatus = init.getInitStatus();
+			let key = ctx.get('Api-Key');
+			let status = init.getInitStatus();
+			let encoding = ctx.get('Accept-Encoding');
 			ctx.param = method === 'get' ? ctx.query : ctx.request.body;
-			ctx.state.api = api;
-			ctx.state.init = initStatus;
+			ctx.state = { api, key, status, encoding };
 			await next();
 		}
 	},
 	checkKey() {
 		return async (ctx, next) => {
-			let key = ctx.get('api-key');
-			let api = ctx.state.api;
+			let { api, key } = ctx.state;
 			if (key && key === config.keys[api]) {
 				await next();
 			} else {
@@ -25,10 +26,9 @@ const model = {
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let api = ctx.state.api;
-			let initStatus = ctx.state.init;
+			let { api, status } = ctx.state;
 			let initApi = ['init'];
-			if (!initStatus) {
+			if (!status) {
 				if (initApi.includes(api)) {
 					await next();
 				} else {
@@ -45,12 +45,29 @@ const model = {
 	},
 	syncStatus() {
 		return async (ctx, next) => {
-			let initStatus = String(ctx.state.init);
+			await next();
+			let initStatus = String(ctx.state.status);
 			let initCookie = ctx.cookies.get('init');
 			if (!initCookie || initCookie !== initStatus) {
 				ctx.cookies.set('init', initStatus, config.cookies);
 			}
+		}
+	},
+	compressResponse() {
+		return async (ctx, next) => {
 			await next();
+			let body = ctx.body;
+			let acceptEncoding = ctx.state.encoding;
+			if (acceptEncoding && acceptEncoding.includes('gzip')) {
+				try {
+					body = await zlib.gzip(body, {});
+					ctx.set('Content-Encoding', 'gzip');
+					ctx.body = body;
+				} catch (error) {
+					ctx.body = body;
+				}
+			}
+			ctx.body = body;
 		}
 	}
 };
