@@ -67,7 +67,6 @@ const model = {
 					ctx.body = body;
 				}
 			}
-			ctx.body = body;
 		}
 	}
 };
