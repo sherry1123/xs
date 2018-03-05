@@ -219,6 +219,7 @@ const model = {
             await init.initOrcaFS(param);
         } catch (error) {
             errorHandler(18, error, param);
+            await model.antiInitCluster(param);
         }
     },
     async antiInitCluster(param) {
@@ -230,5 +231,5 @@ const model = {
             errorHandler(19, error, param);
         }
     }
-}
+};
 module.exports = model;

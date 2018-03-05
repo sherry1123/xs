@@ -73,5 +73,5 @@ const model = {
         service.antiInitCluster(param);
         ctx.body = { code: 0, data: 'start to anti-initialize cluster' };
     }
-}
+};
 module.exports = model;
