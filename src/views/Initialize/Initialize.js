@@ -7,6 +7,7 @@ import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import {validateIpv4} from '../../services';
+import requests from '../../dataInteraction/requests';
 import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
 
@@ -106,7 +107,7 @@ class Initialize extends Component {
         this.setState({current: this.state.current - 1});
     }
 
-    next (){
+    async next (){
         let next = this.state.current + 1;
         switch (next) {
             case 1:
@@ -128,9 +129,17 @@ class Initialize extends Component {
                         }
                     }
                 }
-                validated ?
-                    this.setState({current: next}) :
+                if (validated){
+                    let checkResult = await requests.checkIPs();
+                    if (checkResult){
+                        this.setState({current: next});
+                    } else {
+                        //
+                        message.error(lang('经检测有IP不能正常使用，请更换', 'Some IPs seem can not be used normally，please change them'));
+                    }
+                } else {
                     message.error(lang('IP输入有误，请先修正', 'Something is wrong with IP input, please correct it first'));
+                }
                 break;
             case 2:
                 this.setState({current: next});
@@ -263,7 +272,7 @@ class Initialize extends Component {
                                     </section>
                                     <section key="ip-input-3" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('管理服务器节点允许配置1至2个', 'There are 1 to 2 management servers allowed to configure')}>
+                                            <Tooltip placement="top" title={lang('管理服务器允许配置1至2个', 'There are 1 to 2 management servers allowed to configure')}>
                                                 {lang('管理服务器', 'Management Server')}
                                             </Tooltip>
                                         </Divider>

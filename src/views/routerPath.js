@@ -14,17 +14,15 @@ const routerPath = {
 
     // below paths are Main's children route, soo they have a common prefix '/storm-fs',
     // the corresponding views of these paths will render after Main's rendering is completed
-    MetadataNodesOverview: '/metadata-nodes-overview',
-    MetadataNodesDetail: '/metadata-nodes-detail',
+    Dashboard: '/dashboard',
 
-    StorageNodesOverview: '/storage-nodes-overview',
-    StorageNodesDetail: '/storage-nodes-detail',
+    MetadataNodes: '/metadata-nodes',
 
-    ClientStatisticsMetadata: '/client-statistics-metadata',
-    ClientStatisticsStorage: '/client-statistics-storage',
+    StorageNodes: '/storage-nodes',
 
-    UserStatisticsMetadata: '/user-statistics-metadata',
-    UserStatisticsStorage: '/user-statistics-storage',
+    ClientStatistics: '/client-statistics',
+
+    UserStatistics: '/user-statistics',
 
     ManagementKnownProblems: '/management-known-problems',
     ManagementLogFile: '/management-log-file',
@@ -36,10 +34,11 @@ const routerPath = {
 export default routerPath;
 
 export const pathToMenu = {
-    MetadataNodes: [routerPath.MetadataNodesOverview, routerPath.MetadataNodesDetail],
-    StorageNodes: [routerPath.StorageNodesOverview, routerPath.StorageNodesDetail],
-    ClientStatistics: [routerPath.ClientStatisticsMetadata, routerPath.ClientStatisticsStorage],
-    UserStatistics: [routerPath.UserStatisticsMetadata, routerPath.UserStatisticsStorage],
+    Dashboard: [routerPath.Dashboard],
+    MetadataNodes: [routerPath.MetadataNodes],
+    StorageNodes: [routerPath.StorageNodes],
+    ClientStatistics: [routerPath.ClientStatistics],
+    UserStatistics: [routerPath.UserStatistics],
     Management: [routerPath.ManagementKnownProblems, routerPath.ManagementLogFile],
-    FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser]
+    FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser],
 };

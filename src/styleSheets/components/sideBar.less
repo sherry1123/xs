@@ -1,13 +1,25 @@
-.fs-side-bar-wrapper {
+.fs-sidebar-wrapper {
     margin-top: 0;
     width: 200px;
-    transition: margin 0.4s ease-in-out;
+    transition: all .4s ease-in-out;
     font-size: 30px;
     background-color: @white;
     &.up {
         margin-top: -60px;
     }
-    .fs-side-bar-menu-wrapper {
-        width: 200px;
+    &.hide {
+        width: 30px;
+        transform: translateX(-203px);
+    }
+    .fs-visible-operation-wrapper {
+        padding-right: 10px;
+        text-align: right;
+        border-bottom: 1px solid @border;
+        .fs-visible-operation-button {
+            transition: transform .4s ease-in-out;
+            &.rock {
+                transform: translateX(206px) translateY(300px) rotate(.5turn);
+            }
+        }
     }
 }

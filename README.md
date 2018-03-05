@@ -2,6 +2,12 @@
 
 ### frontend
 
+# project is initialized using 'create-react-app' provided by Facebook React.js authorities.
+# [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
+
+# ui component library is 'antd' provided by Ant Financial R D team.
+# [https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
+
 #### folder directory structure
  - ./config          - configurations for cli tools
  - ./public          - production build destination

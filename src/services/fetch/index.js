@@ -12,7 +12,7 @@ const initRequest = (url, options) => {
             } else {
                 reject(response.statusText);
             }
-        } catch (error) {
+        } catch (error){
             reject(error);
         }
     });
@@ -24,4 +24,6 @@ const fetchGet = (url, param) => (initRequest(initSearchUrl(url, param), {method
 
 const fetchPost = (url, param) => (initRequest(url, {method: 'POST', body: JSON.stringify(param)}));
 
-export {fetchGet, fetchPost};
+const fetchMock = () => new Promise(resolve => setTimeout(resolve(true), 1500));
+
+export {fetchGet, fetchPost, fetchMock};

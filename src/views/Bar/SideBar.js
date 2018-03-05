@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Affix, Menu, Icon} from 'antd';
+import {Button, Menu, Icon} from 'antd';
 import mainAction from '../../redux/actions/mainAction';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
@@ -13,7 +13,8 @@ class SideBar extends Component {
         this.props.changeActivePage(key);
         this.getSubMenuByPath(key);
         this.state = {
-            direction: 'down'
+            direction: 'down',
+            menuVisible: true
         };
     }
 
@@ -27,6 +28,11 @@ class SideBar extends Component {
 
     componentWillUnmount (){
         window.onhashchange = null;
+    }
+
+    changeMenuVisible (){
+        let menuVisible = !this.state.menuVisible;
+        this.setState({menuVisible});
     }
 
     switchScrollDirection (direction){
@@ -57,54 +63,38 @@ class SideBar extends Component {
 
     render (){
         return (
-            <Affix className={`fs-side-bar-wrapper ${this.state.direction}`}>
-                <aside >
-                    <Menu className="fs-side-bar-menu-wrapper"
-                        selectedKeys={[this.props.activePage]}
-                        openKeys={this.props.activeMenu}
-                        mode="inline"
-                        onClick={this.forwardPage.bind(this)}
-                        onOpenChange={this.openMenu.bind(this)}
+            <aside className={`fs-sidebar-wrapper ${this.state.direction}  ${this.state.menuVisible ? '' : 'hide'}`}>
+                <div className={`fs-visible-operation-wrapper`}>
+                    <Button className={`fs-visible-operation-button ${this.state.menuVisible ? '' : 'rock'}`} shape="circle" icon="left" size="small"
+                        onClick={this.changeMenuVisible.bind(this)}
+                    />
+                </div>
+                <Menu
+                    selectedKeys={[this.props.activePage]}
+                    openKeys={this.props.activeMenu}
+                    mode="inline"
+                    onClick={this.forwardPage.bind(this)}
+                    onOpenChange={this.openMenu.bind(this)}
+                >
+                    <Menu.Item key={routerPath.Dashboard}><Icon type="dashboard" />{lang('仪表盘', 'Dashboard')}</Menu.Item>
+                    <Menu.Item key={routerPath.MetadataNodes}><Icon type="file-text" />{lang('元数据节点', 'Metadata Nodes')}</Menu.Item>
+                    <Menu.Item key={routerPath.StorageNodes}><Icon type="hdd" />{lang('存储节点', 'Storage Nodes')}</Menu.Item>
+                    <Menu.Item key={routerPath.ClientStatistics}><Icon type="line-chart" />{lang('客户端统计', 'Client Statistics')}</Menu.Item>
+                    <Menu.Item key={routerPath.UserStatistics}><Icon type="dot-chart" />{lang('用户统计信息', 'User Statistics')}</Menu.Item>
+                    <Menu.SubMenu key="Management"
+                        title={<span><Icon type="appstore-o" /><span>{lang('管理', 'Management')}</span></span>}
                     >
-                        <Menu.SubMenu key="MetadataNodes"
-                            title={<span><Icon type="file-text" /><span>{lang('元数据节点', 'Metadata Nodes')}</span></span>}
-                        >
-                            <Menu.Item key={routerPath.MetadataNodesOverview}>{lang('概述', 'Overview')}</Menu.Item>
-                            <Menu.Item key={routerPath.MetadataNodesDetail}>{lang('节点详情', 'Node Details')}</Menu.Item>
-                        </Menu.SubMenu>
-                        <Menu.SubMenu key="StorageNodes"
-                            title={<span><Icon type="hdd" /><span>{lang('存储节点', 'Storage Nodes')}</span></span>}
-                        >
-                            <Menu.Item key={routerPath.StorageNodesOverview}>{lang('概述', 'Overview')}</Menu.Item>
-                            <Menu.Item key={routerPath.StorageNodesDetail}>{lang('节点详情', 'Node Details')}</Menu.Item>
-                        </Menu.SubMenu>
-                        <Menu.SubMenu key="ClientStatistics"
-                            title={<span><Icon type="line-chart" /><span>{lang('客户端统计数据', 'Client Statistics')}</span></span>}
-                        >
-                            <Menu.Item key={routerPath.ClientStatisticsMetadata}>{lang('元数据', 'Metadata')}</Menu.Item>
-                            <Menu.Item key={routerPath.ClientStatisticsStorage}>{lang('存储', 'Storage')}</Menu.Item>
-                        </Menu.SubMenu>
-                        <Menu.SubMenu key="UserStatistics"
-                            title={<span><Icon type="dot-chart" /><span>{lang('用户统计信息', 'User Statistics')}</span></span>}
-                        >
-                            <Menu.Item key={routerPath.UserStatisticsMetadata}>{lang('元数据', 'Metadata')}</Menu.Item>
-                            <Menu.Item key={routerPath.UserStatisticsStorage}>{lang('存储', 'Storage')}</Menu.Item>
-                        </Menu.SubMenu>
-                        <Menu.SubMenu key="Management"
-                            title={<span><Icon type="appstore-o" /><span>{lang('管理', 'Management')}</span></span>}
-                        >
-                            <Menu.Item key={routerPath.ManagementKnownProblems}>{lang('已知问题', 'Known Problems')}</Menu.Item>
-                            <Menu.Item key={routerPath.ManagementLogFile}>{lang('日志文件', 'Log File')}</Menu.Item>
-                        </Menu.SubMenu>
-                        <Menu.SubMenu key="FSOperation"
-                            title={<span><Icon type="setting" /><span>{lang('文件系统操作', 'FS Operation')}</span></span>}
-                        >
-                            <Menu.Item key={routerPath.FSOperationStripeSettings}>{lang('条带设置', 'Stripe Settings')}</Menu.Item>
-                            <Menu.Item key={routerPath.FSOperationFileBrowser}>{lang('文件浏览器', 'File Browser')}</Menu.Item>
-                        </Menu.SubMenu>
-                    </Menu>
-                </aside>
-            </Affix>
+                        <Menu.Item key={routerPath.ManagementKnownProblems}>{lang('已知问题', 'Known Problems')}</Menu.Item>
+                        <Menu.Item key={routerPath.ManagementLogFile}>{lang('日志文件', 'Log File')}</Menu.Item>
+                    </Menu.SubMenu>
+                    <Menu.SubMenu key="FSOperation"
+                        title={<span><Icon type="setting" /><span>{lang('文件系统操作', 'FS Operation')}</span></span>}
+                    >
+                        <Menu.Item key={routerPath.FSOperationStripeSettings}>{lang('条带设置', 'Stripe Settings')}</Menu.Item>
+                        <Menu.Item key={routerPath.FSOperationFileBrowser}>{lang('文件浏览器', 'File Browser')}</Menu.Item>
+                    </Menu.SubMenu>
+                </Menu>
+            </aside>
         );
     }
 }
