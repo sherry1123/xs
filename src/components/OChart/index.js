@@ -35,6 +35,7 @@ export default class OChart extends Component {
 }
 
 /**
+ * This is abstraction for G2 line chart based on Viser
  * G2 parameter brief description
  *
  * @param data Object[] data source, need raw json object array or processed by '@antv/data-set'

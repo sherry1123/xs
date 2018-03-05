@@ -32,6 +32,9 @@ import ManagementLogFile from '../Management/ManagementLogFile';
 import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings';
 import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
 
+// dashboard
+import Dashboard from '../Dashboard/Dashboard';
+
 export default class Main extends Component {
     componentWillMount (){
         let isInitialized = Cookie.get('init');
@@ -71,7 +74,7 @@ export default class Main extends Component {
                 <TopBar history={this.props.history} ref={ref => this.TopBar = ref} />
                 <div className="fs-body-wrapper">
                     <SideBar history={this.props.history} ref={ref => this.SideBar = ref} />
-                    <main className='fs-page-wrapper'>
+                    <main className='fs-content-wrapper'>
                         <Route path={`${Main}${routerPath.MetadataNodesOverview}`} component={MetadataNodesOverview} />
                         <Route path={`${Main}${routerPath.MetadataNodesDetail}`} component={MetadataNodesDetail} />
 
@@ -89,6 +92,8 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.FSOperationStripeSettings}`} component={FSOperationStripeSettings} />
                         <Route path={`${Main}${routerPath.FSOperationFileBrowser}`} component={FSOperationFileBrowser} />
+
+                        <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
                     </main>
                 </div>
                 <FooterBar />

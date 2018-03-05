@@ -14,6 +14,8 @@ const routerPath = {
 
     // below paths are Main's children route, soo they have a common prefix '/storm-fs',
     // the corresponding views of these paths will render after Main's rendering is completed
+    Dashboard: '/dashboard',
+
     MetadataNodesOverview: '/metadata-nodes-overview',
     MetadataNodesDetail: '/metadata-nodes-detail',
 
