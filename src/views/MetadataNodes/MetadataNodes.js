@@ -49,7 +49,7 @@ class MetadataNodes extends Component {
                     </div>
                     <div className="fs-metadata-node-detail-item">
                         <section className="fs-page-item-wrapper fs-metadata-node-info-wrapper">
-                            <h3 className="fs-page-title item">{lang(`${this.state.currentNode.name} 节点基础信息`, 'Basic Information')}</h3>
+                            <h3 className="fs-page-title item">{lang(`节点基础信息 ${this.state.currentNode.name}`, 'Basic Information')}</h3>
                             <section className="fs-page-item-content fs-metadata-node-info-content">
                                 <span className="fs-info-item">
                                     <span className="fs-info-label">{lang('节点：', 'Node: ')}</span>
@@ -70,7 +70,7 @@ class MetadataNodes extends Component {
                             </section>
                         </section>
                         <section className="fs-page-item-wrapper fs-metadata-work-request-wrapper">
-                            <h3 className="fs-page-title item">{lang(`${this.state.currentNode.name} 节点用户操作`, 'User Operation')}</h3>
+                            <h3 className="fs-page-title item">{lang(`节点用户操作 ${this.state.currentNode.name}`, 'User Operation')}</h3>
                             <section className="fs-page-item-content fs-metadata-work-request-content">
                                 这里展示类似于客户端统计中的用户操作的记录，而非工作请求
                             </section>
