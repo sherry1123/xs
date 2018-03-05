@@ -16,17 +16,13 @@ const routerPath = {
     // the corresponding views of these paths will render after Main's rendering is completed
     Dashboard: '/dashboard',
 
-    MetadataNodesOverview: '/metadata-nodes-overview',
-    MetadataNodesDetail: '/metadata-nodes-detail',
+    MetadataNodes: '/metadata-nodes',
 
-    StorageNodesOverview: '/storage-nodes-overview',
-    StorageNodesDetail: '/storage-nodes-detail',
+    StorageNodes: '/storage-nodes',
 
-    ClientStatisticsMetadata: '/client-statistics-metadata',
-    ClientStatisticsStorage: '/client-statistics-storage',
+    ClientStatistics: '/client-statistics',
 
-    UserStatisticsMetadata: '/user-statistics-metadata',
-    UserStatisticsStorage: '/user-statistics-storage',
+    UserStatistics: '/user-statistics',
 
     ManagementKnownProblems: '/management-known-problems',
     ManagementLogFile: '/management-log-file',
@@ -38,10 +34,11 @@ const routerPath = {
 export default routerPath;
 
 export const pathToMenu = {
-    MetadataNodes: [routerPath.MetadataNodesOverview, routerPath.MetadataNodesDetail],
-    StorageNodes: [routerPath.StorageNodesOverview, routerPath.StorageNodesDetail],
-    ClientStatistics: [routerPath.ClientStatisticsMetadata, routerPath.ClientStatisticsStorage],
-    UserStatistics: [routerPath.UserStatisticsMetadata, routerPath.UserStatisticsStorage],
+    Dashboard: [routerPath.Dashboard],
+    MetadataNodes: [routerPath.MetadataNodes],
+    StorageNodes: [routerPath.StorageNodes],
+    ClientStatistics: [routerPath.ClientStatistics],
+    UserStatistics: [routerPath.UserStatistics],
     Management: [routerPath.ManagementKnownProblems, routerPath.ManagementLogFile],
-    FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser]
+    FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser],
 };

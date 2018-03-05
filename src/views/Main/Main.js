@@ -9,20 +9,16 @@ import SideBar from '../Bar/SideBar';
 import FooterBar from '../Bar/FooterBar';
 
 // metadata nodes
-import MetadataNodesOverview from '../MetadataNodes/MetadataNodesOverview';
-import MetadataNodesDetail from '../MetadataNodes/MetadataNodesDetail';
+import MetadataNodes from '../MetadataNodes/MetadataNodes';
 
 // storage nodes
-import StorageNodesOverview from '../StorageNodes/StorageNodesOverview';
-import StorageNodesDetail from '../StorageNodes/StorageNodesDetail';
+import StorageNodes from '../StorageNodes/StorageNodes';
 
 // client statistics metadata
-import ClientStatisticsMetadata from '../ClientStatistics/ClientStatisticsMetadata';
-import ClientStatisticsStorage from '../ClientStatistics/ClientStatisticsStorage';
+import ClientStatistics from '../ClientStatistics/ClientStatistics';
 
 // user statistics metadata
-import UserStatisticsMetadata from '../UserStatistics/UserStatisticsMetadata';
-import UserStatisticsStorage from '../UserStatistics/UserStatisticsStorage';
+import UserStatistics from '../UserStatistics/UserStatistics';
 
 // user statistics metadata
 import ManagementKnownProblems from '../Management/ManagementKnownProblems';
@@ -75,17 +71,13 @@ export default class Main extends Component {
                 <div className="fs-body-wrapper">
                     <SideBar history={this.props.history} ref={ref => this.SideBar = ref} />
                     <main className='fs-content-wrapper'>
-                        <Route path={`${Main}${routerPath.MetadataNodesOverview}`} component={MetadataNodesOverview} />
-                        <Route path={`${Main}${routerPath.MetadataNodesDetail}`} component={MetadataNodesDetail} />
+                        <Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />
 
-                        <Route path={`${Main}${routerPath.StorageNodesOverview}`} component={StorageNodesOverview} />
-                        <Route path={`${Main}${routerPath.StorageNodesDetail}`} component={StorageNodesDetail} />
+                        <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
 
-                        <Route path={`${Main}${routerPath.ClientStatisticsMetadata}`} component={ClientStatisticsMetadata} />
-                        <Route path={`${Main}${routerPath.ClientStatisticsStorage}`} component={ClientStatisticsStorage} />
+                        <Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />
 
-                        <Route path={`${Main}${routerPath.UserStatisticsMetadata}`} component={UserStatisticsMetadata} />
-                        <Route path={`${Main}${routerPath.UserStatisticsStorage}`} component={UserStatisticsStorage} />
+                        <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
 
                         <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />
                         <Route path={`${Main}${routerPath.ManagementLogFile}`} component={ManagementLogFile} />
