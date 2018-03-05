@@ -6,14 +6,21 @@ input[type="number"]{
     -moz-appearance: textfield;
 }
 
-.ant-menu-inline {
-    border-right: none !important;
-}
-
 .ant-form-item-label {
     white-space: normal !important;
 }
 
 .ant-table-thead > tr > th {
     background-color: @white !important;
+}
+
+.ant-menu {
+    &.ant-menu-inline,
+    &.ant-menu-vertical {
+        border-right: none !important;
+    }
+    .ant-menu-item .anticon,
+    .ant-menu-submenu-title .anticon {
+        margin-right: 16px !important;
+    }
 }
