@@ -230,6 +230,17 @@ const model = {
         } catch (error) {
             errorHandler(19, error, param);
         }
+    },
+    async clusterEnvCheck(param) {
+        let { ipList } = param;
+        let result = {};
+        try {
+            let data = await init.initEnvCheck(ipList);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(24, error, param);
+        }
+        return result;
     }
 };
 module.exports = model;

@@ -27,7 +27,7 @@ const model = {
 	filterRequest() {
 		return async (ctx, next) => {
 			let { api, status } = ctx.state;
-			let initApi = ['init'];
+			let initApi = ['init', 'clusterenvcheck'];
 			if (!status) {
 				if (initApi.includes(api)) {
 					await next();

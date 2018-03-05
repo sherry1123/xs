@@ -66,6 +66,18 @@ const model = {
         //todo
         let result = true;
         return result;
+    },
+    async initEnvCheck(ipList) {
+        let result = {};
+        for (let ip of ipList) {
+            try {
+                await request.get(`http://${ip}:3456/api/testapi`);
+                result[ip] = true;
+            } catch (error) {
+                result[ip] = false;
+            }
+        }
+        return result;
     }
 };
 module.exports = model;
