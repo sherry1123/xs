@@ -171,7 +171,8 @@ const model = {
         let api = config.api.agentd.hardware;
         let url = api;
         try {
-            let iplist = ['127.0.0.1'];
+            let iplist = await database.getSetting({ key: 'nodelist' });
+            iplist = iplist.value.split(',');
             let data = [];
             for (let ip of iplist) {
                 url = api.replace('localhost', ip);
@@ -217,6 +218,7 @@ const model = {
         try {
             await init.initMongoDB(ipList);
             await init.initOrcaFS(param);
+            await init.saveInitInfo(ipList);
         } catch (error) {
             errorHandler(18, error, param);
             await model.antiInitCluster(param);
