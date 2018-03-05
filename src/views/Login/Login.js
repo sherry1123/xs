@@ -26,7 +26,7 @@ class Login extends Component {
         if (isInitialized === 'true'){
             let isLoggedIn = Cookie.get('user');
             if (!!isLoggedIn && (isLoggedIn !== 'false')){
-                this.props.history.replace(routerPath.Main + routerPath.MetadataNodesOverview);
+                this.props.history.replace(routerPath.Main + routerPath.Dashboard);
             }
         } else {
             this.props.history.replace(routerPath.Init);
@@ -68,7 +68,7 @@ class Login extends Component {
             }
             // fetch login interface
 
-            this.props.history.push(routerPath.Main + routerPath.MetadataNodesOverview);
+            this.props.history.push(routerPath.Main + routerPath.Dashboard);
         } else {
             message.warning(lang('请正确输入用户名和密码', 'please fill the form'));
         }

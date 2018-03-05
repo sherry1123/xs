@@ -17,7 +17,7 @@ class Dashboard extends Component {
     render () {
         return (
             <section className="fs-page-content fs-dashboard-wrapper">
-                <section className="fs-page-item-wrapper fs-cluster-monitor-wrapper">
+                <section className="fs-page-item-wrapper title fs-cluster-monitor-wrapper">
                     <h3 className="fs-page-title item">{lang('集群监控', 'Cluster Monitor')}</h3>
                     <section className="fs-page-item-content fs-cluster-monitor-content">
                         <div className="fs-cluster-throughput-wrapper">

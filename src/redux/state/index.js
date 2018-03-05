@@ -37,6 +37,19 @@ export default {
         userInfo: {
             name: 'admin'
         },
+        // metadata nodes
+        metadataNodes: {
+            overview: {
+                metadataNodes: [
+                    {name: 'ClusterMe1',id: 'cm1',up: true},
+                    {name: 'ClusterMe2',id: 'cm2',up: true},
+                    {name: 'ClusterMe3',id: 'cm3',up: true},
+                ],
+            },
+            detail: {
+
+            }
+        },
         // stripe
         stripeInformation: {
             path: '/opt/xxx/ada',
