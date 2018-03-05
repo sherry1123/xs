@@ -15,5 +15,6 @@ router.all('/api/gethardware', controller['/api/gethardware']);
 router.all('/api/testmail', controller['/api/testmail']);
 router.all('/api/init', controller['/api/init']);
 router.all('/api/antiinit', controller['/api/antiinit']);
+router.all('/api/clusterenvcheck', controller['/api/clusterenvcheck']);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const dao = require('../module/dao');
 const user = require('../model/user');
+const setting = require('../model/setting');
 const eventlog = require('../model/eventlog');
 const auditlog = require('../model/auditlog');
 const hardware = require('../model/hardware');
@@ -36,6 +37,12 @@ const model = {
     },
     async addHardware(param) {
         return await dao.createOne(hardware, param);
+    },
+    async addSetting(param) {
+        return await dao.createOne(setting, param);
+    },
+    async getSetting(param) {
+        return await dao.findOne(setting, param);
     }
 };
 module.exports = model;

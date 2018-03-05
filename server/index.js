@@ -8,7 +8,7 @@ const bodyParser = require('koa-bodyparser');
 socket.io.attach(app);
 app.use(bodyParser());
 app.use(middleware.initRequest());
-app.use(middleware.checkKey());
+//app.use(middleware.checkKey());
 app.use(middleware.filterRequest());
 app.use(middleware.syncStatus());
 app.use(middleware.compressResponse());
