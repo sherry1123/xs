@@ -8,13 +8,19 @@
                 margin-left: 10px;
             }
             .fs-node-info-wrapper {
+                .fs-switch-node-wrapper {
+                    float: right;
+                    transition: transform .5s ease-in;
+                    &.fold {
+                        transform: translateX(95%);
+                    }
+                }
                 .fs-node-info-content {
                     text-align: left;
                     .fs-info-item {
                         &.title {
                             display: block;
-                            margin: 40px 0 20px;
-                            padding-bottom: 15px;
+                            margin: 30px 0 20px;
                             color: #888888;
                             &:nth-child(1) {
                                 margin-top: 0;

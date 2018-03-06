@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon, Select, Table, Tooltip} from 'antd';
+import {Icon, Select, Table} from 'antd';
 import lang from '../../components/Language/lang';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import {TABLE_LOCALE, formatStorageSize} from '../../services';
@@ -11,7 +11,13 @@ class StorageNodes extends Component {
         super(props);
         this.state = {
             currentNode: this.props.nodes.filter(node => node.up)[0],
+            expandSwitchNode: true
         };
+    }
+
+    changeExpandSwitchNode (){
+        let expandSwitchNode = !this.state.expandSwitchNode;
+        this.setState({expandSwitchNode});
     }
 
     switchNode (nodeID){
@@ -93,19 +99,21 @@ class StorageNodes extends Component {
                         <section className="fs-page-item-wrapper fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
                                 {lang('存储节点详情', 'Storage Node Detail')}
-                                <div style={{float: 'right'}}>
+                                <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
+                                    <Icon type={this.state.expandSwitchNode ? 'right-circle' : 'left-circle'} className="fs-info-icon m-r"
+                                        title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
+                                        onClick={this.changeExpandSwitchNode.bind(this)}
+                                    />
                                     <Select style={{width: 160}} size="small" value={this.state.currentNode.id} onChange={this.switchNode.bind(this)}>
                                         {
                                             this.props.nodes.map(({name, id, up}) =>
                                                 <Select.Option key={name} value={id} disabled={!up}>
-                                                    <Icon className={up ? 'fs-option-node up' : 'fs-option-node down'} type="database" /> {name}
+                                                    <Icon className={up ? 'fs-option-node up' : 'fs-option-node down'} title={up ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                    {name}
                                                 </Select.Option>
                                             )
                                         }
                                     </Select>
-                                    <Tooltip placement="right" title={lang('点击切换存储节点','Click to switch storage node')}>
-                                        <Icon type="question-circle" className="fs-info-icon m-l" />
-                                    </Tooltip>
                                 </div>
                             </h3>
                             <section className="fs-page-item-content fs-node-info-content">
