@@ -50,16 +50,16 @@
 ```
 #### Folder Directory Structure
 ```
-- server.js entrance(master)
+- server.js    entrance(master)
 - server
-  |- agentd monitor hardware(agentd)
+  |- agentd    monitor hardware(agentd)
   |- config
   |- controller
   |- middleware
   |- model
   |- module
   |- router
-  |- schedule timing tasks(task)
+  |- schedule  timing tasks(task)
   |- service
-  |- index.js handle http request(job)
+  |- index.js  handle http request(job)
 ```
