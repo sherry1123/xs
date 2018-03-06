@@ -24,5 +24,8 @@ export {
     checkSerialNumberDup, validateNFSV4MountPath,  checkPortInput, validatePassword, checkImageNumber, validataTargetName
 } from './validation';
 
+// config
+export {TABLE_LOCALE} from './config';
+
 // random
 export {randomBoolean} from './random';

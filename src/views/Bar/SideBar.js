@@ -80,7 +80,7 @@ class SideBar extends Component {
                     onOpenChange={this.openMenu.bind(this)}
                 >
                     <Menu.Item key={routerPath.Dashboard}>
-                        <Icon type="dashboard" />{lang('仪表盘', 'Dashboard')}
+                        <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>
                     <Menu.Item key={routerPath.MetadataNodes}>
                         <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
@@ -97,7 +97,7 @@ class SideBar extends Component {
                     <Menu.SubMenu key="Management"
                         title={
                             <span>
-                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#1890ff'}} />
+                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#CC6600'}} />
                                 <span>{lang('管理', 'Management')}</span>
                             </span>
                         }
@@ -112,7 +112,7 @@ class SideBar extends Component {
                     <Menu.SubMenu key="FSOperation" inlineIndent={16}
                         title={
                             <span>
-                                <Icon type="switcher" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#1890ff'}} />
+                                <Icon type="switcher" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#00CC66'}} />
                                 <span>{lang('文件系统操作', 'FS Operation')}</span>
                             </span>
                         }

@@ -62,11 +62,18 @@ export default {
                 nodes: [
                     {name: 'ClusterSt1',id: 'cs1',up: true},
                     {name: 'ClusterSt2',id: 'cs2',up: true},
-                    {name: 'ClusterSt3',id: 'cs3',up: true},
+                    {name: 'ClusterSt3',id: 'cs3',up: false},
+                    {name: 'ClusterSt4',id: 'cs4',up: true},
                 ],
+                throughput : [],
             },
             detail: {
-
+                status: {},
+                targetList: [
+                    {id: 'target_1', path: '/dev/target_1', totalDiskCapacity: 999999999, usedDiskCapacity: 299999999, remainingDiskCapacity: 70000000},
+                    {id: 'target_2', path: '/dev/target_1', totalDiskCapacity: 599999999, usedDiskCapacity: 399999999, remainingDiskCapacity: 20000000},
+                    {id: 'target_3', path: '/dev/target_1', totalDiskCapacity: 599999999, usedDiskCapacity: 399999999, remainingDiskCapacity: 20000000},
+                ]
             }
         },
         // stripe

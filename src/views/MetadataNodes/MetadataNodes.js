@@ -20,7 +20,7 @@ class MetadataNodes extends Component {
 
     render (){
         return (
-            <section className="fs-page-content fs-node-wrapper">
+            <section className="fs-page-content fs-node-wrapper fs-metadata">
                 <section className="fs-page-item-wrapper title">
                     <h3 className="fs-page-title">{lang('元数据节点', 'Metadata Nodes')}</h3>
                 </section>
