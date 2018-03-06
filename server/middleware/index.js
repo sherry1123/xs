@@ -20,7 +20,7 @@ const model = {
 			if (key && key === config.keys[api]) {
 				await next();
 			} else {
-				ctx.body = { code: 20, message: config.errors[20] };
+				ctx.body = { code: 3, message: config.errors[3] };
 			}
 		}
 	},
@@ -32,13 +32,13 @@ const model = {
 				if (initApi.includes(api)) {
 					await next();
 				} else {
-					ctx.body = { code: 21, message: config.errors[21] };
+					ctx.body = { code: 4, message: config.errors[4] };
 				}
 			} else {
 				if (!initApi.includes(api)) {
 					await next();
 				} else {
-					ctx.body = { code: 22, message: config.errors[22] };
+					ctx.body = { code: 5, message: config.errors[5] };
 				}
 			}
 		}
