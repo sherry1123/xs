@@ -18,46 +18,14 @@ const errorHandler = (code, message, param = {}) => {
     logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
 };
 const model = {
-    async getUser(param) {
-        let result = {};
+    async getInitStatus() {
+        let result = false;
         try {
-            let data = await database.getUser(param);
-            result = responseHandler(0, data);
+            result = await init.getMongoDBStatus() && await init.getOrcaFSStatus();
         } catch (error) {
-            result = responseHandler(1, error, param);
+            errorHandler(1, error);
         }
-        return result;
-    },
-    async addUser(param) {
-        let result = {};
-        try {
-            await database.addUser(param)
-            result = responseHandler(0, 'create user success');
-        } catch (error) {
-            result = responseHandler(2, error, param);
-        }
-        return result;
-    },
-    async updateUser(param) {
-        let result = {};
-        try {
-            let { username, password } = param;
-            let query = { username, password };
-            await database.updateUser(query, param);
-            result = responseHandler(0, 'update user success');
-        } catch (error) {
-            result = responseHandler(3, error, param);
-        }
-        return result;
-    },
-    async deleteUser(param) {
-        let result = {};
-        try {
-            await database.deleteUser(param);
-            result = responseHandler(0, 'delete user success');
-        } catch (error) {
-            result = responseHandler(4, error, param);
-        }
+        init.setInitStatus(result);
         return result;
     },
     async isMaster() {
@@ -70,20 +38,63 @@ const model = {
                 result = await init.getMongoDBMasterOrNot();
                 //todo
             } catch (error) {
-                errorHandler(23, error);
+                errorHandler(2, error);
             }
         }
         return result;
     },
-    async updateNginxConfig(param) {
-        let path = config.nginx.path;
+    /**
+     * Check The Cluster Initialization Environment
+     * 
+     * @param {array} MDS Metadata Servers
+     * @param {array} OSS Object Storage Servers
+     * @param {array} MS Management Servers
+     * @param {boolean} HA High Availability
+     * @param {array} CSMIP Cluster Service Management IP
+     * @param {array} HBIP Heart Beat IP
+     */
+    async checkClusterEnv(param) {
+        let { ipList } = param;
+        let result = {};
         try {
-            await promise.chmodFileInPromise(path, 777);
-            let file = await promise.readFileInPromise(path);
-            let data = file.replace(/127\.0\.0\.1/g, `${param}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
-            await promise.writeFileInPromise(path, data);
+            let data = await init.checkClusterEnv(ipList);
+            result = responseHandler(0, data);
         } catch (error) {
-            errorHandler(6, error, param);
+            result = responseHandler(6, error, param);
+        }
+        return result;
+    },
+    /**
+     * Initialize The Cluster
+     * 
+     * According to the parameters to determine whether the cluster is turned on high availability and the type of the database cluster.
+     * First initialize the database, and then the file system, finally save the initialization information.
+     * 
+     * @param {array} MDS Metadata Servers
+     * @param {array} OSS Object Storage Servers
+     * @param {array} MS Management Servers
+     * @param {boolean} HA High Availability
+     * @param {array} CSMIP Cluster Service Management IP
+     * @param {array} HBIP Heart Beat IP
+     */
+    async initCluster(param) {
+        let { ipList } = param;
+        try {
+            await init.initMongoDB(ipList);
+            await init.initOrcaFS(param);
+            await init.saveInitInfo(ipList);
+        } catch (error) {
+            errorHandler(7, error, param);
+            await model.antiInitCluster(param);
+        }
+    },
+    async antiInitCluster(param) {
+        let { ipList } = param;
+        try {
+            await init.antiInitMongoDB(ipList);
+            await init.antiInitOrcaFS(param);
+        } catch (error) {
+            errorHandler(8, error, param);
         }
     },
     async login(param) {
@@ -94,10 +105,10 @@ const model = {
                 await model.addAuditLog({ user: param.username, desc: 'login success' });
                 result = responseHandler(0, 'login success');
             } else {
-                result = responseHandler(7, 'username or password error', param);
+                result = responseHandler(9, 'username or password error', param);
             }
         } catch (error) {
-            result = responseHandler(7, error, param);
+            result = responseHandler(9, error, param);
         }
         return result;
     },
@@ -106,13 +117,55 @@ const model = {
         await model.addAuditLog({ user: param.username, desc: 'logout success' });
         return result;
     },
+    async getUser(param) {
+        let result = {};
+        try {
+            let data = await database.getUser(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(10, error, param);
+        }
+        return result;
+    },
+    async addUser(param) {
+        let result = {};
+        try {
+            await database.addUser(param)
+            result = responseHandler(0, 'create user success');
+        } catch (error) {
+            result = responseHandler(11, error, param);
+        }
+        return result;
+    },
+    async updateUser(param) {
+        let result = {};
+        try {
+            let { username, password } = param;
+            let query = { username, password };
+            await database.updateUser(query, param);
+            result = responseHandler(0, 'update user success');
+        } catch (error) {
+            result = responseHandler(12, error, param);
+        }
+        return result;
+    },
+    async deleteUser(param) {
+        let result = {};
+        try {
+            await database.deleteUser(param);
+            result = responseHandler(0, 'delete user success');
+        } catch (error) {
+            result = responseHandler(13, error, param);
+        }
+        return result;
+    },
     async getEventLog(param) {
         let result = {};
         try {
             let data = await database.getEventLog(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(8, error, param);
+            result = responseHandler(14, error, param);
         }
         return result;
     },
@@ -121,7 +174,7 @@ const model = {
         try {
             await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
-            errorHandler(9, error, param);
+            errorHandler(15, error, param);
         }
     },
     async updateEventLog(param) {
@@ -134,7 +187,7 @@ const model = {
             }
             result = responseHandler(0, 'update event log success');
         } catch (error) {
-            result = responseHandler(10, error, param);
+            result = responseHandler(16, error, param);
         }
         return result;
     },
@@ -144,7 +197,7 @@ const model = {
             let data = await database.getAuditLog(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(11, error, param);
+            result = responseHandler(17, error, param);
         }
         return result;
     },
@@ -153,7 +206,7 @@ const model = {
         try {
             await database.addAuditLog({ time, user, group, desc, level, ip });
         } catch (error) {
-            errorHandler(12, error, param);
+            errorHandler(18, error, param);
         }
     },
     async getHardware(param) {
@@ -162,7 +215,7 @@ const model = {
             let data = await database.getHardware(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(13, error, param);
+            result = responseHandler(19, error, param);
         }
         return result;
     },
@@ -181,14 +234,7 @@ const model = {
             }
             await database.addHardware({ date, iplist, data });
         } catch (error) {
-            errorHandler(14, error, url);
-        }
-    },
-    async sendMail(param) {
-        try {
-            await email.sendMail(param);
-        } catch (error) {
-            errorHandler(15, error, param);
+            errorHandler(20, error, url);
         }
     },
     async testMail(param) {
@@ -197,52 +243,16 @@ const model = {
             await email.sendMail(param);
             result = responseHandler(0, 'test mail success');
         } catch (error) {
-            result = responseHandler(16, error, param);
+            result = responseHandler(21, error, param);
         }
         return result;
     },
-    async getInitStatus() {
-        let result = false;
+    async sendMail(param) {
         try {
-            let dbStatus = await init.getMongoDBStatus();
-            let fsStatus = await init.getOrcaFSStatus();
-            result = dbStatus && fsStatus;
+            await email.sendMail(param);
         } catch (error) {
-            errorHandler(17, error);
+            errorHandler(22, error, param);
         }
-        init.setInitStatus(result);
-        return result;
-    },
-    async initCluster(param) {
-        let { ipList } = param;
-        try {
-            await init.initMongoDB(ipList);
-            await init.initOrcaFS(param);
-            await init.saveInitInfo(ipList);
-        } catch (error) {
-            errorHandler(18, error, param);
-            await model.antiInitCluster(param);
-        }
-    },
-    async antiInitCluster(param) {
-        let { ipList } = param;
-        try {
-            await init.antiInitMongoDB(ipList);
-            await init.antiInitOrcaFS(param);
-        } catch (error) {
-            errorHandler(19, error, param);
-        }
-    },
-    async clusterEnvCheck(param) {
-        let { ipList } = param;
-        let result = {};
-        try {
-            let data = await init.initEnvCheck(ipList);
-            result = responseHandler(0, data);
-        } catch (error) {
-            result = responseHandler(24, error, param);
-        }
-        return result;
     }
 };
 module.exports = model;

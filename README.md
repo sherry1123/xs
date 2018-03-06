@@ -23,67 +23,43 @@
  - ./src/index.js    - the portal of build for whole frontend project for webpack
 
 
-### backend
+### Back-end
 
-#### server多进程模型
-server的入口为server.js文件。
-整体采用Node.js的cluster模块和Koa实现多进程后端框架。
-server包含了四个进程，分别是master，agentd，job和task进程。
-master进程负责状态管理，包括系统的状态以及其他3个进程的状态。
-agentd进程负责系统硬件状态的监控，不直接操作数据库，仅向job进程提供API。
-job进程负责处理请求，实现业务逻辑以及调用底层orcafs api接口。
-task进程负责定时任务的执行。
-进程的启动顺序如下：
+#### Technology Stack
+
+##### 1.[Node.js - a JavaScript runtime built on Chrome's V8 JavaScript engine](https://github.com/nodejs/node)
+
+##### 2.[Koa.js - a next generation web framework for Node.js](https://github.com/koajs/koa)
+
+##### 3.[MongoDB - a document database with the scalability and flexibility](https://github.com/mongodb/mongo)
+
+#### Multi-process Model
+```
   master       agentd        job         task 
-    |                                
-    |———————————>|                                   
-    |<———————————|                  
-    |agentd ready|                 
-    |———————————-|———————————>|
-    |<———————————|————————————|
-    |            |  job ready |
-    |———————————-|————————————|———————————>|
-    |<———————————|————————————|————————————|
-    |            |            | task ready |
-当系统未初始化时，server启动master，agentd和job进程。
-当系统已初始化时，主节点server启动master，agentd，job和task进程，其余节点server启动master和agentd进程。
-
-#### server目录结构
- - agentd 硬件状态监控(agentd进程)
- - config 配置文件
- - contronller 控制器
- - middleware 中间件
- - model 数据模型
- - module 组件
-	- dao dao层
-  - logger 全局log输出
-  - promise 同步转异步
-  - request 异步http请求
-  - socket socket通信
- - router 路由
- - schedule 定时任务(task进程)
- - service 服务
-  - database 数据库相关服务
-  - email email相关服务
-  - filesystem orcafs api调用
-  - index 服务入口
-  - initialize 初始化相关服务
- - index job入口(job进程)
-
-#### server处理请求过程                                  
-request/response <=> nginx <=> job port <=> middleware <=> router <=> controller <=> service <=> module
-
-#### 初始化状态管理
-1.启动master进程 => 调用service接口获取status => 将status存入内存 => 将status存入cluster.settings
-2.master进程fork worker进程, 并将status存入process.env => 将status存入内存
-
-#### MongoDB副本集集群
-
-##### 初始化
-1.启动mongod进程
-2.配置集群并初始化
-3.重新连接数据库
-
-##### 反初始化
-1.终止mongod进程
-2.删除数据文件
+    | 
+    | fork agentd                               
+    |———————————>|                              master: manage status    
+    |<———————————|                              agentd: monitor hardware
+    |agentd ready|  fork job                    job: handle http request
+    |————————————|———————————>|                 task: timing tasks
+    |<———————————|————————————|                 
+    | job ready  |            |  fork task      not initialized: master, agentd, job
+    |————————————|————————————|———————————>|    initialized & master: all
+    |<———————————|————————————|————————————|    initialized & not master: master, agentd
+    | task ready |            |            |
+```
+#### Folder Directory Structure
+```
+- server.js    entrance(master)
+- server
+  |- agentd    monitor hardware(agentd)
+  |- config
+  |- controller
+  |- middleware
+  |- model
+  |- module
+  |- router
+  |- schedule  timing tasks(task)
+  |- service
+  |- index.js  handle http request(job)
+```
