@@ -1,6 +1,9 @@
 // fetch
 export {fetchGet, fetchPost, fetchMock} from './fetch';
 
+// localStorage
+export {lsGet, lsSet, lsRemove} from './localStorage';
+
 // reference mapping
 export {CAPACITY_UNIT_SIZE_MAP, Time_UNIT_MILLISECOND_MAP, INTERVAL_LIST} from './localData';
 

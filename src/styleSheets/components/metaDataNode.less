@@ -1,19 +1,15 @@
-.fs-metadata-node-wrapper {
-    .fs-page-item-group {
+.fs-node-wrapper {
+    .fs-node-item-group {
+        display: flex;
+        flex-direction: row;
         height: 100%;
-        .fs-metadata-node-overview-item {
-
-        }
-
-        .fs-metadata-node-detail-item {
-            margin-left: 5px;
-        }
-
-        .fs-metadata-node-overview-item,
-        .fs-metadata-node-detail-item {
+        .fs-node-item {
             flex: 1;
-            .fs-metadata-node-info-wrapper {
-                .fs-metadata-node-info-content {
+            &:nth-child(2) {
+                margin-left: 5px;
+            }
+            .fs-node-info-wrapper {
+                .fs-node-info-content {
                     height: 64px;
                     line-height: 24px;
                     text-align: left;
@@ -40,12 +36,6 @@
                             }
                         }
                     }
-                }
-            }
-            .fs-metadata-user-operation-wrapper {
-                margin-top: 20px;
-                .fs-metadata-user-operation-content {
-                    padding: 20px;
                 }
             }
         }

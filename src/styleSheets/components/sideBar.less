@@ -4,15 +4,17 @@
     transition: all .4s ease-in-out;
     font-size: 30px;
     background-color: @white;
+    .ant-menu-submenu-arrow {
+        opacity: 1 !important;
+        transition: opacity .4s ease !important;
+    }
     &.up {
         margin-top: -60px;
     }
     &.hide {
         width: 45px;
         .ant-menu-submenu-arrow {
-            top: 20px !important;
-            right: 0 !important;
-            opacity: 0.1;
+            opacity: 0 !important;
         }
         .ant-menu-item {
             padding-left: 16px !important;

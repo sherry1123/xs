@@ -33,6 +33,7 @@ export default {
         // general
         activeMenu: [],
         activePage: '',
+        menuExpand: true,
         // login user
         userInfo: {
             name: 'admin'
@@ -40,10 +41,28 @@ export default {
         // metadata nodes
         metadataNodes: {
             overview: {
-                metadataNodes: [
+                nodes: [
                     {name: 'ClusterMe1',id: 'cm1',up: true},
                     {name: 'ClusterMe2',id: 'cm2',up: true},
                     {name: 'ClusterMe3',id: 'cm3',up: true},
+                ],
+            },
+            detail: {
+
+            }
+        },
+        // storage nodes
+        storageNodes: {
+            overview: {
+                diskStatus: {
+                    totalCapacity: 99999999999,
+                    usedCapacity: 39999999999,
+                    remainingCapacity: 60000000000,
+                },
+                nodes: [
+                    {name: 'ClusterSt1',id: 'cs1',up: true},
+                    {name: 'ClusterSt2',id: 'cs2',up: true},
+                    {name: 'ClusterSt3',id: 'cs3',up: true},
                 ],
             },
             detail: {
