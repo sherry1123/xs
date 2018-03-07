@@ -97,6 +97,12 @@ const model = {
             errorHandler(8, error, param);
         }
     },
+    /**
+     * Login
+     * 
+     * @param {string} username
+     * @param {string} password
+     */
     async login(param) {
         let result = {};
         try {
@@ -112,6 +118,11 @@ const model = {
         }
         return result;
     },
+    /**
+     * Logout
+     * 
+     * @param {string} username
+     */
     async logout(param) {
         let result = responseHandler(0, 'logout success');
         await model.addAuditLog({ user: param.username, desc: 'logout success' });
