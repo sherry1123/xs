@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Menu, Icon} from 'antd';
+import {Menu, Icon} from 'antd';
 import mainAction from '../../redux/actions/mainAction';
+import {lsSet} from '../../services';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
 
@@ -13,8 +14,7 @@ class SideBar extends Component {
         this.props.changeActivePage(key);
         this.getSubMenuByPath(key);
         this.state = {
-            direction: 'down',
-            menuExpand: true
+            direction: 'down'
         };
     }
 
@@ -31,8 +31,9 @@ class SideBar extends Component {
     }
 
     changeMenuExpand (){
-        let menuExpand = !this.state.menuExpand;
-        this.setState({menuExpand});
+        let menuExpand = !this.props.menuExpand;
+        this.props.changeMenuExpand(menuExpand);
+        lsSet('menuExpand', menuExpand);
     }
 
     switchScrollDirection (direction){
@@ -63,11 +64,11 @@ class SideBar extends Component {
 
     render (){
         return (
-            <aside className={`fs-sidebar-wrapper ${this.state.direction}  ${this.state.menuExpand ? '' : 'hide'}`}>
+            <aside className={`fs-sidebar-wrapper ${this.state.direction}  ${this.props.menuExpand ? '' : 'hide'}`}>
                 <div className={`fs-visible-operation-wrapper`}>
                     <Icon className="fs-visible-operation-button"
-                        type={`${this.state.menuExpand ? 'menu-fold' : 'menu-unfold'}`}
-                        title={this.state.menuExpand ? lang('折叠菜单', 'Fold Menu') : lang('展开菜单', 'Expand Menu')}
+                        type={`${this.props.menuExpand ? 'menu-fold' : 'menu-unfold'}`}
+                        title={this.props.menuExpand ? lang('折叠菜单', 'Fold Menu') : lang('展开菜单', 'Expand Menu')}
                         onClick={this.changeMenuExpand.bind(this)}
                     />
                 </div>
@@ -79,7 +80,7 @@ class SideBar extends Component {
                     onOpenChange={this.openMenu.bind(this)}
                 >
                     <Menu.Item key={routerPath.Dashboard}>
-                        <Icon type="dashboard" />{lang('仪表盘', 'Dashboard')}
+                        <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>
                     <Menu.Item key={routerPath.MetadataNodes}>
                         <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
@@ -94,7 +95,12 @@ class SideBar extends Component {
                         <Icon type="bar-chart" />{lang('用户统计', 'User Statistics')}
                     </Menu.Item>
                     <Menu.SubMenu key="Management"
-                        title={<span><Icon type="tool" /><span>{lang('管理', 'Management')}</span></span>}
+                        title={
+                            <span>
+                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#f6b93f'}} />
+                                <span>{lang('管理', 'Management')}</span>
+                            </span>
+                        }
                     >
                         <Menu.Item key={routerPath.ManagementKnownProblems}>
                             <Icon type="frown-o" />{lang('已知问题', 'Known Problems')}
@@ -104,7 +110,12 @@ class SideBar extends Component {
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu key="FSOperation" inlineIndent={16}
-                        title={<span><Icon type="switcher" /><span>{lang('文件系统操作', 'FS Operation')}</span></span>}
+                        title={
+                            <span>
+                                <Icon type="switcher" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#9966ff'}} />
+                                <span>{lang('文件系统操作', 'FS Operation')}</span>
+                            </span>
+                        }
                     >
                         <Menu.Item key={routerPath.FSOperationStripeSettings}>
                             <Icon type="setting" />{lang('条带设置', 'Stripe Settings')}
@@ -120,14 +131,15 @@ class SideBar extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {activeMenu, activePage}} = state;
-    return {language, activeMenu, activePage};
+    let {language, main: {activeMenu, activePage, menuExpand}} = state;
+    return {language, activeMenu, activePage, menuExpand};
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         changeActiveMenu: key => dispatch(mainAction.changeActiveMenu(key)),
         changeActivePage: key => dispatch(mainAction.changeActivePage(key)),
+        changeMenuExpand: menuExpand => dispatch(mainAction.changeMenuExpand(menuExpand)),
     };
 };
 

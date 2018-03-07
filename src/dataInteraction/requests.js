@@ -16,7 +16,7 @@ export default  {
     async checkIPs (IPs){
         try {
             await this.checkStoreIsReady();
-            await fetchMock(IPs);
+            return await fetchMock(IPs);
         } catch (e){
             console.info(e);
         }

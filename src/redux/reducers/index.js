@@ -4,6 +4,9 @@ import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
 import mainReducer from './mainReducer';
 
+let menuExpand = localStorage.getItem('menuExpand') !== 'false';
+State.main.menuExpand = menuExpand;
+
 const reducer = combineReducers({
     // global
     language: (language = State.language, action) => {

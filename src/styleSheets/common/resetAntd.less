@@ -10,8 +10,15 @@ input[type="number"]{
     white-space: normal !important;
 }
 
+.ant-table-small {
+    border: none !important;
+}
+
 .ant-table-thead > tr > th {
     background-color: @white !important;
+    & > span {
+        color: #888888;
+    }
 }
 
 .ant-menu {
@@ -23,4 +30,22 @@ input[type="number"]{
     .ant-menu-submenu-title .anticon {
         margin-right: 16px !important;
     }
+
+    &.ant-menu-inline .ant-menu-submenu-title,
+    .ant-menu-item {
+        text-overflow: clip !important;
+    }
 }
+
+.anticon {
+    &.fs-option-node {
+        margin-right: 15px;
+        &.up {
+            color: @green;
+        }
+        &.down {
+            color: @red;;
+        }
+    }
+}
+

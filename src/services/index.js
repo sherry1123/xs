@@ -1,6 +1,9 @@
 // fetch
 export {fetchGet, fetchPost, fetchMock} from './fetch';
 
+// localStorage
+export {lsGet, lsSet, lsRemove} from './localStorage';
+
 // reference mapping
 export {CAPACITY_UNIT_SIZE_MAP, Time_UNIT_MILLISECOND_MAP, INTERVAL_LIST} from './localData';
 
@@ -20,6 +23,9 @@ export {
     getPassStrengthRegs, subnetValidation, checkOverLap, subnetOverlap, checkIpInSubnet, numberToNetmask,
     checkSerialNumberDup, validateNFSV4MountPath,  checkPortInput, validatePassword, checkImageNumber, validataTargetName
 } from './validation';
+
+// config
+export {TABLE_LOCALE} from './config';
 
 // random
 export {randomBoolean} from './random';

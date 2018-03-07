@@ -1,49 +1,84 @@
-exports.findOne = (model, param) => {
+exports.findOne = (model, conditions, projection = {}, options = {}) => {
     return new Promise((resolve, reject) => {
-        model.findOne(param, (error, docs) => {
+        model.findOne(conditions, projection, options, (error, doc) => {
+            error ? reject(error) : resolve(doc);
+        });
+    });
+};
+exports.findById = (model, id, projection = {}, options = {}) => {
+    return new Promise((resolve, reject) => {
+        model.findById(id, projection, options, (error, doc) => {
+            error ? reject(error) : resolve(doc);
+        });
+    });
+};
+exports.findAll = (model, conditions, projection = {}, options = {}) => {
+    return new Promise((resolve, reject) => {
+        model.find(conditions, projection, options, (error, docs) => {
             error ? reject(error) : resolve(docs);
         });
     });
 };
-exports.findAll = (model, param) => {
+exports.count = (model, conditions) => {
     return new Promise((resolve, reject) => {
-        model.find(param, (error, docs) => {
+        model.count(conditions, (error, count) => {
+            error ? reject(error) : resolve(count);
+        });
+    });
+};
+exports.createOne = (model, doc) => {
+    return new Promise((resolve, reject) => {
+        model.create(doc, (error, doc) => {
+            error ? reject(error) : resolve(doc);
+        });
+    });
+};
+exports.createSome = (model, docs) => {
+    return new Promise((resolve, reject) => {
+        model.create(docs, (error, docs) => {
             error ? reject(error) : resolve(docs);
         });
     });
 };
-exports.createOne = (model, param) => {
+exports.updateOne = (model, conditions, update, options = {}) => {
     return new Promise((resolve, reject) => {
-        model.create(param, (error, docs) => {
-            error ? reject(error) : resolve(docs);
+        model.updateOne(conditions, update, options, (error, raw) => {
+            error ? reject(error) : resolve(raw);
         });
     });
 };
-exports.updateOne = (model, query, param) => {
+exports.updateById = (model, id, update, options = {}) => {
     return new Promise((resolve, reject) => {
-        model.findOneAndUpdate(query, param, (error, docs) => {
-            error ? reject(error) : resolve(docs);
+        model.updateOne({ _id: id }, update, options, (error, raw) => {
+            error ? reject(error) : resolve(raw);
         });
     });
 };
-exports.updateAll = (model, query, param) => {
+exports.updateAll = (model, conditions, update, options = {}) => {
     return new Promise((resolve, reject) => {
-        model.update(query, param, (error, docs) => {
-            error ? reject(error): resolve(docs);
+        model.updateMany(conditions, update, options, (error, raws) => {
+            error ? reject(error) : resolve(raws);
         });
     });
 };
-exports.deleteOne = (model, param) => {
+exports.deleteOne = (model, conditions) => {
     return new Promise((resolve, reject) => {
-        model.findOneAndRemove(param, (error, docs) => {
-            error ? reject(error) : resolve(docs);
+        model.deleteOne(conditions, error => {
+            error ? reject(error) : resolve();
         });
     });
 };
-exports.deleteAll = (model, param) => {
+exports.deleteById = (model, id) => {
     return new Promise((resolve, reject) => {
-        model.remove(param, (error, docs) => {
-            error ? reject(error) : resolve(docs);
+        model.deleteOne({ _id: id }, error => {
+            error ? reject(error) : resolve();
+        });
+    });
+};
+exports.deleteAll = (model, conditions) => {
+    return new Promise((resolve, reject) => {
+        model.deleteMany(conditions, error => {
+            error ? reject(error) : resolve();
         });
     });
 };

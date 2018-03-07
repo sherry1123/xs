@@ -33,6 +33,7 @@ export default {
         // general
         activeMenu: [],
         activePage: '',
+        menuExpand: true,
         // login user
         userInfo: {
             name: 'admin'
@@ -40,7 +41,7 @@ export default {
         // metadata nodes
         metadataNodes: {
             overview: {
-                metadataNodes: [
+                nodes: [
                     {name: 'ClusterMe1',id: 'cm1',up: true},
                     {name: 'ClusterMe2',id: 'cm2',up: true},
                     {name: 'ClusterMe3',id: 'cm3',up: true},
@@ -48,6 +49,31 @@ export default {
             },
             detail: {
 
+            }
+        },
+        // storage nodes
+        storageNodes: {
+            overview: {
+                diskStatus: {
+                    totalCapacity: 99999999999,
+                    usedCapacity: 39999999999,
+                    remainingCapacity: 60000000000,
+                },
+                nodes: [
+                    {name: 'ClusterSt1',id: 'cs1',up: true},
+                    {name: 'ClusterSt2',id: 'cs2',up: true},
+                    {name: 'ClusterSt3',id: 'cs3',up: false},
+                    {name: 'ClusterSt4',id: 'cs4',up: true},
+                ],
+                throughput : [],
+            },
+            detail: {
+                status: {},
+                targetList: [
+                    {id: 'target_1', path: '/dev/target_1', totalDiskCapacity: 999999999, usedDiskCapacity: 299999999, remainingDiskCapacity: 70000000},
+                    {id: 'target_2', path: '/dev/target_1', totalDiskCapacity: 599999999, usedDiskCapacity: 399999999, remainingDiskCapacity: 20000000},
+                    {id: 'target_3', path: '/dev/target_1', totalDiskCapacity: 599999999, usedDiskCapacity: 399999999, remainingDiskCapacity: 20000000},
+                ]
             }
         },
         // stripe

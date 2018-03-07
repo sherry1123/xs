@@ -25,12 +25,12 @@ class UserSettingPopover extends Component {
         return (
             <div style={{padding: '10px 0'}}>
                 <Button icon="user" onClick={this.forwardAccountSetting.bind(this)}>
-                    {lang('账户设置', 'Account Setting')}
+                    <span >{lang('账户设置', 'Account Setting')}</span>
                 </Button>
                 <br />
                 <br />
                 <Button icon="logout" onClick={this.logout.bind(this)}>
-                    {lang('注销', 'Logout')}
+                    <span>{lang('注销', 'Logout')}</span>
                 </Button>
             </div>
         );
