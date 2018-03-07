@@ -97,7 +97,7 @@ class SideBar extends Component {
                     <Menu.SubMenu key="Management"
                         title={
                             <span>
-                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#CC6600'}} />
+                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#339966'}} />
                                 <span>{lang('管理', 'Management')}</span>
                             </span>
                         }
@@ -112,7 +112,7 @@ class SideBar extends Component {
                     <Menu.SubMenu key="FSOperation" inlineIndent={16}
                         title={
                             <span>
-                                <Icon type="switcher" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#00CC66'}} />
+                                <Icon type="switcher" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#9966ff'}} />
                                 <span>{lang('文件系统操作', 'FS Operation')}</span>
                             </span>
                         }
