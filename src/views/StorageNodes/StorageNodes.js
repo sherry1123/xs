@@ -63,17 +63,31 @@ class StorageNodes extends Component {
                 <section className="fs-node-item-group">
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper fs-node-info-wrapper">
-                            <h3 className="fs-page-title item">{lang('基础信息总览', 'Basic Information')}</h3>
+                            <h3 className="fs-page-title item">{lang('存储节点总览', 'Storage Nodes Overview')}</h3>
                             <section className="fs-page-item-content fs-node-info-content">
-                                <span className="fs-info-item">
-                                    <span className="fs-info-label">{lang('节点数量：', 'Number Of Nodes: ')}</span>
-                                    {this.props.nodes.length || 0}
+                                <span className="fs-info-item title">
+                                    <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <span className="fs-info-item">
-                                    <span className="fs-info-label">{lang('状态：', 'Status of Nodes: ')}</span>
-                                    <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /> {this.props.nodes.filter(node => node.up).length || 0}
-                                    <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /> {this.props.nodes.filter(node => !node.up).length || 0}
-                                </span>
+                                <div className="fs-info-block-item">
+                                    <i className="fs-info-block-circle yellow" />
+                                    <div className="fs-info-block-label">{lang('节点总数', 'Total Nodes')}</div>
+                                    <div className="fs-info-block-value">{this.props.nodes.length || 0}</div>
+                                </div>
+                                <div className="fs-info-block-item m-l">
+                                    <i className="fs-info-block-circle purple" />
+                                    <div className="fs-info-block-label">{lang('正常节点数', 'Nodes Up')}</div>
+                                    <div className="fs-info-block-value">
+                                        <span>{this.props.nodes.filter(node => node.up).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
+                                    </div>
+                                </div>
+                                <div className="fs-info-block-item m-l">
+                                    <i className="fs-info-block-circle orange" />
+                                    <div className="fs-info-block-label">{lang('异常节点数', 'Nodes Down')}</div>
+                                    <div className="fs-info-block-value">
+                                        <span>{this.props.nodes.filter(node => !node.up).length || 0} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                    </div>
+                                </div>
+                                <br />
                                 <span className="fs-info-item">
                                     <span className="fs-info-label">{lang('磁盘总容量：', 'Disk Total Capacity: ')}</span>
                                     {formatStorageSize(this.props.diskStatus.totalCapacity)}
@@ -98,7 +112,7 @@ class StorageNodes extends Component {
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {lang('存储节点详情', 'Storage Node Detail')}
+                                {this.state.currentNode.name} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
                                     <Icon type={this.state.expandSwitchNode ? 'right-circle' : 'left-circle'} className="fs-info-icon m-r"
                                         title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
@@ -121,12 +135,12 @@ class StorageNodes extends Component {
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
                                 <div className="fs-info-block-item">
-                                    <i className="fs-info-block-circle purple" />
+                                    <i className="fs-info-block-circle yellow" />
                                     <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
                                     <div className="fs-info-block-value">{this.state.currentNode.name}</div>
                                 </div>
-                                <div className="fs-info-block-item">
-                                    <i className="fs-info-block-circle yellow" />
+                                <div className="fs-info-block-item m-l">
+                                    <i className="fs-info-block-circle purple" />
                                     <div className="fs-info-block-label">{lang('状态', 'Status')}</div>
                                     <div className="fs-info-block-value">
                                         {
