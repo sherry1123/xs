@@ -33,7 +33,7 @@ const model = {
         return await dao.createOne(auditlog, param);
     },
     async getHardware(param) {
-        return await dao.findAll(hardware, param);
+        return await dao.findAll(hardware, param, { _id: 0, __v: 0 }, { sort: { date: -1 }, limit: 200 });
     },
     async addHardware(param) {
         return await dao.createOne(hardware, param);
