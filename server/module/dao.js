@@ -19,6 +19,13 @@ exports.findAll = (model, conditions, projection = {}, options = {}) => {
         });
     });
 };
+exports.count = (model, conditions) => {
+    return new Promise((resolve, reject) => {
+        model.count(conditions, (error, count) => {
+            error ? reject(error) : resolve(count);
+        });
+    });
+};
 exports.createOne = (model, doc) => {
     return new Promise((resolve, reject) => {
         model.create(doc, (error, doc) => {
