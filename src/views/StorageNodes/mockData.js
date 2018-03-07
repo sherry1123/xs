@@ -58,11 +58,12 @@ export default {
     },
 
     chartProps3: {
-        height: 180,
+        width: 100,
+        height: 100,
         series: [{
             name: '磁盘容量',
             type: 'pie',
-            color: ['#f6b93f', '#47d45b'],
+            color: ['#f6b93f', '#ebeef4'],
             legend: {
                 data: ['Used Disk Capacity', 'RemainingDiskCapacity']
             },

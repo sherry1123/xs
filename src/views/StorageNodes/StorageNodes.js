@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Icon, Select, Table} from 'antd';
 import lang from '../../components/Language/lang';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
-import FSPieChart from '../../components/FSPieChart/FSPieChart';
+import DiskUsageStatus from '../../components/DiskUsageStatus/DiskUsageStatus';
 import {TABLE_LOCALE, formatStorageSize} from '../../services';
 import mockData from './mockData';
 
@@ -64,7 +64,7 @@ class StorageNodes extends Component {
                 <section className="fs-node-item-group">
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper fs-node-info-wrapper">
-                            <h3 className="fs-page-title item">{lang('存储节点总览', 'Storage Nodes Overview')}</h3>
+                            <h3 className="fs-page-title item">{lang('总览', 'Overview')}</h3>
                             <section className="fs-page-item-content fs-node-info-content">
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
@@ -93,6 +93,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('磁盘使用状态', 'Disk Usage Status')}</span>
                                 </span>
+                                <DiskUsageStatus chartOption={mockData.chartProps3} />
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('总吞吐量', 'Total Throughput')}</span>
                                 </span>
@@ -150,7 +151,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('存储目标', 'Storage Target')}</span>
                                 </span>
-                                <Table {...tableProps} style={{width: '100%'}}/>
+                                <Table {...tableProps} style={{width: '100%'}} />
                             </section>
                         </section>
                     </div>
