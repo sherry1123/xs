@@ -33,48 +33,52 @@
                             margin-right: 10px;
                         }
                     }
-                    .fs-info-block-item {
-                        display: inline-block;
-                        padding-left: 20px;
-                        width: 160px;
-                        border: 1px solid @border;
-                        border-radius: 10px;
-                        box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
-                        &.m-l {
-                            margin-left: 15px;
-                        }
-                        &:hover {
-                            box-shadow: 0 2px 8px rgba(200, 200, 200, 0.7);
+                    .fs-info-block-group {
+                        text-align: center;
+                        .fs-info-block-item {
+                            display: inline-block;
+                            padding-left: 20px;
+                            width: 160px;
+                            text-align: left;
+                            border: 1px solid @border;
+                            border-radius: 10px;
+                            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
+                            &.m-l {
+                                margin-left: 15px;
+                            }
+                            &:hover {
+                                box-shadow: 0 2px 8px rgba(200, 200, 200, 0.7);
+                                .fs-info-block-circle {
+                                    border-radius: 0;
+                                    transform: rotate(360deg);
+                                }
+                            }
                             .fs-info-block-circle {
-                                border-radius: 0;
-                                transform: rotate(360deg);
+                                display: block;
+                                margin: 10px 20px 10px 0;
+                                width: 12px;
+                                height: 12px;
+                                border-radius: 12px;
+                                transition: all .5s ease .2s;
+                                &.purple {
+                                    border: 3px solid @purple;
+                                }
+                                &.yellow {
+                                    border: 3px solid @yellow;
+                                }
+                                &.orange {
+                                    border: 3px solid @orange;
+                                }
                             }
-                        }
-                        .fs-info-block-circle {
-                            display: block;
-                            margin: 10px 20px 10px 0;
-                            width: 12px;
-                            height: 12px;
-                            border-radius: 12px;
-                            transition: all .5s ease .2s;
-                            &.purple {
-                                border: 3px solid @purple;
+                            .fs-info-block-label {
+                                margin-top: 20px;
+                                font-weight: bold;
+                                color: #888888;
                             }
-                            &.yellow {
-                                border: 3px solid @yellow;
+                            .fs-info-block-value {
+                                margin: 10px 0;
+                                font-size: 12px;
                             }
-                            &.orange {
-                                border: 3px solid @orange;
-                            }
-                        }
-                        .fs-info-block-label {
-                            margin-top: 20px;
-                            font-weight: bold;
-                            color: #888888;
-                        }
-                        .fs-info-block-value {
-                            margin: 10px 0;
-                            font-size: 12px;
                         }
                     }
                     .fs-node-status-circle {

@@ -97,7 +97,7 @@ class SideBar extends Component {
                     <Menu.SubMenu key="Management"
                         title={
                             <span>
-                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#339966'}} />
+                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#f6b93f'}} />
                                 <span>{lang('管理', 'Management')}</span>
                             </span>
                         }

@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Icon, Select, Table} from 'antd';
 import lang from '../../components/Language/lang';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
+import FSPieChart from '../../components/FSPieChart/FSPieChart';
 import {TABLE_LOCALE, formatStorageSize} from '../../services';
 import mockData from './mockData';
 
@@ -68,43 +69,33 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <div className="fs-info-block-item">
-                                    <i className="fs-info-block-circle yellow" />
-                                    <div className="fs-info-block-label">{lang('节点总数', 'Total Nodes')}</div>
-                                    <div className="fs-info-block-value">{this.props.nodes.length || 0}</div>
-                                </div>
-                                <div className="fs-info-block-item m-l">
-                                    <i className="fs-info-block-circle purple" />
-                                    <div className="fs-info-block-label">{lang('正常节点数', 'Nodes Up')}</div>
-                                    <div className="fs-info-block-value">
-                                        <span>{this.props.nodes.filter(node => node.up).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
+                                <div className="fs-info-block-group">
+                                    <div className="fs-info-block-item">
+                                        <i className="fs-info-block-circle yellow" />
+                                        <div className="fs-info-block-label">{lang('节点总数', 'Total Nodes')}</div>
+                                        <div className="fs-info-block-value">{this.props.nodes.length || 0}</div>
+                                    </div>
+                                    <div className="fs-info-block-item m-l">
+                                        <i className="fs-info-block-circle purple" />
+                                        <div className="fs-info-block-label">{lang('正常节点数', 'Nodes Up')}</div>
+                                        <div className="fs-info-block-value">
+                                            <span>{this.props.nodes.filter(node => node.up).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
+                                        </div>
+                                    </div>
+                                    <div className="fs-info-block-item m-l">
+                                        <i className="fs-info-block-circle orange" />
+                                        <div className="fs-info-block-label">{lang('异常节点数', 'Nodes Down')}</div>
+                                        <div className="fs-info-block-value">
+                                            <span>{this.props.nodes.filter(node => !node.up).length || 0} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="fs-info-block-item m-l">
-                                    <i className="fs-info-block-circle orange" />
-                                    <div className="fs-info-block-label">{lang('异常节点数', 'Nodes Down')}</div>
-                                    <div className="fs-info-block-value">
-                                        <span>{this.props.nodes.filter(node => !node.up).length || 0} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
-                                    </div>
-                                </div>
-                                <br />
-                                <span className="fs-info-item">
-                                    <span className="fs-info-label">{lang('磁盘总容量：', 'Disk Total Capacity: ')}</span>
-                                    {formatStorageSize(this.props.diskStatus.totalCapacity)}
+                                <span className="fs-info-item title">
+                                    <span className="fs-info-label">{lang('磁盘使用状态', 'Disk Usage Status')}</span>
                                 </span>
-                                <span className="fs-info-item">
-                                    <span className="fs-info-label">{lang('已使用磁盘容量：', 'Used Capacity: ')}</span>
-                                    {formatStorageSize(this.props.diskStatus.usedCapacity)}
+                                <span className="fs-info-item title">
+                                    <span className="fs-info-label">{lang('总吞吐量', 'Total Throughput')}</span>
                                 </span>
-                                <span className="fs-info-item">
-                                    <span className="fs-info-label">{lang('剩余磁盘容量：', 'Remaining Capacity: ')}</span>
-                                    {formatStorageSize(this.props.diskStatus.remainingCapacity)}
-                                </span>
-                            </section>
-                        </section>
-                        <section className="fs-page-item-wrapper fs-user-operation-wrapper">
-                            <h3 className="fs-page-title item">{lang('存储节点吞吐量', 'Storage Throughput')}</h3>
-                            <section className="fs-page-item-content fs-user-operation-content">
                                 <FSLineChart option={mockData.chartProps1} />
                             </section>
                         </section>
@@ -134,20 +125,22 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <div className="fs-info-block-item">
-                                    <i className="fs-info-block-circle yellow" />
-                                    <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                    <div className="fs-info-block-value">{this.state.currentNode.name}</div>
-                                </div>
-                                <div className="fs-info-block-item m-l">
-                                    <i className="fs-info-block-circle purple" />
-                                    <div className="fs-info-block-label">{lang('状态', 'Status')}</div>
-                                    <div className="fs-info-block-value">
-                                        {
-                                            this.state.currentNode.up ?
-                                            <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
-                                            <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
-                                        }
+                                <div className="fs-info-block-group">
+                                    <div className="fs-info-block-item">
+                                        <i className="fs-info-block-circle yellow" />
+                                        <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
+                                        <div className="fs-info-block-value">{this.state.currentNode.name}</div>
+                                    </div>
+                                    <div className="fs-info-block-item m-l">
+                                        <i className="fs-info-block-circle purple" />
+                                        <div className="fs-info-block-label">{lang('状态', 'Status')}</div>
+                                        <div className="fs-info-block-value">
+                                            {
+                                                this.state.currentNode.up ?
+                                                <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
+                                                <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <span className="fs-info-item title">

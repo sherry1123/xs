@@ -100,7 +100,7 @@ class FSLineChart extends Component {
                     color: '#fff'
                 }
             },
-            legend: legend,
+            legend,
             grid: {
                 x: x, y: y,
                 x2: 20, y2: 30
