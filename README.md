@@ -19,7 +19,7 @@ Also for webpack project, dev server is certainly support. Based on this, we int
 4. We use the 'antd' as UI component library that is provided by Ant Financial R D team: <br />
 [https://ant.design](https://ant.design)
 
-####  Folder directory structure
+####  Folder Directory Structure
 
  - - __./config__          - configurations for cli tools
  - - __./public__          - production build destination
