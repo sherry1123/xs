@@ -1,9 +1,18 @@
-.change-language-button {
-    color: @gray;
-    &.transparent-bg {
-        background-color: transparent;
-        &:hover {
+.fs-switch-language-btn-wrapper {
+    display: inline-block;
+    .fs-change-language-btn {
+        color: @gray;
+        &.transparent-bg {
             background-color: transparent;
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+    .fs-change-language-pure-text {
+        cursor: pointer;
+        &:hover {
+            color: @light-blue;
         }
     }
 }

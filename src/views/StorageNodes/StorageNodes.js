@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, Select, Table} from 'antd';
 import lang from '../../components/Language/lang';
+import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import DiskUsageStatus from '../../components/DiskUsageStatus/DiskUsageStatus';
 import {TABLE_LOCALE, formatStorageSize} from '../../services';
@@ -71,12 +72,12 @@ class StorageNodes extends Component {
                                 </span>
                                 <div className="fs-info-block-group">
                                     <div className="fs-info-block-item">
-                                        <i className="fs-info-block-circle yellow" />
+                                        <i className="fs-info-block-circle purple" />
                                         <div className="fs-info-block-label">{lang('节点总数', 'Total Nodes')}</div>
                                         <div className="fs-info-block-value">{this.props.nodes.length || 0}</div>
                                     </div>
                                     <div className="fs-info-block-item m-l">
-                                        <i className="fs-info-block-circle purple" />
+                                        <i className="fs-info-block-circle yellow" />
                                         <div className="fs-info-block-label">{lang('正常节点数', 'Nodes Up')}</div>
                                         <div className="fs-info-block-value">
                                             <span>{this.props.nodes.filter(node => node.up).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
@@ -106,11 +107,11 @@ class StorageNodes extends Component {
                             <h3 className="fs-page-title item">
                                 {this.state.currentNode.name} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                    <Icon type={this.state.expandSwitchNode ? 'right-circle' : 'left-circle'} className="fs-info-icon m-r"
+                                    <ArrowButton style={{marginRight: 15}}
                                         title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                         onClick={this.changeExpandSwitchNode.bind(this)}
                                     />
-                                    <Select style={{width: 160}} size="small" value={this.state.currentNode.id} onChange={this.switchNode.bind(this)}>
+                                    <Select style={{width: 140}} size="small" value={this.state.currentNode.id} onChange={this.switchNode.bind(this)}>
                                         {
                                             this.props.nodes.map(({name, id, up}) =>
                                                 <Select.Option key={name} value={id} disabled={!up}>
@@ -128,12 +129,12 @@ class StorageNodes extends Component {
                                 </span>
                                 <div className="fs-info-block-group">
                                     <div className="fs-info-block-item">
-                                        <i className="fs-info-block-circle yellow" />
+                                        <i className="fs-info-block-circle purple" />
                                         <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
                                         <div className="fs-info-block-value">{this.state.currentNode.name}</div>
                                     </div>
                                     <div className="fs-info-block-item m-l">
-                                        <i className="fs-info-block-circle purple" />
+                                        <i className="fs-info-block-circle yellow" />
                                         <div className="fs-info-block-label">{lang('状态', 'Status')}</div>
                                         <div className="fs-info-block-value">
                                             {
@@ -151,7 +152,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('存储目标', 'Storage Target')}</span>
                                 </span>
-                                <Table {...tableProps} style={{width: '100%', fontSize: 12}} />
+                                <Table {...tableProps} style={{width: '100%'}} />
                             </section>
                         </section>
                     </div>

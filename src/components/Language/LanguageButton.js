@@ -7,24 +7,36 @@ import lang from './lang';
 class LanguageButton extends Component {
     constructor (props){
         super(props);
-        let {type = 'default', ghost = false, width = '100px', border = '', transparentBg = false} = this.props;
+        let {type = 'default', ghost = false, width = '100px', border = '', transparentBg = false, pureText = false} = this.props;
         this.state = {
-            type, ghost, width, border, transparentBg
+            type, ghost, width, border, transparentBg, pureText
         };
     }
 
     render (){
-        return (
-            <Button className={`change-language-button ${this.state.transparentBg && 'transparent-bg'}`}
-                title={lang('切换语言', 'switch language')}
-                style={{width: this.state.width, border: this.state.border}}
-                type={this.state.type}
-                ghost={this.state.ghost}
-                onClick={this.props.changeLanguage.bind(this, this.props.language === 'chinese' ? 'english' : 'chinese')}
-            >
-                {lang('English', '中文')}
-            </Button>
-        );
+        let title = lang('切换语言', 'switch language');
+        let {type, ghost, width, border, transparentBg, pureText} = this.state;
+        let language = this.props.language === 'chinese' ? 'english' : 'chinese';
+        return (<div className="fs-switch-language-btn-wrapper">
+            {
+                pureText ?
+                <Button className={`fs-change-language-btn ${transparentBg ? 'transparent-bg' : ''}`}
+                    title={title}
+                    style={{width, border}}
+                    type={type}
+                    ghost={ghost}
+                    onClick={this.props.changeLanguage.bind(this, language)}
+                >
+                    {lang('English', '中文')}
+                </Button> :
+                <span className="fs-change-language-pure-text"
+                    title={title}
+                    onClick={this.props.changeLanguage.bind(this, language)}
+                >
+                    {lang('English', '中文')}
+                </span>
+            }
+        </div>);
     }
 }
 

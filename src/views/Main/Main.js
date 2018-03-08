@@ -46,10 +46,17 @@ export default class Main extends Component {
 
     componentDidMount (){
         let prevScrollTop = 0;
+        let threshold = 30;
         let prevDirection = 'down';
         this.scrollHandler = ({target: {scrollingElement: {scrollTop}}}) => {
-            let direction = scrollTop - prevScrollTop > 0 ? 'up' : 'down';
-            prevScrollTop = scrollTop;
+            let dif = scrollTop - prevScrollTop;
+            let direction = '';
+            if (dif > threshold){
+                direction = 'up'
+            } else if (dif < 0){
+                direction = 'down';
+            }
+            // prevScrollTop = scrollTop;
             if (direction !== prevDirection){
                 prevDirection = direction;
                 this.TopBar.getWrappedInstance().switchScrollDirection(direction);
