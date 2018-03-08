@@ -2,7 +2,7 @@
 
 ## Frontend
 
-### Technology Stack
+#### Technology Stack
 
 1.Project is initialized using 'create-react-app' provided by Facebook React.js authorities:
 [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
@@ -10,7 +10,7 @@
 2.UI component library is 'antd' provided by Ant Financial R D team:
 [https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
 
-###  Folder directory structure
+####  Folder directory structure
 
  - - __./config__          - configurations for cli tools
  - - __./public__          - production build destination
