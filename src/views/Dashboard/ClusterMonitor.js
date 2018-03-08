@@ -22,6 +22,7 @@ export default class ClusterMonitor extends Component {
   initLine(id) {
     let option = null;//模拟数据
     option = {
+      backgroundColor: '#fff',
       title: {
         text:'带宽',
         left: 'left',

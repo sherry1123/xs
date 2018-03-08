@@ -29,10 +29,10 @@ export default class CpacityUsage extends Component {
     let scale = 1;
     let echartData = [{
       value: 2154,
-      name: '健康'
+      name: '可恢复'
     }, {
       value: 3854,
-      name: '可恢复'
+      name: '健康'
     }, {
       value: 3515,
       name: '不可恢复'
@@ -47,8 +47,8 @@ export default class CpacityUsage extends Component {
       yellow: {
         color: "#ffc72b",
         fontSize: 10 * scale,
-        padding: [5, 4],
-        align: 'center'
+        // padding: [5, 4],
+        // align: 'center'
       },
       total: {
         color: "#ffc72b",
@@ -56,82 +56,98 @@ export default class CpacityUsage extends Component {
         align: 'center'
       },
       white: {
-        color: "#fff",
+        // color: "#aaa",
         align: 'center',
         fontSize: 10 * scale,
-        padding: [10, 0],
+        // padding: [10, 0],
         
       },
-      hr: {
-        borderColor: '#0b5263',
-        width: '100%',
-        borderWidth: 1,
-        height: 0,
-      }
+      // hr: {
+      //   borderColor: '#0b5263',
+      //   width: '100%',
+      //   borderWidth: 1,
+      //   height: 0,
+      // }
     }
+    let total = 0; 
+    echartData.forEach(function (value, index, array) {
+      total += value.value;
+    });
     option = {
-      backgroundColor: '#031f2d',
+      backgroundColor: '#fff',
       title: {
         text: '硬盘状态',
-        left: 'center',
-        top: '35%',
-        padding: [25, 0],
+        subtext:total+'MiB',
+        // left: 'center',
+        top: '39%',
+        // padding: [25, 0],
+        // center: ['15%', '50%'],
+        left:'23.4%',
         textStyle: {
-          color: '#fff',
+          color: '#aaa',
           fontSize: 12 * scale,
-          align: 'center'
-        }
+          // align: 'center'
+        },
       },
       legend: {
-        selectedMode: false,
-        formatter: function (name) {
-          let total = 0; //各科正确率总和
-          let averagePercent; //综合正确率
-          echartData.forEach(function (value, index, array) {
-            total += value.value;
-          });
-          return '{total|' + total + '}';
-        },
-        data: [echartData[0].name],
-        // data: ['高等教育学'],
-        // itemGap: 50,
-        left: 'center',
-        top: 'center',
-        icon: 'none',
-        align: 'center',
+        orient: 'vertical',
+        top: '21%',
+        left: '60%',
+        icon: 'circle',
+        data:echartData,
         textStyle: {
-          rich: rich
+          color: 'auto'
         },
+        formatter: function (params) {
+          // let total = 0; 
+          let percent = 0; 
+          let tarValue = 0;
+          for(let i = 0;i<echartData.length;i++){
+            // total += echartData[i].value;
+            if(echartData[i].name===params){
+              tarValue = echartData[i].value;
+            }
+          };
+          percent = ((tarValue / total) * 100).toFixed(2);
+          console.log(percent)
+          return params + ' ' + percent + '%';
+        },
+
       },
       series: [{
-        name: '总考生数量',
+        name: '硬盘容量',
         type: 'pie',
         radius: ['42%', '50%'],
-        hoverAnimation: false,
+        center: ['31%', '50%'],
+        hoverAnimation: true,
+        data: echartData.sort(function (a, b) { return a.value - b.value; }),
+        tooltip: {
+          show: true
+        },
         color: ['#c487ee', '#deb140', '#49dff0', '#034079', '#6f81da', '#00ffb4'],
         label: {
           normal: {
-            formatter: function (params, ticket, callback) {
-              let total = 0; //考生总数量
-              let percent = 0; //考生占比
-              echartData.forEach(function (value, index, array) {
-                total += value.value;
-              });
-              percent = ((params.value / total) * 100).toFixed(1);
-              return '{white|' + params.name + '}\n{hr|}\n{yellow|' + params.value +'MiB '+percent+'%'+ '}\n{blue|' +'}';
-            },
-            rich: rich
-          },
-        },
-        labelLine: {
-          normal: {
-            length:1*scale,
-            lineStyle: {
-              color: '#0b5263'
+            textStyle: {
+              // color: 'red'
             }
           }
         },
-        data: echartData
+        labelLine: {
+          normal: {
+            lineStyle: {
+              color: '#000'
+            },
+            smooth: 0.2,
+            length: 10,
+            length2: 10
+          }
+        },
+        animationType: 'scale',
+        animationEasing: 'elasticOut',
+        animationDelay: function (idx) {
+          return Math.random() * 200;
+        }
+        
       }]
     };
     let myChart = echarts.getInstanceByDom(document.getElementById(id));
