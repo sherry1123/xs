@@ -26,7 +26,7 @@ export default class FSPieChart extends Component {
                     }
                 }
             };
-            series.data.map((data, i) => {
+            series.data.forEach((data, i) => {
                 data['itemStyle'] = {
                     normal : {
                         label: i === 0 && {

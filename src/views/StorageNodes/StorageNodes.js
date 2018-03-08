@@ -93,7 +93,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('磁盘使用状态', 'Disk Usage Status')}</span>
                                 </span>
-                                <DiskUsageStatus chartOption={mockData.chartProps3} />
+                                <DiskUsageStatus diskStatus={this.props.diskStatus} />
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('总吞吐量', 'Total Throughput')}</span>
                                 </span>
