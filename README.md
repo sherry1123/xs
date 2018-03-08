@@ -4,11 +4,20 @@
 
 #### Technology Stack
 
-1.Project is initialized using 'create-react-app' provided by Facebook React.js authorities:
-[https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
+1. Project is initialized through 'create-react-app' that is provided by Facebook React.js authorities.
+This tool will initialize a webpack based project with modularization support. It uses 'less' as css preprocessor, and 'auto-prefix' as postprocessor.
+Also for webpack project, dev server is certainly support, and we introduce module HRM in advanced for a better development experience: <br />
+[https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app) <br />
 
-2.UI component library is 'antd' provided by Ant Financial R D team:
-[https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
+2. State management tool is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />
+[https://redux.js.org](https://redux.js.org) <br />
+[https://redux.js.org/basics/usage-with-react](https://redux.js.org/basics/usage-with-react) <br />
+
+3. For router implementation we use 'react-router': <br />
+[https://reacttraining.com](https://reacttraining.com) <br />
+
+4. We use the 'antd' as UI component library that is provided by Ant Financial R D team: <br />
+[https://ant.design](https://ant.design)
 
 ####  Folder directory structure
 
