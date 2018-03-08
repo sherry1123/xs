@@ -76,10 +76,10 @@ export default class CpacityUsage extends Component {
     option = {
       backgroundColor: '#fff',
       title: {
-        text: '硬盘状态',
+        text: '硬盘容量',
         subtext:total+'MiB',
         // left: 'center',
-        top: '39%',
+        top: '49%',
         // padding: [25, 0],
         // center: ['15%', '50%'],
         left:'23.4%',
@@ -91,7 +91,7 @@ export default class CpacityUsage extends Component {
       },
       legend: {
         orient: 'vertical',
-        top: '21%',
+        top: '41%',
         left: '60%',
         icon: 'circle',
         data:echartData,
@@ -118,7 +118,7 @@ export default class CpacityUsage extends Component {
         name: '硬盘容量',
         type: 'pie',
         radius: ['42%', '50%'],
-        center: ['31%', '50%'],
+        center: ['31%', '60%'],
         hoverAnimation: true,
         data: echartData.sort(function (a, b) { return a.value - b.value; }),
         tooltip: {

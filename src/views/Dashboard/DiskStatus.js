@@ -40,7 +40,7 @@ class DiskStatus extends Component {
           color: '#000'
         }
       },
-      data:data,
+      data: data,
       tooltip: {
         trigger: 'item',
         formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -50,17 +50,17 @@ class DiskStatus extends Component {
         top: '28%',
         left: '65%',
         icon: 'circle',
-        data:data,
+        data: data,
         textStyle: {
           color: 'auto'
         },
         formatter: function (params) {
-          let total = 0; 
-          let percent = 0; 
+          let total = 0;
+          let percent = 0;
           let tarValue = 0;
-          for(let i = 0;i<data.length;i++){
+          for (let i = 0; i < data.length; i++) {
             total += data[i].value;
-            if(data[i].name===params){
+            if (data[i].name === params) {
               tarValue = data[i].value;
             }
           };
