@@ -1,12 +1,14 @@
 # OrcaFS Big Frontend Project
 
-## frontend
+## Frontend
 
-### project is initialized using 'create-react-app' provided by Facebook React.js authorities.
-### [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
+### Technology Stack
 
-### ui component library is 'antd' provided by Ant Financial R D team.
-### [https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
+#### 1.Project is initialized using 'create-react-app' provided by Facebook React.js authorities:
+#### [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
+
+#### 2.UI component library is 'antd' provided by Ant Financial R D team:
+#### [https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
 
 #### folder directory structure
  - - __./config__          - configurations for cli tools
