@@ -12,7 +12,7 @@ class StorageNodes extends Component {
         super(props);
         this.state = {
             currentNode: this.props.nodes.filter(node => node.up)[0],
-            expandSwitchNode: true
+            expandSwitchNode: false
         };
     }
 
@@ -151,7 +151,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('存储目标', 'Storage Target')}</span>
                                 </span>
-                                <Table {...tableProps} style={{width: '100%'}} />
+                                <Table {...tableProps} style={{width: '100%', fontSize: 12}} />
                             </section>
                         </section>
                     </div>

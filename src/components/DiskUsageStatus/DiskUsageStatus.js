@@ -8,6 +8,7 @@ class DiskUsageStatus extends Component {
     render (){
         let {totalCapacity, usedCapacity, remainingCapacity} = this.props.diskStatus;
         let option = {
+            width: 340,
             infoData: [
                 {
                     label: lang('总容量', 'Total'),
@@ -24,9 +25,9 @@ class DiskUsageStatus extends Component {
                 }
             ],
             chartOption: {
-                width: 100,
-                height: 100,
-                formatter: `${lang('已使用', 'Used')} \n\n ${(usedCapacity/totalCapacity).toFixed(2) * 100}%`,
+                width: 140,
+                height: 140,
+                formatter: `${lang('使用率', 'Usage Rate')} \n\n ${(usedCapacity/totalCapacity).toFixed(2) * 100}%`,
                 series: [{
                     name: 'totalDiskCapacityStatus',
                     type: 'pie',
@@ -42,7 +43,7 @@ class DiskUsageStatus extends Component {
             }
         };
         return (
-            <div className="fs-disk-usage-wrapper">
+            <div className="fs-disk-usage-wrapper" style={{width: option.width}}>
                 <FSPieChart option={option.chartOption} />
                 <div className="fs-disk-usage-info-wrapper" style={{height: option.height}}>
                     {

@@ -14,8 +14,8 @@ export default class FSPieChart extends Component {
         };
     }
 
-    makeSeries (series){
-        let {option: {formatter = ''}} = this.props;
+    makeSeries (series, nextProps){
+        let {option: {formatter = ''}} = nextProps || this.props;
         return series.map(series => {
             series['radius'] = ['80%', '100%'];
             series['hoverAnimation'] = false;
@@ -59,7 +59,7 @@ export default class FSPieChart extends Component {
     async componentWillReceiveProps(nextProps){
         let {option: {series}} = nextProps;
         await this.setState({
-            series: this.makeSeries(series)
+            series: this.makeSeries(series, nextProps)
         });
         this.updateChart(this.state);
     }
