@@ -10,13 +10,12 @@ export default class FSPieChart extends Component {
             width,
             height,
             legend,
-            series: this.makeSeries(series)
+            series: this.makeSeries(series, this.props)
         };
     }
 
     makeSeries (series, nextProps){
-        let {option: {formatter = ''}} = nextProps || this.props;
-        console.info(formatter);
+        let {option: {formatter = ''}} = nextProps;
         return series.map(series => {
             series['radius'] = ['80%', '100%'];
             series['hoverAnimation'] = false;

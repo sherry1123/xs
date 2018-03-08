@@ -97,22 +97,22 @@ class SideBar extends Component {
                     <Menu.SubMenu key="Management"
                         title={
                             <span>
-                                <Icon type="tool" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#f6b93f'}} />
+                                <Icon type="tool" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
                                 <span>{lang('管理', 'Management')}</span>
                             </span>
                         }
                     >
                         <Menu.Item key={routerPath.ManagementKnownProblems}>
-                            <Icon type="frown-o" />{lang('已知问题', 'Known Problems')}
+                            <Icon type="frown-o" />{lang('已知问题', 'Known Issues')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.ManagementLogFile}>
-                            <Icon type="file-text" />{lang('日志文件', 'Log File')}
+                            <Icon type="file-text" />{lang('日志文件', 'Log Files')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu key="FSOperation" inlineIndent={16}
                         title={
                             <span>
-                                <Icon type="switcher" style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#9966ff'}} />
+                                <Icon type="switcher" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
                                 <span>{lang('文件系统操作', 'FS Operation')}</span>
                             </span>
                         }

@@ -6,16 +6,11 @@ body {
         min-height: 100%;
         .fs-main-wrapper {
             height: 100%;
-            .fs-top-bar-wrapper {
-                height: 60px;
-                box-sizing: border-box;
-                border-bottom: 1px solid @page-bg;
-            }
             .fs-body-wrapper {
                 flex: 1;
                 display: flex;
                 flex-direction: row;
-                padding-top: 60px;
+                padding-top: 50px;
                 min-height: 650px;
                 .fs-content-wrapper {
                     flex: 1;
@@ -41,11 +36,12 @@ body {
                                 margin: 0;
                                 padding: 10px 16px;
                                 font-size: 15px;
-                                color: @light-blue;
-                                border-bottom: 1px solid @page-bg;
+                                color: @head-line;
                                 overflow: hidden;
                                 &.item {
-                                    color: #888888;
+                                    height: 45px;
+                                    color: @title-color;
+                                    border-bottom: 1px solid @page-bg;
                                 }
                             }
                             .fs-page-item-content {

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import QueueAnim from 'rc-queue-anim';
 import FSPieChart from '../../components/FSPieChart/FSPieChart';
 import {formatStorageSize} from "../../services";
 import lang from '../Language/lang';
@@ -13,7 +14,7 @@ class DiskUsageStatus extends Component {
                 {
                     label: lang('总容量', 'Total'),
                     value: formatStorageSize(totalCapacity),
-                    color: 'green'
+                    color: 'purple'
                 }, {
                     label: lang('已使用容量', 'Used'),
                     value: formatStorageSize(usedCapacity),
@@ -46,6 +47,7 @@ class DiskUsageStatus extends Component {
             <div className="fs-disk-usage-wrapper" style={{width: option.width}}>
                 <FSPieChart option={option.chartOption} />
                 <div className="fs-disk-usage-info-wrapper" style={{height: option.height}}>
+                    <QueueAnim className="fs-disk-usage-info-anim-wrapper" type={['right', 'left']} delay={300}>
                     {
                         option.infoData.map((info, i) =>
                             <div className="fs-disk-usage-info-item" key={i}>
@@ -55,6 +57,7 @@ class DiskUsageStatus extends Component {
                             </div>
                         )
                     }
+                    </QueueAnim>
                 </div>
             </div>
         );

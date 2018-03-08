@@ -1,26 +1,29 @@
-## OrcaFS Big Frontend Project
+# OrcaFS Big Frontend Project
 
-### frontend
+## Frontend
 
-# project is initialized using 'create-react-app' provided by Facebook React.js authorities.
-# [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
+#### Technology Stack
 
-# ui component library is 'antd' provided by Ant Financial R D team.
-# [https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
+1.Project is initialized using 'create-react-app' provided by Facebook React.js authorities:
+[https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app)
 
-#### folder directory structure
- - ./config          - configurations for cli tools
- - ./public          - production build destination
- - ./scripts         - npm scripts for running cli tools
- - ./src             - source code and static resource for webpack
- - ./src/component   - common components and high-level abstractions of mature business-view components
- - ./src/images      - image resource
- - ./src/redux       - state management
- - ./src/services    - useful functions and local data/map
- - ./src/socket      - socket.io client
- - ./src/styleSheets - less style sheets for common using and specific components
- - ./src/views       - business-view components placed by module or category
- - ./src/index.js    - the portal of build for whole frontend project for webpack
+2.UI component library is 'antd' provided by Ant Financial R D team:
+[https://ant.design/docs/react/introduce-cn](https://ant.design/docs/react/introduce-cn)
+
+####  Folder directory structure
+
+ - - __./config__          - configurations for cli tools
+ - - __./public__          - production build destination
+ - - __./scripts__         - npm scripts for running cli tools
+ - - __./src__             - source code and static resource for webpack
+ - - __./src/component__   - common components and high-level abstractions of mature business-view components
+ - - __./src/images__      - image resource
+ - - __./src/redux__       - state management
+ - - __./src/services__    - useful functions and local data/map
+ - - __./src/socket__      - socket.io client
+ - - __./src/styleSheets__ - less style sheets for common using and specific components
+ - - __./src/views__       - business-view components placed by module or category
+ - - __./src/index.js__    - the portal of build for whole frontend project for webpack
 
 
 ### Back-end

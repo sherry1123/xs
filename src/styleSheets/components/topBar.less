@@ -2,12 +2,14 @@
     position: fixed;
     top: 0;
     z-index: 20;
+    box-sizing: border-box;
     width: 100%;
-    height: 60px;
-    transition: transform 0.35s ease-in-out;
+    height: 50px;
+    transition: transform .35s ease;
     will-change: transform;
     background-color: @white;
-    box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
+    box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
+    border-bottom: 1px solid @page-bg;
     &.up {
         transform: translateY(-100%);
     }
@@ -16,15 +18,16 @@
     }
     .logo-wrapper {
         float: left;
-        width: 200px;
+        width: 120px;
         .logo-link {
             position: relative;
-            width: 200px;
-            height: 60px;
+            margin: 5px 0;
+            height: 40px;
             background: url(../../images/logo-h.svg) 0 0 no-repeat;
             background-size: 100% 100%;
             &:hover {
-                .rock-point {
+                &:before {
+                    content: '';
                     display: block;
                     width: 4px;
                     height: 4px;
@@ -36,14 +39,24 @@
             }
         }
     }
-    .login-user-wrapper {
+    .fs-top-info-wrapper {
         float: right;
-        padding-right: 40px;
-        line-height: 60px;
-        span {
-            &.fs-login-user:hover {
+        padding-right: 20px;
+        font-size: 12px;
+        line-height: 50px;
+        .fs-login-user-wrapper {
+            margin-right: 20px;
+            .fs-login-user:hover {
                 cursor: pointer;
                 color: #1890ff;
+            }
+        }
+        .fs-alarm-wrapper {
+            cursor: pointer;
+            margin-right: 30px;
+            .fs-alarm-bell-icon {
+                font-size: 20px;
+                color: #777777;
             }
         }
     }
