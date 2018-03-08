@@ -1,8 +1,51 @@
 .fs-disk-usage-wrapper {
-    .fs-disk-usage-chart-wrapper {
-
-    }
+    margin: 0 auto;
+    width: 300px;
+    display: flex;
+    flex-direction: row;
     .fs-disk-usage-info-wrapper {
-
+        margin-left: 60px;
+        padding: 8px 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .fs-disk-usage-info-item {
+            font-size: 12px;
+            &:nth-child(1) {
+                margin-top: 0;
+            }
+            .fs-disk-text {
+                position: relative;
+                .fs-disk-label {
+                    display: inline-block;
+                    width: 70px;
+                }
+                &:before {
+                    content: '';
+                    position: absolute;
+                    left: -18px;
+                    top: 1px;
+                    display: block;
+                    width: 12px;
+                    height: 12px;
+                }
+                &.green {
+                    &:before {
+                        border: 3px solid @green;
+                        border-radius: 12px;
+                    }
+                }
+                &.orange {
+                    &:before {
+                        background: @orange;
+                    }
+                }
+                &.dark-gray {
+                    &:before {
+                        background: @dark-gray;
+                    }
+                }
+            }
+        }
     }
 }
