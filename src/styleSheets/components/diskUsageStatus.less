@@ -1,4 +1,6 @@
 .fs-disk-usage-wrapper {
+    margin: 0 auto;
+    width: 280px;
     display: flex;
     flex-direction: row;
     .fs-disk-usage-info-wrapper {
@@ -22,17 +24,18 @@
                 }
                 &.total {
                     &:before {
-                        background: @green;
+                        border: 3px solid @cyan;
+                        border-radius: 12px;
                     }
                 }
-                &.used {
+                &.orange {
                     &:before {
                         background: @orange;
                     }
                 }
-                &.remaining {
+                &.dark-gray {
                     &:before {
-                        background: @light-gray;
+                        background: @dark-gray;
                     }
                 }
             }

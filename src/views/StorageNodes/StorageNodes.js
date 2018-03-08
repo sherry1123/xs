@@ -162,7 +162,7 @@ class StorageNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {storageNodes: {overview: {diskStatus, nodes},detail: {targetList}}}} = state;
+    const {language, main: {storageNodes: {overview: {diskStatus, nodes}, detail: {targetList}}}} = state;
     return {language, diskStatus, nodes, targetList};
 };
 

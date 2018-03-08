@@ -55,22 +55,5 @@ export default {
                 12, 20, 20, 50, 15 , 20, 20, 11 , 700, 23, 24 , 25,
             ]
         }]
-    },
-
-    chartProps3: {
-        width: 100,
-        height: 100,
-        series: [{
-            name: '磁盘容量',
-            type: 'pie',
-            color: ['#f6b93f', '#ebeef4'],
-            legend: {
-                data: ['Used Disk Capacity', 'RemainingDiskCapacity']
-            },
-            data: [
-                {value: 39999999999, name: 'UsedDiskCapacity'},
-                {value: 60000000000, name: 'RemainingDiskCapacity'},
-            ]
-        }]
     }
 }

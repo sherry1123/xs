@@ -4,24 +4,47 @@ import echarts from 'echarts';
 export default class FSPieChart extends Component {
     constructor (props) {
         super(props);
-        let {option: {width = '100%', height = '100%', legend = {}, formatterFn = '', series}} = this.props;
+        let {option: {title, width = '100%', height = '100%', legend = {}, series}} = this.props;
         this.state = {
+            title,
             width,
             height,
-            formatterFn,
             legend,
-            series: series.map(series => {
-                series['radius'] = ['80%', '100%'];
-                series['itemStyle'] = {
-                    normal: {
-                        label: {
+            series: this.makeSeries(series)
+        };
+    }
+
+    makeSeries (series){
+        let {option: {formatter = ''}} = this.props;
+        return series.map(series => {
+            series['radius'] = ['80%', '100%'];
+            series['hoverAnimation'] = false;
+            series['itemStyle'] = {
+                normal: {
+                    label: {
+                        show: false
+                    }
+                }
+            };
+            series.data.map((data, i) => {
+                data['itemStyle'] = {
+                    normal : {
+                        label: i === 0 && {
+                            show: true,
+                            position: 'center',
+                            formatter,
+                            textStyle: {
+                                baseline : 'bottom'
+                            }
+                        },
+                        labelLine: {
                             show: false
                         }
                     }
                 };
-                return series;
-            })
-        };
+            });
+            return series;
+        });
     }
 
     componentDidMount (){
@@ -36,22 +59,14 @@ export default class FSPieChart extends Component {
     async componentWillReceiveProps(nextProps){
         let {option: {series}} = nextProps;
         await this.setState({
-            series: series.map(series => {
-                series['radius'] = ['70%', '90%'];
-                return series;
-            })
+            series: this.makeSeries(series)
         });
         this.updateChart(this.state);
     }
 
-    generateOption ({legend}){
+    generateOption ({title, legend}){
         return {
-            tooltip: {
-                trigger: 'item',
-                formatter: "{b} : {c} ({d}%)",
-                backgroundColor: 'rgba(100, 100, 100, .7)',
-                borderColor: '#333',
-            },
+            title,
             legend: {
                 orient: 'vertical',
                 x: 'left',
