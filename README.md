@@ -35,7 +35,7 @@ Also for webpack project, dev server is certainly support. Based on this, we int
  - - __./src/index.js__    - the portal of build for whole frontend project for webpack
 
 
-### Back-end
+## Backend
 
 #### Technology Stack
 
@@ -74,4 +74,17 @@ Also for webpack project, dev server is certainly support. Based on this, we int
   |- schedule  timing tasks(task)
   |- service
   |- index.js  handle http request(job)
+```
+#### Deployment Method
+
+1. depend Node.js
+```
+npm install
+node server
+```
+2. no dependence
+```
+npm install pkg -g
+pkg server.js -t node9-linux-x64/node9-macos-x64/node9-win-x64 -o app
+./app
 ```
