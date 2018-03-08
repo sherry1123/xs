@@ -9,7 +9,7 @@ This tool will initialize a webpack based project with modularization support. I
 Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM in advanced for a better development experience: <br />
 [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app) <br />
 
-2. State management tool is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />
+2. The current popular state management framework is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />
 [https://redux.js.org](https://redux.js.org) <br />
 [https://redux.js.org/basics/usage-with-react](https://redux.js.org/basics/usage-with-react) <br />
 
