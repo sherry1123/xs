@@ -6,3 +6,4 @@ yarn.lock
 logs
 build
 www
+package-lock.json
