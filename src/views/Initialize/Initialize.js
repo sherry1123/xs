@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import update from "react-addons-update";
 import {Button, Divider, Form, Icon, Input, message, notification, Progress, Steps, Switch, Tooltip} from 'antd';
+import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import QueueAnim from 'rc-queue-anim';
 import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
@@ -14,14 +15,16 @@ import routerPath from '../routerPath';
 class Initialize extends Component {
     constructor (props){
         super(props);
-        let {metadataServerIPs, storageServerIPs, managementServerIPs, floatIPs, hbIPs} = props;
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             current: 0,
             stepNum: 4,
+            checking: false,
 
             metadataServerIPsError: metadataServerIPs.map(() => ({status: '', help: ''})),
             storageServerIPsError: storageServerIPs.map(() => ({status: '', help: ''})),
+            clientIPsError: clientIPs.map(() => ({status: '', help: ''})),
             managementServerIPsError: managementServerIPs.map(() => ({status: '', help: ''})),
             floatIPsError: floatIPs.map(() => ({status: '', help: ''})),
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
@@ -49,7 +52,7 @@ class Initialize extends Component {
         if (checked){
             await this.addIP('managementServerIPs');
             notification.open({
-                message: '提示',
+                message: lang('提示', 'Tooltip'),
                 description: lang('您已为管理服务器启用HA，请配置两个有效的管理服务器IP，并配置存储集群服务管理IP以及HB IP',
                     'You have enabled HA for management server, please configure two valid management server IPs, storage cluster service management IP and HB IP')
             });
@@ -111,6 +114,7 @@ class Initialize extends Component {
         let next = this.state.current + 1;
         switch (next) {
             case 1:
+                await this.setState({checking: true});
                 // validate all ips before entering information confirm step
                 this.categoryArr.forEach(category => {
                     let ips = this.props[category];
@@ -140,6 +144,7 @@ class Initialize extends Component {
                 } else {
                     message.error(lang('IP输入有误，请先修正', 'Something is wrong with IP input, please correct it first'));
                 }
+                await this.setState({checking: false});
                 break;
             case 2:
                 this.setState({current: next});
@@ -156,7 +161,7 @@ class Initialize extends Component {
         let initProgress = this.state.initProgress;
         let initTimer = setInterval(async () => {
             initProgress += (initProgress === 10 || initProgress === 40 || initProgress === 70 ? 10 : 1);
-            let info = `initialize xxx file, ${lang('进度:', 'progress:')} ${initProgress}%`;
+            let info = `initialize xxx server, ${lang('进度:', 'progress:')} ${initProgress}%`;
             let infoArr = initProgress === 100 ? [info, lang('初始化已完成!', 'Initialization done!')] : [info];
             let newState =  update(this.state, {
                 initializationInfo: {$push: infoArr},
@@ -182,7 +187,7 @@ class Initialize extends Component {
     render (){
         return (
             <section className="fs-initialize-wrapper">
-                <section className="fs-initialize-language-btn-wrapper">
+                <section className="fs-initialize-language-btn-wrapper" style={{marginRight: 30}}>
                     <LanguageButton />
                 </section>
                 <section key="initialize-title" className="fs-initialize-welcome-wrapper">
@@ -193,25 +198,25 @@ class Initialize extends Component {
                 </section>
                 <Steps key="initialize-step" className="fs-initialize-step-index-wrapper" current={this.state.current}>
                     <Steps.Step title={lang('定义角色', 'Define Roles')} />
-                    <Steps.Step title={lang('信息确认', 'Information Confirm')} />
+                    <Steps.Step title={lang('确认信息', 'Confirm Information')} />
                     <Steps.Step title={lang('开始初始化', 'Start Initialization')} />
-                    <Steps.Step title={lang('完成', 'Completed')} />
+                    <Steps.Step title={lang('完成', 'Complete')} />
                 </Steps>
                 <Divider className="fs-initialize-divider-wrapper" dashed />
                 <section className="fs-initialize-step-content-wrapper">
                     {
                         this.state.current === 0 &&
                         <Form className="fs-initialize-step-content">
-                            <QueueAnim type="top">
+                            <QueueAnim type="top" duration={200}>
                                 <section key="ip-input-title" className="fs-ip-input-title">
                                     {lang(
                                         '步骤1：请定义存储集群相应的服务器IP和管理IP。',
-                                        'Step1: Please define service IP and management IP for the storage cluster.'
+                                        'Step1: Please define service IPs and management IPs for the storage cluster.'
                                     )}
                                 </section>
                             </QueueAnim>
                             <div className="fs-ip-input-group">
-                                <QueueAnim>
+                                <QueueAnim delay={250}>
                                     <section key="ip-input-1" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
                                             <Tooltip placement="top" title={lang('元数据服务器允许配置0至n个', 'There are 0 to n metadata servers allowed to configure')}>
@@ -272,6 +277,35 @@ class Initialize extends Component {
                                     </section>
                                     <section key="ip-input-3" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
+                                            <Tooltip placement="top" title={lang('客户端允许配置0至n个', 'There are 0 to n clients allowed to configure')}>
+                                                {lang('客户端', 'Clients')}
+                                            </Tooltip>
+                                        </Divider>
+                                        <QueueAnim type={['right', 'left']}>
+                                            {this.props.clientIPs.map((ip, i) =>
+                                                <Form.Item className="fs-ip-input-item" key={`clients-${i}`}
+                                                    validateStatus={this.state['clientIPsError'][i].status}
+                                                    help={this.state['clientIPsError'][i].help}
+                                                >
+                                                    <Input className="fs-ip-input" value={ip}
+                                                        placeholder={lang('请输入客户端IP', 'please enter client IP')}
+                                                        onChange={({target: {value}}) => {
+                                                            this.setIP.bind(this, 'clientIPs', i, value)();
+                                                            this.validateIP.bind(this, 'clientIPs', i, value)();
+                                                        }}
+                                                        addonAfter={
+                                                            i !== 0 && <Button title={lang('移除', 'remove')} icon="minus" size="small"
+                                                                onClick={this.removeIP.bind(this, 'clientIPs', i)} />
+                                                        }
+                                                    />
+                                                </Form.Item>)
+                                            }
+                                        </QueueAnim>
+                                        <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
+                                                onClick={this.addIP.bind(this, 'clientsIPs')} />
+                                    </section>
+                                    <section key="ip-input-4" className="fs-ip-input-member">
+                                        <Divider className="fs-ip-input-title">
                                             <Tooltip placement="top" title={lang('管理服务器允许配置1至2个', 'There are 1 to 2 management servers allowed to configure')}>
                                                 {lang('管理服务器', 'Management Server')}
                                             </Tooltip>
@@ -294,8 +328,8 @@ class Initialize extends Component {
                                         </QueueAnim>
                                         <Divider dashed style={{margin: "12px 0"}} />
                                         <div className="fs-ip-input-item">
-                                            <label>{lang('为管理服务器启用HA', 'Enable HA for Management Server')}</label>
-                                            <Switch size="small" style={{float: 'right'}} title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击开启', 'Click to enable')}
+                                            <label>{lang('为管理服务器启用HA', 'Enable HA for Mgmt Server')}</label>
+                                            <Switch size="small" style={{float: 'right', marginTop: 3}} title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击开启', 'Click to enable')}
                                                 checked={this.props.enableHA}
                                                 onChange={this.setEnableHA.bind(this)}
                                             />
@@ -320,7 +354,7 @@ class Initialize extends Component {
                                                 }
                                                 {this.props.hbIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
-                                                        label={i === 0 ? lang('HB IP', 'HB IP') : null}
+                                                        label={i === 0 ? lang('Heartbeat IP', 'Heartbeat IP') : null}
                                                         validateStatus={this.state['hbIPsError'][i].status}
                                                         help={this.state['hbIPsError'][i].help}
                                                     >
@@ -343,7 +377,7 @@ class Initialize extends Component {
                     {
                         this.state.current === 1 &&
                         <div className="fs-initialize-step-content">
-                            <QueueAnim type="top">
+                            <QueueAnim type="top" delay={200}>
                                 <section className="fs-ip-input-title">
                                     {lang(
                                         '步骤2：请核对各项IP地址是否输入正确。若发现任何问题，请点击"上一步"进行修改；若确认无误，请点击"下一步"进行初始化。一旦开始初始化，将无法做任何修改。',
@@ -370,6 +404,14 @@ class Initialize extends Component {
                                         }
                                     </section>
                                     <section key="ip-confirm-3" className="fs-ip-input-member">
+                                        <Divider className="fs-ip-input-title">{lang('客户端', 'Clients')}</Divider>
+                                        {this.props.clientIPs.map((ip, i) =>
+                                            <Form.Item className="fs-ip-input-item fs-t-c" key={i}>
+                                                <span>{ip}</span>
+                                            </Form.Item>)
+                                        }
+                                    </section>
+                                    <section key="ip-confirm-4" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">{lang('管理服务器', 'Mangement Server')}</Divider>
                                         {this.props.managementServerIPs.map((ip, i) =>
                                             <Form.Item className="fs-ip-input-item fs-t-c" key={i}>
@@ -407,7 +449,7 @@ class Initialize extends Component {
                     {
                         this.state.current === 2 &&
                         <div className="fs-initialize-step-content">
-                            <QueueAnim type="left">
+                            <QueueAnim type="left" delay={200}>
                                 <section key="fs-initializing-1" className="fs-ip-input-title">
                                     {lang(
                                         '步骤3：初始化已经开始！您可以去放松一下或做点其他事情，我们会在您回来之前搞定一切。',
@@ -428,7 +470,7 @@ class Initialize extends Component {
                     {
                         this.state.current === 3 &&
                         <div className="fs-initialize-step-content">
-                            <QueueAnim>
+                            <QueueAnim duration={200}>
                                 <section key="fs-initialized-1" className="fs-ip-input-title">
                                     <p>
                                         {lang(
@@ -438,7 +480,7 @@ class Initialize extends Component {
                                     </p>
                                 </section>
                             </QueueAnim>
-                            <QueueAnim type="bottom">
+                            <QueueAnim type="bottom" delay={250}>
                                 <section key="fs-initialized-2" className="fs-done-wrapper">
                                     <p>
                                         {lang(
@@ -461,14 +503,14 @@ class Initialize extends Component {
                         this.state.current > 0 &&
                         this.state.current !== this.state.stepNum - 1 &&
                         this.state.current !== this.state.stepNum - 2 &&
-                        <Button className="fs-initialize-btn prev" size="small" onClick={this.prev.bind(this)}>
-                            <Icon type="left" /> {lang('上一步', 'Previous')}
+                        <Button className="fs-initialize-btn prev" size="small" title={lang('上一步', 'Previous')} onClick={this.prev.bind(this)}>
+                            <ArrowButton />
                         </Button>
                     }
                     {
                         (this.state.current === 0 || this.state.current === 1) &&
-                        <Button className="fs-initialize-btn next" size="small" onClick={this.next.bind(this)}>
-                            {lang('下一步', 'Next')} <Icon type="right" />
+                        <Button className="fs-initialize-btn next" size="small" title={lang('下一步', 'Next')} onClick={this.next.bind(this)} loading={this.state.checking}>
+                            {!this.state.checking && <ArrowButton directionRange={['right', 'left']} />}
                         </Button>
                     }
                     {
@@ -484,8 +526,8 @@ class Initialize extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, managementServerIPs, enableHA, floatIPs, hbIPs}} = state;
-    return {language, metadataServerIPs, storageServerIPs, managementServerIPs, enableHA, floatIPs, hbIPs};
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs};
 };
 
 const mapDispatchToProps = dispatch => {

@@ -52,7 +52,7 @@ class DiskUsageStatus extends Component {
                         option.infoData.map((info, i) =>
                             <div className="fs-disk-usage-info-item" key={i}>
                                 <span className={`fs-disk-text ${info.color}`}>
-                                    <span className="fs-disk-label">{info.label}</span> {info.value}
+                                    <span className="fs-disk-label">{info.label}</span> <b>{info.value}</b>
                                 </span>
                             </div>
                         )

@@ -10,16 +10,19 @@ export default {
         storageServerIPs: [
             '192.168.100.110'
         ],
-        managementServerIPs: [
+        clientIPs: [
             '192.168.100.120'
+        ],
+        managementServerIPs: [
+            '192.168.100.130'
         ],
         enableHA: false,
         floatIPs: [
-            '192.168.100.130'
+            '192.168.100.140'
         ],
         hbIPs: [
-            '192.168.100.140',
-            '192.168.100.141'
+            '192.168.100.150',
+            '192.168.100.151'
         ],
     },
 
@@ -55,9 +58,9 @@ export default {
         storageNodes: {
             overview: {
                 diskStatus: {
-                    totalCapacity: 99999999999,
-                    usedCapacity: 39999999999,
-                    remainingCapacity: 60000000000,
+                    totalCapacity: 99999999999999,
+                    usedCapacity: 39000000000000,
+                    remainingCapacity: 60999999999999,
                 },
                 nodes: [
                     {name: 'ClusterSt1',id: 'cs1',up: true},

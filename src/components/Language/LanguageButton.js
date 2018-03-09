@@ -7,34 +7,34 @@ import lang from './lang';
 class LanguageButton extends Component {
     constructor (props){
         super(props);
-        let {type = 'default', ghost = false, width = '100px', border = '', transparentBg = false, pureText = false} = this.props;
+        let {style, type = 'default', ghost = false, width = '100px', border = '', transparentBg = false, pureText = false} = this.props;
         this.state = {
-            type, ghost, width, border, transparentBg, pureText
+            style, type, ghost, width, border, transparentBg, pureText
         };
     }
 
     render (){
-        let title = lang('切换语言', 'switch language');
-        let {type, ghost, width, border, transparentBg, pureText} = this.state;
+        let title = lang('切换语言', 'Switch Language');
+        let {style, type, ghost, width, border, transparentBg, pureText} = this.state;
         let language = this.props.language === 'chinese' ? 'english' : 'chinese';
-        return (<div className="fs-switch-language-btn-wrapper">
+        return (<div className="fs-switch-language-btn-wrapper" style={style}>
             {
                 pureText ?
-                <Button className={`fs-change-language-btn ${transparentBg ? 'transparent-bg' : ''}`}
-                    title={title}
-                    style={{width, border}}
-                    type={type}
-                    ghost={ghost}
-                    onClick={this.props.changeLanguage.bind(this, language)}
-                >
-                    {lang('English', '中文')}
-                </Button> :
                 <span className="fs-change-language-pure-text"
                     title={title}
                     onClick={this.props.changeLanguage.bind(this, language)}
                 >
                     {lang('English', '中文')}
-                </span>
+                </span> :
+                <Button className={`fs-change-language-btn ${transparentBg ? 'transparent-bg' : ''}`}
+                        title={title}
+                        style={{width, border}}
+                        type={type}
+                        ghost={ghost}
+                        onClick={this.props.changeLanguage.bind(this, language)}
+                >
+                    {lang('English', '中文')}
+                </Button>
             }
         </div>);
     }

@@ -78,14 +78,14 @@ class StorageNodes extends Component {
                                     </div>
                                     <div className="fs-info-block-item m-l">
                                         <i className="fs-info-block-circle yellow" />
-                                        <div className="fs-info-block-label">{lang('正常节点数', 'Nodes Up')}</div>
+                                        <div className="fs-info-block-label">{lang('正常节点数', 'Up Nodes')}</div>
                                         <div className="fs-info-block-value">
                                             <span>{this.props.nodes.filter(node => node.up).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
                                         </div>
                                     </div>
                                     <div className="fs-info-block-item m-l">
                                         <i className="fs-info-block-circle orange" />
-                                        <div className="fs-info-block-label">{lang('异常节点数', 'Nodes Down')}</div>
+                                        <div className="fs-info-block-label">{lang('异常节点数', 'Down Nodes')}</div>
                                         <div className="fs-info-block-value">
                                             <span>{this.props.nodes.filter(node => !node.up).length || 0} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
                                         </div>
@@ -107,7 +107,7 @@ class StorageNodes extends Component {
                             <h3 className="fs-page-title item">
                                 {this.state.currentNode.name} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                    <ArrowButton style={{marginRight: 15}}
+                                    <ArrowButton switchDirection style={{marginRight: 15}}
                                         title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                         onClick={this.changeExpandSwitchNode.bind(this)}
                                     />
@@ -135,7 +135,7 @@ class StorageNodes extends Component {
                                     </div>
                                     <div className="fs-info-block-item m-l">
                                         <i className="fs-info-block-circle yellow" />
-                                        <div className="fs-info-block-label">{lang('状态', 'Status')}</div>
+                                        <div className="fs-info-block-label">{lang('状态', 'Node Status')}</div>
                                         <div className="fs-info-block-value">
                                             {
                                                 this.state.currentNode.up ?
