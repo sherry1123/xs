@@ -1,8 +1,9 @@
 const os = require('os');
 const Koa = require('koa');
+const Router = require('koa-router');
 const app = new Koa();
+const router = new Router();
 const CronJob = require('cron').CronJob;
-const router = new require('koa-router')();
 const promise = require('../module/promise');
 //service
 const getCpuInfo = () => {
