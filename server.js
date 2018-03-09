@@ -44,19 +44,19 @@ const messageHandler = msg => {
 		initStatus = initStatus === 'true' ? true : false;
 		switch (name) {
 			case 'agentd':
-				require('./server/agentd/index');
+				require('./server/agentd/');
 				init.setInitStatus(initStatus);
 				logger.info('agentd ready');
 				process.send('agentd ready');
 				break;
 			case 'job':
-				require('./server/index');
+				require('./server/');
 				init.setInitStatus(initStatus);
 				logger.info('job ready');
 				process.send('job ready');
 				break;
 			case 'task':
-				require('./server/schedule/index');
+				require('./server/schedule/');
 				init.setInitStatus(initStatus);
 				logger.info('task ready');
 				process.send('task ready');
