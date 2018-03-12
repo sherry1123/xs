@@ -1,72 +1,103 @@
 .fs-dashboard-wrapper {
-    .fs-cluster-monitor-wrapper {
-      // background:rgb(132, 225, 241);
-      border:none;
-        .fs-cluster-monitor-content {
-            display: flex;
-            flex-direction: row;
-            justify-content:flex-start;
-            .fs-cluster-monitor-detail-A {
-              width:49%;flex:1;
-              height:300px;
-              // background:rgb(198, 201, 181);
+  .fs-cluster-monitor-wrapper {
+    background:#fff;
+    border:none;
+      .fs-cluster-monitor-content {
+          display: flex;
+          flex-direction: row;
+          justify-content:flex-start;
+          .fs-title-block{
+            .fs-info-item{
+              padding: 0px 15px;
+              height: 78px;
+              width: 98%;
+              display: inline-block;
+              line-height: 71px;
             }
-            .fs-cluster-monitor-detail-B {
-              width:49%;
-              height:300px;
-              margin-left:20px; 
-              // background:rgb(190, 79, 224);
+            .fs-chart-content {
+              margin-left:-6%;
+            }
+          }
+          .fs-node-status-circle {
+            display: inline-block;
+            margin-left: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            &.up {
+                background-color: @green;
+                animation: 6s fs-node-up infinite 1s;
+            }
+            &.blue {
+                background-color: @blue;
+                animation: 6s fs-node-blue infinite 1s;
+            }
+            &.down {
+                background-color: @red;
+                animation: 6s fs-node-down infinite 1.5s;
             }
         }
-    }
-    .fs-cluster-monitor-CpacityUsage {
-      .fs-CpacityUsage-content {
+          .fs-cluster-monitor-detail-A {
+            width:49%;flex:1;
+            height:300px;
+            // background:rgb(198, 201, 181);
+          }
+          .fs-cluster-monitor-detail-B {
+            width:49%;
+            height:300px;
+            margin-left:20px; 
+            // background:rgb(190, 79, 224);
+          }
+      }
+  }
+  .fs-cluster-monitor-CpacityUsage {
+    .fs-CpacityUsage-content {
+      
+        display: flex;
+        flex-direction: row;
+        justify-content:flex-start;
         
-          display: flex;
-          flex-direction: row;
-          justify-content:flex-start;
-          
-          .fs-CpacityUsage-content-detail-A{
-            border:none;
-            width:30%;
-            height:300px;flex: 1;
-            background:rgb(201, 181, 181);
-          }
-          .fs-CpacityUsage-content-detail-B{
-            border:none;
-            height:300px;
-            width:30%;      flex: 1; 
-            margin-left:20px;    
-            background:rgb(41, 164, 235);
-          }
-          .fs-CpacityUsage-content-detail-C{
-            border:none;            
-            height:300px;
-            width:30%;
-            margin-left:20px;
-            background:rgb(156, 27, 27);
-          }
-      }
+        .fs-CpacityUsage-content-detail-A{
+          border:none;
+          width:30%;
+          height:300px;flex: 1;
+          background:rgb(201, 181, 181);
+        }
+        .fs-CpacityUsage-content-detail-B{
+          border:none;
+          height:300px;
+          width:30%;      flex: 1; 
+          margin-left:20px;    
+          background:rgb(41, 164, 235);
+        }
+        .fs-CpacityUsage-content-detail-C{
+          border:none;            
+          height:300px;
+          width:30%;
+          margin-left:20px;
+          background:rgb(156, 27, 27);
+        }
     }
-    .fs-EventMonitor-wrapper {
-      .fs-EventMonitor-content {
-          display: flex;
-          flex-direction: row;
-          justify-content:flex-start;
-          .fs-EventMonitor-content-detail-A{
-            border:none;            
-            width:62.5%;flex:1;
-            height:300px;
-            background:rgb(201, 181, 181);
-          }
-          .fs-EventMonitor-content-detail-B{
-            border:none;            
-            height:300px;
-            width:30%;    
-            margin-left:20px;       
-            background:rgb(41, 164, 235);
-          }
-      }
+  }
+  .fs-EventMonitor-wrapper {
+    .fs-EventMonitor-content {
+        display: flex;
+        flex-direction: row;
+        justify-content:flex-start;
+        .fs-EventMonitor-content-detail-A{
+          border:none;            
+          width:62.5%;flex:1;
+          height:300px;
+          background:rgb(201, 181, 181);
+        }
+        .fs-EventMonitor-content-detail-B{
+          border:none;            
+          height:300px;
+          width:30%;    
+          margin-left:20px;       
+          background:rgb(41, 164, 235);
+        }
     }
+  }
 
 }
