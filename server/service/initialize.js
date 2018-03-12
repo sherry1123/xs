@@ -48,18 +48,25 @@ const model = {
         }
         return result;
     },
-    async initMongoDB(ipList) {
-        let command = `sudo ${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
-        let conf = {
-            _id: config.database.replicaSet,
-            members: []
-        };
-        for (let i = 0; i < ipList.length; i++) {
-            i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
-            conf.members.push({ _id: i, host: ipList[i] });
+    async initMongoDB(param) {
+        let { primary, secondary, arbiter, replicaSet } = param;
+        if (!replicaSet) {
+            let command = `sudo ${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --fork`;
+            await promise.runCommandInPromise(command);
+        } else {
+            let command = `sudo ${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
+            let ipList = [primary, secondary, arbiter];
+            let conf = {
+                _id: config.database.replicaSet,
+                members: []
+            };
+            for (let i = 0; i < ipList.length; i++) {
+                i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
+                conf.members.push(i === 2 ? { _id: i, host: ipList[i], arbiterOnly: true } : { _id: i, host: ipList[i], priority: 2 - i });
+            }
+            await promise.writeFileInPromise('/tmp/initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
+            await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/initiatedb.js`);
         }
-        await promise.writeFileInPromise('/tmp/initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
-        await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/initiatedb.js`);
     },
     async initOrcaFS(param) {
         //todo
