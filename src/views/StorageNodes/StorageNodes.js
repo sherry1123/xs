@@ -5,7 +5,8 @@ import lang from '../../components/Language/lang';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import DiskUsageStatus from '../../components/DiskUsageStatus/DiskUsageStatus';
-import {TABLE_LOCALE, formatStorageSize} from '../../services';
+import StorageTargetGroup from '../../components/StorageTargetGroup/StorageTargetGroup';
+// import {TABLE_LOCALE, formatStorageSize} from '../../services';
 import mockData from './mockData';
 
 class StorageNodes extends Component {
@@ -30,7 +31,7 @@ class StorageNodes extends Component {
     }
 
     render (){
-        let tableProps = {
+        /*let tableProps = {
             size: 'small',
             bordered: false,
             locale: TABLE_LOCALE,
@@ -56,7 +57,7 @@ class StorageNodes extends Component {
                 dataIndex: 'remainingDiskCapacity',
                 render: text => formatStorageSize(text)
             }]
-        };
+        };*/
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-item-wrapper title">
@@ -92,13 +93,13 @@ class StorageNodes extends Component {
                                     </div>
                                 </div>
                                 <span className="fs-info-item title">
-                                    <span className="fs-info-label">{lang('磁盘使用状态', 'Disk Usage Status')}</span>
-                                </span>
-                                <DiskUsageStatus diskStatus={this.props.diskStatus} />
-                                <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('总吞吐量', 'Total Throughput')}</span>
                                 </span>
                                 <FSLineChart option={mockData.chartProps1} />
+                                <span className="fs-info-item title">
+                                    <span className="fs-info-label">{lang('磁盘使用状态', 'Disk Usage Status')}</span>
+                                </span>
+                                <DiskUsageStatus diskStatus={this.props.diskStatus} />
                             </section>
                         </section>
                     </div>
@@ -152,7 +153,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('存储目标', 'Storage Target')}</span>
                                 </span>
-                                <Table {...tableProps} style={{width: '100%'}} />
+                                <StorageTargetGroup targets={this.props.targetList} />
                             </section>
                         </section>
                     </div>

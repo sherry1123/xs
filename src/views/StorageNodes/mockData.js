@@ -13,7 +13,7 @@ export default {
             type: 'line',
             itemStyle: {
                 normal: {
-                    color: '#45ccce',
+                    color: '#888',
                     lineStyle: {
                         width: 1
                     }
@@ -42,7 +42,7 @@ export default {
             type: 'line',
             itemStyle: {
                 normal: {
-                    color: '#f79f07',
+                    color: '#45ccce',
                     lineStyle: {
                         width: 1
                     }
