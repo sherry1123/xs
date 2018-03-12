@@ -73,9 +73,9 @@ export default {
             detail: {
                 status: {},
                 targetList: [
-                    {id: 'target_1', path: '/dev/target_1', totalDiskCapacity: 999999999, usedDiskCapacity: 299999999, remainingDiskCapacity: 70000000},
-                    {id: 'target_2', path: '/dev/target_1', totalDiskCapacity: 599999999, usedDiskCapacity: 399999999, remainingDiskCapacity: 20000000},
-                    {id: 'target_3', path: '/dev/target_1', totalDiskCapacity: 599999999, usedDiskCapacity: 399999999, remainingDiskCapacity: 20000000},
+                    {id: 'target_1', path: '/dev/orca_t1', totalDiskCapacity: 999999999, usedDiskCapacity: 899999999, remainingDiskCapacity: 100000000},
+                    {id: 'target_2', path: '/dev/orca_t2', totalDiskCapacity: 599999999, usedDiskCapacity: 199999999, remainingDiskCapacity: 400000000},
+                    {id: 'target_3', path: '/dev/orca_t3', totalDiskCapacity: 899999999, usedDiskCapacity: 199999999, remainingDiskCapacity: 700000000},
                 ]
             }
         },

@@ -78,20 +78,20 @@ const model = {
      * @param {array} HBIP Heart Beat IP
      */
     async initCluster(param) {
-        let { ipList } = param;
+        let { MDS, OSS, MS, HA, CSMIP, HBIP } = param;
         try {
-            await init.initMongoDB(ipList);
+            await init.initMongoDB(HA ? { primary: MS[0], secondary: MS[1], arbiter: MDS[0], replicaSet: true } : { primary: MS[0], replicaSet: false });
             await init.initOrcaFS(param);
-            await init.saveInitInfo(ipList);
+            await init.saveInitInfo(Array.from(new Set(MDS.concat(OSS, MS))));
         } catch (error) {
             errorHandler(7, error, param);
             await model.antiInitCluster(param);
         }
     },
     async antiInitCluster(param) {
-        let { ipList } = param;
+        let { MDS, OSS, MS, HA, CSMIP, HBIP } = param; 
         try {
-            await init.antiInitMongoDB(ipList);
+            await init.antiInitMongoDB(Array.from(new Set(MDS.concat(OSS, MS))));
             await init.antiInitOrcaFS(param);
         } catch (error) {
             errorHandler(8, error, param);

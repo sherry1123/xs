@@ -14,35 +14,28 @@ export default class CpacityUsage extends Component {
   constructor(props) {
     super(props)
     let id = ('_' + Math.random()).replace('.', '_');
-    this.state = {
-      pieId: 'pie' + id,
-    }
-    this.resize = this.resize.bind(this);
-  }
-  /**
-   * 生成图表，主要做了一个判断，因为如果不去判断dom有没有生成，
-   * 在后面如果定期去更新图表，每次生成一个dom节点会导致浏览器
-   * 占用的cpu和内存非常高，踩过坑。
-   */
-  initPie(id) {
+    let myChart = null;
     let option = null;
     let scale = 1;
-    let echartData = [{
-      value: 2154,
-      name: '可恢复'
-    }, {
-      value: 3854,
-      name: '健康'
-    }, {
-      value: 3515,
-      name: '不可恢复'
-    }, {
-      value: 3515,
-      name: '降级'
-    }, {
-      value: 3854,
-      name: '不可能'
-    }]
+    let echartData = [
+
+      {
+        value: 2154,
+        name: '可恢复'
+      }, {
+        value: 3854,
+        name: '健康'
+      }, {
+        value: 3515,
+        name: '不可恢复'
+      }, {
+        value: 3515,
+        name: '降级'
+      }, {
+        value: 3854,
+        name: '不可能'
+      }
+    ]
     let rich = {
       yellow: {
         color: "#ffc72b",
@@ -60,7 +53,7 @@ export default class CpacityUsage extends Component {
         align: 'center',
         fontSize: 10 * scale,
         // padding: [10, 0],
-        
+
       },
       // hr: {
       //   borderColor: '#0b5263',
@@ -69,7 +62,7 @@ export default class CpacityUsage extends Component {
       //   height: 0,
       // }
     }
-    let total = 0; 
+    let total = 0;
     echartData.forEach(function (value, index, array) {
       total += value.value;
     });
@@ -77,12 +70,12 @@ export default class CpacityUsage extends Component {
       backgroundColor: '#fff',
       title: {
         text: '硬盘容量',
-        subtext:total+'MiB',
+        subtext: total + 'MiB',
         // left: 'center',
         top: '49%',
         // padding: [25, 0],
         // center: ['15%', '50%'],
-        left:'23.4%',
+        left: '23.4%',
         textStyle: {
           color: '#aaa',
           fontSize: 12 * scale,
@@ -94,22 +87,22 @@ export default class CpacityUsage extends Component {
         top: '41%',
         left: '60%',
         icon: 'circle',
-        data:echartData,
+        data: echartData,
         textStyle: {
           color: 'auto'
         },
         formatter: function (params) {
           // let total = 0; 
-          let percent = 0; 
+          let percent = 0;
           let tarValue = 0;
-          for(let i = 0;i<echartData.length;i++){
+          for (let i = 0; i < echartData.length; i++) {
             // total += echartData[i].value;
-            if(echartData[i].name===params){
+            if (echartData[i].name === params) {
               tarValue = echartData[i].value;
             }
           };
           percent = ((tarValue / total) * 100).toFixed(2);
-          console.log(percent)
+          // console.log(percent)
           return params + ' ' + percent + '%';
         },
 
@@ -147,36 +140,41 @@ export default class CpacityUsage extends Component {
         animationDelay: function (idx) {
           return Math.random() * 200;
         }
-        
+
       }]
     };
-    let myChart = echarts.getInstanceByDom(document.getElementById(id));
-    // let myChart = echarts.getInstanceByDom(document.getElementById(id));
-    if (myChart === undefined) {
-      myChart = echarts.init(document.getElementById(id));
-    }
-    myChart.setOption(option)
-    window.onresize = () => {
-      //自适应容器窗口变化  
-      // console.log('ssssss')
-      myChart.resize();
+    this.state = {
+      pieId: 'pie' + id,
+      total,
+      rich,
+      echartData,
+      scale,
+      myChart,
+      option
     }
   }
-  resize(){
-    this.initPie(this.state.pieId);
-    // console.log('state')
+  
+  initPie(id) {
+    let _myChart = this.state.myChart;
+    this._myChart = echarts.init(document.getElementById(id));
+    this._myChart.setOption(this.state.option)
+    console.log('initPie  开始初始化 Pie')
   }
 
   componentDidMount() {
-    /**
-     * 在这里去调用生成图表的方法是因为，在组件加载后生成
-     * dom节点，这个时候canvas才能根据id去绘制图表
-     */
     this.initPie(this.state.pieId);
-    // window.addEventListener('resize', this.resize)
+    window.addEventListener('resize', this.resizeChart.bind(this));
+
+  }
+
+  resizeChart() {
+    this.timer && clearTimeout(this.timer);
+    this.timer = setTimeout(this._myChart.resize, 300);
+
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.resizeChart.bind(this));
+    // console.log('componentDidMount')
   }
   render() {
     return (

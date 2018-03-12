@@ -14,7 +14,7 @@ class DiskUsageStatus extends Component {
                 {
                     label: lang('总容量', 'Total'),
                     value: formatStorageSize(totalCapacity),
-                    color: 'purple'
+                    color: 'blue'
                 }, {
                     label: lang('已使用容量', 'Used'),
                     value: formatStorageSize(usedCapacity),

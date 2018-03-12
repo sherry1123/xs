@@ -15,7 +15,7 @@ class Dashboard extends Component {
     this.state = {
 
     };
-    console.log(this.props)
+    // console.log(this.props)
   }
   componentWillUnmount() {
     
@@ -25,7 +25,7 @@ class Dashboard extends Component {
     return (
       <section className="fs-page-content fs-dashboard-wrapper">
         <section className="fs-cluster-monitor-wrapper">
-          <section className="fs-page-item-wrapper title">
+          <section className="fs-page-item-wrapper ">
             <h3 className="fs-page-title ">{lang('集群监控', 'Cluster Monitor')}</h3>
           </section>
           <section className="fs-page-item-content  fs-cluster-monitor-content">
@@ -65,7 +65,7 @@ class Dashboard extends Component {
               <CpacityUsage />
             </div>
             <div className="fs-CpacityUsage-content-detail-B">
-              数据状态
+            <DiskStatus />
                         </div>
             <div className="fs-CpacityUsage-content-detail-C">
               {/* <div></div> */}
