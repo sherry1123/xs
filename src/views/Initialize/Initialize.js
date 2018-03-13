@@ -53,8 +53,8 @@ class Initialize extends Component {
             await this.addIP('managementServerIPs');
             notification.open({
                 message: lang('提示', 'Tooltip'),
-                description: lang('您已为管理服务器启用HA，请配置两个有效的管理服务器IP，并配置存储集群服务管理IP以及HB IP',
-                    'You have enabled HA for management server, please configure two valid management server IPs, storage cluster service management IP and HB IP')
+                description: lang('您已为管理服务器启用HA，请配置两个有效的管理服务器IP及对应的HB IP，并配置存储集群服务管理IP。这些设置将确保HA功能能够正常工作。',
+                    'You have enabled HA for management server, please configure two valid management server IPs and corresponding Heartbeat IPs, also the storage cluster service management IP needs to be set up. All those settings will ensure that the HA function can work properly.')
             });
         } else {
             await this.removeIP('managementServerIPs', 1);
@@ -91,17 +91,66 @@ class Initialize extends Component {
     async validateIP (category, i, value){
         // validate ipv4 address pattern
         if (!validateIpv4(value)){
-            let help = !value ? lang('请输入IP', 'please input IP') : lang('IP格式错误', 'pattern error');
+            let help = !value ? lang('请输入IP', 'please enter IP') : lang('IP格式错误', 'IP pattern error');
             await this.setErrorArr(category, i, {status: 'error', help});
         } else {
             // validate whether this ip is duplicated with an existing one in its server category
             let currentIPs = this.props[category];
             let duplicated = currentIPs.some((ip, index) => (ip === value && index !== i));
             if (duplicated){
-                await this.setErrorArr(category, i, {status: 'error', help: lang('IP在所在分类中有重复', 'duplicated')});
+                await this.setErrorArr(category, i, {status: 'error', help: lang('IP在这个服务器类型中有重复', 'IP is duplicated in this server category')});
             } else {
                 // validate successfully
-                await this.setErrorArr(category, i, {status: '', help: ''});
+                if (!!this.state[category + 'Error'][i].status){
+                    await this.setErrorArr(category, i, {status: '', help: ''});
+                }
+            }
+        }
+    }
+
+    async validateIPForHA (){
+        // once enabled HA for management server, management server IPs shouldn't be the same with any of metadata, storage or client server IPs
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs} = this.props;
+        let errorHelp = lang('为管理服务器启用HA后，管理服务器IP不能与任何元数据、存储服务器或客户端IP相同', 'once enabled HA for mgmt server, mgmt server IPs shouldn\'t be the same with any of metadata, storage server or client IPs');
+        for (let i = 0; i < managementServerIPs.length; i ++){
+            let managementServerIP = managementServerIPs[i];
+            if (managementServerIP){
+                if (metadataServerIPs.includes(managementServerIP)){
+                    await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
+                } else if (storageServerIPs.includes(managementServerIP)){
+                    await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
+                } else if (clientIPs.includes(managementServerIP)){
+                    await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
+                } else {
+                    if (!!this.state.managementServerIPsError[i].status){
+                        await this.setErrorArr('managementServerIPs', i, {status: '', help: ''});
+                    }
+                }
+            }
+        }
+    }
+
+    async validateNetworkSegmentForMgmtAndHAIPs (){
+        // a more graceful way to validate network segment is using net mask to do binary '&' operations,
+        // but currently it hasn't been provided yet or let customers to enter, so there's no way to get it
+        let {managementServerIPs: [mgmtIP1, mgmtIP2], hbIPs: [hbIP1, hbIP2]} = this.props;
+        let errorHelp = lang('管理服务器IP不能与和它对应的集群服务管理IP处于相同网段', 'Management Server IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP');
+        let [mgmtIP1_1, mgmtIP1_2, mgmtIP1_3] = mgmtIP1.split('.');
+        let [hbIP1_1, hbIP1_2, hbIP1_3] = hbIP1.split('.');
+        if (!(mgmtIP1_1 !== hbIP1_1 || mgmtIP1_2 !== hbIP1_2 || mgmtIP1_3 !== hbIP1_3)){
+            await this.setErrorArr('managementServerIPs', 0, {status: 'error', help: errorHelp});
+        } else {
+            if (!!mgmtIP1){
+                await this.setErrorArr('managementServerIPs', 0, {status: '', help: ''});
+            }
+        }
+        let [mgmtIP2_1, mgmtIP2_2, mgmtIP2_3] = mgmtIP2.split('.');
+        let [hbIP2_1, hbIP2_2, hbIP2_3] = hbIP2.split('.');
+        if (!(mgmtIP2_1 !== hbIP2_1 || mgmtIP2_2 !== hbIP2_2 || mgmtIP2_3 !== hbIP2_3)){
+            await this.setErrorArr('managementServerIPs', 1, {status: 'error', help: errorHelp});
+        } else {
+            if (!!mgmtIP1){
+                await this.setErrorArr('managementServerIPs', 1, {status: '', help: ''});
             }
         }
     }
@@ -122,6 +171,11 @@ class Initialize extends Component {
                         await this.validateIP(category, i, ip);
                     });
                 });
+                // validate HA
+                if (this.props.enableHA){
+                    await this.validateIPForHA();
+                    await this.validateNetworkSegmentForMgmtAndHAIPs();
+                }
                 // is there a validation error
                 let validated = true;
                 for (let category of this.categoryArr){
@@ -142,7 +196,7 @@ class Initialize extends Component {
                         message.error(lang('经检测有IP不能正常使用，请更换', 'Some IPs seem can not be used normally，please change them'));
                     }
                 } else {
-                    message.error(lang('IP输入有误，请先修正', 'Something is wrong with IP input, please correct it first'));
+                    message.error(lang('IP输入验证没有通过，请先修正', 'IP input validation did not pass, please correct the error one(s) firstly'));
                 }
                 await this.setState({checking: false});
                 break;
@@ -188,7 +242,7 @@ class Initialize extends Component {
         return (
             <section className="fs-initialize-wrapper">
                 <section className="fs-initialize-language-btn-wrapper" style={{marginRight: 30}}>
-                    <LanguageButton />
+                    <LanguageButton pureText />
                 </section>
                 <section key="initialize-title" className="fs-initialize-welcome-wrapper">
                     {lang(
@@ -229,15 +283,15 @@ class Initialize extends Component {
                                                     validateStatus={this.state['metadataServerIPsError'][i].status}
                                                     help={this.state['metadataServerIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip}
-                                                        placeholder={lang('请输入元数据服务器IP', 'please enter metadata sever IP')}
+                                                    <Input className="fs-ip-input" value={ip} size="small"
+                                                        placeholder={lang('请输入IP', 'please enter IP')}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'metadataServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'metadataServerIPs', i, value)();
                                                         }}
                                                         addonAfter={
                                                             i !== 0 && <Button title={lang('移除', 'remove')} icon="minus" size="small"
-                                                                onClick={this.removeIP.bind(this, 'metadataServerIPs', i)} />
+                                                                className="fs-ip-sub-btn" onClick={this.removeIP.bind(this, 'metadataServerIPs', i)} />
                                                         }
                                                     />
                                                 </Form.Item>)
@@ -258,15 +312,15 @@ class Initialize extends Component {
                                                     validateStatus={this.state['storageServerIPsError'][i].status}
                                                     help={this.state['storageServerIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip}
-                                                        placeholder={lang('请输入存储服务器IP', 'please enter storage sever IP')}
+                                                    <Input className="fs-ip-input" value={ip} size="small"
+                                                        placeholder={lang('请输入IP', 'please enter IP')}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'storageServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'storageServerIPs', i, value)();
                                                         }}
                                                         addonAfter={
                                                             i !== 0 && <Button title={lang('移除', 'remove')} icon="minus" size="small"
-                                                                onClick={this.removeIP.bind(this, 'storageServerIPs', i)} />
+                                                                className="fs-ip-sub-btn" onClick={this.removeIP.bind(this, 'storageServerIPs', i)} />
                                                         }
                                                     />
                                                 </Form.Item>)
@@ -287,22 +341,22 @@ class Initialize extends Component {
                                                     validateStatus={this.state['clientIPsError'][i].status}
                                                     help={this.state['clientIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip}
-                                                        placeholder={lang('请输入客户端IP', 'please enter client IP')}
+                                                    <Input className="fs-ip-input" value={ip}  size="small"
+                                                        placeholder={lang('请输入IP', 'please enter IP')}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'clientIPs', i, value)();
                                                             this.validateIP.bind(this, 'clientIPs', i, value)();
                                                         }}
                                                         addonAfter={
                                                             i !== 0 && <Button title={lang('移除', 'remove')} icon="minus" size="small"
-                                                                onClick={this.removeIP.bind(this, 'clientIPs', i)} />
+                                                                className="fs-ip-sub-btn" onClick={this.removeIP.bind(this, 'clientIPs', i)} />
                                                         }
                                                     />
                                                 </Form.Item>)
                                             }
                                         </QueueAnim>
                                         <Button className="fs-ip-plus-btn" title={lang('添加', 'add')} icon="plus" size="small"
-                                                onClick={this.addIP.bind(this, 'clientsIPs')} />
+                                            onClick={this.addIP.bind(this, 'clientIPs')} />
                                     </section>
                                     <section key="ip-input-4" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
@@ -316,8 +370,9 @@ class Initialize extends Component {
                                                     validateStatus={this.state['managementServerIPsError'][i].status}
                                                     help={this.state['managementServerIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip}
-                                                        placeholder={lang('请输入管理服务器IP', 'please enter management server IP')}
+                                                    <Input className="fs-ip-input" value={ip} size="small"
+                                                        addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
+                                                        placeholder={lang('请输入IP', 'please enter IP')}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'managementServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'managementServerIPs', i, value)();
@@ -337,34 +392,45 @@ class Initialize extends Component {
                                         <Divider dashed style={{margin: "12px 0"}} />
                                         {this.props.enableHA &&
                                             <div>
-                                                {this.props.floatIPs.map((ip, i) =>
-                                                    <Form.Item className="fs-ip-input-item" key={`float-${i}`}
-                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster service management IP') : null}
-                                                        validateStatus={this.state['floatIPsError'][i].status}
-                                                        help={this.state['floatIPsError'][i].help}
-                                                    >
-                                                        <Input className="fs-ip-input" value={ip}
-                                                            placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
-                                                            onChange={({target: {value}}) => {
-                                                                this.setIP.bind(this, 'floatIPs', i, value)();
-                                                                this.validateIP.bind(this, 'floatIPs', i, value)();
-                                                            }}
-                                                        />
-                                                    </Form.Item>)
-                                                }
                                                 {this.props.hbIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
-                                                        label={i === 0 ? lang('Heartbeat IP', 'Heartbeat IP') : null}
+                                                        label={i === 0 ? lang('心跳IP', 'Heartbeat IP') : null}
                                                         validateStatus={this.state['hbIPsError'][i].status}
                                                         help={this.state['hbIPsError'][i].help}
                                                     >
-                                                        <Input className="fs-ip-input" value={ip}
+                                                        <Input className="fs-ip-input" value={ip} size="small" style={{width: 200}}
+                                                            addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                             placeholder={lang('请输入HB IP', 'please enter HB IP')}
                                                             onChange={({target: {value}}) => {
                                                                 this.setIP.bind(this, 'hbIPs', i, value)();
                                                                 this.validateIP.bind(this, 'hbIPs', i, value)();
                                                             }}
                                                         />
+                                                        <Tooltip placement="right"
+                                                            title={lang(`对应管理服务器节点${i + 1}`, `Corresponding with management server Node ${i + 1}`)}
+                                                        >
+                                                            <Icon type="question-circle" className="fs-info-icon m-l" />
+                                                        </Tooltip>
+                                                    </Form.Item>)
+                                                }
+                                                {this.props.floatIPs.map((ip, i) =>
+                                                    <Form.Item className="fs-ip-input-item" key={`float-${i}`}
+                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Mgmt IP') : null}
+                                                        validateStatus={this.state['floatIPsError'][i].status}
+                                                        help={this.state['floatIPsError'][i].help}
+                                                    >
+                                                        <Input className="fs-ip-input" value={ip} size="small" style={{width: 200}}
+                                                            placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
+                                                            onChange={({target: {value}}) => {
+                                                                this.setIP.bind(this, 'floatIPs', i, value)();
+                                                                this.validateIP.bind(this, 'floatIPs', i, value)();
+                                                            }}
+                                                        />
+                                                        <Tooltip placement="right"
+                                                             title={lang(`首次将映射至管理服务器节点${i + 1}的IP上`, `Will be mapped to the IP of management server Node ${i + 1} firstly`)}
+                                                        >
+                                                            <Icon type="question-circle" className="fs-info-icon m-l" />
+                                                        </Tooltip>
                                                     </Form.Item>)
                                                 }
                                             </div>
@@ -422,19 +488,19 @@ class Initialize extends Component {
                                             <div>
                                                 <Divider dashed style={{margin: "12px 0"}} />
                                                 <div className="fs-ip-input-item">
-                                                    <label>{lang('管理服务器HA配置', 'Management Server HA Configuration')}</label>
+                                                    <label>{lang('管理服务器HA配置', 'Mgmt Server HA Configuration')}</label>
                                                 </div>
                                                 <Divider dashed style={{margin: "12px 0"}} />
                                                 {this.props.floatIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={i}
-                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster service management IP') : null}
+                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Management IP') : null}
                                                     >
                                                         <div className="fs-t-c">{ip}</div>
                                                     </Form.Item>)
                                                 }
                                                 {this.props.hbIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={i}
-                                                        label={i === 0 ? lang('HB IP', 'HB IP') : null}
+                                                        label={i === 0 ? lang('心跳IP', 'Heartbeat IP') : null}
                                                     >
                                                         <div className="fs-t-c">{ip}</div>
                                                     </Form.Item>)

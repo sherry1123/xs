@@ -36,7 +36,7 @@ class TopBar extends Component {
                             <span className="fs-login-user">admin</span>
                         </Popover>
                     </span>
-                    <LanguageButton width={80} border="none" transparentBg />
+                    <LanguageButton width={80} border="none" pureText />
                 </section>
             </header>
         );

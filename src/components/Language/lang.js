@@ -1,7 +1,8 @@
 import store from '../../redux';
+import {lsGet} from '../../services';
 
 const lang = (chinese, english) => {
-    let localLanguage = localStorage.getItem('language');
+    let localLanguage = lsGet('language');
     if (!store){
         if (localLanguage){
             return localLanguage === 'chinese' ? chinese : english;
