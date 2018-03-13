@@ -31,33 +31,6 @@ class StorageNodes extends Component {
     }
 
     render (){
-        /*let tableProps = {
-            size: 'small',
-            bordered: false,
-            locale: TABLE_LOCALE,
-            dataSource: this.props.targetList,
-            pagination: this.props.targetList.length > 5 ? {pageSize: 5,size: 'small'} : false,
-            rowKey: 'id',
-            columns: [{
-                title: lang('存储目标ID', 'Storage Target ID'),
-                dataIndex: 'id'
-            }, {
-                title: lang('存储路径', 'Storage Path'),
-                dataIndex: 'path'
-            }, {
-                title: lang('总磁盘容量', 'Total Disk Capacity'),
-                dataIndex: 'totalDiskCapacity',
-                render: text => formatStorageSize(text)
-            }, {
-                title: lang('已使用磁盘容量', 'Used Disk Capacity'),
-                dataIndex: 'usedDiskCapacity',
-                render: text => formatStorageSize(text)
-            }, {
-                title: lang('剩余磁盘容量', 'Remaining Disk Capacity'),
-                dataIndex: 'remainingDiskCapacity',
-                render: text => formatStorageSize(text)
-            }]
-        };*/
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-item-wrapper title">
@@ -93,13 +66,13 @@ class StorageNodes extends Component {
                                     </div>
                                 </div>
                                 <span className="fs-info-item title">
-                                    <span className="fs-info-label">{lang('总吞吐量', 'Total Throughput')}</span>
-                                </span>
-                                <FSLineChart option={mockData.chartProps1} />
-                                <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('磁盘使用状态', 'Disk Usage Status')}</span>
                                 </span>
                                 <DiskUsageStatus diskStatus={this.props.diskStatus} />
+                                <span className="fs-info-item title">
+                                    <span className="fs-info-label">{lang('总吞吐量', 'Total Throughput')}</span>
+                                </span>
+                                <FSLineChart option={mockData.chartProps1} />
                             </section>
                         </section>
                     </div>
@@ -147,13 +120,13 @@ class StorageNodes extends Component {
                                     </div>
                                 </div>
                                 <span className="fs-info-item title">
-                                    <span className="fs-info-label">{lang('吞吐量', 'Throughput')}</span>
-                                </span>
-                                <FSLineChart option={mockData.chartProps2} />
-                                <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('存储目标', 'Storage Target')}</span>
                                 </span>
                                 <StorageTargetGroup targets={this.props.targetList} />
+                                <span className="fs-info-item title">
+                                    <span className="fs-info-label">{lang('吞吐量', 'Throughput')}</span>
+                                </span>
+                                <FSLineChart option={mockData.chartProps2} />
                             </section>
                         </section>
                     </div>
