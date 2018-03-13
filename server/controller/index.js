@@ -5,78 +5,52 @@ const model = {
         ctx.body = ctx;
     },
     '/api/getuser': async ctx => {
-        let param = ctx.param;
-        let result = await service.getUser(param);
-        ctx.body = result;
+        ctx.body = await service.getUser(ctx.param);
     },
     '/api/adduser': async ctx => {
-        let param = ctx.param;
-        let result = await service.addUser(param);
-        ctx.body = result;
+        ctx.body = await service.addUser(ctx.param);
     },
     '/api/updateuser': async ctx => {
-        let param = ctx.param;
-        let result = await service.updateUser(param);
-        ctx.body = result;
+        ctx.body = await service.updateUser(ctx.param);
     },
     '/api/deleteuser': async ctx => {
-        let param = ctx.param;
-        let result = await service.deleteUser(param);
-        ctx.body = result;
+        ctx.body = await service.deleteUser(ctx.param);
     },
     '/api/login': async ctx => {
-        let param = ctx.param;
-        let result = await service.login(param);
-        if (!result.code) {
+        ctx.body = await service.login(ctx.param);
+        if (!ctx.body.code) {
             ctx.cookies.set('login', 'true', config.cookies);
         }
-        ctx.body = result;
     },
     '/api/logout': async ctx => {
-        let param = ctx.param;
-        let result = await service.logout(param);
+        ctx.body = await service.logout(ctx.param);
         ctx.cookies.set('login', 'false', config.cookies);
-        ctx.body = result;
     },
     '/api/geteventlog': async ctx => {
-        let param = ctx.param;
-        let result = await service.getEventLog(param);
-        ctx.body = result;
+        ctx.body = await service.getEventLog(ctx.param);
     },
     '/api/updateeventlog': async ctx => {
-        let param = ctx.param;
-        let result = await service.updateEventLog(param);
-        ctx.body = result;
+        ctx.body = await service.updateEventLog(ctx.param);
     },
     '/api/getauditlog': async ctx => {
-        let param = ctx.param;
-        let result = await service.getAuditLog(param);
-        ctx.body = result;
+        ctx.body = await service.getAuditLog(ctx.param);
     },
     '/api/gethardware': async ctx => {
-        let param = ctx.param;
-        let result = await service.getHardware(param);
-        ctx.body = result;
+        ctx.body = await service.getHardware(ctx.param);
     },
     '/api/testmail': async ctx => {
-        let param = ctx.param;
-        let result = await service.testMail(param);
-        ctx.body = result;
+        ctx.body = await service.testMail(ctx.param);
     },
     '/api/init': ctx => {
-        let param = ctx.param;
-        service.initCluster(param);
         ctx.body = { code: 0, data: 'start to initialize cluster' };
+        service.initCluster(ctx.param);
     },
     '/api/antiinit': ctx => {
-        let param = ctx.param;
-        service.antiInitCluster(param);
         ctx.body = { code: 0, data: 'start to anti-initialize cluster' };
+        service.antiInitCluster(ctx.param);
     },
     '/api/checkclusterenv': async ctx => {
-        let param = ctx.param;
-        let result = await service.checkClusterEnv(param);
-        ctx.body = result;
+        ctx.body = await service.checkClusterEnv(ctx.param);
     }
 };
 module.exports = model;
