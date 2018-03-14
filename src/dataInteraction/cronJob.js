@@ -1,5 +1,5 @@
-import requests from './requests';
-const CronJob = require('cron').CronJob;
+import {CronJob} from 'cron';
+// import requests from './requests';
 
 const fetchData = () => {
 
