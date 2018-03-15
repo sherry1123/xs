@@ -1,11 +1,11 @@
 // EventMonitor 事件监视器
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import lang from '../../components/Language/lang';
+// import lang from '../../components/Language/lang';
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/title'
-import config from './chart.config.js'
+// import config from './chart.config.js'
 class EventMonitor extends Component {
   constructor(props) {
     super(props);
@@ -145,7 +145,7 @@ class EventMonitor extends Component {
     }
   }
   initPie(id) {
-    let _myChart = this.state.myChart;
+    // let _myChart = this.state.myChart;
     this._myChart = echarts.init(document.getElementById(id));
     this._myChart.setOption(this.state.option)
     console.log('initPie  开始初始化 Pie')

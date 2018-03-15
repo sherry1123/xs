@@ -15,12 +15,19 @@ body {
                 .fs-content-wrapper {
                     flex: 1;
                     box-sizing: border-box;
-                    padding: 5px 10px 10px 10px;
+                    padding: 5px 0 5px 5px;
                     border-left: 1px solid @page-bg;
                     overflow: hidden;
                     background-color: @page-bg;
                     .fs-page-content {
                         height: 100%;
+                        background-color: @white;
+                        .fs-page-big-title {
+                            position: relative;
+                            z-index: 2;
+                            background-color: @white;
+                            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
+                        }
                         .fs-page-item-group { // wanna one more '.fs-page-item's arrange horizontally, you need wrap them with this tag
                             display: flex;
                             flex-direction: row;
@@ -32,6 +39,15 @@ body {
                             &.title {
                                 margin-top: 0;
                             }
+                            &.m-t-0 {
+                                margin-top: 0;
+                            }
+                            .fs-page-item-content {
+                                padding: 20px 16px;
+                            }
+                        }
+                        .fs-page-big-title,
+                        .fs-page-item-wrapper {
                             .fs-page-title {
                                 margin: 0;
                                 padding: 10px 16px;
@@ -43,9 +59,6 @@ body {
                                     color: @title-color;
                                     border-bottom: 1px solid @page-bg;
                                 }
-                            }
-                            .fs-page-item-content {
-                                padding: 20px 16px;
                             }
                         }
                     }

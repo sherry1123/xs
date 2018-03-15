@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import lang from '../../components/Language/lang';
-import ClusterMonitor from './ClusterMonitor';//集群监视器
+// import ClusterMonitor from './ClusterMonitor';//集群监视器
 import CpacityUsage from './CpacityUsage';//容量使用
 import DiskStatus from './DiskStatus';//硬盘状态
 import EventMonitor from './EventMonitor';//事件监视器
-import IOPSRanking from './IOPSRanking';//IOPSRanking 写入读出排行
+// import IOPSRanking from './IOPSRanking';//IOPSRanking 写入读出排行
 
 import config from './chart.config.js'
 import FSLineChart from '../../components/FSLineChart/FSLineChart';

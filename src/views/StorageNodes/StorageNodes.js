@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon, Select, Table} from 'antd';
+import {Icon, Select} from 'antd';
 import lang from '../../components/Language/lang';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
@@ -33,12 +33,12 @@ class StorageNodes extends Component {
     render (){
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
-                <section className="fs-page-item-wrapper title">
+                <section className="fs-page-big-title">
                     <h3 className="fs-page-title">{lang('存储节点', 'Metadata Nodes')}</h3>
                 </section>
                 <section className="fs-node-item-group">
                     <div className="fs-node-item">
-                        <section className="fs-page-item-wrapper fs-node-info-wrapper">
+                        <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">{lang('总览', 'Overview')}</h3>
                             <section className="fs-page-item-content fs-node-info-content">
                                 <span className="fs-info-item title">
@@ -77,7 +77,7 @@ class StorageNodes extends Component {
                         </section>
                     </div>
                     <div className="fs-node-item">
-                        <section className="fs-page-item-wrapper fs-node-info-wrapper">
+                        <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
                                 {this.state.currentNode.name} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>

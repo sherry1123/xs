@@ -1,7 +1,7 @@
 // DiskStatus 磁盘状态
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import lang from '../../components/Language/lang';
+// import lang from '../../components/Language/lang';
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/title'
@@ -125,7 +125,7 @@ class DiskStatus extends Component {
     }
   }
   initPie(id) {
-    let _myChart = this.state.myChart;
+    // let _myChart = this.state.myChart;
     this._myChart = echarts.init(document.getElementById(id));
     this._myChart.setOption(this.state.option)
     console.log('initPie  开始初始化 Pie')

@@ -155,7 +155,7 @@ export default class CpacityUsage extends Component {
   }
   
   initPie(id) {
-    let _myChart = this.state.myChart;
+    // let _myChart = this.state.myChart;
     this._myChart = echarts.init(document.getElementById(id));
     this._myChart.setOption(this.state.option)
     console.log('initPie  开始初始化 Pie')

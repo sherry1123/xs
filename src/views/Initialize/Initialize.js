@@ -16,7 +16,7 @@ class Initialize extends Component {
     constructor (props){
         super(props);
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
-        this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
+        this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             current: 0,
             stepNum: 4,
@@ -81,7 +81,7 @@ class Initialize extends Component {
 
     keyCodeFilter (event){
         // only allow to enter '0'-'9', '.' & 'Backspace'
-        let validKeyCodes = [8, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 190];
+        let validKeyCodes = [8, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 110, 190];
         if (!(validKeyCodes.includes(event.keyCode))){
             event.preventDefault();
         }
@@ -180,6 +180,7 @@ class Initialize extends Component {
                 this.categoryArr.forEach(category => {
                     let ips = this.props[category];
                     ips.forEach(async (ip, i) => {
+                        console.info(category, ip);
                         await this.validateIP(category, i, ip);
                     });
                 });
@@ -211,7 +212,6 @@ class Initialize extends Component {
                     message.error(lang('IP输入验证没有通过，请先修正', 'IP input validation did not pass, please correct the error one(s) firstly'));
                 }
                 await this.setState({checking: false});
-                console.info(this.props.metadataServerIPs);
                 break;
             case 2:
                 this.setState({current: next});
@@ -326,7 +326,7 @@ class Initialize extends Component {
                                                     validateStatus={this.state['storageServerIPsError'][i].status}
                                                     help={this.state['storageServerIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip} size="small"
+                                                    <Input className="fs-ip-input" defaultValue={ip} size="small"
                                                         placeholder={lang('请输入IP', 'please enter IP')}
                                                         onKeyDown={event => {this.keyCodeFilter(event)}}
                                                         onKeyUp={({target: {value}}) => {
@@ -356,7 +356,7 @@ class Initialize extends Component {
                                                     validateStatus={this.state['clientIPsError'][i].status}
                                                     help={this.state['clientIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip}  size="small"
+                                                    <Input className="fs-ip-input" defaultValue={ip}  size="small"
                                                         placeholder={lang('请输入IP', 'please enter IP')}
                                                         onKeyDown={event => {this.keyCodeFilter(event)}}
                                                         onKeyUp={({target: {value}}) => {
@@ -386,7 +386,7 @@ class Initialize extends Component {
                                                     validateStatus={this.state['managementServerIPsError'][i].status}
                                                     help={this.state['managementServerIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip} size="small"
+                                                    <Input className="fs-ip-input" defaultValue={ip} size="small"
                                                         addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                         placeholder={lang('请输入IP', 'please enter IP')}
                                                         onKeyDown={event => {this.keyCodeFilter(event)}}
@@ -415,7 +415,7 @@ class Initialize extends Component {
                                                         validateStatus={this.state['hbIPsError'][i].status}
                                                         help={this.state['hbIPsError'][i].help}
                                                     >
-                                                        <Input className="fs-ip-input" value={ip} size="small" style={{width: 200}}
+                                                        <Input className="fs-ip-input" defaultValue={ip} size="small" style={{width: 200}}
                                                             addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                             placeholder={lang('请输入HB IP', 'please enter HB IP')}
                                                             onKeyDown={event => {this.keyCodeFilter(event)}}
@@ -437,7 +437,7 @@ class Initialize extends Component {
                                                         validateStatus={this.state['floatIPsError'][i].status}
                                                         help={this.state['floatIPsError'][i].help}
                                                     >
-                                                        <Input className="fs-ip-input" value={ip} size="small" style={{width: 200}}
+                                                        <Input className="fs-ip-input" defaultValue={ip} size="small" style={{width: 200}}
                                                             placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
                                                             onKeyDown={event => {this.keyCodeFilter(event)}}
                                                             onKeyUp={({target: {value}}) => {
@@ -446,7 +446,7 @@ class Initialize extends Component {
                                                             }}
                                                         />
                                                         <Tooltip placement="right"
-                                                             title={lang(`首次将映射至管理服务器节点${i + 1}的IP上`, `Will be mapped to the IP of management server Node ${i + 1} firstly`)}
+                                                            title={lang(`首次将映射至管理服务器节点${i + 1}的IP上`, `Will be mapped to the IP of management server Node ${i + 1} firstly`)}
                                                         >
                                                             <Icon type="question-circle" className="fs-info-icon m-l" />
                                                         </Tooltip>
