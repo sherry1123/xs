@@ -79,6 +79,14 @@ class Initialize extends Component {
         this.props.setIP(category, i, value);
     }
 
+    keyCodeFilter (event){
+        // only allow to enter '0'-'9', '.' & 'Backspace'
+        let validKeyCodes = [8, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 190];
+        if (!(validKeyCodes.includes(event.keyCode))){
+            event.preventDefault();
+        }
+    }
+
     async setErrorArr (category, i, errorObj){
         // modify nesting object or array state is complex, move these operations into reducer may be better
         let mutation = errorObj === 'remove' ? [i, 1] : [i, 1, errorObj];
@@ -100,9 +108,14 @@ class Initialize extends Component {
             if (duplicated){
                 await this.setErrorArr(category, i, {status: 'error', help: lang('IP在这个服务器类型中有重复', 'IP is duplicated in this server category')});
             } else {
-                // validate successfully
+                // duplicate validate successfully
                 if (!!this.state[category + 'Error'][i].status){
                     await this.setErrorArr(category, i, {status: '', help: ''});
+                    // if it's mgmt server IP and need to do HA validation
+                    if (category === 'managementServerIPs' && this.props.enableHA){
+                        await this.validateIPForHA();
+                        await this.validateNetworkSegmentForMgmtAndHAIPs();
+                    }
                 }
             }
         }
@@ -115,11 +128,10 @@ class Initialize extends Component {
         for (let i = 0; i < managementServerIPs.length; i ++){
             let managementServerIP = managementServerIPs[i];
             if (managementServerIP){
-                if (metadataServerIPs.includes(managementServerIP)){
-                    await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
-                } else if (storageServerIPs.includes(managementServerIP)){
-                    await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
-                } else if (clientIPs.includes(managementServerIP)){
+                if (metadataServerIPs.includes(managementServerIP) ||
+                    storageServerIPs.includes(managementServerIP) ||
+                    clientIPs.includes(managementServerIP)
+                ){
                     await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
                 } else {
                     if (!!this.state.managementServerIPsError[i].status){
@@ -161,7 +173,7 @@ class Initialize extends Component {
 
     async next (){
         let next = this.state.current + 1;
-        switch (next) {
+        switch (next){
             case 1:
                 await this.setState({checking: true});
                 // validate all ips before entering information confirm step
@@ -199,6 +211,7 @@ class Initialize extends Component {
                     message.error(lang('IP输入验证没有通过，请先修正', 'IP input validation did not pass, please correct the error one(s) firstly'));
                 }
                 await this.setState({checking: false});
+                console.info(this.props.metadataServerIPs);
                 break;
             case 2:
                 this.setState({current: next});
@@ -283,9 +296,10 @@ class Initialize extends Component {
                                                     validateStatus={this.state['metadataServerIPsError'][i].status}
                                                     help={this.state['metadataServerIPsError'][i].help}
                                                 >
-                                                    <Input className="fs-ip-input" value={ip} size="small"
+                                                    <Input className="fs-ip-input" defaultValue={ip} size="small"
                                                         placeholder={lang('请输入IP', 'please enter IP')}
-                                                        onChange={({target: {value}}) => {
+                                                        onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                        onKeyUp={({target: {value}}) => {
                                                             this.setIP.bind(this, 'metadataServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'metadataServerIPs', i, value)();
                                                         }}
@@ -314,7 +328,8 @@ class Initialize extends Component {
                                                 >
                                                     <Input className="fs-ip-input" value={ip} size="small"
                                                         placeholder={lang('请输入IP', 'please enter IP')}
-                                                        onChange={({target: {value}}) => {
+                                                        onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                        onKeyUp={({target: {value}}) => {
                                                             this.setIP.bind(this, 'storageServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'storageServerIPs', i, value)();
                                                         }}
@@ -343,7 +358,8 @@ class Initialize extends Component {
                                                 >
                                                     <Input className="fs-ip-input" value={ip}  size="small"
                                                         placeholder={lang('请输入IP', 'please enter IP')}
-                                                        onChange={({target: {value}}) => {
+                                                        onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                        onKeyUp={({target: {value}}) => {
                                                             this.setIP.bind(this, 'clientIPs', i, value)();
                                                             this.validateIP.bind(this, 'clientIPs', i, value)();
                                                         }}
@@ -373,7 +389,8 @@ class Initialize extends Component {
                                                     <Input className="fs-ip-input" value={ip} size="small"
                                                         addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                         placeholder={lang('请输入IP', 'please enter IP')}
-                                                        onChange={({target: {value}}) => {
+                                                        onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                        onKeyUp={({target: {value}}) => {
                                                             this.setIP.bind(this, 'managementServerIPs', i, value)();
                                                             this.validateIP.bind(this, 'managementServerIPs', i, value)();
                                                         }}
@@ -401,7 +418,8 @@ class Initialize extends Component {
                                                         <Input className="fs-ip-input" value={ip} size="small" style={{width: 200}}
                                                             addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                             placeholder={lang('请输入HB IP', 'please enter HB IP')}
-                                                            onChange={({target: {value}}) => {
+                                                            onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                            onKeyUp={({target: {value}}) => {
                                                                 this.setIP.bind(this, 'hbIPs', i, value)();
                                                                 this.validateIP.bind(this, 'hbIPs', i, value)();
                                                             }}
@@ -421,7 +439,8 @@ class Initialize extends Component {
                                                     >
                                                         <Input className="fs-ip-input" value={ip} size="small" style={{width: 200}}
                                                             placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
-                                                            onChange={({target: {value}}) => {
+                                                            onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                            onKeyUp={({target: {value}}) => {
                                                                 this.setIP.bind(this, 'floatIPs', i, value)();
                                                                 this.validateIP.bind(this, 'floatIPs', i, value)();
                                                             }}
