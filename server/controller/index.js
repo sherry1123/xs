@@ -51,6 +51,27 @@ const model = {
     },
     '/api/checkclusterenv': async ctx => {
         ctx.body = await service.checkClusterEnv(ctx.param);
+    },
+    '/api/getnodelist': async ctx => {
+        ctx.body = await service.getNodeList(ctx.param);
+    },
+    '/api/getmetanodesoverview': async ctx => {
+        ctx.body = await service.getMetaNodesOverview(ctx.param);
+    },
+    '/api/getmetanode': async ctx => {
+        ctx.body = await service.getMetaNode(ctx.param);
+    },
+    '/api/getstoragenodesoverview': async ctx => {
+        ctx.body = await service.getStorageNodesOverview(ctx.param);
+    },
+    '/api/getstoragenode': async ctx => {
+        ctx.body = await service.getStorageNode(ctx.param);
+    },
+    '/api/getclientstats': async ctx => {
+        ctx.body = await service.getClientStats(ctx.param);
+    },
+    '/api/getuserstats': async ctx => {
+        ctx.body = await service.getUserStats(ctx.param);
     }
 };
 module.exports = model;
