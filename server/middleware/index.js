@@ -1,6 +1,7 @@
 const config = require('../config');
 const promise = require('../module/promise');
 const init = require('../service/initialize');
+const responseHandler = code => ({ code, message: config.errors[code] });
 const model = {
 	initRequest() {
 		return async (ctx, next) => {
@@ -20,7 +21,7 @@ const model = {
 			if (key && key === config.keys[api]) {
 				await next();
 			} else {
-				ctx.body = { code: 3, message: config.errors[3] };
+				ctx.body = responseHandler(3);
 			}
 		}
 	},
@@ -32,13 +33,13 @@ const model = {
 				if (initApi.includes(api)) {
 					await next();
 				} else {
-					ctx.body = { code: 4, message: config.errors[4] };
+					ctx.body = responseHandler(4);
 				}
 			} else {
 				if (!initApi.includes(api)) {
 					await next();
 				} else {
-					ctx.body = { code: 5, message: config.errors[5] };
+					ctx.body = responseHandler(5);
 				}
 			}
 		}
@@ -60,9 +61,8 @@ const model = {
 			let acceptEncoding = ctx.state.encoding;
 			if (acceptEncoding && acceptEncoding.includes('gzip')) {
 				try {
-					body = await promise.gzipDataInPromise(body);
+					ctx.body = await promise.gzipDataInPromise(body);
 					ctx.set('Content-Encoding', 'gzip');
-					ctx.body = body;
 				} catch (error) {
 					ctx.body = body;
 				}
