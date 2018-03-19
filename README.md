@@ -4,9 +4,9 @@
 
 #### Technology Stack
 
-1. Project is initialized through 'create-react-app' that is provided by Facebook React.js authorities.
+1. Project is initialized through 'create-react-app' which is provided by Facebook React.js authorities.
 This tool will initialize a webpack based project with modularization support. It uses 'less' as css preprocessor, and 'auto-prefix' as postprocessor.
-Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM in advanced for a better development experience: <br />
+Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM into CLI project for a better development experience: <br />
 [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app) <br />
 
 2. The current popular state management framework is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />

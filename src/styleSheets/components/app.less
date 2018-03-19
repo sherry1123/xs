@@ -21,12 +21,12 @@ body {
                     background-color: @page-bg;
                     .fs-page-content {
                         height: 100%;
-                        background-color: @white;
+                        background-color: @page-bg;
                         .fs-page-big-title {
                             position: relative;
                             z-index: 2;
                             background-color: @white;
-                            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
+                            box-shadow: 0 2px 8px rgba(229, 229, 229, .5);
                         }
                         .fs-page-item-group { // wanna one more '.fs-page-item's arrange horizontally, you need wrap them with this tag
                             display: flex;
@@ -35,7 +35,7 @@ body {
                         .fs-page-item-wrapper {
                             margin-top: 5px;
                             background-color: @white;
-                            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
+                            box-shadow: 0 2px 8px rgba(229, 229, 229, .5);
                             &.title {
                                 margin-top: 0;
                             }
