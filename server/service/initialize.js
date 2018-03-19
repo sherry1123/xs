@@ -40,7 +40,7 @@ const model = {
         let result = {};
         for (let ip of ipList) {
             try {
-                await request.get(`http://${ip}:3456/api/testapi`);
+                await request.get(`http://${ip}:3456/api/testapi`, false, {}, true);
                 result[ip] = true;
             } catch (error) {
                 result[ip] = false;
