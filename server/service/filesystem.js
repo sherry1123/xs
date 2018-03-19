@@ -38,7 +38,7 @@ const model = {
         let res = await request.get('http://192.168.100.101:8000/XML_Metanode', param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
-        let result = { general: {}, workRequests: [], queuedRequests: [] }
+        let result = { general: {}, workRequests: [], queuedRequests: [] };
         result.general = data.general;
         for (let i of data.workRequests.value) {
             result.workRequests.push({ time: i['$'].time, value: i['_'] });
