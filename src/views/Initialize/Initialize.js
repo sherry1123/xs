@@ -12,6 +12,11 @@ import requests from '../../dataInteraction/requests';
 import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
 
+let prevKeyCode = 0;
+let validKeyCodes = [8, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 110, 190]; // '0'-'9', '.' , 'Backspace'
+let cvKeyCodes = [67, 86, 88]; // 'c', 'v', 'x'
+let specKeyCodes = [17, 91, 93];
+
 class Initialize extends Component {
     constructor (props){
         super(props);
@@ -80,10 +85,18 @@ class Initialize extends Component {
     }
 
     keyCodeFilter (event){
-        // only allow to enter '0'-'9', '.' & 'Backspace'
-        let validKeyCodes = [8, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 110, 190];
-        if (!(validKeyCodes.includes(event.keyCode))){
+        let {keyCode} = event;
+        if (!(
+            validKeyCodes.includes(keyCode) ||
+            (specKeyCodes.includes(prevKeyCode) && cvKeyCodes.includes(keyCode)) ||
+            (event.ctrlKey && cvKeyCodes.includes(keyCode))
+            )
+        ){
+            console.info('invalid key press');
             event.preventDefault();
+        }
+        if (specKeyCodes.includes(keyCode)){
+            prevKeyCode = keyCode;
         }
     }
 
@@ -180,7 +193,6 @@ class Initialize extends Component {
                 this.categoryArr.forEach(category => {
                     let ips = this.props[category];
                     ips.forEach(async (ip, i) => {
-                        console.info(category, ip);
                         await this.validateIP(category, i, ip);
                     });
                 });
