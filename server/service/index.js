@@ -4,6 +4,7 @@ const init = require('./initialize');
 const database = require('./database');
 const socket = require('../module/socket');
 const logger = require('../module/logger');
+const fileSystem = require('./filesystem');
 const promise = require('../module/promise');
 const request = require('../module/request');
 const responseHandler = (code, result, param) => {
@@ -89,7 +90,7 @@ const model = {
         }
     },
     async antiInitCluster(param) {
-        let { MDS, OSS, MS, HA, CSMIP, HBIP } = param; 
+        let { MDS, OSS, MS, HA, CSMIP, HBIP } = param;
         try {
             await init.antiInitMongoDB(Array.from(new Set(MDS.concat(OSS, MS))));
             await init.antiInitOrcaFS(param);
@@ -240,7 +241,7 @@ const model = {
             let data = [];
             for (let ip of iplist) {
                 url = api.replace('localhost', ip);
-                let res = await request.get(url);
+                let res = await request.get(url, {}, {}, true);
                 data.push(res);
             }
             await database.addHardware({ date, iplist, data });
@@ -264,6 +265,191 @@ const model = {
         } catch (error) {
             errorHandler(22, error, param);
         }
+    },
+    /**
+     * Get Node List
+     * 
+     * @param {boolean} clients get client nodes or not
+     * @param {boolean} admon get admon node or not
+     */
+    async getNodeList(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getNodeList(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Metadata Nodes Overview
+     * 
+     * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
+     */
+    async getMetaNodesOverview(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getMetaNodesOverview(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Metadata Node Detail
+     * 
+     * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
+     * @param {string} node node's hostname
+     * @param {int} nodeNumID node's id
+     */
+    async getMetaNode(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getMetaNode(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Storage Nodes Overview
+     * 
+     * @param {string} group the group which the node belongs
+     */
+    async getStorageNodesOverview(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getStorageNodesOverview(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Storage Node Detail
+     * 
+     * @param {string} node node's hostname
+     * @param {int} nodeNumID node's id
+     */
+    async getStorageNode(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getStorageNode(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Client Stats
+     * 
+     * @param {int} nodeType node's type, 1 => meta, 2 => storage
+     * @param {int} interval interval, the unit is second
+     * @param {int} numLines the number of clients
+     * @param {int} requestorID the id of the requestor
+     * @param {int} nextDataSequenceID the next data sequence's id
+     */
+    async getClientStats(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getClientStats(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get User Stats
+     * 
+     * @param {int} nodeType node's type, 1 => meta, 2 => storage
+     * @param {int} interval interval, the unit is second
+     * @param {int} numLines the number of clients
+     * @param {int} requestorID the id of the requestor
+     * @param {int} nextDataSequenceID the next data sequence's id
+     */
+    async getUserStats(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getUserStats(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Storage Nodes Status And Disk Summary
+     * 
+     * @param {string} group the group which the node belongs
+     */
+    async getStorageNodesStatusAndDIskSummary(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getStorageNodesOverview(param);
+            data = { status: data.status, diskSpace: data.diskSpace };
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Storage Nodes Throughout
+     * 
+     * @param {string} group the group which the node belongs
+     */
+    async getStorageNodesThroughout(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getStorageNodesOverview(param);
+            data = data.diskPerfSummary;
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Storage Node Status And Disk Summary
+     * 
+     * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
+     * @param {string} node node's hostname
+     * @param {int} nodeNumID node's id
+     */
+    async getStorageNodeStatusAndDIskSummary(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getStorageNode(param);
+            data = { general: data.general, storageTargets: data.storageTargets };
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Storage Node Throughout
+     * 
+     * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
+     * @param {string} node node's hostname
+     * @param {int} nodeNumID node's id
+     */
+    async getStorageNodeThroughout(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getStorageNode(param);
+            data = data.diskPerfSummary;
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
     }
 };
 module.exports = model;

@@ -13,10 +13,10 @@ const model = {
         init = status;
     },
     async getMongoDBStatus() {
-        let command = `${config.database.bin}/mongo --quiet --eval "rs.status()"`;
+        let command = `${config.database.bin}/mongo --quiet --eval "db.serverStatus().ok"`;
         let result = false;
         try {
-            result = String(await promise.runCommandInPromise(command)).includes('PRIMARY');
+            result = String(await promise.runCommandInPromise(command)).replace('\n', '') === '1';
         } catch (error) {
             result = false;
         }
@@ -40,7 +40,7 @@ const model = {
         let result = {};
         for (let ip of ipList) {
             try {
-                await request.get(`http://${ip}:3456/api/testapi`);
+                await request.get(`http://${ip}:3456/api/testapi`, false, {}, true);
                 result[ip] = true;
             } catch (error) {
                 result[ip] = false;
@@ -64,8 +64,8 @@ const model = {
                 i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
                 conf.members.push(i === 2 ? { _id: i, host: ipList[i], arbiterOnly: true } : { _id: i, host: ipList[i], priority: 2 - i });
             }
-            await promise.writeFileInPromise('/tmp/initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
-            await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/initiatedb.js`);
+            await promise.writeFileInPromise('/tmp/.initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
+            await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
         }
     },
     async initOrcaFS(param) {

@@ -17,5 +17,16 @@ router.all('/api/testmail', controller['/api/testmail']);
 router.all('/api/init', controller['/api/init']);
 router.all('/api/antiinit', controller['/api/antiinit']);
 router.all('/api/checkclusterenv', controller['/api/checkclusterenv']);
+router.all('/api/getnodelist', controller['/api/getnodelist']);
+router.all('/api/getmetanodesoverview', controller['/api/getmetanodesoverview']);
+router.all('/api/getmetanode', controller['/api/getmetanode']);
+router.all('/api/getstoragenodesoverview', controller['/api/getstoragenodesoverview']);
+router.all('/api/getstoragenode', controller['/api/getstoragenode']);
+router.all('/api/getclientstats', controller['/api/getclientstats']);
+router.all('/api/getuserstats', controller['/api/getuserstats']);
+router.all('/api/getstoragenodessummary', controller['/api/getstoragenodessummary']);
+router.all('/api/getstoragenodesthroughout', controller['/api/getstoragenodesthroughout']);
+router.all('/api/getstoragenodesummary', controller['/api/getstoragenodesummary']);
+router.all('/api/getstoragenodethroughout', controller['/api/getstoragenodethroughout']);
 
 module.exports = router;
