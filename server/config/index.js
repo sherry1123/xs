@@ -25,6 +25,15 @@ exports.api = {
         gettoken: 'http://localhost:9090/token/get',
         createcluster: 'http://localhost:9090/cluster/create',
         installstatus: 'http://localhost:9090/cluster/createinstallstatus'
+    },
+    admon: {
+        nodelist: 'http://192.168.100.101:8000/XML_NodeList',
+        metanodesoverview: 'http://192.168.100.101:8000/XML_MetanodesOverview',
+        metanode: 'http://192.168.100.101:8000/XML_Metanode',
+        storagenodesoverview: 'http://192.168.100.101:8000/XML_StoragenodesOverview',
+        storagenode: 'http://192.168.100.101:8000/XML_Storagenode',
+        clientstats: 'http://192.168.100.101:8000/XML_ClientStats',
+        userstats: 'http://192.168.100.101:8000/XML_UserStats'
     }
 }
 exports.logs = {

@@ -6,7 +6,7 @@ const model = {
         return await request.get(config.api.orcafs.gettoken);
     },
     async getNodeList(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_NodeList', param, {}, false);
+        let res = await request.get(config.api.admon.nodelist, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { charkey: 'hostname', attrkey: 'state' });
         let data = json.data;
         let result = { mgmtd: [], meta: [], storage: [], admon: [] };
@@ -20,7 +20,7 @@ const model = {
         return result;
     },
     async getMetaNodesOverview(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_MetanodesOverview', param, {}, false);
+        let res = await request.get(config.api.admon.metanodesoverview, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
         let result = { general: {}, status: {}, workRequests: [], queuedRequests: [] };
@@ -35,7 +35,7 @@ const model = {
         return result;
     },
     async getMetaNode(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_Metanode', param, {}, false);
+        let res = await request.get(config.api.admon.metanode, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
         let result = { general: {}, workRequests: [], queuedRequests: [] };
@@ -49,7 +49,7 @@ const model = {
         return result;
     },
     async getStorageNodesOverview(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_StoragenodesOverview', param, {}, false);
+        let res = await request.get(config.api.admon.storagenodesoverview, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
         if (typeof(data.status) === 'object') {
@@ -77,7 +77,7 @@ const model = {
         return data;
     },
     async getStorageNode(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_Storagenode', param, {}, false);
+        let res = await request.get(config.api.admon.storagenode, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
         data.storageTargets = data.storageTargets === '' ? [] : data.storageTargets;
@@ -100,7 +100,7 @@ const model = {
         return data;
     },
     async getClientStats(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_ClientStats', param, {}, false);
+        let res = await request.get(config.api.admon.clientstats, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
         if (typeof (data.hosts) === 'object') {
@@ -124,7 +124,7 @@ const model = {
         return data;
     },
     async getUserStats(param) {
-        let res = await request.get('http://192.168.100.101:8000/XML_UserStats', param, {}, false);
+        let res = await request.get(config.api.admon.userstats, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
         if (typeof (data.hosts) === 'object') {
