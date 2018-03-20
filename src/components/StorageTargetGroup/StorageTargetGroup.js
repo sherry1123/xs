@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {Popover} from 'antd';
+import QueueAnim from 'rc-queue-anim';
 import {formatStorageSize} from '../../services';
 import lang from '../Language/lang';
 
@@ -8,7 +9,7 @@ import lang from '../Language/lang';
 class StorageTargetGroup extends Component {
     render (){
         return (
-            <section className="fs-storage-target-group">
+            <QueueAnim className="fs-storage-target-group">
                 {
                     this.props.targets.map(target => {
                         let {id, path, totalDiskCapacity, usedDiskCapacity, remainingDiskCapacity} = target;
@@ -36,7 +37,7 @@ class StorageTargetGroup extends Component {
                         </div>
                     })
                 }
-            </section>
+            </QueueAnim>
         );
     }
 }

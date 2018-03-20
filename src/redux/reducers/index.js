@@ -1,11 +1,13 @@
 import {combineReducers} from 'redux';
 import State from '../state';
+import {lsGet} from '../../services'
 import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
-import mainReducer from './mainReducer';
+import generalReducer from './generalReducer';
+import storageNodeReducer from '../reducers/storageNodeReducer';
 
-let menuExpand = localStorage.getItem('menuExpand') !== 'false';
-State.main.menuExpand = menuExpand;
+// firstly read some persistent data from localStorage
+State.main.general.menuExpand = lsGet('menuExpand');
 
 const reducer = combineReducers({
     // global
@@ -20,7 +22,20 @@ const reducer = combineReducers({
 
     // logged
     main: (main = State.main, action) => {
-        return mainReducer(main,  action);
+        let state = {};
+        Object.keys(main).forEach(key => {
+            switch (key){
+                case 'general':
+                    state[key] = generalReducer(main[key], action);
+                    break;
+                case 'storageNode':
+                    state[key] = storageNodeReducer(main[key], action);
+                    break;
+                default:
+                    state[key] = main[key];
+            }
+        });
+        return state;
     },
 });
 

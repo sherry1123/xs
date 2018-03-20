@@ -34,20 +34,22 @@ export default {
     // logged
     main: {
         // general
-        activeMenu: [],
-        activePage: '',
-        menuExpand: true,
-        // login user
-        userInfo: {
-            name: 'admin'
+        general: {
+            version: '',
+            user: {
+                name: 'admin'
+            },
+            activeMenu: [],
+            activePage: '',
+            menuExpand: true,
         },
         // metadata nodes
-        metadataNodes: {
+        metadataNode: {
             overview: {
-                nodes: [
-                    {name: 'ClusterMe1',id: 'cm1',up: true},
-                    {name: 'ClusterMe2',id: 'cm2',up: true},
-                    {name: 'ClusterMe3',id: 'cm3',up: true},
+                status: [
+                    {hostname: 'ClusterMe1', nodeNumID: 'cm1', value: true},
+                    {hostname: 'ClusterMe2', nodeNumID: 'cm2', value: true},
+                    {hostname: 'ClusterMe3', nodeNumID: 'cm3', value: true},
                 ],
             },
             detail: {
@@ -55,19 +57,19 @@ export default {
             }
         },
         // storage nodes
-        storageNodes: {
+        storageNode: {
             overview: {
-                diskStatus: {
-                    totalCapacity: 99999999999999,
-                    usedCapacity: 39000000000000,
-                    remainingCapacity: 60999999999999,
-                },
-                nodes: [
-                    {name: 'ClusterSt1',id: 'cs1',up: true},
-                    {name: 'ClusterSt2',id: 'cs2',up: true},
-                    {name: 'ClusterSt3',id: 'cs3',up: false},
-                    {name: 'ClusterSt4',id: 'cs4',up: true},
+                status: [
+                    {hostname: 'ClusterSt1', nodeNumID: 'cs1', value: true},
+                    {hostname: 'ClusterSt2', nodeNumID: 'cs2', value: true},
+                    {hostname: 'ClusterSt3', nodeNumID: 'cs3', value: false},
+                    {hostname: 'ClusterSt4', nodeNumID: 'cs4', value: true},
                 ],
+                diskSpace: {
+                    diskSpaceTotal: 99999999999999,
+                    diskSpaceUsed: 39000000000000,
+                    diskSpaceFree: 60999999999999,
+                },
                 throughput : [],
             },
             detail: {

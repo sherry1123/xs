@@ -15,7 +15,7 @@ const bytestoSizeApi = () => {
         }
         if ((data < 1 && unitFrom === 'B') || data === 0){
             if (returnNum) {
-                return {value: 0, unit: 'B', pow:0};
+                return {value: 0, unit: 'B', pow: 0};
             }
             if (showBit){
                 return '0 b';
@@ -50,8 +50,8 @@ const bytestoSizeApi = () => {
         }
         // in order to round down, use the next function
         let cleaner = Math.pow(10, num);
-        let size_result = showBit? Math.round((data / Math.pow(k, i))*cleaner)/cleaner * 8 : Math.round((data / Math.pow(k, i))*cleaner)/cleaner;
-        let size_unit = showBit? sizes[i].replace('B', 'b') : sizes[i];
+        let size_result = showBit ? Math.round((data / Math.pow(k, i))*cleaner)/cleaner * 8 : Math.round((data / Math.pow(k, i))*cleaner)/cleaner;
+        let size_unit = showBit ? sizes[i].replace('B', 'b') : sizes[i];
         return ((size_result).toFixed(num) || 0) + ' ' + size_unit;
         // return (data / Math.pow(k, i)).toFixed(num) + ' ' + sizes[i];
     };

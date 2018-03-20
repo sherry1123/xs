@@ -8,7 +8,7 @@ module.exports = function(proxy) {
     if (serverPath){
         console.log(chalk.cyan('Validate server path ... \n'));
         if (!(PROTOCOL_VALIDATE_REG.test(serverPath))){
-            console.error(chalk.red(`Validate server path failed: server path "${serverPath}" provided in "npm start" command needs a valid protocol, and like "http", "https" & "ws" are supported. \n`));
+            console.error(chalk.red(`Validate server path failed: server path "${serverPath}" provided in "npm start" command needs a valid protocol, like "http", "https" & "ws". \n`));
             process.exit(1);
         } else {
             let extractResult = serverPath.match(IPV4_EXTRACT_REG);
@@ -23,5 +23,5 @@ module.exports = function(proxy) {
     return proxy;
 };
 
-// an example:
+// development environment functionality enhancement, an example:
 // $ npm (run) start http://192.168.100.233:3579

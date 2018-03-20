@@ -6,7 +6,7 @@ import moment from 'moment';
 class FSLineChart extends Component {
     constructor(props) {
         super(props);
-        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, formatterFn = '', legend = [], label, series}} = this.props;
+        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, formatterFn = '', legend = [], label, series}} = this.props;
         this.state = {
             menuExpand,
             title,
@@ -17,13 +17,14 @@ class FSLineChart extends Component {
             yAxisUnit,
             yMin,
             yMax,
+            labelTimeFormat,
             formatterFn,
             legend,
             label: label.map(label => {
                 return moment(new Date(label)).format('HH:mm:ss');
             }),
             series: series.map(series => {
-                if (series.type === 'line') {
+                if (series.type === 'line'){
                     // curve smoothing
                     series['smooth'] = true;
                     // show all symbol
@@ -49,7 +50,7 @@ class FSLineChart extends Component {
         await this.setState({
             label: label.map(label => {
                 // format 'Wed Aug 16 2017 21:24:26 GMT+0800 (CST)' to '21:24:26'
-                return moment(new Date(label)).format('HH:mm:ss');
+                return moment(new Date(label)).format(this.state.labelTimeFormat);
             }),
             series: series.map(series => {
                 if (series.type === 'line') {

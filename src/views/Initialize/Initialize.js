@@ -7,19 +7,15 @@ import QueueAnim from 'rc-queue-anim';
 import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
-import {validateIpv4} from '../../services';
-import requests from '../../dataInteraction/requests';
+import {validateIpv4, KeyPressFilter} from '../../services';
+import requests from '../../http/requests';
 import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
-
-let prevKeyCode = 0;
-let validKeyCodes = [8, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 110, 190]; // '0'-'9', '.' , 'Backspace'
-let cvKeyCodes = [67, 86, 88]; // 'c', 'v', 'x'
-let specKeyCodes = [17, 91, 93];
 
 class Initialize extends Component {
     constructor (props){
         super(props);
+        this.keyPressFilter = new KeyPressFilter();
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
@@ -85,19 +81,7 @@ class Initialize extends Component {
     }
 
     keyCodeFilter (event){
-        let {keyCode} = event;
-        if (!(
-            validKeyCodes.includes(keyCode) ||
-            (specKeyCodes.includes(prevKeyCode) && cvKeyCodes.includes(keyCode)) ||
-            (event.ctrlKey && cvKeyCodes.includes(keyCode))
-            )
-        ){
-            console.info('invalid key press');
-            event.preventDefault();
-        }
-        if (specKeyCodes.includes(keyCode)){
-            prevKeyCode = keyCode;
-        }
+        this.keyPressFilter.do(event);
     }
 
     async setErrorArr (category, i, errorObj){

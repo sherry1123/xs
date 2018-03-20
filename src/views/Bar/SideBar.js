@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Menu, Icon} from 'antd';
-import mainAction from '../../redux/actions/mainAction';
+import generalAction from '../../redux/actions/generalAction';
 import {lsSet} from '../../services';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
@@ -131,15 +131,15 @@ class SideBar extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {activeMenu, activePage, menuExpand}} = state;
+    let {language, main: {general: {activeMenu, activePage, menuExpand}}} = state;
     return {language, activeMenu, activePage, menuExpand};
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        changeActiveMenu: key => dispatch(mainAction.changeActiveMenu(key)),
-        changeActivePage: key => dispatch(mainAction.changeActivePage(key)),
-        changeMenuExpand: menuExpand => dispatch(mainAction.changeMenuExpand(menuExpand)),
+        changeActiveMenu: key => dispatch(generalAction.changeActiveMenu(key)),
+        changeActivePage: key => dispatch(generalAction.changeActivePage(key)),
+        changeMenuExpand: menuExpand => dispatch(generalAction.changeMenuExpand(menuExpand)),
     };
 };
 

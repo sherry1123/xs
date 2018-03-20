@@ -29,3 +29,6 @@ export {TABLE_LOCALE} from './config';
 
 // random
 export {randomBoolean} from './random';
+
+// key press filter
+export {KeyPressFilter} from './keyPressFilter';

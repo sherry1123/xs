@@ -7,28 +7,29 @@ import lang from '../Language/lang';
 
 class DiskUsageStatus extends Component {
     render (){
-        let {totalCapacity, usedCapacity, remainingCapacity} = this.props.diskStatus;
+        let {diskSpaceTotal, diskSpaceUsed, diskSpaceFree} = this.props.diskStatus;
         let option = {
             width: 340,
             infoData: [
                 {
                     label: lang('总容量', 'Total'),
-                    value: formatStorageSize(totalCapacity),
+                    value: formatStorageSize(diskSpaceTotal),
                     color: 'blue'
                 }, {
                     label: lang('已使用容量', 'Used'),
-                    value: formatStorageSize(usedCapacity),
+                    value: formatStorageSize(diskSpaceUsed),
                     color: 'orange'
                 }, {
                     label: lang('剩余容量', 'Remaining'),
-                    value: formatStorageSize(remainingCapacity),
+                    value: formatStorageSize(diskSpaceFree),
                     color: 'dark-gray'
                 }
             ],
             chartOption: {
                 width: 140,
                 height: 140,
-                formatter: `${lang('使用率', 'Usage Rate')} \n\n ${(usedCapacity/totalCapacity).toFixed(2) * 100}%`,
+                // formatter: `${lang('使用率', 'Usage Rate')} \n\n ${((diskSpaceUsed/diskSpaceTotal).toFixed(2)) * 100}%`,
+                formatter: `${lang('使用率', 'Usage Rate')} \n\n 10%`,
                 series: [{
                     name: 'totalDiskCapacityStatus',
                     type: 'pie',
@@ -37,8 +38,10 @@ class DiskUsageStatus extends Component {
                         data: ['Used Disk Capacity', 'RemainingDiskCapacity']
                     },
                     data: [
-                        {value: usedCapacity, name: 'UsedDiskCapacity'},
-                        {value: remainingCapacity, name: 'RemainingDiskCapacity'},
+                        // {value: diskSpaceUsed, name: 'UsedDiskCapacity'},
+                        // {value: diskSpaceFree, name: 'RemainingDiskCapacity'},
+                        {value: 1, name: 'UsedDiskCapacity'},
+                        {value: 9, name: 'RemainingDiskCapacity'},
                     ]
                 }]
             }

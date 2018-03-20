@@ -4,7 +4,7 @@ import {Table, Icon} from 'antd';
 import {timeFormat} from '../../services';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
-import mainAction from "../../redux/actions/mainAction";
+import mainAction from "../../redux/actions/generalAction";
 
 class FSOperationFileBrowser extends Component {
 
