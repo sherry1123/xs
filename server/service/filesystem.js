@@ -59,8 +59,19 @@ const model = {
             data.status[i] = { value: data.status[i].value['_'], hostname: data.status[i].value['$'].node, nodeNumID: data.status[i].value['$'].nodeNumID };
         }
         for (let i of Object.keys(data)) {
-            if (typeof (data[i]) === 'string' & data[i] === '') {
+            if (typeof(data[i]) === 'string' & data[i] === '') {
                 data[i] = '0.000 MiB';
+            }
+        }
+        for (let i of Object.keys(data)) {
+            if (typeof(data[i]) === 'string' & String(data[i]).includes('MiB')) {
+                data[i] = Number(data[i].replace(' MiB', ''));
+            } else if (typeof(data[i] === 'object')) {
+                for (let j of Object.keys(data[i])) {
+                    if (String(data[i][j]).includes('MiB')) {
+                        data[i][j] = Number(data[i][j].replace(' MiB', ''));
+                    }
+                }
             }
         }
         return data;
@@ -71,8 +82,19 @@ const model = {
         let data = json.data;
         data.storageTargets = data.storageTargets === '' ? [] : data.storageTargets;
         for (let i of Object.keys(data)) {
-            if (typeof (data[i]) === 'string' & data[i] === '' & i.includes('diskPerf')) {
+            if (typeof(data[i]) === 'string' & data[i] === '' & i.includes('diskPerf')) {
                 data[i] = '0.000 MiB';
+            }
+        }
+        for (let i of Object.keys(data)) {
+            if (typeof(data[i]) === 'string' & String(data[i]).includes('MiB')) {
+                data[i] = Number(data[i].replace(' MiB', ''));
+            } else if (typeof(data[i] === 'object')) {
+                for (let j of Object.keys(data[i])) {
+                    if (String(data[i][j]).includes('MiB')) {
+                        data[i][j] = Number(data[i][j].replace(' MiB', ''));
+                    }
+                }
             }
         }
         return data;

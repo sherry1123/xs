@@ -85,6 +85,6 @@ node server
 ##### 2.no dependence
 ```
 npm install pkg -g
-pkg server.js -t node9-linux-x64/node9-macos-x64/node9-win-x64 -o app
-./app
+pkg server.js -t node9-linux-x64/node9-macos-x64/node9-win-x64 -o orcafs-gui
+./orcafs-gui
 ```
