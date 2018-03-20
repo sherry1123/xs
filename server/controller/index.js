@@ -72,6 +72,18 @@ const model = {
     },
     '/api/getuserstats': async ctx => {
         ctx.body = await service.getUserStats(ctx.param);
+    },
+    '/api/getstoragenodessummary': async ctx => {
+        ctx.body = await service.getStorageNodesStatusAndDIskSummary(ctx.param);
+    },
+    '/api/getstoragenodesthroughout': async ctx => {
+        ctx.body = await service.getStorageNodesThroughout(ctx.param);
+    },
+    '/api/getstoragenodesummary':async ctx => {
+        ctx.body = await service.getStorageNodeStatusAndDIskSummary(ctx.param);
+    },
+    '/api/getstoragenodethroughout': async ctx => {
+        ctx.body = await service.getStorageNodeThroughout(ctx.param);
     }
 };
 module.exports = model;

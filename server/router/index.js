@@ -24,5 +24,9 @@ router.all('/api/getstoragenodesoverview', controller['/api/getstoragenodesoverv
 router.all('/api/getstoragenode', controller['/api/getstoragenode']);
 router.all('/api/getclientstats', controller['/api/getclientstats']);
 router.all('/api/getuserstats', controller['/api/getuserstats']);
+router.all('/api/getstoragenodessummary', controller['/api/getstoragenodessummary']);
+router.all('/api/getstoragenodesthroughout', controller['/api/getstoragenodesthroughout']);
+router.all('/api/getstoragenodesummary', controller['/api/getstoragenodesummary']);
+router.all('/api/getstoragenodethroughout', controller['/api/getstoragenodethroughout']);
 
 module.exports = router;
