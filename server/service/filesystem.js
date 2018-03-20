@@ -52,7 +52,12 @@ const model = {
         let res = await request.get('http://192.168.100.101:8000/XML_StoragenodesOverview', param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
-        data.status = { value: data.status.value['_'], hostname: data.status.value['$'].node, nodeNumID: data.status.value['$'].nodeNumID };
+        if (typeof(data.status) === 'object') {
+            data.status = [data.status];
+        }
+        for (let i in data.status) {
+            data.status[i] = { value: data.status[i].value['_'], hostname: data.status[i].value['$'].node, nodeNumID: data.status[i].value['$'].nodeNumID };
+        }
         for (let i of Object.keys(data)) {
             if (typeof (data[i]) === 'string' & data[i] === '') {
                 data[i] = '0.000 MiB';
@@ -64,6 +69,7 @@ const model = {
         let res = await request.get('http://192.168.100.101:8000/XML_Storagenode', param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
         let data = json.data;
+        data.storageTargets = data.storageTargets === '' ? [] : data.storageTargets;
         for (let i of Object.keys(data)) {
             if (typeof (data[i]) === 'string' & data[i] === '' & i.includes('diskPerf')) {
                 data[i] = '0.000 MiB';

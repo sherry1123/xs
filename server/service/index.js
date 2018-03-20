@@ -382,6 +382,6 @@ const model = {
             result = responseHandler(22, error, param);
         }
         return result;
-    },
+    }
 };
 module.exports = model;
