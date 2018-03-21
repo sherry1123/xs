@@ -79,6 +79,7 @@ const model = {
         return data;
     },
     async getStorageNode(param) {
+        param.timeSpanPerf = 1;
         let res = await request.get(config.api.admon.storagenode, param, {}, false);
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
