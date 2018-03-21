@@ -29,7 +29,7 @@ import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings'
 import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
 
 // dashboard
-import Dashboard from '../Dashboard/Dashboard';
+// import Dashboard from '../Dashboard/Dashboard';
 
 export default class Main extends Component {
     componentWillMount (){
@@ -92,7 +92,9 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.FSOperationStripeSettings}`} component={FSOperationStripeSettings} />
                         <Route path={`${Main}${routerPath.FSOperationFileBrowser}`} component={FSOperationFileBrowser} />
 
-                        <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
+                        {/*
+                            <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
+                        */}
                     </main>
                 </div>
                 <FooterBar />

@@ -28,8 +28,7 @@ class DiskUsageStatus extends Component {
             chartOption: {
                 width: 140,
                 height: 140,
-                // formatter: `${lang('使用率', 'Usage Rate')} \n\n ${((diskSpaceUsed/diskSpaceTotal).toFixed(2)) * 100}%`,
-                formatter: `${lang('使用率', 'Usage Rate')} \n\n 10%`,
+                formatter: `${lang('使用率', 'Usage Rate')} \n\n ${((diskSpaceUsed / diskSpaceTotal * 100).toFixed(2))}%`,
                 series: [{
                     name: 'totalDiskCapacityStatus',
                     type: 'pie',
@@ -38,10 +37,8 @@ class DiskUsageStatus extends Component {
                         data: ['Used Disk Capacity', 'RemainingDiskCapacity']
                     },
                     data: [
-                        // {value: diskSpaceUsed, name: 'UsedDiskCapacity'},
-                        // {value: diskSpaceFree, name: 'RemainingDiskCapacity'},
-                        {value: 1, name: 'UsedDiskCapacity'},
-                        {value: 9, name: 'RemainingDiskCapacity'},
+                        {value: diskSpaceUsed, name: 'UsedDiskCapacity'},
+                        {value: diskSpaceFree, name: 'RemainingDiskCapacity'},
                     ]
                 }]
             }
@@ -55,7 +52,7 @@ class DiskUsageStatus extends Component {
                         option.infoData.map((info, i) =>
                             <div className="fs-disk-usage-info-item" key={i}>
                                 <span className={`fs-disk-text ${info.color}`}>
-                                    <span className="fs-disk-label">{info.label}</span> <b>{info.value}</b>
+                                    <span className="fs-disk-label">{info.label}</span> {info.value}
                                 </span>
                             </div>
                         )

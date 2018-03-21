@@ -47,9 +47,9 @@ export default {
         metadataNode: {
             overview: {
                 status: [
-                    {hostname: 'ClusterMe1', nodeNumID: 'cm1', value: true},
-                    {hostname: 'ClusterMe2', nodeNumID: 'cm2', value: true},
-                    {hostname: 'ClusterMe3', nodeNumID: 'cm3', value: true},
+                    {node: 'ClusterMe1', nodeNumID: 'cm1', value: true},
+                    {node: 'ClusterMe2', nodeNumID: 'cm2', value: true},
+                    {node: 'ClusterMe3', nodeNumID: 'cm3', value: true},
                 ],
             },
             detail: {
@@ -60,25 +60,35 @@ export default {
         storageNode: {
             overview: {
                 status: [
-                    {hostname: 'ClusterSt1', nodeNumID: 'cs1', value: true},
-                    {hostname: 'ClusterSt2', nodeNumID: 'cs2', value: true},
-                    {hostname: 'ClusterSt3', nodeNumID: 'cs3', value: false},
-                    {hostname: 'ClusterSt4', nodeNumID: 'cs4', value: true},
+
                 ],
                 diskSpace: {
                     diskSpaceTotal: 99999999999999,
                     diskSpaceUsed: 39000000000000,
                     diskSpaceFree: 60999999999999,
                 },
-                throughput : [],
+                overviewThroughput: {
+                    read: [],
+                    write: [],
+                    sum: [],
+                    time: [] // for x-axis
+                },
             },
             detail: {
-                status: {},
-                targetList: [
-                    {id: 'target_1', path: '/dev/orca_t1', totalDiskCapacity: 999999999, usedDiskCapacity: 899999999, remainingDiskCapacity: 100000000},
-                    {id: 'target_2', path: '/dev/orca_t2', totalDiskCapacity: 599999999, usedDiskCapacity: 299999999, remainingDiskCapacity: 300000000},
-                    {id: 'target_3', path: '/dev/orca_t3', totalDiskCapacity: 899999999, usedDiskCapacity: 199999999, remainingDiskCapacity: 700000000},
-                ]
+                general: {},
+                storageTargets: [
+                    /*
+                    {id: '201', pathStr: '/dev/orca_201', diskSpaceTotal: 999999999, diskSpaceUsed: 899999999, diskSpaceFree: 100000000},
+                    {id: '202', pathStr: '/dev/orca_202', diskSpaceTotal: 599999999, diskSpaceUsed: 299999999, diskSpaceFree: 300000000},
+                    {id: '203', pathStr: '/dev/orca_203', diskSpaceTotal: 899999999, diskSpaceUsed: 199999999, diskSpaceFree: 700000000},
+                    */
+                ],
+                detailThroughput: {
+                    read: [],
+                    write: [],
+                    sum: [],
+                    time: [] // for x-axis
+                },
             }
         },
         // stripe

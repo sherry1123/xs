@@ -1,14 +1,16 @@
 .fs-storage-target-group {
-    .fs-clear-fix();
     margin: -12px 0 0 0;
+    min-height: 152px;
+    .fs-clear-fix();
     .fs-storage-target-item {
         float: left;
         box-sizing: border-box;
         margin-top: 12px;
-        padding: 4px 20px;
+        padding: 4px 20px 4px 10px;
         width: 330px;
         font-size: 12px;
         border-radius: 10px;
+        cursor: pointer;
         &:hover {
             box-shadow: 0 2px 8px rgba(200, 200, 200, 0.7);
         }
@@ -57,8 +59,7 @@
                     text-align: right;
                     &:before {
                         top: 2px;
-                        box-sizing: border-box;
-                        border: 1px solid #d1d1d1;
+                        background: @dark-gray;
                     }
                 }
             }
@@ -67,13 +68,20 @@
             margin: 3px 0 3px 26px;
             height: 14px;
             overflow: hidden;
-            border: 1px solid #d1d1d1;
+            // border: 1px solid #d1d1d1;
             border-radius: 5px;
-            cursor: pointer;
+            background-color: @dark-gray;
             .fs-target-used-bar {
                 height: 100%;
                 background-color: @orange;
             }
         }
+    }
+}
+
+.fs-storage-target-usage-rate {
+    font-size: 12px;
+    span {
+        color: @orange;
     }
 }

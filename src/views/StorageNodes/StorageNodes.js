@@ -7,16 +7,41 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import DiskUsageStatus from '../../components/DiskUsageStatus/DiskUsageStatus';
 import StorageTargetGroup from '../../components/StorageTargetGroup/StorageTargetGroup';
+import {lsGet, lsSet, formatStorageSize} from '../../services';
 import httpRequests from '../../http/requests';
-import mockData from './mockData';
 
 class StorageNodes extends Component {
     constructor (props){
         super(props);
         this.state = {
-            currentNode: this.props.status.filter(node => node.value)[0],
+            currentStorageNode: this.props.status.filter(node => node.value)[0] || {},
             expandSwitchNode: false
         };
+    }
+
+    componentDidMount (){
+        // request overview data
+        httpRequests.getStorageNodeOverviewSummary();
+        setTimeout(() => httpRequests.getStorageNodeOverviewThroughput(), 1000);
+        // request detail data
+        this.getCurrentStorageNodeData();
+        setTimeout(() => httpRequests.getStorageNodeDetailThroughput(), 1500);
+    }
+
+    componentWillReceiveProps (nextProps){
+        let {status} = nextProps;
+        let currentStorageNode = {};
+        if (status.length){
+            currentStorageNode = status.filter(node => node.value)[0];
+        }
+        let newState = {};
+        if (currentStorageNode.node && !this.state.currentStorageNode.node){
+            // when firstly get the nodes data, request the first node data as current node
+            newState['currentStorageNode'] = currentStorageNode;
+            lsSet('currentStorageNode', currentStorageNode);
+            this.getCurrentStorageNodeData();
+        }
+        this.setState(newState);
     }
 
     changeExpandSwitchNode (){
@@ -24,30 +49,40 @@ class StorageNodes extends Component {
         this.setState({expandSwitchNode});
     }
 
-    switchNode (nodeNumID, option){
-        let {props: {hostname}} = option;
-        let currentNode = this.props.status.filter(node => node.nodeNumID === nodeNumID)[0];
-        this.setState({currentNode});
+    switchNode (nodeNumID){
+        let currentStorageNode = this.props.status.filter(node => node.nodeNumID === nodeNumID)[0];
+        this.setState({currentStorageNode});
         // fetch current node data
-        httpRequests.getStorageNodeDetailSummary(hostname, nodeNumID);
+        lsSet('currentStorageNode', currentStorageNode);
+        this.getCurrentStorageNodeData();
+    }
+
+    getCurrentStorageNodeData (){
+        let currentStorageNode = lsGet('currentStorageNode');
+        if (currentStorageNode){
+            httpRequests.getStorageNodeDetailSummary(currentStorageNode);
+        }
+    }
+
+    generateThroughChartOption (type){
+        let {read, write, sum, time} = this.props[type + 'Throughput'];
+        return {
+            height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
+            label: time,
+            formatterFn: (value) => {
+                return formatStorageSize(value);
+            },
+            series: [
+                {data: read, name: lang('读', 'Read'), type: 'line', itemStyle: {normal: {color: '#f6b93f', lineStyle: {width: 1}}}},
+                {data: write, name: lang('写', 'Write'), type: 'line', itemStyle: {normal: {color: '#fbe81f', lineStyle: {width: 1}}}},
+                {data: sum, name: lang('总和', 'Sum'), type: 'line', itemStyle: {normal: {color: '#00cc00', lineStyle: {width: 1}}}},
+            ]
+        };
     }
 
     render (){
-        // generate overview throughput chart option
-        let label = [];
-        let series = [
-            {name: 'read', type: 'line', itemStyle: {normal: {color: '#f6b93f',lineStyle: {width: 1}}}, data: []},
-            {name: 'write', type: 'line', itemStyle: {normal: {color: '#fbe81f',lineStyle: {width: 1}}}, data: []},
-            {name: 'sum', type: 'line', itemStyle: {normal: {color: '#00cc00',lineStyle: {width: 1}}}, data: []},
-        ];
-        this.props.throughput.map(({diskReadSum, diskWriteSum, totalSum, time}) => {
-            label.push(time);
-            series[0].data.push(diskReadSum);
-            series[1].data.push(diskWriteSum);
-            series[2].data.push(totalSum);
-        });
-        let overviewThroughputChartOption = {height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm', label, series};
-
+        let overviewThroughputChartOption = this.generateThroughChartOption('overview');
+        let detailThroughputChartOption = this.generateThroughChartOption('detail');
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-big-title">
@@ -61,7 +96,7 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <QueueAnim type={['left', 'right']}>
+                                <QueueAnim className="fs-info-block-group-animation-wrapper" type={['left', 'right']} delay={200}>
                                     <div className="fs-info-block-group" key={1}>
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
@@ -98,18 +133,18 @@ class StorageNodes extends Component {
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {this.state.currentNode.name} {lang('节点详情', 'Node Detail')}
+                                {this.state.currentStorageNode.name} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
                                     <ArrowButton switchDirection style={{marginRight: 15}}
                                         title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                         onClick={this.changeExpandSwitchNode.bind(this)}
                                     />
-                                    <Select style={{width: 140}} size="small" value={this.state.currentNode.nodeNumID} onChange={this.switchNode.bind(this)}>
+                                    <Select style={{width: 170}} size="small" value={this.state.currentStorageNode.nodeNumID} onChange={this.switchNode.bind(this)}>
                                         {
-                                            this.props.status.map(({hostname, nodeNumID, value}) =>
-                                                <Select.Option key={nodeNumID} value={nodeNumID} hostname={hostname} disabled={!value}>
+                                            this.props.status.map(({node, nodeNumID, value}) =>
+                                                <Select.Option key={nodeNumID} value={nodeNumID} node={node} disabled={!value}>
                                                     <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
-                                                    {hostname}
+                                                    {node}
                                                 </Select.Option>
                                             )
                                         }
@@ -120,19 +155,19 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <QueueAnim type={['left', 'right']}>
+                                <QueueAnim className="fs-info-block-group-animation-wrapper" type={['left', 'right']} delay={300}>
                                     <div className="fs-info-block-group" key={1}>
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentNode.hostname}</div>
+                                            <div className="fs-info-block-value">{this.state.currentStorageNode.node}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('状态', 'Node Status')}</div>
                                             <div className="fs-info-block-value">
                                                 {
-                                                    this.state.currentNode.value ?
+                                                    this.state.currentStorageNode.value ?
                                                     <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
                                                     <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
                                                 }
@@ -143,11 +178,11 @@ class StorageNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('存储目标', 'Storage Target')}</span>
                                 </span>
-                                <StorageTargetGroup targets={this.props.targetList} />
+                                <StorageTargetGroup storageTargets={this.props.storageTargets} />
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('吞吐量', 'Throughput')}</span>
                                 </span>
-                                <FSLineChart option={mockData.chartProps2} />
+                                <FSLineChart option={detailThroughputChartOption} />
                             </section>
                         </section>
                     </div>
@@ -158,9 +193,8 @@ class StorageNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {storageNode: {overview: {diskSpace, status, throughput}, detail: {targetList}}}} = state;
-    console.info(throughput);
-    return {language, diskSpace, status, throughput, targetList};
+    const {language, main: {storageNode: {overview: {diskSpace, status, overviewThroughput}, detail: {storageTargets, detailThroughput}}}} = state;
+    return {language, diskSpace, status, overviewThroughput, storageTargets, detailThroughput};
 };
 
 export default connect(mapStateToProps)(StorageNodes);
