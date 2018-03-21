@@ -87,7 +87,7 @@ const model = {
         }
         data.general = { status: data.general.status === 'true', nodeID: data.general.nodeID, nodeNumID: Number(data.general.nodeNumID) };
         data.storageTargets = Array.isArray(data.storageTargets) ? data.storageTargets : typeof (data.storageTargets) === 'object' ? [data.storageTargets] : [];
-        data.storageTargets = data.storageTargets.map(i => ({ id: i['_'], diskSpaceTotal: Number(i.diskSpaceTotal), diskSpaceFree: Number(i.diskSpaceFree), pathStr: i.pathStr }));
+        data.storageTargets = data.storageTargets.map(i => ({ id: i['_'], diskSpaceTotal: Number(i.diskSpaceTotal), diskSpaceFree: Number(i.diskSpaceFree), diskSpaceUsed: Number(i.diskSpaceTotal) - Number(i.diskSpaceFree), pathStr: i.pathStr }));
         for (let i of Object.keys(data)) {
             if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
                 data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
@@ -101,48 +101,50 @@ const model = {
     },
     async getClientStats(param) {
         let res = await request.get(config.api.admon.clientstats, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        if (typeof (data.hosts) === 'object') {
-            data.hosts = [data.hosts.host];
+        for (let i of Object.keys(data)) {
+            data[i] = data[i].host ? data[i].host : data[i];
         }
-        if (!data.hosts || data.hosts === '') {
-            data.hosts = [];
-            data.sum = {};
-        } else {
-            for (let i of data.hosts) {
-                for (let j of Object.keys(i)) {
-                    i[j] = j === '$' ? i['$'].ip : { id: i[j]['$'].id, value: i[j]['_'] };
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : [];
+        for (let i of Object.keys(data)) {
+            if (Array.isArray(data[i])) {
+                for (let j in data[i]) {
+                    for (let k of Object.keys(data[i][j])) {
+                        data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
+                    }
                 }
-                i.host = i['$'];
-                delete i['$'];
-            }
-            for (let i of Object.keys(data.sum)) {
-                data.sum[i] = { id: data.sum[i]['$'].id, value: data.sum[i]['_'] };
+            } else if (typeof (data[i]) === 'object') {
+                for (let j of Object.keys(data[i])) {
+                    data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
+                }
+            } else if (typeof (data[i]) === 'string' && String(i).includes('ID')) {
+                data[i] = Number(data[i]);
             }
         }
         return data;
     },
     async getUserStats(param) {
         let res = await request.get(config.api.admon.userstats, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        if (typeof (data.hosts) === 'object') {
-            data.hosts = [data.hosts.host];
+        for (let i of Object.keys(data)) {
+            data[i] = data[i].host ? data[i].host : data[i];
         }
-        if (!data.hosts || data.hosts === '') {
-            data.hosts = [];
-            data.sum = {};
-        } else {
-            for (let i of data.hosts) {
-                for (let j of Object.keys(i)) {
-                    i[j] = j === '$' ? i['$'].ip : { id: i[j]['$'].id, value: i[j]['_'] };
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : [];
+        for (let i of Object.keys(data)) {
+            if (Array.isArray(data[i])) {
+                for (let j in data[i]) {
+                    for (let k of Object.keys(data[i][j])) {
+                        data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
+                    }
                 }
-                i.host = i['$'];
-                delete i['$'];
-            }
-            for (let i of Object.keys(data.sum)) {
-                data.sum[i] = { id: data.sum[i]['$'].id, value: data.sum[i]['_'] };
+            } else if (typeof (data[i]) === 'object') {
+                for (let j of Object.keys(data[i])) {
+                    data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
+                }
+            } else if (typeof (data[i]) === 'string' && String(i).includes('ID')) {
+                data[i] = Number(data[i]);
             }
         }
         return data;
