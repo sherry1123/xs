@@ -408,7 +408,7 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getStorageNodesOverview(param);
-            data = data.diskPerfSummary;
+            data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
             result = responseHandler(0, data);
         } catch (error) {
             result = responseHandler(22, error, param);
@@ -444,7 +444,7 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getStorageNode(param);
-            data = data.diskPerfSummary;
+            data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
             result = responseHandler(0, data);
         } catch (error) {
             result = responseHandler(22, error, param);

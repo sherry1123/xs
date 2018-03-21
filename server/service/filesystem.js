@@ -50,27 +50,19 @@ const model = {
     },
     async getStorageNodesOverview(param) {
         let res = await request.get(config.api.admon.storagenodesoverview, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        if (typeof(data.status) === 'object') {
-            data.status = [data.status];
-        }
-        for (let i in data.status) {
-            data.status[i] = { value: data.status[i].value['_'], hostname: data.status[i].value['$'].node, nodeNumID: data.status[i].value['$'].nodeNumID };
-        }
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & data[i] === '') {
-                data[i] = '0.000 MiB';
-            }
+            data[i] = data[i].value ? data[i].value : data[i];
         }
+        data.status = Array.isArray(data.status) ? data.status : typeof (data.status) === 'object' ? [data.status] : [];
+        data.status = data.status.map(i => ({ value: i['_'] === 'true', node: i.node, nodeNumID: Number(i.nodeNumID) }));
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & String(data[i]).includes('MiB')) {
-                data[i] = Number(data[i].replace(' MiB', ''));
-            } else if (typeof(data[i] === 'object')) {
+            if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
+                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
+            } else if (String(i).includes('disk') && typeof (data[i]) === 'object') {
                 for (let j of Object.keys(data[i])) {
-                    if (String(data[i][j]).includes('MiB')) {
-                        data[i][j] = Number(data[i][j].replace(' MiB', ''));
-                    }
+                    data[i][j] = Number(data[i][j].replace(/\s\SiB/, ''));
                 }
             }
         }
@@ -78,22 +70,20 @@ const model = {
     },
     async getStorageNode(param) {
         let res = await request.get(config.api.admon.storagenode, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        data.storageTargets = data.storageTargets === '' ? [] : data.storageTargets;
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & data[i] === '' & i.includes('diskPerf')) {
-                data[i] = '0.000 MiB';
-            }
+            data[i] = data[i].value || data[i].target ? data[i].value || data[i].target : data[i];
         }
+        data.general = { status: data.general.status === 'true', nodeID: data.general.nodeID, nodeNumID: Number(data.general.nodeNumID) };
+        data.storageTargets = Array.isArray(data.storageTargets) ? data.storageTargets : typeof (data.storageTargets) === 'object' ? [data.storageTargets] : [];
+        data.storageTargets = data.storageTargets.map(i => ({ id: i['_'], diskSpaceTotal: Number(i.diskSpaceTotal), diskSpaceFree: Number(i.diskSpaceFree), pathStr: i.pathStr }));
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & String(data[i]).includes('MiB')) {
-                data[i] = Number(data[i].replace(' MiB', ''));
-            } else if (typeof(data[i] === 'object')) {
+            if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
+                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
+            } else if (String(i).includes('disk') && typeof (data[i]) === 'object') {
                 for (let j of Object.keys(data[i])) {
-                    if (String(data[i][j]).includes('MiB')) {
-                        data[i][j] = Number(data[i][j].replace(' MiB', ''));
-                    }
+                    data[i][j] = Number(data[i][j].replace(/\s\SiB/, ''));
                 }
             }
         }

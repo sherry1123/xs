@@ -58,6 +58,7 @@ const model = {
 		return async (ctx, next) => {
 			await next();
 			let body = ctx.body;
+			if (!body) return;
 			let acceptEncoding = ctx.state.encoding;
 			if (acceptEncoding && acceptEncoding.includes('gzip')) {
 				try {
