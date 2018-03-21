@@ -43,7 +43,7 @@ class Initialize extends Component {
             if (!isLoggedIn || (isLoggedIn === 'false')){
                 path = routerPath.Login;
             } else {
-                path = routerPath.Main + routerPath.MetadataNodesOverview;
+                path = routerPath.Main + routerPath.StorageNodes;
             }
             this.props.history.replace(path);
         }

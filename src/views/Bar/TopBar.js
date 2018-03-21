@@ -32,8 +32,8 @@ class TopBar extends Component {
                     </Popover>
                     <span className="fs-login-user-wrapper">
                         {lang('您好, ', 'Hi, ')}
-                        <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="hover">
-                            <span className="fs-login-user">admin</span>
+                        <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="click">
+                            <span className="fs-login-user">{this.props.user.name}</span>
                         </Popover>
                     </span>
                     <LanguageButton width={80} border="none" pureText />
@@ -44,11 +44,9 @@ class TopBar extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
+    let {language, main: {general: {user}}} = state;
+    return {language, user};
 };
-
-const mapDispatchToProps = [];
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
     return Object.assign({}, stateProps, ownProps);
@@ -56,4 +54,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(TopBar);
+export default connect(mapStateToProps, [], mergeProps, options)(TopBar);

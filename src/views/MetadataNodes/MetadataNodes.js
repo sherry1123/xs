@@ -18,8 +18,8 @@ class MetadataNodes extends Component {
         this.setState({expandSwitchNode});
     }
 
-    switchNode (nodeID){
-        let currentNode = this.props.nodes.filter(node => node.nodeNumID === nodeID)[0];
+    switchNode (nodeNumID){
+        let currentNode = this.props.nodes.filter(node => node.nodeNumID === nodeNumID)[0];
         this.setState({currentNode});
         // fetch current node data
 
@@ -29,7 +29,7 @@ class MetadataNodes extends Component {
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('存储节点', 'Metadata Nodes')}</h3>
+                    <h3 className="fs-page-title">{lang('元数据节点', 'Metadata Nodes')}</h3>
                 </section>
                 <section className="fs-node-item-group">
                     <div className="fs-node-item">
@@ -79,10 +79,10 @@ class MetadataNodes extends Component {
                                     />
                                     <Select style={{width: 140}} size="small" value={this.state.currentNode.id} onChange={this.switchNode.bind(this)}>
                                         {
-                                            this.props.status.map(({hostname, nodeNumID, value}) =>
-                                                <Select.Option key={hostname} value={nodeNumID} disabled={!value}>
+                                            this.props.status.map(({node, nodeNumID, value}) =>
+                                                <Select.Option key={node} value={nodeNumID} node={node} disabled={!value}>
                                                     <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
-                                                    {hostname}
+                                                    {node}
                                                 </Select.Option>
                                             )
                                         }
@@ -98,7 +98,7 @@ class MetadataNodes extends Component {
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentNode.name}</div>
+                                            <div className="fs-info-block-value">{this.state.currentNode.node}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />

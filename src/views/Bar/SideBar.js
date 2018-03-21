@@ -79,9 +79,11 @@ class SideBar extends Component {
                     onClick={this.forwardPage.bind(this)}
                     onOpenChange={this.openMenu.bind(this)}
                 >
+                    {/*
                     <Menu.Item key={routerPath.Dashboard}>
                         <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>
+                    */}
                     <Menu.Item key={routerPath.MetadataNodes}>
                         <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
                     </Menu.Item>

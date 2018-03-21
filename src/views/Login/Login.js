@@ -26,7 +26,7 @@ class Login extends Component {
         if (isInitialized === 'true'){
             let isLoggedIn = Cookie.get('user');
             if (!!isLoggedIn && (isLoggedIn !== 'false')){
-                this.props.history.replace(routerPath.Main + routerPath.Dashboard);
+                this.props.history.replace(routerPath.Main + routerPath.StorageNodes);
             }
         } else {
             this.props.history.replace(routerPath.Init);
