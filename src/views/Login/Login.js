@@ -4,8 +4,10 @@ import {Button, Form, Icon, Input, message} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
+import generalAction from "../../redux/actions/generalAction";
 
 class Login extends Component {
     constructor (props){
@@ -14,17 +16,19 @@ class Login extends Component {
             username: '',
             usernameStatus: '',
             usernameHelp: '',
+
             password: '',
             passwordStatus: '',
             passwordHelp: '',
-            loginErrorInfo: ''
+
+            loginErrorCode: ''
         };
     }
 
     componentWillMount (){
         let isInitialized = Cookie.get('init');
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('user');
+            let isLoggedIn = Cookie.get('login');
             if (!!isLoggedIn && (isLoggedIn !== 'false')){
                 this.props.history.replace(routerPath.Main + routerPath.StorageNodes);
             }
@@ -41,7 +45,8 @@ class Login extends Component {
     async validateUsername (value){
         await this.setState({
             usernameStatus: !value ? 'error' : '',
-            usernameHelp: !value ? lang('请输入密码', 'please enter username') : ''
+            usernameHelp: !value ? lang('请输入密码', 'please enter username') : '',
+            loginErrorCode: ''
         });
     }
 
@@ -53,7 +58,8 @@ class Login extends Component {
     async validatePassword (value){
         await this.setState({
             passwordStatus: !value ? 'error' : '',
-            passwordHelp: !value ? lang('请输入用户名', 'please enter password') : ''
+            passwordHelp: !value ? lang('请输入用户名', 'please enter password') : '',
+            loginErrorCode: ''
         });
     }
 
@@ -63,23 +69,28 @@ class Login extends Component {
         await this.validatePassword(password);
         let {usernameStatus, passwordStatus} = this.state;
         if (!usernameStatus && !passwordStatus){
-            if (process.env.NODE_ENV === 'development'){
-                Cookie.set('user', 'dev_user');
+            // request login http interface
+            try {
+                let user = await httpRequests.login({username, password});
+                this.props.setUser(user);
+                await this.setState({loginErrorCode: ''});
+                this.props.history.push(routerPath.Main + routerPath.StorageNodes);
+            } catch ({code}){
+                this.setState({loginErrorCode: code});
             }
-            // fetch login interface
-
-            this.props.history.push(routerPath.Main + routerPath.Dashboard);
         } else {
-            message.warning(lang('请正确输入用户名和密码', 'please fill the form'));
+            message.warning(lang('请正确输入用户名和密码', 'please fill login form'));
         }
     }
 
     render (){
-        let {VERSION, NODE_ENV} = process.env;
+        let loginErrorInfoMap = {
+            9: lang('用户名或密码错误', 'username or password error')
+        };
         return (
             <section className="fs-login-wrapper">
-                <LanguageButton />
-                <QueueAnim type="top">
+                <LanguageButton width={80} border="none" pureText />
+                <QueueAnim type="top" delay={100}>
                     <section key="fd" className="fs-login-content">
                         <div className="fs-login-logo-wrapper" >
                             <div className="rock-bg">
@@ -89,17 +100,19 @@ class Login extends Component {
                                 <i className="rock-point d" />
                             </div>
                         </div>
-                        {/*<section className="fs-login-description-wrapper">
+                        {/*
+                        <section className="fs-login-description-wrapper">
                             {lang('全闪存并行文件存储系统', 'All flash parallel file storage system')}
-                        </section>*/}
+                        </section>
+                        */}
                         <section>
                             <Form className="fs-login-form-wrapper">
                                 <Form.Item className="fs-login-username-input-wrapper"
                                     validateStatus={this.state.usernameStatus}
                                     help={this.state.usernameHelp}
                                 >
-                                    <Input placeholder={lang('请输入用户名', 'enter username')}
-                                        prefix={<Icon type="user" style={{color: 'rgba(0, 0, 0, .25)'}} />}
+                                    <Input placeholder={lang('请输入用户名', 'please enter username')}
+                                        prefix={<Icon type="user" style={{color: 'rgba(0, 0, 0, .7)'}} />}
                                         value={this.state.username}
                                         onChange={this.changeUsername.bind(this)}
                                         onPressEnter={this.doLogin.bind(this)}
@@ -109,9 +122,9 @@ class Login extends Component {
                                     validateStatus={this.state.passwordStatus}
                                     help={this.state.passwordHelp}
                                 >
-                                    <Input placeholder={lang('请输入密码', 'enter password')}
+                                    <Input placeholder={lang('请输入密码', 'pleaseenter password')}
                                        type="password"
-                                        prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .25)'}} />}
+                                        prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .7)'}} />}
                                         value={this.state.password}
                                         onChange={this.changePassword.bind(this)}
                                         onPressEnter={this.doLogin.bind(this)}
@@ -122,13 +135,17 @@ class Login extends Component {
                                 >
                                     {lang('登录', 'Login')}
                                 </Button>
-                                {this.state.loginErrorInfo && <p className="fs-login-error-info-wrapper">{this.state.loginErrorInfo}</p>}
+                                {
+                                    this.state.loginErrorCode && <p className="fs-login-error-info-wrapper">
+                                        {lang('登录失败：', 'Login failed: ')}{loginErrorInfoMap[this.state.loginErrorCode]}
+                                    </p>
+                                }
                             </Form>
                         </section>
                     </section>
                 </QueueAnim>
                 <footer className="fs-login-copyright-wrapper">
-                    ©2018 Orcadt {'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '')}
+                    ©2018 Orcadt {this.props.version}
                 </footer>
             </section>
         );
@@ -136,8 +153,14 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
+    const {language, main: {general: {version}}} = state;
+    return {language, version};
 };
 
-export default connect(mapStateToProps)(Login);
+const mapDispatchToProps = dispatch => {
+    return {
+        setUser: user => dispatch(generalAction.setUser(user)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

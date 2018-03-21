@@ -7,10 +7,14 @@ const initRequest = (url, options) => {
         try {
             let response = await fetch(url, options);
             if (response.ok) {
-                let {data} = await response.json();
-                resolve(data);
+                let {code, data, message} = await response.json();
+                if (code === 0){
+                    resolve(data);
+                } else {
+                    reject({code, message});
+                }
             } else {
-                reject(response.statusText);
+                reject({message: response.statusText});
             }
         } catch (error){
             reject(error);

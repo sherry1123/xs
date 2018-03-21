@@ -9,7 +9,7 @@ import lang from '../Language/lang';
 class StorageTargetGroup extends Component {
     render (){
         return (
-            <QueueAnim className="fs-storage-target-group" delay={400}>
+            <QueueAnim className="fs-storage-target-group" delay={300}>
                 {
                     this.props.storageTargets.map(target => {
                         let {id, pathStr, diskSpaceTotal, diskSpaceUsed, diskSpaceFree} = target;

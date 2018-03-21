@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Checkbox, Form, Input, Select} from 'antd';
+import {Button, /*Checkbox, */Form, Input, Select} from 'antd';
 import lang from '../../components/Language/lang';
 
 class FSOperationStripeSettings extends Component {
@@ -101,13 +101,15 @@ class FSOperationStripeSettings extends Component {
                                         <Select.Option value="buddyMirror">BuddyMirror</Select.Option>
                                     </Select>
                                 </Form.Item>
-                                <Form.Item label={lang('元数据镜像', 'Metadata Image')} {...formItemLayout}>
+                                {/*
+                                 <Form.Item label={lang('元数据镜像', 'Metadata Image')} {...formItemLayout}>
                                     <Checkbox checked={this.state.stripeInformation.isMetadataImage}
                                         onChange={({target: {checked}}) => {
                                             this.formChange.bind(this, 'isMetadataImage', checked)();
                                         }}
                                     />
                                 </Form.Item>
+                                */}
                                 <Form.Item wrapperCol={{sm: {offset: 8}}}>
                                     <Button icon="save" onClick={this.submit.bind(this)}>{lang('保存', 'Save')}</Button>
                                 </Form.Item>

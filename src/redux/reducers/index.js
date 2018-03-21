@@ -1,14 +1,17 @@
 import {combineReducers} from 'redux';
 import State from '../state';
-import {lsGet} from '../../services'
+import {lsGet} from '../../services';
 import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';
 import storageNodeReducer from '../reducers/storageNodeReducer';
 
-// firstly read some persistent data from localStorage
+// firstly read environmental parameters from process, also persistent data from localStorage
+let {VERSION, NODE_ENV} = process.env;
+State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 State.main.general.menuExpand = lsGet('menuExpand');
 
+// combine all reducers
 const reducer = combineReducers({
     // global
     language: (language = State.language, action) => {

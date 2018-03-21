@@ -68,14 +68,12 @@ class StorageNodes extends Component {
         let {read, write, sum, time} = this.props[type + 'Throughput'];
         return {
             height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
+            formatterFn: value => formatStorageSize(value),
             label: time,
-            formatterFn: (value) => {
-                return formatStorageSize(value);
-            },
             series: [
                 {data: read, name: lang('读', 'Read'), type: 'line', itemStyle: {normal: {color: '#f6b93f', lineStyle: {width: 1}}}},
                 {data: write, name: lang('写', 'Write'), type: 'line', itemStyle: {normal: {color: '#fbe81f', lineStyle: {width: 1}}}},
-                {data: sum, name: lang('总和', 'Sum'), type: 'line', itemStyle: {normal: {color: '#00cc00', lineStyle: {width: 1}}}},
+                {data: sum, name: lang('总', 'Sum'), type: 'line', itemStyle: {normal: {color: '#00cc00', lineStyle: {width: 1}}}},
             ]
         };
     }

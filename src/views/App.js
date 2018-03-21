@@ -16,7 +16,7 @@ export default class App extends Component {
         let isInitialized = Cookie.get('init');
         let defaultPath = '';
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('user');
+            let isLoggedIn = Cookie.get('login');
             if (!isLoggedIn){
                 defaultPath = routerPath.Login;
             } else {

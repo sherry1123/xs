@@ -33,7 +33,7 @@ class TopBar extends Component {
                     <span className="fs-login-user-wrapper">
                         {lang('您好, ', 'Hi, ')}
                         <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="click">
-                            <span className="fs-login-user">{this.props.user.name}</span>
+                            <span className="fs-login-user">{this.props.user.username}</span>
                         </Popover>
                     </span>
                     <LanguageButton width={80} border="none" pureText />

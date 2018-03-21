@@ -1,12 +1,19 @@
 import React, {Component} from 'react';
+import {connect} from "react-redux";
 
-export default class FooterBar extends Component {
+class FooterBar extends Component {
     render (){
-        let {VERSION, NODE_ENV} = process.env;
         return (
             <footer className="fs-footer-bar-wrapper">
-                ©2018 OrcaFS {'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '')}
+                ©2018 OrcaFS {this.props.version}
             </footer>
         );
     }
 }
+
+const mapStateToProps = state => {
+    const {language, main: {general: {version}}} = state;
+    return {language, version};
+};
+
+export default connect(mapStateToProps)(FooterBar);

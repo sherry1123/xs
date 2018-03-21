@@ -38,7 +38,7 @@ class Initialize extends Component {
     componentWillMount (){
         let isInitialized = Cookie.get('init');
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('user');
+            let isLoggedIn = Cookie.get('login');
             let path = '';
             if (!isLoggedIn || (isLoggedIn === 'false')){
                 path = routerPath.Login;

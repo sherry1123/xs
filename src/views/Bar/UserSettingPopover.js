@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Button} from 'antd';
 import lang from '../../components/Language/lang';
 import mainAction from '../../redux/actions/generalAction';
-import Cookie from 'js-cookie';
+import httpRequests from '../../http/requests';
 import routerPath from '../routerPath';
 
 class UserSettingPopover extends Component {
@@ -11,13 +11,8 @@ class UserSettingPopover extends Component {
 
     }
 
-    logout (){
-        if (process.env.NODE_ENV === 'production'){
-            // fetch logout interface
-
-        } else {
-            Cookie.set('user', 'false');
-        }
+    async logout (){
+        await httpRequests.logout(this.props.user.username);
         this.props.history.push(routerPath.Login);
     }
 
@@ -37,8 +32,8 @@ class UserSettingPopover extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
+    let {language, main: {general: {user}}} = state;
+    return {language, user};
 };
 
 const mapDispatchToProps = dispatch => {

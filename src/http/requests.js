@@ -21,25 +21,17 @@ export default  {
             await this.checkStoreIsReady();
             return await fetchMock(IPs);
         } catch (e){
-            console.info(e);
+            console.info(e.message);
         }
     },
 
     // login & logout
-    async login (){
-        try {
-            return await fetchPost('/api/login', {username: 'admin', password: '123456'});
-        } catch (e){
-            console.info(e);
-        }
+    async login ({username, password}){
+        return await fetchPost('/api/login', {username, password});
     },
 
-    async logout (){
-        try {
-            return await fetchPost('/api/logout', {username: 'admin'});
-        } catch (e){
-            console.info(e);
-        }
+    async logout (username){
+        return await fetchPost('/api/logout', {username});
     },
 
     // main
@@ -49,7 +41,7 @@ export default  {
             let data = await fetchGet('/api/getstoragenodessummary');
             store.dispatch(storageNodeAction.setStorageNodeOverviewSummary(data));
         } catch (e){
-            console.info(e);
+            console.info(e.message);
         }
     },
 
@@ -58,7 +50,7 @@ export default  {
             let data = await fetchGet('/api/getstoragenodesthroughput');
             store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
         } catch (e){
-            console.info(e);
+            console.info(e.message);
         }
     },
 
@@ -69,7 +61,7 @@ export default  {
                 let data = await fetchGet('/api/getstoragenodesummary', {node, nodeNumID});
                 store.dispatch(storageNodeAction.setStorageNodeDetailSummary(data));
             } catch (e){
-                console.info(e);
+                console.info(e.message);
             }
         }
     },
@@ -80,7 +72,7 @@ export default  {
                 let data = await fetchGet('/api/getstoragenodethroughput', {node, nodeNumID});
                 store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
             } catch (e){
-                console.info(e);
+                console.info(e.message);
             }
         }
     }

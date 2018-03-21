@@ -35,7 +35,7 @@ export default class Main extends Component {
     componentWillMount (){
         let isInitialized = Cookie.get('init');
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('user');
+            let isLoggedIn = Cookie.get('login');
             if (!isLoggedIn || (isLoggedIn === 'false')){
                 this.props.history.replace(routerPath.Login);
             }

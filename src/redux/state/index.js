@@ -37,7 +37,7 @@ export default {
         general: {
             version: '',
             user: {
-                name: 'admin'
+                username: 'admin'
             },
             activeMenu: [],
             activePage: '',
