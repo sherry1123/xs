@@ -400,15 +400,15 @@ const model = {
         return result;
     },
     /**
-     * Get Storage Nodes Throughout
+     * Get Storage Nodes Throughput
      * 
      * @param {string} group the group which the node belongs
      */
-    async getStorageNodesThroughout(param) {
+    async getStorageNodesThroughput(param) {
         let result = {};
         try {
             let data = await fileSystem.getStorageNodesOverview(param);
-            data = data.diskPerfSummary;
+            data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
             result = responseHandler(0, data);
         } catch (error) {
             result = responseHandler(22, error, param);
@@ -434,17 +434,17 @@ const model = {
         return result;
     },
     /**
-     * Get Storage Node Throughout
+     * Get Storage Node Throughput
      * 
      * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
      * @param {string} node node's hostname
      * @param {int} nodeNumID node's id
      */
-    async getStorageNodeThroughout(param) {
+    async getStorageNodeThroughput(param) {
         let result = {};
         try {
             let data = await fileSystem.getStorageNode(param);
-            data = data.diskPerfSummary;
+            data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
             result = responseHandler(0, data);
         } catch (error) {
             result = responseHandler(22, error, param);

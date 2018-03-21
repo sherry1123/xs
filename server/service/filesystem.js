@@ -2,98 +2,100 @@ const config = require('../config');
 const request = require('../module/request');
 const promise = require('../module/promise');
 const model = {
+    toByte(value, unit) {
+        let unitList = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+        let byte = 0;
+        for (let i in unitList) {
+            if (unit === unitList[i]) {
+                byte = Math.floor(value * Math.pow(1024, i));
+                break;
+            }
+        }
+        return byte;
+    },
     async getToken() {
         return await request.get(config.api.orcafs.gettoken);
     },
     async getNodeList(param) {
         let res = await request.get(config.api.admon.nodelist, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { charkey: 'hostname', attrkey: 'state' });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        let result = { mgmtd: [], meta: [], storage: [], admon: [] };
         for (let i of Object.keys(data)) {
-            result[i] = data[i].map(j => {
-                let obj = Object.assign(j.node[0], j.node[0].state);
-                delete obj.state;
-                return obj;
-            });
+            data[i] = Array.isArray(data[i]) ? data[i] : typeof (data[i]) === 'object' ? [data[i]] : [];
+            data[i] = data[i].map(j => ({ node: j.node['_'], nodeNumID: Number(j.node.nodeNumID), group: j.node.group }));
         }
-        return result;
+        return data;
     },
     async getMetaNodesOverview(param) {
         let res = await request.get(config.api.admon.metanodesoverview, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        let result = { general: {}, status: {}, workRequests: [], queuedRequests: [] };
-        result.general = data.general;
-        result.status = { value: data.status.value['_'], hostname: data.status.value['$'].node, nodeNumID: data.status.value['$'].nodeNumID };
-        for (let i of data.workRequests.value) {
-            result.workRequests.push({ time: i['$'].time, value: i['_'] });
+        for (let i of Object.keys(data)) {
+            data[i] = data[i].value ? data[i].value : data[i];
         }
-        for (let i of data.queuedRequests.value) {
-            result.queuedRequests.push({ time: i['$'].time, value: i['_'] });
+        data.general = { nodeCount: Number(data.general.nodeCount), rootNode: data.general.rootNode };
+        data.status = Array.isArray(data.status) ? data.status : typeof (data.status) === 'object' ? [data.status] : [];
+        data.status = data.status.map(i => ({ value: i['_'] === 'true', node: i.node, nodeNumID: Number(i.nodeNumID) }));
+        for (let i of Object.keys(data)) {
+            if (String(i).includes('Requests') && Array.isArray(data[i])) {
+                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
+            }
         }
-        return result;
+        return data;
     },
     async getMetaNode(param) {
         let res = await request.get(config.api.admon.metanode, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        let result = { general: {}, workRequests: [], queuedRequests: [] };
-        result.general = data.general;
-        for (let i of data.workRequests.value) {
-            result.workRequests.push({ time: i['$'].time, value: i['_'] });
-        }
-        for (let i of data.queuedRequests.value) {
-            result.queuedRequests.push({ time: i['$'].time, value: i['_'] });
-        }
-        return result;
-    },
-    async getStorageNodesOverview(param) {
-        let res = await request.get(config.api.admon.storagenodesoverview, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
-        let data = json.data;
-        if (typeof(data.status) === 'object') {
-            data.status = [data.status];
-        }
-        for (let i in data.status) {
-            data.status[i] = { value: data.status[i].value['_'], hostname: data.status[i].value['$'].node, nodeNumID: data.status[i].value['$'].nodeNumID };
-        }
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & data[i] === '') {
-                data[i] = '0.000 MiB';
+            data[i] = data[i].value ? data[i].value : data[i];
+        }
+        data.general = { status: data.general.status === 'true', nodeID: data.general.nodeID, nodeNumID: Number(data.general.nodeNumID), rootNode: data.general.rootNode === 'Yes' };
+        for (let i of Object.keys(data)) {
+            if (String(i).includes('Requests') && Array.isArray(data[i])) {
+                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
             }
         }
+        return data;
+    },
+    async getStorageNodesOverview(param) {
+        param.timeSpanPerf = 1;
+        let res = await request.get(config.api.admon.storagenodesoverview, param, {}, false);
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
+        let data = json.data;
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & String(data[i]).includes('MiB')) {
-                data[i] = Number(data[i].replace(' MiB', ''));
-            } else if (typeof(data[i] === 'object')) {
+            data[i] = data[i].value ? data[i].value : data[i];
+        }
+        data.status = Array.isArray(data.status) ? data.status : typeof (data.status) === 'object' ? [data.status] : [];
+        data.status = data.status.map(i => ({ value: i['_'] === 'true', node: i.node, nodeNumID: Number(i.nodeNumID) }));
+        for (let i of Object.keys(data)) {
+            if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
+                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
+            } else if (String(i).includes('disk') && typeof (data[i]) === 'object') {
                 for (let j of Object.keys(data[i])) {
-                    if (String(data[i][j]).includes('MiB')) {
-                        data[i][j] = Number(data[i][j].replace(' MiB', ''));
-                    }
+                    data[i][j] = model.toByte(Number(data[i][j].replace(/\s\SiB/, '')), data[i][j].replace(/\S+\s/, '')[0]);
                 }
             }
         }
         return data;
     },
     async getStorageNode(param) {
+        param.timeSpanPerf = 1;
         let res = await request.get(config.api.admon.storagenode, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        data.storageTargets = data.storageTargets === '' ? [] : data.storageTargets;
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & data[i] === '' & i.includes('diskPerf')) {
-                data[i] = '0.000 MiB';
-            }
+            data[i] = data[i].value || data[i].target ? data[i].value || data[i].target : data[i];
         }
+        data.general = { status: data.general.status === 'true', nodeID: data.general.nodeID, nodeNumID: Number(data.general.nodeNumID) };
+        data.storageTargets = Array.isArray(data.storageTargets) ? data.storageTargets : typeof (data.storageTargets) === 'object' ? [data.storageTargets] : [];
+        data.storageTargets = data.storageTargets.map(i => ({ id: i['_'], diskSpaceTotal: Number(i.diskSpaceTotal), diskSpaceFree: Number(i.diskSpaceFree), diskSpaceUsed: Number(i.diskSpaceTotal) - Number(i.diskSpaceFree), pathStr: i.pathStr }));
         for (let i of Object.keys(data)) {
-            if (typeof(data[i]) === 'string' & String(data[i]).includes('MiB')) {
-                data[i] = Number(data[i].replace(' MiB', ''));
-            } else if (typeof(data[i] === 'object')) {
+            if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
+                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
+            } else if (String(i).includes('disk') && typeof (data[i]) === 'object') {
                 for (let j of Object.keys(data[i])) {
-                    if (String(data[i][j]).includes('MiB')) {
-                        data[i][j] = Number(data[i][j].replace(' MiB', ''));
-                    }
+                    data[i][j] = model.toByte(Number(data[i][j].replace(/\s\SiB/, '')), data[i][j].replace(/\S+\s/, '')[0]);
                 }
             }
         }
@@ -101,48 +103,50 @@ const model = {
     },
     async getClientStats(param) {
         let res = await request.get(config.api.admon.clientstats, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        if (typeof (data.hosts) === 'object') {
-            data.hosts = [data.hosts.host];
+        for (let i of Object.keys(data)) {
+            data[i] = data[i].host ? data[i].host : data[i];
         }
-        if (!data.hosts || data.hosts === '') {
-            data.hosts = [];
-            data.sum = {};
-        } else {
-            for (let i of data.hosts) {
-                for (let j of Object.keys(i)) {
-                    i[j] = j === '$' ? i['$'].ip : { id: i[j]['$'].id, value: i[j]['_'] };
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : [];
+        for (let i of Object.keys(data)) {
+            if (Array.isArray(data[i])) {
+                for (let j in data[i]) {
+                    for (let k of Object.keys(data[i][j])) {
+                        data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
+                    }
                 }
-                i.host = i['$'];
-                delete i['$'];
-            }
-            for (let i of Object.keys(data.sum)) {
-                data.sum[i] = { id: data.sum[i]['$'].id, value: data.sum[i]['_'] };
+            } else if (typeof (data[i]) === 'object') {
+                for (let j of Object.keys(data[i])) {
+                    data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
+                }
+            } else if (typeof (data[i]) === 'string' && String(i).includes('ID')) {
+                data[i] = Number(data[i]);
             }
         }
         return data;
     },
     async getUserStats(param) {
         let res = await request.get(config.api.admon.userstats, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false });
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
-        if (typeof (data.hosts) === 'object') {
-            data.hosts = [data.hosts.host];
+        for (let i of Object.keys(data)) {
+            data[i] = data[i].host ? data[i].host : data[i];
         }
-        if (!data.hosts || data.hosts === '') {
-            data.hosts = [];
-            data.sum = {};
-        } else {
-            for (let i of data.hosts) {
-                for (let j of Object.keys(i)) {
-                    i[j] = j === '$' ? i['$'].ip : { id: i[j]['$'].id, value: i[j]['_'] };
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : [];
+        for (let i of Object.keys(data)) {
+            if (Array.isArray(data[i])) {
+                for (let j in data[i]) {
+                    for (let k of Object.keys(data[i][j])) {
+                        data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
+                    }
                 }
-                i.host = i['$'];
-                delete i['$'];
-            }
-            for (let i of Object.keys(data.sum)) {
-                data.sum[i] = { id: data.sum[i]['$'].id, value: data.sum[i]['_'] };
+            } else if (typeof (data[i]) === 'object') {
+                for (let j of Object.keys(data[i])) {
+                    data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
+                }
+            } else if (typeof (data[i]) === 'string' && String(i).includes('ID')) {
+                data[i] = Number(data[i]);
             }
         }
         return data;
