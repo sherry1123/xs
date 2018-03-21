@@ -101,8 +101,8 @@ const model = {
     /**
      * Login
      * 
-     * @param {string} username
-     * @param {string} password
+     * @param {string} username username
+     * @param {string} password password
      */
     async login(param) {
         let result = {};
@@ -110,7 +110,7 @@ const model = {
             let data = await database.getUser(param);
             if (data.length) {
                 await model.addAuditLog({ user: param.username, desc: 'login success' });
-                result = responseHandler(0, 'login success');
+                result = responseHandler(0, data[0]);
             } else {
                 result = responseHandler(9, 'username or password error', param);
             }
@@ -122,7 +122,7 @@ const model = {
     /**
      * Logout
      * 
-     * @param {string} username
+     * @param {string} username username
      */
     async logout(param) {
         let result = responseHandler(0, 'logout success');
