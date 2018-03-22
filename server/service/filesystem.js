@@ -133,7 +133,7 @@ const model = {
         for (let i of Object.keys(data)) {
             data[i] = data[i].host ? data[i].host : data[i];
         }
-        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : [];
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : data.hosts;
         for (let i of Object.keys(data)) {
             if (Array.isArray(data[i])) {
                 for (let j in data[i]) {

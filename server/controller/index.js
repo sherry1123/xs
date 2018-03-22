@@ -84,6 +84,15 @@ const model = {
     },
     '/api/getstoragenodethroughput': async ctx => {
         ctx.body = await service.getStorageNodeThroughput(ctx.param);
+    },
+    '/api/getmetanodessummary': async ctx => {
+        ctx.body = await service.getMetaNodesStatus(ctx.param);
+    },
+    '/api/getmetanodesrequest': async ctx => {
+        ctx.body = await service.getMetaNodesRequest(ctx.param);
+    },
+    '/api/getmetanodesummary': async ctx => {
+        ctx.body = await service.getMetaNodeStatus(ctx.param);
     }
 };
 module.exports = model;

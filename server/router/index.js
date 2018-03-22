@@ -28,5 +28,8 @@ router.all('/api/getstoragenodessummary', controller['/api/getstoragenodessummar
 router.all('/api/getstoragenodesthroughput', controller['/api/getstoragenodesthroughput']);
 router.all('/api/getstoragenodesummary', controller['/api/getstoragenodesummary']);
 router.all('/api/getstoragenodethroughput', controller['/api/getstoragenodethroughput']);
+router.all('/api/getmetanodessummary', controller['/api/getmetanodessummary']);
+router.all('/api/getmetanodesrequest', controller['/api/getmetanodesrequest']);
+router.all('/api/getmetanodesummary', controller['/api/getmetanodesummary']);
 
 module.exports = router;

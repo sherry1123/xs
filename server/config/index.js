@@ -19,7 +19,8 @@ exports.nginx = {
 };
 exports.api = {
     agentd: {
-        hardware: 'http://localhost:3457/hardware/getall'
+        hardware: 'http://localhost:3457/hardware/getall',
+        metanodes: 'http://localhost:3457/hardware/getmetanodes'
     },
     orcafs: {
         gettoken: 'http://localhost:9090/token/get',
