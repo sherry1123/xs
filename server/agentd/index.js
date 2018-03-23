@@ -59,6 +59,8 @@ const getMetaNodesInfo = async () => {
     if (!requestorID) {
         metaNodesParam.requestorID = data.requestorID;
     } else if (data.hosts) {
+        data.sum.ip = 'sum';
+        data.hosts.unshift(data.sum);
         metaNodesParam.dataSequenceID += 1;
         metaNodesParam.hosts = data.hosts;
     }

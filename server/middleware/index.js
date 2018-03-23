@@ -1,66 +1,48 @@
 const config = require('../config');
 const promise = require('../module/promise');
 const init = require('../service/initialize');
+const cookieHandler = value => (value ? value === 'true' : undefined);
 const responseHandler = code => ({ code, message: config.errors[code] });
 const model = {
 	initRequest() {
 		return async (ctx, next) => {
-			let method = ctx.method.toLowerCase();
-			let api = ctx.url.split('/').pop().replace(/\?\S+/, '');
-			let key = ctx.get('Api-Key');
-			let status = init.getInitStatus();
-			let encoding = ctx.get('Accept-Encoding');
-			ctx.param = method === 'get' ? ctx.query : ctx.request.body;
-			ctx.state = { api, key, status, encoding };
+			ctx.param = ctx.method.toLowerCase() === 'get' ? ctx.query : ctx.request.body;
+			ctx.state = {
+				api: ctx.url.split('/').pop().replace(/\?\S+/, ''),
+				key: ctx.get('Api-Key'),
+				cookie: {
+					init: cookieHandler(ctx.cookies.get('init'))
+				},
+				encoding: ctx.get('Accept-Encoding'),
+				status: init.getInitStatus()
+			};
 			await next();
 		}
 	},
 	checkKey() {
 		return async (ctx, next) => {
 			let { api, key } = ctx.state;
-			if (key && key === config.keys[api]) {
-				await next();
-			} else {
-				ctx.body = responseHandler(3);
-			}
-		}
-	},
-	filterRequest() {
-		return async (ctx, next) => {
-			let { api, status } = ctx.state;
-			let initApi = ['checkclusterenv', 'init'];
-			if (!status) {
-				if (initApi.includes(api)) {
-					await next();
-				} else {
-					ctx.body = responseHandler(4);
-				}
-			} else {
-				if (!initApi.includes(api)) {
-					await next();
-				} else {
-					ctx.body = responseHandler(5);
-				}
-			}
+			key && key === config.keys[api] ? await next() : ctx.body = responseHandler(3);
 		}
 	},
 	syncStatus() {
 		return async (ctx, next) => {
 			await next();
-			let initStatus = String(ctx.state.status);
-			let initCookie = ctx.cookies.get('init');
-			if (!initCookie || initCookie !== initStatus) {
-				ctx.cookies.set('init', initStatus, config.cookies);
-			}
+			let { cookie: { init: initCookie }, status: initStatus } = ctx.state;
+			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookies);
+		}
+	},
+	filterRequest() {
+		return async (ctx, next) => {
+			let { api, status } = ctx.state, initApiList = ['checkclusterenv', 'init'];
+			!status === initApiList.includes(api) ? await next() : ctx.body = !status ? responseHandler(4) : responseHandler(5);
 		}
 	},
 	compressResponse() {
 		return async (ctx, next) => {
 			await next();
-			let body = ctx.body;
-			if (!body) return;
-			let acceptEncoding = ctx.state.encoding;
-			if (acceptEncoding && acceptEncoding.includes('gzip')) {
+			let body = ctx.body, acceptEncoding = ctx.state.encoding;
+			if (body && acceptEncoding && acceptEncoding.includes('gzip')) {
 				try {
 					ctx.body = await promise.gzipDataInPromise(body);
 					ctx.set('Content-Encoding', 'gzip');
