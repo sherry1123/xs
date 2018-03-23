@@ -450,6 +450,58 @@ const model = {
             result = responseHandler(22, error, param);
         }
         return result;
-    }
+    },
+    /**
+     * Get Metadata Nodes Status
+     * 
+     * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
+     */
+    async getMetaNodesStatus(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getMetaNodesOverview(param);
+            data = { general: data.general, status: data.status };
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Metadata Nodes Request
+     * 
+     * @param {int} interval interval, the unit is second
+     * @param {int} numLines the number of clients
+     * @param {int} requestorID the id of the requestor
+     * @param {int} nextDataSequenceID the next data sequence's id
+     */
+    async getMetaNodesRequest(param) {
+        let result = {};
+        try {
+            let data = await request.get(config.api.agentd.metanodes, param, {}, true);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    /**
+     * Get Metadata Node Status
+     * 
+     * @param {int} timeSpanRequests the length of statistical time, the unit is minute, the interval is one second
+     * @param {string} node node's hostname
+     * @param {int} nodeNumID node's id
+     */
+    async getMetaNodeStatus(param) {
+        let result = {};
+        try {
+            let data = await fileSystem.getMetaNode(param);
+            data = { general: data.general };
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
 };
 module.exports = model;
