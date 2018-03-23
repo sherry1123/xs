@@ -4,6 +4,7 @@ import {lsGet} from '../../services';
 import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';
+import metadataNodeReducer from '../reducers/metadataNodeReducer';
 import storageNodeReducer from '../reducers/storageNodeReducer';
 
 // firstly read environmental parameters from process, also persistent data from localStorage
@@ -31,9 +32,15 @@ const reducer = combineReducers({
                 case 'general':
                     state[key] = generalReducer(main[key], action);
                     break;
+
+                case 'metadataNode':
+                    state[key] = metadataNodeReducer(main[key], action);
+                    break;
+
                 case 'storageNode':
                     state[key] = storageNodeReducer(main[key], action);
                     break;
+
                 default:
                     state[key] = main[key];
             }

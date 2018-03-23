@@ -47,20 +47,29 @@ export default {
         metadataNode: {
             overview: {
                 status: [
+                    /*
                     {node: 'ClusterMe1', nodeNumID: 'cm1', value: true},
                     {node: 'ClusterMe2', nodeNumID: 'cm2', value: true},
-                    {node: 'ClusterMe3', nodeNumID: 'cm3', value: true},
+                    {node: 'ClusterMe3', nodeNumID: 'cm3', value: false},
+                    */
                 ],
+                general: [],
+                userOperationStatics: []
             },
             detail: {
-
+                general: [],
+                userOperationStatics: []
             }
         },
         // storage nodes
         storageNode: {
             overview: {
                 status: [
-
+                    /*
+                    {node: 'ClusterMe1', nodeNumID: 'cm1', value: true},
+                    {node: 'ClusterMe2', nodeNumID: 'cm2', value: true},
+                    {node: 'ClusterMe3', nodeNumID: 'cm3', value: false},
+                    */
                 ],
                 diskSpace: {
                     diskSpaceTotal: 99999999999999,
@@ -77,11 +86,9 @@ export default {
             detail: {
                 general: {},
                 storageTargets: [
-                    /*
                     {id: '201', pathStr: '/dev/orca_201', diskSpaceTotal: 999999999, diskSpaceUsed: 899999999, diskSpaceFree: 100000000},
                     {id: '202', pathStr: '/dev/orca_202', diskSpaceTotal: 599999999, diskSpaceUsed: 299999999, diskSpaceFree: 300000000},
                     {id: '203', pathStr: '/dev/orca_203', diskSpaceTotal: 899999999, diskSpaceUsed: 199999999, diskSpaceFree: 700000000},
-                    */
                 ],
                 detailThroughput: {
                     read: [],

@@ -1,5 +1,6 @@
 import {fetchGet, fetchPost, fetchMock, lsGet} from '../services';
 import store from '../redux';
+import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 
 export default  {
@@ -35,6 +36,36 @@ export default  {
     },
 
     // main
+    // metadata node
+    async getMetadataNodeOverviewSummary (){
+        try {
+            let data = await fetchGet('/api/getmetanodessummary');
+            store.dispatch(metadataNodeAction.setMetadataNodeOverviewSummary(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
+    async getMetadataNodeOverviewUserOperationStatics (){
+        try {
+            let data = await fetchGet('/api/getmetanodesrequest');
+            store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
+    async getMetadataNodeDetailSummary ({node, nodeNumID} = (lsGet('currentMetadataNode') || {})){
+        if (node){
+            try {
+                let data = await fetchGet('/api/getmetanodesummary', {node, nodeNumID});
+                store.dispatch(metadataNodeAction.setMetadataNodeDetailSummary(data));
+            } catch (e){
+                console.info(e.message);
+            }
+        }
+    },
+
     // storage node
     async getStorageNodeOverviewSummary (){
         try {
@@ -54,7 +85,7 @@ export default  {
         }
     },
 
-    async getStorageNodeDetailSummary ({node, nodeNumID} = lsGet('storageCurrentNode')){
+    async getStorageNodeDetailSummary ({node, nodeNumID} = (lsGet('currentStorageNode') || {})){
         // if called by CronJob there will be no parameters, so get it from localStorage
         if (node){
             try {
@@ -66,7 +97,7 @@ export default  {
         }
     },
 
-    async getStorageNodeDetailThroughput ({node, nodeNumID} = lsGet('storageCurrentNode')){
+    async getStorageNodeDetailThroughput ({node, nodeNumID} = (lsGet('currentStorageNode') || {})){
         if (node){
             try {
                 let data = await fetchGet('/api/getstoragenodethroughput', {node, nodeNumID});

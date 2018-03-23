@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon, Select} from 'antd';
+import {Icon, Select, Popover} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import lang from '../../components/Language/lang';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
@@ -15,7 +15,7 @@ class StorageNodes extends Component {
         super(props);
         this.state = {
             currentStorageNode: this.props.status.filter(node => node.value)[0] || {},
-            expandSwitchNode: false
+            expandSwitchNode: true
         };
     }
 
@@ -79,6 +79,17 @@ class StorageNodes extends Component {
     }
 
     render (){
+        let totalNodesCount = this.props.status.length || 0;
+        let upNodesCount = this.props.status.filter(node => node.value).length || 0;
+        let downNodesCount = 0;
+        let downNodes = [];
+        this.props.status.forEach(({node, value}) => {
+            if (!value){
+                downNodesCount ++;
+                downNodes.push(node);
+            }
+        });
+        let downNodesDetail = !downNodesCount ? lang('无异常存储节点', 'There\'s no storage nodes down') : (lang('异常存储节点：', 'Down Storage Nodes: ') + downNodes.join(','));
         let overviewThroughputChartOption = this.generateThroughChartOption('overview');
         let detailThroughputChartOption = this.generateThroughChartOption('detail');
         return (
@@ -99,22 +110,24 @@ class StorageNodes extends Component {
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点总数', 'Total Nodes')}</div>
-                                            <div className="fs-info-block-value">{this.props.status.length || 0}</div>
+                                            <div className="fs-info-block-value">{totalNodesCount}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('正常节点数', 'Up Nodes')}</div>
                                             <div className="fs-info-block-value">
-                                                <span>{this.props.status.filter(node => node.value).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
+                                                <span>{upNodesCount} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
                                             </div>
                                         </div>
-                                        <div className="fs-info-block-item m-l">
-                                            <i className="fs-info-block-circle orange" />
-                                            <div className="fs-info-block-label">{lang('异常节点数', 'Down Nodes')}</div>
-                                            <div className="fs-info-block-value">
-                                                <span>{this.props.status.filter(node => !node.value).length || 0} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                        <Popover content={downNodesDetail}>
+                                            <div className="fs-info-block-item m-l pointer">
+                                                <i className="fs-info-block-circle orange" />
+                                                <div className="fs-info-block-label">{lang('异常节点数', 'Down Nodes')}</div>
+                                                <div className="fs-info-block-value">
+                                                    <span>{downNodesCount} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Popover>
                                     </div>
                                 </QueueAnim>
                                 <span className="fs-info-item title">
@@ -133,7 +146,7 @@ class StorageNodes extends Component {
                             <h3 className="fs-page-title item">
                                 {this.state.currentStorageNode.name} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                    <ArrowButton switchDirection style={{marginRight: 15}}
+                                    <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
                                         title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                         onClick={this.changeExpandSwitchNode.bind(this)}
                                     />

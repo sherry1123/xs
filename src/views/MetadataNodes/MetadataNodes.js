@@ -1,16 +1,41 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon, Select} from 'antd';
+import {Icon, Select, Popover} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import lang from '../../components/Language/lang';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
+import StaticsTable from '../../components/StaticsTable/StaticsTable';
+import httpRequests from "../../http/requests";
+import {lsGet, lsSet} from "../../services";
 
 class MetadataNodes extends Component {
     constructor (props){
         super(props);
         this.state = {
-            currentNode: this.props.status[0],
+            currentMetadataNode: this.props.status.filter(node => node.value)[0] || {},
+            expandSwitchNode: true
         };
+    }
+
+    componentDidMount (){
+        httpRequests.getMetadataNodeOverviewSummary();
+        httpRequests.getMetadataNodeDetailSummary();
+    }
+
+    componentWillReceiveProps (nextProps){
+        let {status} = nextProps;
+        let currentMetadataNode = {};
+        if (status.length){
+            currentMetadataNode = status.filter(node => node.value)[0];
+        }
+        let newState = {};
+        if (currentMetadataNode.node && !this.state.currentMetadataNode.node){
+            // when firstly get the nodes data, request the first node data as current node
+            newState['currentMetadataNode'] = currentMetadataNode;
+            lsSet('currentMetadataNode', currentMetadataNode);
+            this.getCurrentMetadataNodeData();
+        }
+        this.setState(newState);
     }
 
     changeExpandSwitchNode (){
@@ -19,13 +44,32 @@ class MetadataNodes extends Component {
     }
 
     switchNode (nodeNumID){
-        let currentNode = this.props.nodes.filter(node => node.nodeNumID === nodeNumID)[0];
-        this.setState({currentNode});
+        let currentMetadataNode = this.props.nodes.filter(node => node.nodeNumID === nodeNumID)[0];
+        this.setState({currentMetadataNode});
         // fetch current node data
+        lsSet('currentMetadataNode', currentMetadataNode);
+        this.getCurrentMetadataNodeData();
+    }
 
+    getCurrentMetadataNodeData (){
+        let currentStorageNode = lsGet('currentStorageNode');
+        if (currentStorageNode){
+            httpRequests.getStorageNodeDetailSummary(currentStorageNode);
+        }
     }
 
     render (){
+        let totalNodesCount = this.props.status.length || 0;
+        let upNodesCount = this.props.status.filter(node => node.value).length || 0;
+        let downNodesCount = 0;
+        let downNodes = [];
+        this.props.status.forEach(({node, value}) => {
+            if (!value){
+                downNodesCount ++;
+                downNodes.push(node);
+            }
+        });
+        let downNodesDetail = !downNodesCount ? lang('无异常元数据节点', 'There\'s no metadata nodes down') : (lang('异常元数据节点：', 'Down Metadata Nodes: ') + downNodes.join(','));
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-big-title">
@@ -39,45 +83,48 @@ class MetadataNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <QueueAnim type={['top', 'bottom']}>
+                                <QueueAnim className="fs-info-block-group-animation-wrapper" type={['top', 'bottom']} delay={100}>
                                     <div className="fs-info-block-group" key={1}>
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点总数', 'Total Nodes')}</div>
-                                            <div className="fs-info-block-value">{this.props.status.length || 0}</div>
+                                            <div className="fs-info-block-value">{totalNodesCount}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('正常节点数', 'Up Nodes')}</div>
                                             <div className="fs-info-block-value">
-                                                <span>{this.props.status.filter(node => node.value).length || 0} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
+                                                <span>{upNodesCount} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span>
                                             </div>
                                         </div>
-                                        <div className="fs-info-block-item m-l">
-                                            <i className="fs-info-block-circle orange" />
-                                            <div className="fs-info-block-label">{lang('异常节点数', 'Down Nodes')}</div>
-                                            <div className="fs-info-block-value">
-                                                <span>{this.props.status.filter(node => !node.value).length || 0} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                        <Popover content={downNodesDetail}>
+                                            <div className="fs-info-block-item m-l pointer">
+                                                <i className="fs-info-block-circle orange" />
+                                                <div className="fs-info-block-label">{lang('异常节点数', 'Down Nodes')}</div>
+                                                <div className="fs-info-block-value">
+                                                    <span>{downNodesCount} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Popover>
                                     </div>
                                 </QueueAnim>
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('用户操作总览', 'User Operation Overview')}</span>
                                 </span>
+                                <StaticsTable />
                             </section>
                         </section>
                     </div>
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {this.state.currentNode.name} {lang('节点详情', 'Node Detail')}
+                                {this.state.currentMetadataNode.hostname} {lang('节点详情', 'Node Detail')}
                                 <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                    <ArrowButton switchDirection style={{marginRight: 15}}
+                                    <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
                                         title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                         onClick={this.changeExpandSwitchNode.bind(this)}
                                     />
-                                    <Select style={{width: 140}} size="small" value={this.state.currentNode.id} onChange={this.switchNode.bind(this)}>
+                                    <Select style={{width: 170}} size="small" value={this.state.currentMetadataNode.nodeNumID} onChange={this.switchNode.bind(this)}>
                                         {
                                             this.props.status.map(({node, nodeNumID, value}) =>
                                                 <Select.Option key={node} value={nodeNumID} node={node} disabled={!value}>
@@ -93,19 +140,19 @@ class MetadataNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('基本信息', 'Basic Information')}</span>
                                 </span>
-                                <QueueAnim type={['top', 'bottom']}>
+                                <QueueAnim className="fs-info-block-group-animation-wrapper" type={['top', 'bottom']} delay={100}>
                                     <div className="fs-info-block-group" key={1}>
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentNode.node}</div>
+                                            <div className="fs-info-block-value">{this.state.currentMetadataNode.node}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('状态', 'Node Status')}</div>
                                             <div className="fs-info-block-value">
                                                 {
-                                                    this.state.currentNode.up ?
+                                                    this.state.currentMetadataNode.value ?
                                                         <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
                                                         <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
                                                 }
@@ -114,7 +161,7 @@ class MetadataNodes extends Component {
                                     </div>
                                 </QueueAnim>
                                 <span className="fs-info-item title">
-                                    <span className="fs-info-label">{lang('节点用户操作', 'User Operation On Node')}</span>
+                                    <span className="fs-info-label">{lang('该节点用户操作', 'User Operation On This Node')}</span>
                                 </span>
                             </section>
                         </section>

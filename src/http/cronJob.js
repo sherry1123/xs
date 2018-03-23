@@ -7,6 +7,13 @@ const fetchDataPer15s = () => {
     let routerHash = window.location.hash;
     const main = routerPath.Main;
 
+    // metadata node
+    if (routerHash.match(main + routerPath.MetadataNodes)){
+        httpRequests.getMetadataNodeOverviewSummary();
+        httpRequests.getMetadataNodeOverviewUserOperationStatics();
+        httpRequests.getMetadataNodeDetailSummary();
+    }
+
     // storage node
     if (routerHash.match(main + routerPath.StorageNodes)){
         httpRequests.getStorageNodeOverviewSummary();

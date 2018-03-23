@@ -21,6 +21,7 @@ class Login extends Component {
             passwordStatus: '',
             passwordHelp: '',
 
+            doingLogin: false,
             loginErrorCode: ''
         };
     }
@@ -69,14 +70,15 @@ class Login extends Component {
         await this.validatePassword(password);
         let {usernameStatus, passwordStatus} = this.state;
         if (!usernameStatus && !passwordStatus){
+            await this.setState({doingLogin: true});
             // request login http interface
             try {
                 let user = await httpRequests.login({username, password});
                 this.props.setUser(user);
-                await this.setState({loginErrorCode: ''});
+                await this.setState({loginErrorCode: '', doingLogin: false});
                 this.props.history.push(routerPath.Main + routerPath.StorageNodes);
             } catch ({code}){
-                this.setState({loginErrorCode: code});
+                this.setState({loginErrorCode: code, doingLogin: false});
             }
         } else {
             message.warning(lang('请正确输入用户名和密码', 'please fill login form'));
@@ -130,10 +132,8 @@ class Login extends Component {
                                         onPressEnter={this.doLogin.bind(this)}
                                     />
                                 </Form.Item>
-                                <Button className="fs-login-btn" type="primary"
-                                    onClick={this.doLogin.bind(this)}
-                                >
-                                    {lang('登录', 'Login')}
+                                <Button className="fs-login-btn" type="primary" loading={this.state.doingLogin} onClick={this.doLogin.bind(this)}>
+                                    {this.state.doingLogin ? lang('登录中...', 'Logging in...') : lang('登录', 'Login')}
                                 </Button>
                                 {
                                     this.state.loginErrorCode && <p className="fs-login-error-info-wrapper">
