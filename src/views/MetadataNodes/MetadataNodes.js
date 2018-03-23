@@ -70,6 +70,7 @@ class MetadataNodes extends Component {
             }
         });
         let downNodesDetail = !downNodesCount ? lang('无异常元数据节点', 'There\'s no metadata nodes down') : (lang('异常元数据节点：', 'Down Metadata Nodes: ') + downNodes.join(','));
+        let staticsFilter = ['ip', 'mkdir', 'rmdir', 'sum', 'create', 'open', 'stat', 'unlnk', 'lookLI', 'statLI'];
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-big-title">
@@ -111,7 +112,7 @@ class MetadataNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('用户操作总览', 'User Operation Overview')}</span>
                                 </span>
-                                <StaticsTable />
+                                <StaticsTable data={this.props.userOperationStatics} filter={staticsFilter} relaceFirstItem="user ID" />
                             </section>
                         </section>
                     </div>
@@ -163,6 +164,7 @@ class MetadataNodes extends Component {
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('该节点用户操作', 'User Operation On This Node')}</span>
                                 </span>
+                                <StaticsTable data={this.props.userOperationStatics} filter={staticsFilter} relaceFirstItem="user ID" />
                             </section>
                         </section>
                     </div>
@@ -173,8 +175,8 @@ class MetadataNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {metadataNode: {overview: {status}}}} = state;
-    return {language, status};
+    const {language, main: {metadataNode: {overview: {status, userOperationStatics}}}} = state;
+    return {language, status, userOperationStatics};
 };
 
 export default connect(mapStateToProps)(MetadataNodes);
