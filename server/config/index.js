@@ -45,7 +45,7 @@ exports.logs = {
     backup: 3
 };
 exports.cookies = {
-    maxAge: 1000 * 60 * 15,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
     overwrite: false,
     httpOnly: false,
     signed: false,
