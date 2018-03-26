@@ -20,7 +20,8 @@ exports.nginx = {
 exports.api = {
     agentd: {
         hardware: 'http://localhost:3457/hardware/getall',
-        metanodes: 'http://localhost:3457/hardware/getmetanodes'
+        metanodes: 'http://localhost:3457/hardware/getmetanodes',
+        knownproblems: 'http://localhost:3457/hardware/getknownproblems'
     },
     orcafs: {
         gettoken: 'http://localhost:9090/token/get',
@@ -34,7 +35,8 @@ exports.api = {
         storagenodesoverview: 'http://192.168.100.101:8000/XML_StoragenodesOverview',
         storagenode: 'http://192.168.100.101:8000/XML_Storagenode',
         clientstats: 'http://192.168.100.101:8000/XML_ClientStats',
-        userstats: 'http://192.168.100.101:8000/XML_UserStats'
+        userstats: 'http://192.168.100.101:8000/XML_UserStats',
+        knownproblems: 'http://192.168.100.101:8000/XML_KnownProblems'
     }
 }
 exports.logs = {

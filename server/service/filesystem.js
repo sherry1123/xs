@@ -150,6 +150,24 @@ const model = {
             }
         }
         return data;
+    },
+    async getKnownProblems(param) {
+        let res = await request.get(config.api.admon.knownproblems, param, {}, false);
+        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
+        let data = json.data;
+        for (let i of Object.keys(data)) {
+            data[i] = Array.isArray(data[i]) ? data[i] : typeof (data[i]) === 'object' ? [data[i]] : [];
+        }
+        for (let i of Object.keys(data)) {
+            let type = i.replace('dead', '').replace('Nodes', '');
+            let reason = 'Dead';
+            for (let j in data[i]) {
+                data[i][j].type = type;
+                data[i][j].reason = reason;
+            }
+        }
+        data = data.deadMetaNodes.concat(data.deadStorageNodes);
+        return data;
     }
 };
 module.exports = model;
