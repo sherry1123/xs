@@ -60,27 +60,23 @@ class StaticsTable extends Component {
     render (){
         return (
             <section className="fs-statics-table-wrapper">
-                <QueueAnim className="fs-statics-table-row header">
-                    {
-                        this.state.header.map((item, i) => <div className="fs-statics-table-item header" key={i}>
-                            {i === 0 && this.props.relaceFirstItem ? this.props.relaceFirstItem : item}
-                        </div>)
-                    }
-                    <div className="fs-statics-table-item header" key={99} />
+                <QueueAnim type={['right', 'left']} delay={100}>
+                    <div className="fs-statics-table-row header" key={1}>
+                        {
+                            this.state.header.map((item, i) => <div className="fs-statics-table-item header" key={i}>
+                                {i === 0 && this.props.relaceFirstItem ? this.props.relaceFirstItem : item}
+                            </div>)
+                        }
+                        <div className="fs-statics-table-item header stick" key={99} />
+                    </div>
                 </QueueAnim>
                 <QueueAnim className="fs-statics-table-body-wrapper stick" type={['left', 'right']} delay={300}>
                     {
                         this.state.stickRows.map((row, y) => <div className="fs-statics-table-row body" key={y}>
                             {
-                                Object.keys(row).map((key, x) => {
-                                    if (key !== '_index'){
-                                        return (
-                                            <div className="fs-statics-table-item body" key={x}>
-                                                {key === 'ip' ? row[key] : row[key].value}
-                                            </div>
-                                        )
-                                    }
-                                })
+                                Object.keys(row).filter(key => key !== '_index').map((key, x) => <div className="fs-statics-table-item body" key={x}>
+                                    {key === 'ip' ? row[key] : row[key].value}
+                                </div>)
                             }
                             <div className="fs-statics-table-item body un-stick" key={99}>
                                 <Icon type="pushpin-o" title={lang('移除钉住', 'Un-pushpin')} onClick={() => {this.unStick.bind(this, row)()}} />

@@ -8,6 +8,8 @@ import lang from '../Language/lang';
 class DiskUsageStatus extends Component {
     render (){
         let {diskSpaceTotal, diskSpaceUsed, diskSpaceFree} = this.props.diskStatus;
+        let usageRate = diskSpaceUsed / diskSpaceTotal * 100;
+        usageRate = usageRate ? usageRate.toFixed(2) + '%' : '--';
         let option = {
             width: 340,
             infoData: [
@@ -28,7 +30,7 @@ class DiskUsageStatus extends Component {
             chartOption: {
                 width: 140,
                 height: 140,
-                formatter: `${lang('使用率', 'Usage Rate')} \n\n ${((diskSpaceUsed / diskSpaceTotal * 100).toFixed(2))}%`,
+                formatter: `${lang('使用率', 'Usage Rate')} \n\n ${usageRate}`,
                 series: [{
                     name: 'totalDiskCapacityStatus',
                     type: 'pie',

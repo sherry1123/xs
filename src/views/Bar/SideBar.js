@@ -107,8 +107,8 @@ class SideBar extends Component {
                         <Menu.Item key={routerPath.ManagementKnownProblems}>
                             <Icon type="frown-o" />{lang('已知问题', 'Known Issues')}
                         </Menu.Item>
-                        <Menu.Item key={routerPath.ManagementLogFile}>
-                            <Icon type="file-text" />{lang('日志文件', 'Log Files')}
+                        <Menu.Item key={routerPath.ManagementSystemLog}>
+                            <Icon type="file-text" />{lang('系统日志', 'System Log')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu key="FSOperation" inlineIndent={16}

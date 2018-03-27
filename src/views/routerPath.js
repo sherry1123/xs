@@ -25,7 +25,7 @@ const routerPath = {
     UserStatistics: '/user-statistics',
 
     ManagementKnownProblems: '/management-known-problems',
-    ManagementLogFile: '/management-log-file',
+    ManagementSystemLog: '/management-system-log',
 
     FSOperationStripeSettings: '/fs-operation-stripe-settings',
     FSOperationFileBrowser: '/fs-operation-file-browser',
@@ -39,6 +39,6 @@ export const pathToMenu = {
     StorageNodes: [routerPath.StorageNodes],
     ClientStatistics: [routerPath.ClientStatistics],
     UserStatistics: [routerPath.UserStatistics],
-    Management: [routerPath.ManagementKnownProblems, routerPath.ManagementLogFile],
+    Management: [routerPath.ManagementKnownProblems, routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser],
 };

@@ -20,11 +20,11 @@ import ClientStatistics from '../ClientStatistics/ClientStatistics';
 // user statistics metadata
 import UserStatistics from '../UserStatistics/UserStatistics';
 
-// user statistics metadata
+// management
 import ManagementKnownProblems from '../Management/ManagementKnownProblems';
-import ManagementLogFile from '../Management/ManagementLogFile';
+import ManagementSystemLog from '../Management/ManagementSystemLog';
 
-// user statistics metadata
+// fs operation
 import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings';
 import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
 
@@ -87,7 +87,7 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
 
                         <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />
-                        <Route path={`${Main}${routerPath.ManagementLogFile}`} component={ManagementLogFile} />
+                        <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
 
                         <Route path={`${Main}${routerPath.FSOperationStripeSettings}`} component={FSOperationStripeSettings} />
                         <Route path={`${Main}${routerPath.FSOperationFileBrowser}`} component={FSOperationFileBrowser} />

@@ -1,0 +1,26 @@
+.fs-management-system-log {
+    .fs-log-tab-wrapper {
+        padding: 0 16px;
+        .fs-log-table-wrapper {
+            .ant-table {
+                min-height: 530px;
+            }
+        }
+        .fs-log-level-circle {
+            display: block;
+            box-sizing: border-box;
+            width: 12px;
+            height: 12px;
+            border-radius: 100%;
+            &.level-1 {
+                border: 3px solid @yellow;
+            }
+            &.level-2 {
+                border: 3px solid @orange;
+            }
+            &.level-3 {
+                border: 3px solid @red;
+            }
+        }
+    }
+}

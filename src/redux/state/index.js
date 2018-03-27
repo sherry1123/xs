@@ -98,6 +98,24 @@ export default {
                 },
             }
         },
+        // management
+        management: {
+            eventLogs: [
+                {node: 'xxx', descr: 'xxx0', level: 1, time: Date.now()},
+                {node: 'xxx', descr: 'xxx1', level: 3, time: Date.now()},
+                {node: 'xxx', descr: 'xxx2', level: 2, time: Date.now()},
+                {node: 'xxx', descr: 'xxx3', level: 1, time: Date.now()},
+                {node: 'xxx', descr: 'xxx4', level: 2, time: Date.now()},
+
+            ],
+            auditLogs: [
+                {username: 'xxx', type: 'xxx', descr: 'xxx0', ip: 'xxx', time: Date.now(),},
+                {username: 'xxx', type: 'xxx', descr: 'xxx1', ip: 'xxx', time: Date.now(),},
+                {username: 'xxx', type: 'xxx', descr: 'xxx2', ip: 'xxx', time: Date.now(),},
+                {username: 'xxx', type: 'xxx', descr: 'xxx3', ip: 'xxx', time: Date.now(),},
+                {username: 'xxx', type: 'xxx', descr: 'xxx4', ip: 'xxx', time: Date.now(),},
+            ],
+        },
         // stripe
         stripeInformation: {
             path: '/opt/xxx/ada',

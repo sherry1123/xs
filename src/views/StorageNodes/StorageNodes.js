@@ -32,7 +32,11 @@ class StorageNodes extends Component {
         let {status} = nextProps;
         let currentStorageNode = {};
         if (status.length){
-            currentStorageNode = status.filter(node => node.value)[0];
+            currentStorageNode = status.filter(node => node.value)[0] || {};
+            if (!currentStorageNode.node){
+                // if there is no up node, use the first node as current node directly, ignore its dead status
+                currentStorageNode = status[0];
+            }
         }
         let newState = {};
         if (currentStorageNode.node && !this.state.currentStorageNode.node){

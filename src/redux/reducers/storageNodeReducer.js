@@ -18,7 +18,7 @@ const storageNodeReducer = (state = State.main.storageNode, action) => {
             let {data: {diskPerfRead, diskPerfWrite}} = action;
             let {overview} = state;
             let read = [], write = [], sum = [],time = [];
-            diskPerfRead.forEach((readItem, i) => {
+            (diskPerfRead || []).forEach((readItem, i) => {
                 let readValue = readItem.value;
                 let writeValue = diskPerfWrite[i].value;
                 let sumValue = readValue + writeValue;
@@ -47,7 +47,7 @@ const storageNodeReducer = (state = State.main.storageNode, action) => {
             let {data: {diskPerfRead, diskPerfWrite}} = action;
             let {detail} = state;
             let read = [], write = [], sum = [],time = [];
-            diskPerfRead.forEach((readItem, i) => {
+            (diskPerfRead || []).forEach((readItem, i) => {
                 let readValue = readItem.value;
                 let writeValue = diskPerfWrite[i].value;
                 let sumValue = readValue + writeValue;

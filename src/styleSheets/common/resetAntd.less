@@ -7,10 +7,10 @@ input[type="number"]{
 }
 
 .ant-btn-sm {
-    padding: 0 15px !important;
+    padding: 0 15px;
     font-size: 12px !important;
-    border-radius: 4px !important;
-    height: 28px !important;
+    border-radius: 4px;
+    height: 28px;
 }
 
 .ant-popover {
@@ -20,6 +20,7 @@ input[type="number"]{
 .ant-form-item-label {
     white-space: normal !important;
 }
+
 .ant-table {
     &.ant-table-small {
         font-size: 12px !important;
@@ -75,6 +76,42 @@ input[type="number"]{
 .ant-switch {
     &.ant-switch-checked {
         background: @green;
+    }
+}
+
+.ant-table-wrapper {
+    .ant-table-thead {
+        font-size: 12px;
+        box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
+        & > tr {
+            & > th {
+                padding: 10px 16px;
+                border: none;
+            }
+        }
+    }
+    .ant-table-tbody {
+        & > tr {
+            font-size: 12px;
+        }
+    }
+}
+
+.ant-pagination {
+    &.ant-table-pagination {
+        .ant-pagination-item,
+        .ant-pagination-prev,
+        .ant-pagination-next {
+            min-width: 28px;
+            height: 28px;
+            line-height: 28px;
+            .ant-pagination-item-link {
+                height: 28px;
+                &:before {
+                    height: 28px;
+                }
+            }
+        }
     }
 }
 
