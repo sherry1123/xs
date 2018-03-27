@@ -28,7 +28,7 @@ const render = Component => {
                 <Component />
             </Provider>
         </AppContainer>,
-        document.getElementById('container'),
+        document.getElementById('root'),
     )
 };
 

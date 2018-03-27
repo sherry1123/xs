@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import update from "react-addons-update";
-import {Button, Divider, Form, Icon, Input, message, notification, Progress, Steps, Switch, Tooltip} from 'antd';
-import ArrowButton from '../../components/ArrowButton/ArrowButton';
+import {Button, Divider, Form, Icon, Input, message, notification, Popover, Progress, Steps, Switch} from 'antd';
 import QueueAnim from 'rc-queue-anim';
-import initializeAction from '../../redux/actions/initializeAction';
 import LanguageButton from '../../components/Language/LanguageButton';
+import ArrowButton from '../../components/ArrowButton/ArrowButton';
+import RAIDConfiguration from '../../components/RAIDConfiguration/RAIDConfiguration';
+import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
 import {validateIpv4, KeyPressFilter} from '../../services';
 import requests from '../../http/requests';
@@ -19,8 +20,8 @@ class Initialize extends Component {
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
-            current: 0,
-            stepNum: 4,
+            currentStep: 2,
+            totalStep: 5,
             checking: false,
 
             metadataServerIPsError: metadataServerIPs.map(() => ({status: '', help: ''})),
@@ -31,7 +32,7 @@ class Initialize extends Component {
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
 
             initProgress: 0,
-            initializationInfo: [lang('初始化已开始，请稍候...', 'Initialization started, pleas wait for moment...')]
+            initializationInfo: [lang('初始化已开始，请稍候...', 'Initializing, pleas wait for a moment ...')]
         };
     }
 
@@ -55,7 +56,7 @@ class Initialize extends Component {
             notification.open({
                 message: lang('提示', 'Tooltip'),
                 description: lang('您已为管理服务器启用HA，请配置两个有效的管理服务器IP及对应的HB IP，并配置存储集群服务管理IP。这些设置将确保HA功能能够正常工作。',
-                    'You have enabled HA for management server, please configure two valid management server IPs and corresponding Heartbeat IPs, also the storage cluster service management IP needs to be set up. All those settings will ensure that the HA function can work properly.')
+                    'You have enabled HA for management server, please configure two valid management server IPs and corresponding Heartbeat IPs, also the storage cluster service management IP needs to be configured. All those settings will ensure that the HA function can work properly.')
             });
         } else {
             await this.removeIP('managementServerIPs', 1);
@@ -132,6 +133,7 @@ class Initialize extends Component {
                     await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
                 } else {
                     if (!!this.state.managementServerIPsError[i].status){
+                        console.info('清除', this.state.managementServerIPsError[i].status);
                         await this.setErrorArr('managementServerIPs', i, {status: '', help: ''});
                     }
                 }
@@ -140,6 +142,10 @@ class Initialize extends Component {
     }
 
     async validateNetworkSegmentForMgmtAndHAIPs (){
+        if (this.state.managementServerIPsError[0].status || this.state.managementServerIPsError[1].status){
+            // management server IPs haven't pass the basic validation
+            return;
+        }
         // a more graceful way to validate network segment is using net mask to do binary '&' operations,
         // but currently it hasn't been provided yet or let customers to enter, so there's no way to get it
         let {managementServerIPs: [mgmtIP1, mgmtIP2], hbIPs: [hbIP1, hbIP2]} = this.props;
@@ -164,45 +170,52 @@ class Initialize extends Component {
         }
     }
 
+    isNoError (){
+        let validated = true;
+        for (let category of this.categoryArr){
+            let errors = this.state[category + 'Error'];
+            for (let error of errors) {
+                if (error.help && error.status){
+                    validated = false;
+                    break;
+                }
+            }
+        }
+        return validated;
+    }
+
     prev (){
-        this.setState({current: this.state.current - 1});
+        this.setState({currentStep: this.state.currentStep - 1});
     }
 
     async next (){
-        let next = this.state.current + 1;
+        let next = this.state.currentStep + 1;
         switch (next){
             case 1:
                 await this.setState({checking: true});
-                // validate all ips before entering information confirm step
-                this.categoryArr.forEach(category => {
+                // validate basic pattern of all IPs
+                await Promise.all(this.categoryArr.map(async (category) => {
                     let ips = this.props[category];
-                    ips.forEach(async (ip, i) => {
-                        await this.validateIP(category, i, ip);
-                    });
-                });
-                // validate HA
-                if (this.props.enableHA){
+                    let len = ips.length;
+                    for (let i = 0; i < len; i ++){
+                        await this.validateIP(category, i, ips[i]);
+                    }
+                }));
+
+                // validate HA if enabled
+                if (this.isNoError() && this.props.enableHA){
                     await this.validateIPForHA();
                     await this.validateNetworkSegmentForMgmtAndHAIPs();
                 }
-                // is there a validation error
-                let validated = true;
-                for (let category of this.categoryArr){
-                    let errors = this.state[category + 'Error'];
-                    for (let error of errors) {
-                        if (error.help && error.status){
-                            validated = false;
-                            break;
-                        }
-                    }
-                }
-                if (validated){
+
+                // the final validation
+                if (this.isNoError()){
                     let checkResult = await requests.checkIPs();
                     if (checkResult){
-                        this.setState({current: next});
+                        this.setState({currentStep: next});
                     } else {
-                        //
-                        message.error(lang('经检测有IP不能正常使用，请更换', 'Some IPs seem can not be used normally，please change them'));
+                        // check IPs availabilities form server
+                        message.error(lang('经检测有IP不能正常使用，请更换', 'Some IPs seem can not be used properly through the validations，please replace them'));
                     }
                 } else {
                     message.error(lang('IP输入验证没有通过，请先修正', 'IP input validation did not pass, please correct the error one(s) firstly'));
@@ -210,10 +223,11 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                this.setState({current: next});
-                this.startInitialization();
+                this.setState({currentStep: next});
                 break;
             case 3:
+                this.setState({currentStep: next});
+                this.startInitialization();
                 break;
             default:
                 break;
@@ -227,7 +241,7 @@ class Initialize extends Component {
             let info = `initialize xxx server, ${lang('进度:', 'progress:')} ${initProgress}%`;
             let infoArr = initProgress === 100 ? [info, lang('初始化已完成!', 'Initialization done!')] : [info];
             let newState =  update(this.state, {
-                initializationInfo: {$push: infoArr},
+                initializationInfo: {$unshift: infoArr},
                 initProgress: {$set: initProgress}
             });
             await this.setState(Object.assign(this.state, newState));
@@ -235,7 +249,7 @@ class Initialize extends Component {
             list && (list.scrollTop = list.scrollHeight);
             if (initProgress === 100){
                 clearInterval(initTimer);
-                setTimeout(() => this.setState({current: 3}), 1500);
+                setTimeout(() => this.setState({currentStep: 4}), 1500);
                 if (process.env.NODE_ENV === 'development'){
                     Cookie.set('init', 'true');
                 }
@@ -256,25 +270,26 @@ class Initialize extends Component {
                 <section key="initialize-title" className="fs-initialize-welcome-wrapper">
                     {lang(
                         '欢迎进入OrcaFS初始化向导。您将通过以下步骤初始化您的存储集群：',
-                        'Welcome to the OrcaFS initialization wizard. You will initialize your storage cluster just follow the steps below: '
+                        'Welcome to the OrcaFS initialization wizard. Just follow these steps below to initialize your storage cluster: '
                     )}
                 </section>
-                <Steps key="initialize-step" className="fs-initialize-step-index-wrapper" current={this.state.current}>
+                <Steps key="initialize-step" className="fs-initialize-step-index-wrapper" current={this.state.currentStep}>
                     <Steps.Step title={lang('定义角色', 'Define Roles')} />
-                    <Steps.Step title={lang('确认信息', 'Confirm Information')} />
+                    <Steps.Step title={lang('确认角色', 'Confirm Roles')} />
+                    <Steps.Step title={lang('配置RAID', 'Configure RAID')} />
                     <Steps.Step title={lang('开始初始化', 'Start Initialization')} />
                     <Steps.Step title={lang('完成', 'Complete')} />
                 </Steps>
                 <Divider className="fs-initialize-divider-wrapper" dashed />
                 <section className="fs-initialize-step-content-wrapper">
                     {
-                        this.state.current === 0 &&
-                        <Form className="fs-initialize-step-content">
+                        this.state.currentStep === 0 &&
+                        <div className="fs-initialize-step-content">
                             <QueueAnim type="top" duration={200}>
-                                <section key="ip-input-title" className="fs-ip-input-title">
+                                <section key={1} className="fs-step-title">
                                     {lang(
                                         '步骤1：请定义存储集群相应的服务器IP和管理IP。',
-                                        'Step1: Please define service IPs and management IPs for the storage cluster.'
+                                        'Step1: Please define the corresponding service IPs and management IPs of storage cluster.'
                                     )}
                                 </section>
                             </QueueAnim>
@@ -282,9 +297,9 @@ class Initialize extends Component {
                                 <QueueAnim delay={250}>
                                     <section key="ip-input-1" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('元数据服务器允许配置0至n个', 'There are 0 to n metadata servers allowed to configure')}>
+                                            <Popover placement="top" content={lang('元数据服务器允许配置0至N个', 'Allow 0 to N metadata servers to be configured')}>
                                                 {lang('元数据服务器', 'Metadata Servers')}
-                                            </Tooltip>
+                                            </Popover>
                                         </Divider>
                                         <QueueAnim type={['right', 'left']}>
                                             {this.props.metadataServerIPs.map((ip, i) =>
@@ -312,9 +327,9 @@ class Initialize extends Component {
                                     </section>
                                     <section key="ip-input-2" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('存储服务器允许配置0至n个', 'There are 0 to n storage servers allowed to configure')}>
+                                            <Popover placement="top" content={lang('存储服务器允许配置0至N个', 'Allow 0 to N storage servers to be configured')}>
                                                 {lang('存储服务器', 'Storage Servers')}
-                                            </Tooltip>
+                                            </Popover>
                                         </Divider>
                                         <QueueAnim type={['right', 'left']}>
                                             {this.props.storageServerIPs.map((ip, i) =>
@@ -342,9 +357,9 @@ class Initialize extends Component {
                                     </section>
                                     <section key="ip-input-3" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('客户端允许配置0至n个', 'There are 0 to n clients allowed to configure')}>
+                                            <Popover placement="top" content={lang('客户端允许配置0至N个', 'Allow 0 to N clients to be configured')}>
                                                 {lang('客户端', 'Clients')}
-                                            </Tooltip>
+                                            </Popover>
                                         </Divider>
                                         <QueueAnim type={['right', 'left']}>
                                             {this.props.clientIPs.map((ip, i) =>
@@ -372,9 +387,9 @@ class Initialize extends Component {
                                     </section>
                                     <section key="ip-input-4" className="fs-ip-input-member">
                                         <Divider className="fs-ip-input-title">
-                                            <Tooltip placement="top" title={lang('管理服务器允许配置1至2个', 'There are 1 to 2 management servers allowed to configure')}>
+                                            <Popover placement="top" content={lang('管理服务器允许配置1至2个', 'Allow 1 to 2 management servers to be configured')}>
                                                 {lang('管理服务器', 'Management Server')}
-                                            </Tooltip>
+                                            </Popover>
                                         </Divider>
                                         <QueueAnim type={['right', 'left']}>
                                             {this.props.managementServerIPs.map((ip, i) =>
@@ -396,7 +411,7 @@ class Initialize extends Component {
                                         </QueueAnim>
                                         <Divider dashed style={{margin: "12px 0"}} />
                                         <div className="fs-ip-input-item">
-                                            <label>{lang('为管理服务器启用HA', 'Enable HA for Mgmt Server')}</label>
+                                            <label className="fs-enable-ha-label">{lang('为管理服务器启用HA', 'Enable HA for Mgmt Server')}</label>
                                             <Switch size="small" style={{float: 'right', marginTop: 3}} title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击开启', 'Click to enable')}
                                                 checked={this.props.enableHA}
                                                 onChange={this.setEnableHA.bind(this)}
@@ -411,20 +426,20 @@ class Initialize extends Component {
                                                         validateStatus={this.state['hbIPsError'][i].status}
                                                         help={this.state['hbIPsError'][i].help}
                                                     >
-                                                        <Input className="fs-ip-input" defaultValue={ip} size="small" style={{width: 200}}
+                                                        <Input className="fs-ip-input" defaultValue={ip} size="small"
                                                             addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                             placeholder={lang('请输入HB IP', 'please enter HB IP')}
                                                             onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                            addonAfter={
+                                                                <Popover placement="right" content={lang(`对应管理服务器节点${i + 1}`, `Corresponding with management server Node ${i + 1}`)}>
+                                                                    <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                                                                </Popover>
+                                                            }
                                                             onKeyUp={({target: {value}}) => {
                                                                 this.setIP.bind(this, 'hbIPs', i, value)();
                                                                 this.validateIP.bind(this, 'hbIPs', i, value)();
                                                             }}
                                                         />
-                                                        <Tooltip placement="right"
-                                                            title={lang(`对应管理服务器节点${i + 1}`, `Corresponding with management server Node ${i + 1}`)}
-                                                        >
-                                                            <Icon type="question-circle" className="fs-info-icon m-l" />
-                                                        </Tooltip>
                                                     </Form.Item>)
                                                 }
                                                 {this.props.floatIPs.map((ip, i) =>
@@ -433,19 +448,19 @@ class Initialize extends Component {
                                                         validateStatus={this.state['floatIPsError'][i].status}
                                                         help={this.state['floatIPsError'][i].help}
                                                     >
-                                                        <Input className="fs-ip-input" defaultValue={ip} size="small" style={{width: 200}}
+                                                        <Input className="fs-ip-input" defaultValue={ip} size="small"
                                                             placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
                                                             onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                            addonAfter={
+                                                                <Popover placement="right" content={lang(`该IP首次将默认映射至管理服务器节点${i + 1}的IP上`, `This IP will be mapped to the IP of management server Node ${i + 1} firstly by default`)}>
+                                                                    <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                                                                </Popover>
+                                                            }
                                                             onKeyUp={({target: {value}}) => {
                                                                 this.setIP.bind(this, 'floatIPs', i, value)();
                                                                 this.validateIP.bind(this, 'floatIPs', i, value)();
                                                             }}
                                                         />
-                                                        <Tooltip placement="right"
-                                                            title={lang(`首次将映射至管理服务器节点${i + 1}的IP上`, `Will be mapped to the IP of management server Node ${i + 1} firstly`)}
-                                                        >
-                                                            <Icon type="question-circle" className="fs-info-icon m-l" />
-                                                        </Tooltip>
                                                     </Form.Item>)
                                                 }
                                             </div>
@@ -453,13 +468,13 @@ class Initialize extends Component {
                                     </section>
                                 </QueueAnim>
                             </div>
-                        </Form>
+                        </div>
                     }
                     {
-                        this.state.current === 1 &&
+                        this.state.currentStep === 1 &&
                         <div className="fs-initialize-step-content">
                             <QueueAnim type="top" delay={200}>
-                                <section className="fs-ip-input-title">
+                                <section key={1} className="fs-step-title">
                                     {lang(
                                         '步骤2：请核对各项IP地址是否输入正确。若发现任何问题，请点击"上一步"进行修改；若确认无误，请点击"下一步"进行初始化。一旦开始初始化，将无法做任何修改。',
                                         'Step1: Please check whether the IP addresses are all correct, if they are any correct, click "Next" to starting initializing. If there is any incorrect IP, click "Previous" and correct it. Once the initialization is started, no changes can be made.'
@@ -528,20 +543,45 @@ class Initialize extends Component {
                         </div>
                     }
                     {
-                        this.state.current === 2 &&
+                        this.state.currentStep === 2 &&
                         <div className="fs-initialize-step-content">
                             <QueueAnim type="left" delay={200}>
-                                <section key="fs-initializing-1" className="fs-ip-input-title">
+                                <section key={1} className="fs-step-title">
                                     {lang(
-                                        '步骤3：初始化已经开始！您可以去放松一下或做点其他事情，我们会在您回来之前搞定一切。',
-                                        'Step3: Initializing has just begun! Relax yourself or do some other things, we will be done when you come back.'
+                                        '步骤3：请决定是否为元数据节点和存储节点配置RAID。',
+                                        'Step3: Please decide whether configure RAID for metadata nodes & storage nodes or not.'
+                                    )}
+                                </section>
+                            </QueueAnim>
+                            <section className="fs-config-raid-wrapper">
+                                <div className="fs-raid-switch-wrapper">
+                                    <label >{lang('为元数据节点和存储节点配置RAID', 'Configure RAID for metadata nodes & storage nodes')}</label>
+                                    <Switch size="small" />
+                                </div>
+                                <RAIDConfiguration />
+                            </section>
+                        </div>
+                    }
+                    {
+                        this.state.currentStep === 3 &&
+                        <div className="fs-initialize-step-content">
+                            <QueueAnim type="left" delay={200}>
+                                <section key={1} className="fs-step-title">
+                                    {lang(
+                                        '步骤4：初始化已经开始！请保持设备网络畅通，请勿关闭电源。',
+                                        'Step4: Initializing has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
                                     )}
                                 </section>
                             </QueueAnim>
                             <QueueAnim type="right">
-                                <Progress key="fs-initializing-2" percent={this.state.initProgress} status={this.state.initProgress === 100 ? 'success' : 'active'} />
+                                <Progress key={1} className="fs-initialization-progress-bar"
+                                    showInfo={false}
+                                    percent={this.state.initProgress}
+                                    status={this.state.initProgress === 100 ? 'success' : 'active'}
+                                    strokeWidth={15}
+                                />
                             </QueueAnim>
-                            <QueueAnim type="bottom">
+                            <QueueAnim key={1} type="bottom">
                                 <section key="fs-initializing-3" className="fs-initialization-wrapper" ref={ref => this.initInfoWrapper = ref}>
                                     {this.state.initializationInfo.map((info, i) => <p className="fs-initialization-info" key={i}>{info}</p>)}
                                 </section>
@@ -549,14 +589,14 @@ class Initialize extends Component {
                         </div>
                     }
                     {
-                        this.state.current === 3 &&
+                        this.state.currentStep === 4 &&
                         <div className="fs-initialize-step-content">
                             <QueueAnim duration={200}>
-                                <section key="fs-initialized-1" className="fs-ip-input-title">
+                                <section key={1} className="fs-step-title">
                                     <p>
                                         {lang(
-                                            '步骤4：初始化已完成，您的存储集群已经准备好了!',
-                                            'Step4: The initialization is complete and your storage cluster is ready!'
+                                            '步骤5：初始化已完成，您的存储集群已经准备好了!',
+                                            'Step5: The initialization is complete and your storage cluster is ready!'
                                         )}
                                     </p>
                                 </section>
@@ -581,21 +621,21 @@ class Initialize extends Component {
                 </section >
                 <section className="fs-initialize-step-action-wrapper">
                     {
-                        this.state.current > 0 &&
-                        this.state.current !== this.state.stepNum - 1 &&
-                        this.state.current !== this.state.stepNum - 2 &&
-                        <Button className="fs-initialize-btn prev" size="small" title={lang('上一步', 'Previous')} onClick={this.prev.bind(this)}>
+                        this.state.currentStep > 0 &&
+                        this.state.currentStep !== this.state.totalStep - 1 &&
+                        this.state.currentStep !== this.state.totalStep - 2 &&
+                        <Button className="fs-initialize-btn prev" size="small" title={lang('上一步', 'Previous Step')} onClick={this.prev.bind(this)}>
                             <ArrowButton />
                         </Button>
                     }
                     {
-                        (this.state.current === 0 || this.state.current === 1) &&
-                        <Button className="fs-initialize-btn next" size="small" title={lang('下一步', 'Next')} onClick={this.next.bind(this)} loading={this.state.checking}>
+                        (this.state.currentStep === 0 || this.state.currentStep === 1 || this.state.currentStep === 2) &&
+                        <Button className="fs-initialize-btn next" size="small" title={lang('下一步', 'Next Step')} onClick={this.next.bind(this)} loading={this.state.checking}>
                             {!this.state.checking && <ArrowButton directionRange={['right', 'left']} />}
                         </Button>
                     }
                     {
-                        this.state.current === this.state.stepNum - 1 &&
+                        this.state.currentStep === this.state.totalStep - 1 &&
                         <Button className="fs-initialize-btn done" size="small" onClick={this.forwardLogin.bind(this)}>
                             <Icon type="check" style={{color: '#3bc374'}} /> {lang('开始使用', 'Start Using')}
                         </Button>

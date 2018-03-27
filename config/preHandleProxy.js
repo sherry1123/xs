@@ -25,5 +25,7 @@ module.exports = function(proxy) {
 
 // Development environment functionality enhancement, an example:
 // $ npm (run) start http://192.168.100.233:3579
+
+// Below function need to do verification:
 // If your http server and webSocket server are running on the same port, only need to enter a 'http:' protocol for a short,
 // and the proxy config will change the protocol to 'ws:' automatically.

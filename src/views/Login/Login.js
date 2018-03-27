@@ -124,7 +124,7 @@ class Login extends Component {
                                     validateStatus={this.state.passwordStatus}
                                     help={this.state.passwordHelp}
                                 >
-                                    <Input placeholder={lang('请输入密码', 'pleaseenter password')}
+                                    <Input placeholder={lang('请输入密码', 'please enter password')}
                                        type="password"
                                         prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .7)'}} />}
                                         value={this.state.password}

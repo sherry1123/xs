@@ -99,7 +99,7 @@ class StorageNodes extends Component {
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('存储节点', 'Metadata Nodes')}</h3>
+                    <h3 className="fs-page-title">{lang('存储节点', 'Storage Nodes')}</h3>
                 </section>
                 <section className="fs-node-item-group">
                     <div className="fs-node-item">
