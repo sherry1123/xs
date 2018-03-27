@@ -503,5 +503,15 @@ const model = {
         }
         return result;
     },
+    async getKnownProblems(param) {
+        let result = {};
+        try {
+            let data = await request.get(config.api.agentd.knownproblems, param, {}, true);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    }
 };
 module.exports = model;

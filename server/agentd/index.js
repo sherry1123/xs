@@ -65,9 +65,12 @@ const getMetaNodesInfo = async () => {
         metaNodesParam.hosts = data.hosts;
     }
 };
-const getMetaNodesRequest = () => {
-    return metaNodesParam.hosts;
+let knownProblems = [];
+const getKnownProblemsInfo = async () => {
+    let data = await fileSystem.getKnownProblems({});
+    knownProblems = data;
 };
+getKnownProblemsInfo();
 //schedule
 new CronJob('*/1 * * * * *', async () => {
     await getMetaNodesInfo();
@@ -76,16 +79,23 @@ new CronJob('*/15 * * * * *', () => {
     getCpuUsage();
     getIopsUsage();
 }, null, true);
+new CronJob('*/15 * * * * *', async () => {
+    await getKnownProblemsInfo();
+}, null, true);
 //controller
 const getAll = ctx => {
     ctx.body = getHardware();
 };
 const getMetaNodes = ctx => {
-    ctx.body = getMetaNodesRequest();
+    ctx.body = metaNodesParam.hosts;
+};
+const getKnownProblems = ctx => {
+    ctx.body = knownProblems;
 }
 //router
 router.all('/hardware/getall', getAll);
 router.all('/hardware/getmetanodes', getMetaNodes);
+router.all('/hardware/getknownproblems', getKnownProblems);
 //app
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(3457);
