@@ -32,5 +32,6 @@ router.all('/api/getmetanodessummary', controller['/api/getmetanodessummary']);
 router.all('/api/getmetanodesrequest', controller['/api/getmetanodesrequest']);
 router.all('/api/getmetanodesummary', controller['/api/getmetanodesummary']);
 router.all('/api/getknownproblems', controller['/api/getknownproblems']);
+router.all('/api/getdisklist', controller['/api/getdisklist']);
 
 module.exports = router;

@@ -24,9 +24,10 @@ exports.api = {
         knownproblems: 'http://localhost:3457/hardware/getknownproblems'
     },
     orcafs: {
-        gettoken: 'http://localhost:9090/token/get',
-        createcluster: 'http://localhost:9090/cluster/create',
-        installstatus: 'http://localhost:9090/cluster/createinstallstatus'
+        gettoken: 'http://192.168.100.101:9090/token/get',
+        createcluster: 'http://192.168.100.101:9090/cluster/create',
+        installstatus: 'http://192.168.100.101:9090/cluster/createinstallstatus',
+        listdisk: 'http://192.168.100.101:9090/disk/list/'
     },
     admon: {
         nodelist: 'http://192.168.100.101:8000/XML_NodeList',

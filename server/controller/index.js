@@ -96,6 +96,9 @@ const model = {
     },
     '/api/getknownproblems': async ctx => {
         ctx.body = await service.getKnownProblems(ctx.param);
+    },
+    '/api/getdisklist': async ctx => {
+        ctx.body = await service.getDiskList(ctx.param);
     }
 };
 module.exports = model;

@@ -10,7 +10,7 @@ const request = require('../module/request');
 const responseHandler = (code, result, param) => {
     if (code) {
         errorHandler(code, result, param);
-        return { code, message: typeof (result) === 'object' ? result.message : result };
+        return { code, message: typeof (result) === 'object' ? result.message || '' : result };
     } else {
         return { code, data: result };
     }
@@ -508,6 +508,20 @@ const model = {
         try {
             let data = await request.get(config.api.agentd.knownproblems, param, {}, true);
             result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    async getDiskList(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getDiskList(param);
+            if (!res.errorid) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(22, res.message, param);
+            }
         } catch (error) {
             result = responseHandler(22, error, param);
         }

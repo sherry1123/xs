@@ -14,7 +14,7 @@ const model = {
         return byte;
     },
     async getToken() {
-        return await request.get(config.api.orcafs.gettoken);
+        return await request.get(config.api.orcafs.gettoken, {}, {}, true);
     },
     async getNodeList(param) {
         let res = await request.get(config.api.admon.nodelist, param, {}, false);
@@ -168,6 +168,17 @@ const model = {
         }
         data = data.deadMetaNodes.concat(data.deadStorageNodes);
         return data;
+    },
+    async getDiskList(param) {
+        let { ip } = param;
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.listdisk + ip, {}, token, true);
+        if (!res.errorid) {
+            for (let i in res.data) {
+                res.data[i].totalspace = model.toByte(Number(res.data[i].totalspace.replace(/\SB/, '')), res.data[i].totalspace.replace(/\S+\d/, '')[0]);
+            }
+        }
+        return res;
     }
 };
 module.exports = model;
