@@ -517,7 +517,7 @@ const model = {
         let result = {};
         try {
             let res = await fileSystem.getDiskList(param);
-            if (!res.errorid) {
+            if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
                 result = responseHandler(22, res.message, param);
