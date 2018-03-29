@@ -64,6 +64,10 @@ class Initialize extends Component {
         await this.props.setEnableHA(checked);
     }
 
+    setEnableRAID (checked){
+        this.props.setEnableRAID(checked);
+    }
+
     async addIP (category){
         this.props.addIP(category);
         // add corresponding validation obj
@@ -226,6 +230,13 @@ class Initialize extends Component {
                 this.setState({currentStep: next});
                 break;
             case 3:
+                if (!this.state.enableRAID){
+                    this.setState({currentStep: next});
+                } else {
+
+                }
+                break;
+            case 4:
                 this.setState({currentStep: next});
                 this.startInitialization();
                 break;
@@ -553,13 +564,17 @@ class Initialize extends Component {
                                     )}
                                 </section>
                             </QueueAnim>
-                            <section className="fs-config-raid-wrapper">
-                                <div className="fs-raid-switch-wrapper">
-                                    <label >{lang('为元数据节点和存储节点配置RAID', 'Configure RAID for metadata nodes & storage nodes')}</label>
-                                    <Switch size="small" />
-                                </div>
-                                <RAIDConfiguration />
-                            </section>
+                            <QueueAnim type="right" delay={200}>
+                                <section key={1} className="fs-config-raid-wrapper">
+                                    <div className="fs-raid-switch-wrapper">
+                                        <label >{lang('为元数据节点和存储节点配置RAID', 'Configure RAID for metadata nodes & storage nodes')}</label>
+                                        <Switch size="small" checked={this.props.enableRAID} onChange={this.setEnableRAID.bind(this)} />
+                                    </div>
+                                    {
+                                        this.props.enableRAID && <RAIDConfiguration />
+                                    }
+                                </section>
+                            </QueueAnim>
                         </div>
                     }
                     {
@@ -647,8 +662,8 @@ class Initialize extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs}} = state;
-    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs};
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID};
 };
 
 const mapDispatchToProps = dispatch => {
@@ -657,6 +672,7 @@ const mapDispatchToProps = dispatch => {
         removeIP: (category, index) => dispatch(initializeAction.removeIP(category, index)),
         setIP: (category, index, ip) => dispatch(initializeAction.setIP(category, index, ip)),
         setEnableHA: enableHA => dispatch(initializeAction.setEnableHA(enableHA)),
+        setEnableRAID: enableRAID => dispatch(initializeAction.setEnableRAID(enableRAID)),
     };
 };
 

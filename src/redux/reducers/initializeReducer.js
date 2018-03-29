@@ -2,7 +2,7 @@ import State from '../state';
 import {initializeActionTypes} from '../actions/initializeAction';
 
 const initializeReducer = (state = State.initialize, action) => {
-    let {category, index, ip, enableHA} = action;
+    let {category, index, ip, enableHA, enableRAID} = action;
     let rawIPs = state[category] || [];
     let IPs = Object.assign([], rawIPs);
     let newIPs = {};
@@ -28,6 +28,10 @@ const initializeReducer = (state = State.initialize, action) => {
         // enable HA
         case initializeActionTypes.SET_ENABLE_HA:
             return Object.assign({}, state, {enableHA});
+
+        // enable RAID
+        case initializeActionTypes.SET_ENABLE_RAID:
+            return Object.assign({}, state, {enableRAID});
 
         default:
             return state;

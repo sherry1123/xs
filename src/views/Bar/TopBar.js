@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Badge, Icon, Popover} from 'antd';
+import {/*Badge, Icon, */Popover} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
-import WarningPopover from './WarningPopover';
+// import WarningPopover from './WarningPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 
@@ -25,11 +25,13 @@ class TopBar extends Component {
                     <div className="logo-link" />
                 </section>
                 <section className="fs-top-info-wrapper">
-                    <Popover placement="bottom" content={<WarningPopover forwardPage={this.forwardPage} history={this.props.history} />} trigger="click">
-                        <Badge className="fs-alarm-wrapper" count={9} overflowCount={100}>
-                            <Icon type="bell" className="fs-alarm-bell-icon" />
-                        </Badge>
-                    </Popover>
+                    {/*
+                       <Popover placement="bottom" content={<WarningPopover forwardPage={this.forwardPage} history={this.props.history} />} trigger="click">
+                            <Badge className="fs-alarm-wrapper" count={9} overflowCount={100}>
+                                <Icon type="bell" className="fs-alarm-bell-icon" />
+                            </Badge>
+                        </Popover>
+                    */}
                     <span className="fs-login-user-wrapper">
                         {lang('您好, ', 'Hi, ')}
                         <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="click">

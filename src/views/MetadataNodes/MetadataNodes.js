@@ -45,7 +45,7 @@ class MetadataNodes extends Component {
     }
 
     switchNode (nodeNumID){
-        let currentMetadataNode = this.props.nodes.filter(node => node.nodeNumID === nodeNumID)[0];
+        let currentMetadataNode = this.props.nodes.filter(node => node.nodeNumID === nodeNumID)[0] || {};
         this.setState({currentMetadataNode});
         // fetch current node data
         lsSet('currentMetadataNode', currentMetadataNode);
