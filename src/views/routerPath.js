@@ -24,11 +24,12 @@ const routerPath = {
 
     UserStatistics: '/user-statistics',
 
-    ManagementKnownProblems: '/management-known-problems',
+    // ManagementKnownProblems: '/management-known-problems',
     ManagementSystemLog: '/management-system-log',
 
-    FSOperationStripeSettings: '/fs-operation-stripe-settings',
-    FSOperationFileBrowser: '/fs-operation-file-browser',
+    // FSOperationStripeSettings: '/fs-operation-stripe-settings',
+    // FSOperationFileBrowser: '/fs-operation-file-browser',
+    FSOperation: '/fs-operation',
 };
 
 export default routerPath;
@@ -39,6 +40,6 @@ export const pathToMenu = {
     StorageNodes: [routerPath.StorageNodes],
     ClientStatistics: [routerPath.ClientStatistics],
     UserStatistics: [routerPath.UserStatistics],
-    Management: [routerPath.ManagementKnownProblems, routerPath.ManagementSystemLog],
+    Management: [/*routerPath.ManagementKnownProblems,*/ routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser],
 };

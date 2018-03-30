@@ -1,15 +1,47 @@
 .fs-operation-wrapper {
-    .fs-stripe-query-wrapper {
-
+    .ant-form {
+        label {
+            font-size: 12px;
+        }
+        .ant-form-item {
+            margin-bottom: 15px;
+        }
     }
-    .fs-stripe-wrapper,
-    .fs-location-wrapper {
-        flex: 1;
+    .fs-query-wrapper {
+        padding: 10px 16px 5px !important;
     }
     .fs-stripe-wrapper {
+        flex: 1;
+        min-width: 350px;
+        .fs-stripe-form {
+            margin: 0 auto;
+            padding: 10px 20px;
+            width: 300px;
+            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
+            .ant-form-item {
+                margin-bottom: 0;
+            }
+        }
+    }
+    .fs-file-wrapper {
+        min-width: 850px;
+        .ant-table {
+            .ant-table-thead > tr > th,
+            .ant-table-tbody > tr > td {
+                padding: 16px 5px;
+            }
+            .ant-table-thead > tr > th {
+                padding: 10px 5px;
+            }
+        }
+    }
+    .fs-stripe-wrapper,
+    .fs-file-wrapper {
+        height: 680px;
+    }
+}
 
-    }
-    .fs-location-wrapper {
-        margin-left: 5px;
-    }
+::-webkit-scrollbar {
+    height: 8px !important;
+    width: 3px !important;
 }

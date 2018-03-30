@@ -27,7 +27,11 @@ class MetadataNodes extends Component {
         let {status} = nextProps;
         let currentMetadataNode = {};
         if (status.length){
-            currentMetadataNode = status.filter(node => node.value)[0];
+            currentMetadataNode = status.filter(node => node.value)[0] || {};
+            if (!currentMetadataNode.node){
+                // if there is no up node, use the first node as current node directly, even if it's down
+                currentMetadataNode = status[0];
+            }
         }
         let newState = {};
         if (currentMetadataNode.node && !this.state.currentMetadataNode.node){
@@ -53,9 +57,9 @@ class MetadataNodes extends Component {
     }
 
     getCurrentMetadataNodeData (){
-        let currentStorageNode = lsGet('currentStorageNode');
-        if (currentStorageNode){
-            httpRequests.getStorageNodeDetailSummary(currentStorageNode);
+        let currentMetadataNode = lsGet('currentMetadataNode');
+        if (currentMetadataNode){
+            httpRequests.getMetadataNodeDetailSummary(currentMetadataNode);
         }
     }
 
@@ -120,23 +124,29 @@ class MetadataNodes extends Component {
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {this.state.currentMetadataNode.hostname} {lang('节点详情', 'Node Detail')}
-                                <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                    <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
-                                        title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
-                                        onClick={this.changeExpandSwitchNode.bind(this)}
-                                    />
-                                    <Select style={{width: 170}} size="small" value={this.state.currentMetadataNode.nodeNumID} onChange={this.switchNode.bind(this)}>
-                                        {
-                                            this.props.status.map(({node, nodeNumID, value}) =>
-                                                <Select.Option key={node} value={nodeNumID} node={node} disabled={!value}>
-                                                    <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
-                                                    {node}
-                                                </Select.Option>
-                                            )
-                                        }
-                                    </Select>
-                                </div>
+                                {this.state.currentMetadataNode.node} {lang('节点详情', 'Node Detail')}
+                                {
+                                    !!this.props.status.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
+                                        <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
+                                            title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
+                                            onClick={this.changeExpandSwitchNode.bind(this)}
+                                        />
+                                        <Select style={{width: 170}} size="small"
+                                            notFoundContent={lang('暂无节点', 'No Nodes')}
+                                            value={this.state.currentMetadataNode.nodeNumID}
+                                            onChange={this.switchNode.bind(this)}
+                                        >
+                                            {
+                                                this.props.status.map(({node, nodeNumID, value}) =>
+                                                    <Select.Option key={node} value={nodeNumID} node={node} disabled={!value}>
+                                                        <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                        {node}
+                                                    </Select.Option>
+                                                )
+                                            }
+                                        </Select>
+                                    </div>
+                                }
                             </h3>
                             <section className="fs-page-item-content fs-node-info-content">
                                 <span className="fs-info-item title">
@@ -147,16 +157,18 @@ class MetadataNodes extends Component {
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentMetadataNode.node}</div>
+                                            <div className="fs-info-block-value">{this.state.currentMetadataNode.node || '--'}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('状态', 'Node Status')}</div>
                                             <div className="fs-info-block-value">
                                                 {
-                                                    this.state.currentMetadataNode.value ?
+                                                    this.state.currentMetadataNode.value === true ?
                                                         <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
-                                                        <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                                        this.state.currentMetadataNode.value !== undefined ?
+                                                            <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span> :
+                                                            '--'
                                                 }
                                             </div>
                                         </div>

@@ -25,8 +25,9 @@ import ManagementKnownProblems from '../Management/ManagementKnownProblems';
 import ManagementSystemLog from '../Management/ManagementSystemLog';
 
 // fs operation
-import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings';
-import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
+// import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings';
+// import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
+import FSOperation from '../FSOperation/FSOperation';
 
 // dashboard
 // import Dashboard from '../Dashboard/Dashboard';
@@ -89,11 +90,14 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
 
+                        {/*
                         <Route path={`${Main}${routerPath.FSOperationStripeSettings}`} component={FSOperationStripeSettings} />
                         <Route path={`${Main}${routerPath.FSOperationFileBrowser}`} component={FSOperationFileBrowser} />
+                        */}
+                        <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
 
                         {/*
-                            <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
+                        <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
                         */}
                     </main>
                 </div>

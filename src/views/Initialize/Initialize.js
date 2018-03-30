@@ -20,7 +20,7 @@ class Initialize extends Component {
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
-            currentStep: 2,
+            currentStep: 0,
             totalStep: 5,
             checking: false,
 
@@ -227,16 +227,13 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                this.setState({currentStep: next});
-                break;
-            case 3:
                 if (!this.state.enableRAID){
                     this.setState({currentStep: next});
                 } else {
 
                 }
                 break;
-            case 4:
+            case 3:
                 this.setState({currentStep: next});
                 this.startInitialization();
                 break;

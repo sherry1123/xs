@@ -34,7 +34,7 @@ class StorageNodes extends Component {
         if (status.length){
             currentStorageNode = status.filter(node => node.value)[0] || {};
             if (!currentStorageNode.node){
-                // if there is no up node, use the first node as current node directly, ignore its dead status
+                // if there is no up node, use the first node as current node directly, even if it's down
                 currentStorageNode = status[0];
             }
         }
@@ -148,23 +148,29 @@ class StorageNodes extends Component {
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {this.state.currentStorageNode.name} {lang('节点详情', 'Node Detail')}
-                                <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                    <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
-                                        title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
-                                        onClick={this.changeExpandSwitchNode.bind(this)}
-                                    />
-                                    <Select style={{width: 170}} size="small" value={this.state.currentStorageNode.nodeNumID} onChange={this.switchNode.bind(this)}>
-                                        {
-                                            this.props.status.map(({node, nodeNumID, value}) =>
-                                                <Select.Option key={nodeNumID} value={nodeNumID} node={node} disabled={!value}>
-                                                    <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
-                                                    {node}
-                                                </Select.Option>
-                                            )
-                                        }
-                                    </Select>
-                                </div>
+                                {this.state.currentStorageNode.node} {lang('节点详情', 'Node Detail')}
+                                {
+                                    !!this.props.status.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
+                                        <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
+                                            title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
+                                            onClick={this.changeExpandSwitchNode.bind(this)}
+                                        />
+                                        <Select style={{width: 170}} size="small"
+                                            notFoundContent={lang('暂无节点', 'No Nodes')}
+                                            value={this.state.currentStorageNode.nodeNumID}
+                                            onChange={this.switchNode.bind(this)}
+                                        >
+                                            {
+                                                this.props.status.map(({node, nodeNumID, value}) =>
+                                                    <Select.Option key={nodeNumID} value={nodeNumID} node={node} disabled={!value}>
+                                                        <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                        {node}
+                                                    </Select.Option>
+                                                )
+                                            }
+                                        </Select>
+                                    </div>
+                                }
                             </h3>
                             <section className="fs-page-item-content fs-node-info-content">
                                 <span className="fs-info-item title">
@@ -175,7 +181,7 @@ class StorageNodes extends Component {
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentStorageNode.node}</div>
+                                            <div className="fs-info-block-value">{this.state.currentStorageNode.node || '--'}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
@@ -183,8 +189,10 @@ class StorageNodes extends Component {
                                             <div className="fs-info-block-value">
                                                 {
                                                     this.state.currentStorageNode.value ?
-                                                    <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
-                                                    <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span>
+                                                        <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
+                                                        this.state.currentStorageNode.value !== undefined ?
+                                                            <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span> :
+                                                            '--'
                                                 }
                                             </div>
                                         </div>

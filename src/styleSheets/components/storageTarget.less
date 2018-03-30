@@ -16,21 +16,10 @@
         }
         .fs-storage-target-label {
             &.bottom {
-                padding-left: 44px;
+                padding-left: 18px;
             }
             .fs-storage-target-id {
                 position: relative;
-                margin-left: 26px;
-                &:before {
-                    content: '';
-                    position: absolute;
-                    left: -26px;
-                    top: 3px;
-                    width: 10px;
-                    height: 10px;
-                    border: 2px solid @green;
-                    border-radius: 100%;
-                }
             }
             .fs-target-chart-label-item {
                 position: relative;
@@ -65,7 +54,7 @@
             }
         }
         .fs-target-usage-chart {
-            margin: 3px 0 3px 26px;
+            margin: 3px 0;
             height: 14px;
             overflow: hidden;
             // border: 1px solid #d1d1d1;
@@ -76,6 +65,9 @@
                 background-color: @orange;
             }
         }
+    }
+    .fs-storage-target-no-data {
+        font-size: 12px;
     }
 }
 
