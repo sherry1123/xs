@@ -126,7 +126,7 @@ class FSOperation extends Component {
                                     <span>{stripe.dirPath}</span>
                                 </Form.Item>
                                 <Form.Item label={lang('默认目标数', 'Default Targets Number')}>
-                                    <Input placeholder={lang('请输入默认目标数', 'enter default target number')} style={{width: 190}} size="small"
+                                    <Input placeholder={lang('请输入默认目标数', 'enter default target number')} style={{width: 130}} size="small"
                                            value={stripe.numTargets}
                                            onChange={({target: {value}}) => {
                                                this.stripeFormChange.bind(this, 'defaultTargetNumber', value)();
@@ -134,7 +134,7 @@ class FSOperation extends Component {
                                     />
                                 </Form.Item>
                                 <Form.Item label={lang('块大小', 'Block Size')}>
-                                    <Input placeholder={lang('请输入块大小', 'enter block size')} style={{width: 150}} size="small"
+                                    <Input placeholder={lang('请输入块大小', 'enter block size')} style={{width: 130}} size="small"
                                            value={stripe.chunkSize}
                                            onChange={({target: {value}}) => {
                                                this.stripeFormChange.bind(this, 'blockSize', value)();
@@ -142,7 +142,7 @@ class FSOperation extends Component {
                                     /><span style={{marginLeft: 12}}>{lang('字节', 'Byte')}</span>
                                 </Form.Item>
                                 <Form.Item label={lang('条带模式', 'Stripe Mode')}>
-                                    <Select style={{width: 190}} size="small"
+                                    <Select style={{width: 130}} size="small"
                                             placeholder={lang('请选择条带模式', 'select stripe mode')}
                                             value={stripe.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
                                             onChange={value => {
@@ -162,7 +162,7 @@ class FSOperation extends Component {
                                     />
                                 </Form.Item>
                                 */}
-                                <Form.Item style={{marginTop: 20}} wrapperCol={{sm: {offset: 18}}}>
+                                <Form.Item style={{marginTop: 20}} wrapperCol={{sm: {offset: 17}}}>
                                     <Button icon="save" size="small" onClick={this.saveStripeConfig.bind(this)}>{lang('保存', 'Save')}</Button>
                                 </Form.Item>
                             </Form>
