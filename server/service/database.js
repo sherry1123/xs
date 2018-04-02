@@ -6,7 +6,7 @@ const auditlog = require('../model/auditlog');
 const hardware = require('../model/hardware');
 const model = {
     async getUser(param) {
-        return await dao.findAll(user, param);
+        return await dao.findOne(user, param);
     },
     async addUser(param) {
         return await dao.createOne(user, param);

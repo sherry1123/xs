@@ -42,7 +42,7 @@ exports.api = {
     }
 }
 exports.logs = {
-    path: '/logs/server.log',
+    path: '/var/log/orcafs-gui.log',
     maxSize: 1024 * 1024 * 10,
     backup: 3
 };

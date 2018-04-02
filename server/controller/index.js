@@ -65,7 +65,7 @@ const model = {
     },
     '/api/antiinit': ctx => {
         ctx.body = { code: 0, data: 'start to anti-initialize cluster' };
-        service.antiInitCluster('all');
+        service.antiInitCluster(1);
     },
     '/api/checkclusterenv': async ctx => {
         ctx.body = await service.checkClusterEnv(ctx.param);

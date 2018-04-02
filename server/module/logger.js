@@ -6,7 +6,7 @@ log4js.configure({
 		console: { type: 'console' },
 		file: {
 			type: 'file',
-			filename: `${config.env.root}/${config.logs.path}`,
+			filename: config.logs.path,
 			maxLogSize: config.logs.maxSize,
 			backups: config.logs.backup
 		}

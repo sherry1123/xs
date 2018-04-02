@@ -88,17 +88,18 @@ const model = {
                 let getInitProgress = setInterval(async () => {
                     let progress = await init.getOrcaFSInitProgress();
                     if (!progress.errorId) {
-                        let { currentStep, describle, errorMessage, staus, totalStep } = progress.data;
+                        let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
                         if (currentStep !== totalStep) {
-                            socket.postInitStatus({current: currentStep, status, total: totalStep + 3});
+                            socket.postInitStatus({ current: currentStep, status, total: totalStep + 3 });
                         }
                         if (currentStep && currentStep === totalStep && describle.includes('finish')) {
                             clearInterval(getInitProgress);
-                            socket.postInitStatus({current: 5, status: 0, total: totalStep + 3});
+                            socket.postInitStatus({ current: 5, status: 0, total: totalStep + 3 });
                             await init.initMongoDB(mongodbParam);
-                            socket.postInitStatus({current: 6, status: 0, total: totalStep + 3});
+                            socket.postInitStatus({ current: 6, status: 0, total: totalStep + 3 });
                             await init.saveInitInfo({ nodelist, initparam: param });
-                            socket.postInitStatus({current: 7, status: 0, total: totalStep + 3});
+                            socket.postInitStatus({ current: 7, status: 0, total: totalStep + 3 });
+                            init.setInitStatus(true);
                             logger.info('init successfully');
                         }
                     }
@@ -108,45 +109,39 @@ const model = {
             }
         } catch (error) {
             errorHandler(7, error, param);
-            await model.antiInitCluster('database');
+            await model.antiInitCluster(2);
         }
     },
-    async antiInitCluster(mode = 'all') {
+    /**
+     * Antiinitialize The Cluster
+     * 
+     * 
+     * @param {number} mode 1 => all; 2 => only database
+     */
+    async antiInitCluster(mode) {
         try {
-            if (mode === 'all') {
-                let res = await init.antiInitOrcaFS();
-                if (!res.errorId) {
-                    let getAntiinitProgress = setInterval(async () => {
-                        let progress = await init.getOrcaFSInitProgress();
-                        if (!progress.errorId) {
-                            let { currentStep, describle, errorMessage, staus, totalStep } = progress.data;
-                            logger.info(`antiinit step: ${currentStep}, desc: ${describle}`);
-                            if (!currentStep && describle.includes('finish')) {
-                                clearInterval(getAntiinitProgress);
-                                let mongodbStatus = await init.getMongoDBStatus();
-                                if (mongodbStatus) {
-                                    let nodelist = await database.getSetting({ key: 'nodelist' });
-                                    nodelist = JSON.parse(nodelist.value);
-                                    await init.antiInitMongoDB(nodelist);
-                                }
-                                logger.info('antiinit successfully');
-                            }
-                        }
-                    }, 1000);
-                } else {
-                    errorHandler(8, res.message);
-                }
-            } else if (mode === 'database') {
-                let mongodbStatus = await init.getMongoDBStatus();
-                if (mongodbStatus) {
-                    let nodelist = await database.getSetting({ key: 'nodelist' });
-                    nodelist = JSON.parse(nodelist.value);
-                    await init.antiInitMongoDB(nodelist);
-                }
-                logger.info('antiinit successfully');
+            if (mode === 1) {
+                await init.antiInitOrcaFS();
             }
+            let getAntiinitProgress = setInterval(async () => {
+                let progress = await init.getOrcaFSInitProgress();
+                if (!progress.errorId) {
+                    let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
+                    logger.info({ currentStep, describle, errorMessage, status, totalStep })
+                    if (!currentStep && describle.includes('finish')) {
+                        clearInterval(getAntiinitProgress);
+                        let mongodbStatus = await init.getMongoDBStatus();
+                        if (mongodbStatus) {
+                            let nodelist = await database.getSetting({ key: 'nodelist' });
+                            nodelist = JSON.parse(nodelist.value);
+                            await init.antiInitMongoDB(nodelist);
+                        }
+                        logger.info('antiinit successfully');
+                    }
+                }
+            }, 1000);
         } catch (error) {
-            errorHandler(8, error);
+            errorHandler(8, error, mode);
         }
     },
     /**
@@ -159,9 +154,9 @@ const model = {
         let result = {};
         try {
             let data = await database.getUser(param);
-            if (data.length) {
+            if (data.username) {
                 await model.addAuditLog({ user: param.username, desc: 'login success' });
-                result = responseHandler(0, data[0]);
+                result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
             }
