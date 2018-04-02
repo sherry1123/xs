@@ -38,7 +38,7 @@ exports.chmodFileInPromise = (path, mode) => {
     });
 };
 exports.runCommandInRemoteNodeInPromise = (ip, command) => {
-    command = `ssh -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip} "${command}"`;
+    command = `ssh -i /root/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet root@${ip} "${command}"`;
     return new Promise((resolve, reject) => {
         child.exec(command, (error, stdout, stderr) => {
             error ? reject(stderr) : resolve(stdout);
@@ -46,7 +46,7 @@ exports.runCommandInRemoteNodeInPromise = (ip, command) => {
     });
 };
 exports.copyFileToRemoteNodeInPromise = (ip, src, dest) => {
-    let command = `scp -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${src} denali@${ip}:${dest}`;
+    let command = `scp -i /root/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${src} root@${ip}:${dest}`;
     return new Promise((resolve, reject) => {
         child.exec(command, (error, stdout, stderr) => {
             error ? reject(stderr) : resolve(stdout);
@@ -54,7 +54,7 @@ exports.copyFileToRemoteNodeInPromise = (ip, src, dest) => {
     });
 };
 exports.copyFileFromRemoteNodeInPromise = (ip, src, dest) => {
-    let command = `scp -i /home/denali/denali/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet denali@${ip}:${dest} ${src} `;
+    let command = `scp -i /root/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet root@${ip}:${dest} ${src} `;
     return new Promise((resolve, reject) => {
         child.exec(command, (error, stdout, stderr) => {
             error ? reject(stderr) : resolve(stdout);

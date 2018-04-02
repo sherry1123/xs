@@ -22,7 +22,7 @@ const model = {
     async getInitStatus() {
         let result = false;
         try {
-            result = await init.getMongoDBStatus() && await init.getOrcaFSStatus();
+            result = await init.getOrcaFSStatus();
         } catch (error) {
             errorHandler(1, error);
         }
@@ -71,31 +71,82 @@ const model = {
      * According to the parameters to determine whether the cluster is turned on high availability and the type of the database cluster.
      * First initialize the database, and then the file system, finally save the initialization information.
      * 
-     * @param {array} MDS Metadata Servers
-     * @param {array} OSS Object Storage Servers
-     * @param {array} MS Management Servers
+     * @param {array} meta Metadata Servers
+     * @param {array} storage Object Storage Servers
+     * @param {array} client Client Servers
+     * @param {array} mgmt Management Servers
      * @param {boolean} HA High Availability
-     * @param {array} CSMIP Cluster Service Management IP
-     * @param {array} HBIP Heart Beat IP
+     * @param {array} floatIP Cluster Service Management IP
+     * @param {array} heartbeatIP Heart Beat IP
+     * @param {boolean} RAID Redundant Array of Independent Disks
      */
     async initCluster(param) {
-        let { MDS, OSS, MS, HA, CSMIP, HBIP } = param;
         try {
-            await init.initMongoDB(HA ? { primary: MS[0], secondary: MS[1], arbiter: MDS[0], replicaSet: true } : { primary: MS[0], replicaSet: false });
-            await init.initOrcaFS(param);
-            await init.saveInitInfo(Array.from(new Set(MDS.concat(OSS, MS))));
+            let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
+            let res = await init.initOrcaFS(orcafsParam);
+            if (!res.errorId) {
+                let getInitProgress = setInterval(async () => {
+                    let progress = await init.getOrcaFSInitProgress();
+                    if (!progress.errorId) {
+                        let { currentStep, describle, errorMessage, staus, totalStep } = progress.data;
+                        if (currentStep !== totalStep) {
+                            socket.postInitStatus({current: currentStep, status, total: totalStep + 3});
+                        }
+                        if (currentStep && currentStep === totalStep && describle.includes('finish')) {
+                            clearInterval(getInitProgress);
+                            socket.postInitStatus({current: 5, status: 0, total: totalStep + 3});
+                            await init.initMongoDB(mongodbParam);
+                            socket.postInitStatus({current: 6, status: 0, total: totalStep + 3});
+                            await init.saveInitInfo({ nodelist, initparam: param });
+                            socket.postInitStatus({current: 7, status: 0, total: totalStep + 3});
+                            logger.info('init successfully');
+                        }
+                    }
+                }, 1000);
+            } else {
+                errorHandler(7, res.message, param);
+            }
         } catch (error) {
             errorHandler(7, error, param);
-            await model.antiInitCluster(param);
+            await model.antiInitCluster('database');
         }
     },
-    async antiInitCluster(param) {
-        let { MDS, OSS, MS, HA, CSMIP, HBIP } = param;
+    async antiInitCluster(mode = 'all') {
         try {
-            await init.antiInitMongoDB(Array.from(new Set(MDS.concat(OSS, MS))));
-            await init.antiInitOrcaFS(param);
+            if (mode === 'all') {
+                let res = await init.antiInitOrcaFS();
+                if (!res.errorId) {
+                    let getAntiinitProgress = setInterval(async () => {
+                        let progress = await init.getOrcaFSInitProgress();
+                        if (!progress.errorId) {
+                            let { currentStep, describle, errorMessage, staus, totalStep } = progress.data;
+                            logger.info(`antiinit step: ${currentStep}, desc: ${describle}`);
+                            if (!currentStep && describle.includes('finish')) {
+                                clearInterval(getAntiinitProgress);
+                                let mongodbStatus = await init.getMongoDBStatus();
+                                if (mongodbStatus) {
+                                    let nodelist = await database.getSetting({ key: 'nodelist' });
+                                    nodelist = JSON.parse(nodelist.value);
+                                    await init.antiInitMongoDB(nodelist);
+                                }
+                                logger.info('antiinit successfully');
+                            }
+                        }
+                    }, 1000);
+                } else {
+                    errorHandler(8, res.message);
+                }
+            } else if (mode === 'database') {
+                let mongodbStatus = await init.getMongoDBStatus();
+                if (mongodbStatus) {
+                    let nodelist = await database.getSetting({ key: 'nodelist' });
+                    nodelist = JSON.parse(nodelist.value);
+                    await init.antiInitMongoDB(nodelist);
+                }
+                logger.info('antiinit successfully');
+            }
         } catch (error) {
-            errorHandler(8, error, param);
+            errorHandler(8, error);
         }
     },
     /**
@@ -237,7 +288,7 @@ const model = {
         let url = api;
         try {
             let iplist = await database.getSetting({ key: 'nodelist' });
-            iplist = iplist.value.split(',');
+            iplist = JSON.parse(iplist.value);
             let data = [];
             for (let ip of iplist) {
                 url = api.replace('localhost', ip);
@@ -517,7 +568,7 @@ const model = {
         let result = {};
         try {
             let res = await fileSystem.getDiskList(param);
-            if (!res.errorid) {
+            if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
                 result = responseHandler(22, res.message, param);
