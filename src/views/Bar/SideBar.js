@@ -96,7 +96,8 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.UserStatistics}>
                         <Icon type="bar-chart" />{lang('用户统计', 'User Statistics')}
                     </Menu.Item>
-                    <Menu.SubMenu key="Management"
+
+                    {/*<Menu.SubMenu key="Management"
                         title={
                             <span>
                                 <Icon type="tool" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
@@ -106,12 +107,13 @@ class SideBar extends Component {
                     >
                         <Menu.Item key={routerPath.ManagementKnownProblems}>
                             <Icon type="frown-o" />{lang('已知问题', 'Known Issues')}
-                        </Menu.Item>
+                        </Menu.Item>*/}
                         <Menu.Item key={routerPath.ManagementSystemLog}>
                             <Icon type="file-text" />{lang('系统日志', 'System Log')}
                         </Menu.Item>
-                    </Menu.SubMenu>
-                    <Menu.SubMenu key="FSOperation" inlineIndent={16}
+                    {/*</Menu.SubMenu>*/}
+
+                    {/*<Menu.SubMenu key="FSOperation" inlineIndent={16}
                         title={
                             <span>
                                 <Icon type="switcher" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
@@ -125,7 +127,10 @@ class SideBar extends Component {
                         <Menu.Item key={routerPath.FSOperationFileBrowser}>
                             <Icon type="folder-open" />{lang('文件浏览器', 'File Browser')}
                         </Menu.Item>
-                    </Menu.SubMenu>
+                    </Menu.SubMenu>*/}
+                    <Menu.Item key={routerPath.FSOperation}>
+                        <Icon type="setting" />{lang('文件系统操作', 'FS Operation')}
+                    </Menu.Item>
                 </Menu>
             </aside>
         );

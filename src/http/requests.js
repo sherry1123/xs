@@ -1,7 +1,9 @@
 import {fetchGet, fetchPost, fetchMock, lsGet} from '../services';
 import store from '../redux';
+import generalAction from '../redux/actions/generalAction';
 import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
+import managementAction from '../redux/actions/managementAction';
 
 export default  {
     // redux store check
@@ -36,6 +38,16 @@ export default  {
     },
 
     // main
+    // known problems
+    async getKnownProblems (){
+        try {
+            let data = await fetchGet('/api/getknownproblems');
+            store.dispatch(generalAction.setKnownProblems(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
     // metadata node
     async getMetadataNodeOverviewSummary (){
         try {
@@ -106,5 +118,25 @@ export default  {
                 console.info(e.message);
             }
         }
+    },
+
+    // management
+    async getEventLogs (){
+        try {
+            let data = await fetchGet('/api/geteventlog');
+            store.dispatch(managementAction.setSystemEventLogs(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
+    async getAuditLogs (){
+        try {
+            let data = await fetchGet('/api/getauditlog');
+            store.dispatch(managementAction.setSystemAuditLogs(data));
+        } catch (e){
+            console.info(e.message);
+        }
     }
+
 };

@@ -20,7 +20,7 @@ class Initialize extends Component {
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
-            currentStep: 2,
+            currentStep: 0,
             totalStep: 5,
             checking: false,
 
@@ -62,6 +62,10 @@ class Initialize extends Component {
             await this.removeIP('managementServerIPs', 1);
         }
         await this.props.setEnableHA(checked);
+    }
+
+    setEnableRAID (checked){
+        this.props.setEnableRAID(checked);
     }
 
     async addIP (category){
@@ -223,7 +227,11 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                this.setState({currentStep: next});
+                if (!this.state.enableRAID){
+                    this.setState({currentStep: next});
+                } else {
+
+                }
                 break;
             case 3:
                 this.setState({currentStep: next});
@@ -553,13 +561,17 @@ class Initialize extends Component {
                                     )}
                                 </section>
                             </QueueAnim>
-                            <section className="fs-config-raid-wrapper">
-                                <div className="fs-raid-switch-wrapper">
-                                    <label >{lang('为元数据节点和存储节点配置RAID', 'Configure RAID for metadata nodes & storage nodes')}</label>
-                                    <Switch size="small" />
-                                </div>
-                                <RAIDConfiguration />
-                            </section>
+                            <QueueAnim type="right" delay={200}>
+                                <section key={1} className="fs-config-raid-wrapper">
+                                    <div className="fs-raid-switch-wrapper">
+                                        <label >{lang('为元数据节点和存储节点配置RAID', 'Configure RAID for metadata nodes & storage nodes')}</label>
+                                        <Switch size="small" checked={this.props.enableRAID} onChange={this.setEnableRAID.bind(this)} />
+                                    </div>
+                                    {
+                                        this.props.enableRAID && <RAIDConfiguration />
+                                    }
+                                </section>
+                            </QueueAnim>
                         </div>
                     }
                     {
@@ -647,8 +659,8 @@ class Initialize extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs}} = state;
-    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs};
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID};
 };
 
 const mapDispatchToProps = dispatch => {
@@ -657,6 +669,7 @@ const mapDispatchToProps = dispatch => {
         removeIP: (category, index) => dispatch(initializeAction.removeIP(category, index)),
         setIP: (category, index, ip) => dispatch(initializeAction.setIP(category, index, ip)),
         setEnableHA: enableHA => dispatch(initializeAction.setEnableHA(enableHA)),
+        setEnableRAID: enableRAID => dispatch(initializeAction.setEnableRAID(enableRAID)),
     };
 };
 

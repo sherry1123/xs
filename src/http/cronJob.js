@@ -2,24 +2,35 @@ import {CronJob} from 'cron';
 import httpRequests from './requests';
 import routerPath from '../views/routerPath';
 
-// load every 15 seconds
+// request every 15 seconds
 const fetchDataPer15s = () => {
     let routerHash = window.location.hash;
     const main = routerPath.Main;
 
+    // main
+    if (routerHash.match(main)){
+        // httpRequests.getKnownProblems();
+        httpRequests.getMetadataNodeOverviewSummary();
+        httpRequests.getStorageNodeOverviewSummary();
+    }
+
     // metadata node
     if (routerHash.match(main + routerPath.MetadataNodes)){
-        httpRequests.getMetadataNodeOverviewSummary();
         httpRequests.getMetadataNodeOverviewUserOperationStatics();
         httpRequests.getMetadataNodeDetailSummary();
     }
 
     // storage node
     if (routerHash.match(main + routerPath.StorageNodes)){
-        httpRequests.getStorageNodeOverviewSummary();
         httpRequests.getStorageNodeOverviewThroughput();
         httpRequests.getStorageNodeDetailSummary();
         httpRequests.getStorageNodeDetailThroughput();
+    }
+
+    // management - system log
+    if (routerHash.match(main + routerPath.ManagementSystemLog)){
+        httpRequests.getEventLogs();
+        httpRequests.getAuditLogs();
     }
 };
 
@@ -28,4 +39,5 @@ new CronJob('*/15 * * * * *', async () => {
 }, null, true);
 
 
-// load immediately when access page
+// request immediately when access page
+// do something here

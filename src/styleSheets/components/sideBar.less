@@ -4,6 +4,7 @@
     transition: all .4s ease;
     font-size: 30px;
     background-color: @white;
+    user-select: none;
     .ant-menu-submenu-arrow {
         opacity: 1 !important;
         transition: opacity .4s ease !important;
@@ -22,14 +23,17 @@
     }
     .fs-visible-operation-wrapper {
         padding-right: 10px;
-        height: 46px;
+        height: 43px;
         text-align: right;
-        border-top: 3px solid @page-bg;
+        // border-top: 3px solid @page-bg;
         border-bottom: 1px solid @border;
         .fs-visible-operation-button {
+            float: right;
+            margin-top: 10px;
             padding: 0;
             width: 24px;
             height: 24px;
+            line-height: 24px;
             font-size: 14px;
             cursor: pointer;
             &:hover {

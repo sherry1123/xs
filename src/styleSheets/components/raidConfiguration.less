@@ -1,6 +1,72 @@
 .fs-raid-config-wrapper {
-    height: 400px;
+    height: 450px;
     .fs-raid-config-description {
         font-size: 12px;
+    }
+    .fs-raid-config-operation-wrapper {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        .fs-raid-node-wrapper {
+            width: 250px;
+            height: 400px;
+            text-align: center;
+            border: 1px solid @border;
+            .fs-raid-node-type-title {
+                margin: 20px 0 15px;
+                font-weight: bold;
+                color: rgba(0, 0, 0, 0.85);
+            }
+            .fs-raid-node-group {
+                .fs-raid-node-item {
+                    margin-bottom: 10px;
+                    box-sizing: border-box;
+                    display: inline-block;
+                    width: 200px;
+                    height: 23px;
+                    cursor: pointer;
+                    &.active {
+                        border: 1px solid @page-bg;
+                        box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
+                    }
+                    &:nth-last-child(1) {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+        .fs-raid-disk-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 670px;
+            .fs-raid-node-array-info {
+                padding: 10px;
+                border: 1px solid @border;
+                .fs-raid-node-array-info-title {
+
+                }
+                .fs-raid-node-array-info-content {
+                    margin-top: 15px;
+                }
+            }
+            .fs-raid-node-array-selector {
+                .ant-transfer-list {
+                    margin-top: 10px;
+                    width: 312px;
+                    height: 307px;
+                    border: 1px solid @border;
+                    border-radius: 0;
+                    &.ant-transfer-list-with-footer {
+                        &:nth-child(1) {
+                            padding-bottom: 0;
+                            .ant-transfer-list-footer {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

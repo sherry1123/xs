@@ -37,7 +37,7 @@ class FSOperationStripeSettings extends Component {
         };
         return (
             <section className="fs-page-content fs-operation-wrapper">
-                <section className="fs-page-item-wrapper title">
+                <section className="fs-page-big-title">
                     <h3 className="fs-page-title">{lang('条带设置', 'Stripe Settings')}</h3>
                 </section>
                 <section className="fs-page-item-wrapper fs-stripe-query-wrapper">
@@ -111,7 +111,7 @@ class FSOperationStripeSettings extends Component {
                                 </Form.Item>
                                 */}
                                 <Form.Item wrapperCol={{sm: {offset: 8}}}>
-                                    <Button icon="save" onClick={this.submit.bind(this)}>{lang('保存', 'Save')}</Button>
+                                    <Button icon="save" size="small" onClick={this.submit.bind(this)}>{lang('保存', 'Save')}</Button>
                                 </Form.Item>
                             </Form>
                         </section>

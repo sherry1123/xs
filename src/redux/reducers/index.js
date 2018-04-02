@@ -6,14 +6,16 @@ import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';
 import metadataNodeReducer from '../reducers/metadataNodeReducer';
 import storageNodeReducer from '../reducers/storageNodeReducer';
+import managementReducer from '../reducers/managementReducer';
+import fsOperationReducer from '../reducers/fsOperationReducer';
 
 // firstly read environmental parameters from process, also persistent data from localStorage
-let {VERSION, NODE_ENV} = process.env;
+const {VERSION, NODE_ENV} = process.env;
 State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 State.main.general.menuExpand = lsGet('menuExpand');
 
-// combine all reducers
-const reducer = combineReducers({
+// export a combined reducer
+export default combineReducers({
     // global
     language: (language = State.language, action) => {
         return languageReducer(language, action);
@@ -41,6 +43,14 @@ const reducer = combineReducers({
                     state[key] = storageNodeReducer(main[key], action);
                     break;
 
+                case 'management':
+                    state[key] = managementReducer(main[key], action);
+                    break;
+
+                case 'fsOperation':
+                    state[key] = fsOperationReducer(main[key], action);
+                    break;
+
                 default:
                     state[key] = main[key];
             }
@@ -48,6 +58,3 @@ const reducer = combineReducers({
         return state;
     },
 });
-
-export default reducer;
-

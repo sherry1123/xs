@@ -80,6 +80,16 @@ input[type="number"]{
 }
 
 .ant-table-wrapper {
+    .ant-table-scroll {
+        .ant-table-header {
+            margin-bottom: 0 !important;
+            padding: 8px !important;
+            background-color: @white;
+        }
+        .ant-table-body {
+            margin: 0 8px !important;
+        }
+    }
     .ant-table-thead {
         font-size: 12px;
         box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
@@ -95,6 +105,9 @@ input[type="number"]{
             font-size: 12px;
         }
     }
+    .ant-table-placeholder {
+        margin-top: 8px;
+    }
 }
 
 .ant-pagination {
@@ -107,7 +120,8 @@ input[type="number"]{
             line-height: 28px;
             .ant-pagination-item-link {
                 height: 28px;
-                &:before {
+                &:before,
+                &:after {
                     height: 28px;
                 }
             }

@@ -8,10 +8,11 @@ import lang from '../Language/lang';
 
 class StorageTargetGroup extends Component {
     render (){
+        let {storageTargets} = this.props;
         return (
             <QueueAnim className="fs-storage-target-group" delay={300}>
                 {
-                    this.props.storageTargets.map(target => {
+                    !!storageTargets.length ? storageTargets.map(target => {
                         let {id, pathStr, diskSpaceTotal, diskSpaceUsed, diskSpaceFree} = target;
                         let usedRate = (diskSpaceUsed / diskSpaceTotal * 100).toFixed(2);
                         return (
@@ -39,7 +40,8 @@ class StorageTargetGroup extends Component {
                                 </div>
                             </Popover>
                         );
-                    })
+                    }) :
+                    <span className="fs-storage-target-no-data">{lang('暂无存储目标', 'No Storage Targets')}</span>
                 }
             </QueueAnim>
         );

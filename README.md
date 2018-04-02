@@ -4,9 +4,10 @@
 
 #### Technology Stack
 
-1. Project is initialized through 'create-react-app' which is provided by Facebook React.js authorities.
-This tool will initialize a webpack based project with modularization support. It uses 'less' as css preprocessor, and 'auto-prefix' as postprocessor.
-Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM into CLI project for a better development experience: <br />
+1. Project is initialized through 'create-react-app' which is provided by Facebook React.js authorities, and we eject the tool configs from node_modules, <br />
+so we can control it by ourselves, add track it through Git. This tool will initialize a webpack based project with modularization support. It uses 'less' as css preprocessor, and 'auto-prefix' as postprocessor. <br />
+Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM into CLI project for a better development experience. <br />
+At the same time, the HTTP proxy provided by webpack dev-server is also indispensable: <br />
 [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app) <br />
 
 2. The current popular state management framework is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />

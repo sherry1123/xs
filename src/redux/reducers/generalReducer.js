@@ -18,6 +18,9 @@ const generalReducer = (state = State.main.general, action) => {
         case generalActionTypes.CHANGE_MENU_EXPAND:
             return Object.assign({}, state, {menuExpand: action.menuExpand});
 
+        case generalActionTypes.SET_KNOWN_PROBLEMS:
+            return Object.assign({}, state, {knownProblems: action.knownProblems});
+
         default:
             return state;
     }
