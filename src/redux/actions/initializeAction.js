@@ -4,6 +4,8 @@ export const initializeActionTypes = {
     SET_IP: 'SET_IP',
     SET_ENABLE_HA: 'SET_ENABLE_HA',
     SET_ENABLE_RAID: 'SET_ENABLE_RAID',
+    SET_INIT_STATUS: 'SET_INIT_STATUS',
+    SET_DEFAULT_USER: 'SET_DEFAULT_USER',
 };
 
 export default {
@@ -33,5 +35,15 @@ export default {
     setEnableRAID: enableRAID => ({
         type: initializeActionTypes.SET_ENABLE_RAID,
         enableRAID
+    }),
+
+    setInitStatus: initStatus => ({
+        type: initializeActionTypes.SET_INIT_STATUS,
+        initStatus
+    }),
+
+    setDefaultUser: defaultUser => ({
+        type: initializeActionTypes.SET_DEFAULT_USER,
+        defaultUser
     }),
 };

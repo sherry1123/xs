@@ -1,5 +1,6 @@
 import {fetchGet, fetchPost, fetchMock, lsGet} from '../services';
 import store from '../redux';
+import initializeAction from '../redux/actions/initializeAction';
 import generalAction from '../redux/actions/generalAction';
 import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
@@ -19,6 +20,24 @@ export default  {
     },
 
     // initialize
+    async startInitialization (config){
+        try {
+            // await fetchPost('/api/testapi', config);
+            await fetchPost('/api/init', config);
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
+    async getDefaultUser (){
+        try {
+            let data = await fetchPost('/api/getuser');
+            store.dispatch(initializeAction.setDefaultUser(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
     async checkIPs (IPs){
         try {
             await this.checkStoreIsReady();

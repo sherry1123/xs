@@ -24,7 +24,7 @@ export const lsSet = (keys, vals) => {
     !Array.isArray(keys) && (keys = [keys]);
     !Array.isArray(vals) && (vals = [vals]);
     keys.forEach((key, i) => {
-        let valStr = JSON.stringify(vals[i]);
+        let valStr = JSON.stringify(vals[i] || []);
         localStorage.setItem(key, valStr);
     });
 };
