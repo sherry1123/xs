@@ -26,8 +26,9 @@ exports.api = {
     orcafs: {
         gettoken: 'http://192.168.100.101:9090/token/get',
         createcluster: 'http://192.168.100.101:9090/cluster/create',
-        installstatus: 'http://192.168.100.101:9090/cluster/createinstallstatus',
-        listdisk: 'http://192.168.100.101:9090/disk/list/'
+        createstatus: 'http://192.168.100.101:9090/cluster/createstatus',
+        listdisk: 'http://192.168.100.101:9090/disk/list/',
+        destroycluster: 'http://192.168.100.101:9090/cluster/destroy'
     },
     admon: {
         nodelist: 'http://192.168.100.101:8000/XML_NodeList',

@@ -42,7 +42,7 @@ const model = {
         return await dao.createOne(setting, param);
     },
     async getSetting(param) {
-        return await dao.findOne(setting, param);
+        return await dao.findOne(setting, param, {_id: 0, __v: 0});
     }
 };
 module.exports = model;
