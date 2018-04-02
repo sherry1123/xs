@@ -1,6 +1,12 @@
 import io from 'socket.io-client';
-const socket = io('http://localhost:3456');
-socket.on('init status', initStatus => {
-    //todo
-});
-export default socket;
+import store from '../redux';
+import initializeAction from '../redux/actions/initializeAction';
+import {lsSet} from '../services';
+
+if (process.env.NODE_ENV !== 'development'){
+    const socket = io();
+    socket.on('init status', initStatus => {
+        lsSet('initStatus', initStatus);
+        store.dispatch(initializeAction.setInitStatus(initStatus));
+    });
+}
