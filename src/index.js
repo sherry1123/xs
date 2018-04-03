@@ -19,7 +19,7 @@ import store from './redux';
 import "./styleSheets/index.less";
 import App from "./views/App";
 import './http/cronJob';
-//import './socket';
+import './socket';
 
 const render = Component => {
     ReactDOM.render(

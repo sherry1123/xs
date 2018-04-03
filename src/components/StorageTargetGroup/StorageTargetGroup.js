@@ -16,7 +16,15 @@ class StorageTargetGroup extends Component {
                         let {id, pathStr, diskSpaceTotal, diskSpaceUsed, diskSpaceFree} = target;
                         let usedRate = (diskSpaceUsed / diskSpaceTotal * 100).toFixed(2);
                         return (
-                            <Popover content={<span className="fs-storage-target-usage-rate">{lang('容量使用率：', 'Capacity Usage Rate: ')}<span>{usedRate}%</span></span>} key={id}>
+                            <Popover key={id}
+                                content={
+                                    <div>
+                                        <p className="fs-storage-target-popover-item">{lang('目标ID：', 'Target ID: ')}<span>{id}</span></p>
+                                        <p className="fs-storage-target-popover-item">{lang('路径：', 'Path: ')}<span>{pathStr}</span></p>
+                                        <p className="fs-storage-target-popover-item">{lang('容量使用率：', 'Capacity Usage Rate: ')}<span>{usedRate}%</span></p>
+                                    </div>
+                                }
+                            >
                                 <div className="fs-storage-target-item" >
                                     <div className="fs-storage-target-label">
                                         <span className="fs-storage-target-id">{id}@{pathStr}</span>

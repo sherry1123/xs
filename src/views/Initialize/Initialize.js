@@ -8,8 +8,8 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import RAIDConfiguration from '../../components/RAIDConfiguration/RAIDConfiguration';
 import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
-import {validateIpv4, KeyPressFilter} from '../../services';
-import requests from '../../http/requests';
+import {validateIpv4, KeyPressFilter, lsRemove} from '../../services';
+import httpRequests from '../../http/requests';
 import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
 
@@ -31,8 +31,10 @@ class Initialize extends Component {
             floatIPsError: floatIPs.map(() => ({status: '', help: ''})),
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
 
+            initStatusNum: 0,
+            initStep: 0,
             initProgress: 0,
-            initializationInfo: [lang('初始化已开始，请稍候...', 'Initializing, pleas wait for a moment ...')]
+            initializationInfo: []
         };
     }
 
@@ -47,6 +49,44 @@ class Initialize extends Component {
                 path = routerPath.Main + routerPath.StorageNodes;
             }
             this.props.history.replace(path);
+        }
+    }
+
+    componentWillReceiveProps (nextProps){
+        let {initStatus: {current, total, status}} = nextProps;
+        let {initStep, initProgress, initializationInfo} = this.state;
+        initializationInfo = [...initializationInfo];
+        if (current === total - 1){
+            // finished
+            if (this.state.initStep !== (total - 1)){
+                this.clearProgressTime();
+                initializationInfo.unshift({step: total - 1, initProgress: 100});
+                this.setState({
+                    initStatusNum: 0,
+                    initStep: total - 1,
+                    initProgress: 100,
+                    initializationInfo
+                });
+                lsRemove('initStatus');
+                httpRequests.getDefaultUser();
+                setTimeout(() => this.setState({currentStep: 4}), 1500);
+            }
+        } else {
+            // progress increase
+            let currentProgress = (current / total).toFixed(2) * 100;
+            if (current > initStep){
+                this.allowIncrease = true;
+                initProgress = currentProgress;
+                initializationInfo.unshift({step: current, initProgress});
+                this.setState({
+                    initStatusNum: status,
+                    initStep: current,
+                    initProgress,
+                    initializationInfo
+                });
+            } else if (current === initStep){
+                this.allowIncrease = initProgress < (currentProgress + parseInt(100 / total, 10));
+            }
         }
     }
 
@@ -214,7 +254,7 @@ class Initialize extends Component {
 
                 // the final validation
                 if (this.isNoError()){
-                    let checkResult = await requests.checkIPs();
+                    let checkResult = await httpRequests.checkIPs();
                     if (checkResult){
                         this.setState({currentStep: next});
                     } else {
@@ -243,7 +283,7 @@ class Initialize extends Component {
     }
 
     startInitialization (){
-        let initProgress = this.state.initProgress;
+        /*
         let initTimer = setInterval(async () => {
             initProgress += (initProgress === 10 || initProgress === 40 || initProgress === 70 ? 10 : 1);
             let info = `initialize xxx server, ${lang('进度:', 'progress:')} ${initProgress}%`;
@@ -263,6 +303,30 @@ class Initialize extends Component {
                 }
             }
         }, 300);
+        */
+
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID} = this.props;
+        httpRequests.startInitialization({
+            metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID
+        });
+        this.setProgressTimer();
+    }
+
+    setProgressTimer (){
+        if (!this.progressTimer){
+            this.progressTimer = setInterval(() => {
+                if (this.allowIncrease){
+                    let initProgress = this.state.initProgress + 1;
+                    this.setState({
+                        initProgress: initProgress > 100 ? 100 : initProgress
+                    });
+                }
+            }, 1000);
+        }
+    }
+
+    clearProgressTime (){
+        this.progressTimer && window.clearInterval(this.progressTimer);
     }
 
     forwardLogin (){
@@ -270,6 +334,16 @@ class Initialize extends Component {
     }
 
     render (){
+        let initTipsMap = {
+            0: lang('初始化已开始，请稍候 ...', 'Initializing, pleas wait for a moment ...'),
+            1: lang('正在初始化管理服务器', 'Initializing management server'),
+            2: lang('正在初始化元数据服务器', 'Initializing metadata server'),
+            3: lang('正在初始化存储服务器', 'Initializing storage server'),
+            4: lang('正在初始化客户端', 'Initializing client'),
+            5: lang('正在初始化数据库', 'Initializing database'),
+            6: lang('正在保存初始化配置', 'Saving initialization config'),
+            7: lang('初始化完成！', 'Initialization finished！')
+        };
         return (
             <section className="fs-initialize-wrapper">
                 <section className="fs-initialize-language-btn-wrapper" style={{marginRight: 30}}>
@@ -589,13 +663,17 @@ class Initialize extends Component {
                                 <Progress key={1} className="fs-initialization-progress-bar"
                                     showInfo={false}
                                     percent={this.state.initProgress}
-                                    status={this.state.initProgress === 100 ? 'success' : 'active'}
+                                    status={this.state.initStatusNum === 0 ? (this.state.initProgress === 100 ? 'success' : 'active') : 'exception'}
                                     strokeWidth={15}
                                 />
                             </QueueAnim>
                             <QueueAnim key={1} type="bottom">
                                 <section key="fs-initializing-3" className="fs-initialization-wrapper" ref={ref => this.initInfoWrapper = ref}>
-                                    {this.state.initializationInfo.map((info, i) => <p className="fs-initialization-info" key={i}>{info}</p>)}
+                                    {
+                                        this.state.initializationInfo.map((info, i) => <p className="fs-initialization-info" key={i}>
+                                            {lang('完成百分比：', 'Completion percentage: ') + info.initProgress + '%, ' + initTipsMap[info.step]}
+                                        </p>)
+                                    }
                                 </section>
                             </QueueAnim>
                         </div>
@@ -621,8 +699,8 @@ class Initialize extends Component {
                                             'The following is a login account generated for you, please keep a record of it at a safe place: '
                                         )}
                                     </p>
-                                    <p>{lang('管理员帐号', 'Admin Account')}: admin</p>
-                                    <p>{lang('管理员密码', 'Admin Password')}: 123456</p>
+                                    <p>{lang('管理员帐号', 'Admin Account')}: {this.props.defaultUser.username}</p>
+                                    <p>{lang('管理员密码', 'Admin Password')}: {this.props.defaultUser.password}</p>
                                     <p>
                                         {lang('您可以随时在设置界面中修改密码。', 'You can modify the password at any time on the settings page.')}
                                     </p>
@@ -659,8 +737,8 @@ class Initialize extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID}} = state;
-    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID};
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, initStatus, defaultUser}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, initStatus, defaultUser};
 };
 
 const mapDispatchToProps = dispatch => {

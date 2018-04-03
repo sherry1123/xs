@@ -22,7 +22,7 @@ class TopBar extends Component {
     componentDidMount (){
         let abnormalNodes = lsGet('abnormalNodes');
         if (!abnormalNodes){
-            lsSet('abnormalNodes', JSON.stringify([]));
+            lsSet('abnormalNodes', []);
         }
     }
 

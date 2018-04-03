@@ -15,11 +15,17 @@
             box-shadow: 0 2px 8px rgba(200, 200, 200, 0.7);
         }
         .fs-storage-target-label {
+            .fs-clear-fix();
             &.bottom {
                 padding-left: 18px;
             }
             .fs-storage-target-id {
-                position: relative;
+                float: left;
+                display: block;
+                width: 190px;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
             }
             .fs-target-chart-label-item {
                 position: relative;
@@ -71,7 +77,7 @@
     }
 }
 
-.fs-storage-target-usage-rate {
+.fs-storage-target-popover-item {
     span {
         color: @orange;
     }
