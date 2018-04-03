@@ -21,7 +21,7 @@ const model = {
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
         for (let i of Object.keys(data)) {
-            data[i] = Array.isArray(data[i]) ? data[i] : typeof (data[i]) === 'object' ? [data[i]] : [];
+            data[i] = Array.isArray(data[i]) ? data[i] : typeof data[i] === 'object' ? [data[i]] : [];
             data[i] = data[i].map(j => ({ node: j.node['_'], nodeNumID: Number(j.node.nodeNumID), group: j.node.group }));
         }
         return data;
@@ -34,7 +34,7 @@ const model = {
             data[i] = data[i].value ? data[i].value : data[i];
         }
         data.general = { nodeCount: Number(data.general.nodeCount), rootNode: data.general.rootNode };
-        data.status = Array.isArray(data.status) ? data.status : typeof (data.status) === 'object' ? [data.status] : [];
+        data.status = Array.isArray(data.status) ? data.status : typeof data.status === 'object' ? [data.status] : [];
         data.status = data.status.map(i => ({ value: i['_'] === 'true', node: i.node, nodeNumID: Number(i.nodeNumID) }));
         for (let i of Object.keys(data)) {
             if (String(i).includes('Requests') && Array.isArray(data[i])) {
@@ -66,12 +66,12 @@ const model = {
         for (let i of Object.keys(data)) {
             data[i] = data[i].value ? data[i].value : data[i];
         }
-        data.status = Array.isArray(data.status) ? data.status : typeof (data.status) === 'object' ? [data.status] : [];
+        data.status = Array.isArray(data.status) ? data.status : typeof data.status === 'object' ? [data.status] : [];
         data.status = data.status.map(i => ({ value: i['_'] === 'true', node: i.node, nodeNumID: Number(i.nodeNumID) }));
         for (let i of Object.keys(data)) {
             if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
                 data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
-            } else if (String(i).includes('disk') && typeof (data[i]) === 'object') {
+            } else if (String(i).includes('disk') && typeof data[i] === 'object') {
                 for (let j of Object.keys(data[i])) {
                     data[i][j] = model.toByte(Number(data[i][j].replace(/\s\SiB/, '')), data[i][j].replace(/\S+\s/, '')[0]);
                 }
@@ -88,12 +88,12 @@ const model = {
             data[i] = data[i].value || data[i].target ? data[i].value || data[i].target : data[i];
         }
         data.general = { status: data.general.status === 'true', nodeID: data.general.nodeID, nodeNumID: Number(data.general.nodeNumID) };
-        data.storageTargets = Array.isArray(data.storageTargets) ? data.storageTargets : typeof (data.storageTargets) === 'object' ? [data.storageTargets] : [];
+        data.storageTargets = Array.isArray(data.storageTargets) ? data.storageTargets : typeof data.storageTargets === 'object' ? [data.storageTargets] : [];
         data.storageTargets = data.storageTargets.map(i => ({ id: i['_'], diskSpaceTotal: Number(i.diskSpaceTotal), diskSpaceFree: Number(i.diskSpaceFree), diskSpaceUsed: Number(i.diskSpaceTotal) - Number(i.diskSpaceFree), pathStr: i.pathStr }));
         for (let i of Object.keys(data)) {
             if (String(i).includes('diskPerf') && Array.isArray(data[i])) {
                 data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
-            } else if (String(i).includes('disk') && typeof (data[i]) === 'object') {
+            } else if (String(i).includes('disk') && typeof data[i] === 'object') {
                 for (let j of Object.keys(data[i])) {
                     data[i][j] = model.toByte(Number(data[i][j].replace(/\s\SiB/, '')), data[i][j].replace(/\S+\s/, '')[0]);
                 }
@@ -108,7 +108,7 @@ const model = {
         for (let i of Object.keys(data)) {
             data[i] = data[i].host ? data[i].host : data[i];
         }
-        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : [];
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof data.hosts === 'object' ? [data.hosts] : [];
         for (let i of Object.keys(data)) {
             if (Array.isArray(data[i])) {
                 for (let j in data[i]) {
@@ -116,11 +116,11 @@ const model = {
                         data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
                     }
                 }
-            } else if (typeof (data[i]) === 'object') {
+            } else if (typeof data[i] === 'object') {
                 for (let j of Object.keys(data[i])) {
                     data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
                 }
-            } else if (typeof (data[i]) === 'string' && String(i).includes('ID')) {
+            } else if (typeof data[i] === 'string' && String(i).includes('ID')) {
                 data[i] = Number(data[i]);
             }
         }
@@ -133,7 +133,7 @@ const model = {
         for (let i of Object.keys(data)) {
             data[i] = data[i].host ? data[i].host : data[i];
         }
-        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof (data.hosts) === 'object' ? [data.hosts] : data.hosts;
+        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof data.hosts === 'object' ? [data.hosts] : data.hosts;
         for (let i of Object.keys(data)) {
             if (Array.isArray(data[i])) {
                 for (let j in data[i]) {
@@ -141,11 +141,11 @@ const model = {
                         data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
                     }
                 }
-            } else if (typeof (data[i]) === 'object') {
+            } else if (typeof data[i] === 'object') {
                 for (let j of Object.keys(data[i])) {
                     data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
                 }
-            } else if (typeof (data[i]) === 'string' && String(i).includes('ID')) {
+            } else if (typeof data[i] === 'string' && String(i).includes('ID')) {
                 data[i] = Number(data[i]);
             }
         }
@@ -156,7 +156,7 @@ const model = {
         let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
         let data = json.data;
         for (let i of Object.keys(data)) {
-            data[i] = Array.isArray(data[i]) ? data[i] : typeof (data[i]) === 'object' ? [data[i]] : [];
+            data[i] = Array.isArray(data[i]) ? data[i] : typeof data[i] === 'object' ? [data[i]] : [];
         }
         for (let i of Object.keys(data)) {
             let type = i.replace('dead', '').replace('Nodes', '');
