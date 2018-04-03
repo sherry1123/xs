@@ -1,10 +1,16 @@
 export const fsOperationActionTypes = {
-    SET_STRIPE: 'SET_STRIPE',
+    SET_ENTRY_INFO: 'SET_ENTRY_INFO',
+    SET_FILES: 'SET_FILES',
 };
 
 export default {
-    setStripeInformation: stripe => ({
-        type: fsOperationActionTypes.SET_STRIPE,
-        stripe
+    setEntryInfo: entryInfo => ({
+        type: fsOperationActionTypes.SET_ENTRY_INFO,
+        entryInfo
+    }),
+
+    setFiles: files => ({
+        type: fsOperationActionTypes.SET_FILES,
+        files
     }),
 };

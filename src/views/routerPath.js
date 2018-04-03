@@ -24,6 +24,8 @@ const routerPath = {
 
     UserStatistics: '/user-statistics',
 
+    Snapshot: '/snapshot',
+
     // ManagementKnownProblems: '/management-known-problems',
     ManagementSystemLog: '/management-system-log',
 
@@ -40,6 +42,7 @@ export const pathToMenu = {
     StorageNodes: [routerPath.StorageNodes],
     ClientStatistics: [routerPath.ClientStatistics],
     UserStatistics: [routerPath.UserStatistics],
+    Snapshot: [routerPath.Snapshot],
     Management: [/*routerPath.ManagementKnownProblems,*/ routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser],
 };

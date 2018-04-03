@@ -96,6 +96,9 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.UserStatistics}>
                         <Icon type="bar-chart" />{lang('用户统计', 'User Statistics')}
                     </Menu.Item>
+                    <Menu.Item key={routerPath.Snapshot}>
+                        <Icon type="camera-o" />{lang('快照', 'Snapshot')}
+                    </Menu.Item>
 
                     {/*<Menu.SubMenu key="Management"
                         title={

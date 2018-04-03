@@ -5,6 +5,7 @@ import generalAction from '../redux/actions/generalAction';
 import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
+import fsOperationAction from '../redux/actions/fsOperationAction';
 
 export default  {
     // redux store check
@@ -156,6 +157,33 @@ export default  {
         } catch (e){
             console.info(e.message);
         }
-    }
+    },
+
+    // fs operation
+    async getEntryInfo (dir){
+        try {
+            let data = await fetchGet('/api/getentryinfo', {dir});
+            store.dispatch(fsOperationAction.setEntryInfo(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
+    async getFiles (dir){
+        try {
+            let data = await fetchGet('api/getfiles', {dir});
+            store.dispatch(fsOperationAction.setFiles(data));
+        } catch (e){
+            console.info(e.message);
+        }
+    },
+
+    async saveEntryInfo (data){
+        try {
+            await fetchPost('/api/setpattern',  data);
+        } catch (e){
+            console.info(e.message);
+        }
+    },
 
 };

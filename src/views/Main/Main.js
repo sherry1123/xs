@@ -20,8 +20,11 @@ import ClientStatistics from '../ClientStatistics/ClientStatistics';
 // user statistics metadata
 import UserStatistics from '../UserStatistics/UserStatistics';
 
+// snapshot
+import Snapshot from '../Snapshot/Snapshot';
+
 // management
-import ManagementKnownProblems from '../Management/ManagementKnownProblems';
+// import ManagementKnownProblems from '../Management/ManagementKnownProblems';
 import ManagementSystemLog from '../Management/ManagementSystemLog';
 
 // fs operation
@@ -87,7 +90,11 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
 
+                        <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
+
+                        {/*
                         <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />
+                        */}
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
 
                         {/*

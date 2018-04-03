@@ -20,13 +20,8 @@ export const lsGet = (keys) => {
     }
 };
 
-export const lsSet = (keys, vals) => {
-    !Array.isArray(keys) && (keys = [keys]);
-    !Array.isArray(vals) && (vals = [vals]);
-    keys.forEach((key, i) => {
-        let valStr = JSON.stringify(vals[i] || []);
-        localStorage.setItem(key, valStr);
-    });
+export const lsSet = (key, val) => {
+    localStorage.setItem(key, JSON.stringify(val));
 };
 
 export const lsRemove = (keys) => {

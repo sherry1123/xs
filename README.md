@@ -12,10 +12,9 @@ At the same time, the HTTP proxy provided by webpack dev-server is also indispen
 
 2. The current popular state management framework is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />
 [https://redux.js.org](https://redux.js.org) <br />
-[https://redux.js.org/basics/usage-with-react](https://redux.js.org/basics/usage-with-react) <br />
 
 3. For router implementation we use 'react-router': <br />
-[https://reacttraining.com](https://reacttraining.com) <br />
+[https://reacttraining.com/react-router/web/example/basic](https://reacttraining.com/react-router/web/example/basic) <br />
 
 4. We use the 'antd' as UI component library that is provided by Ant Financial R D team: <br />
 [https://ant.design](https://ant.design)

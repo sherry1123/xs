@@ -1,40 +1,74 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, /*Checkbox,*/ Form, Icon, Input, Select, Table} from 'antd';
+import {Button, /*Checkbox,*/ Form, Icon, Input, message, Select, Table, Popover} from 'antd';
 import lang from '../../components/Language/lang';
-import {timeFormat} from "../../services";
+import {formatStorageSize} from '../../services';
+import httpRequests from '../../http/requests';
 
 class FSOperation extends Component {
     constructor (props){
         super(props);
-        let {stripe} = props;
+        let {entryInfo} = props;
+        this.minChunkSize = 65536;
+        this.directoryStack = [];
         this.state = {
-            path: stripe.dirPath,
-            stripe
+            dirPath: entryInfo.dirPath,
+            entryInfo,
+            readonly: false
         };
     }
 
+    componentDidMount (){
+        let defaultDirPath = this.state.dirPath || '/';
+        this.queryDirPath(defaultDirPath);
+        // firstly put the root directory path '/' into directory stack as the earliest one
+        this.directoryStack.unshift(defaultDirPath);
+
+    }
+
     componentWillReceiveProps (nextProps){
-        let {stripe} = nextProps;
-        this.setState({
-            path: stripe.dirPath,
-            stripe
-        });
+        let {entryInfo} = nextProps;
+        this.setState({entryInfo});
     }
 
-    queryPath (path){
-        // query file
-
-        // query stripe
-
-        console.info(path);
+    queryDirPath (dirPath){
+        // query files
+        httpRequests.getFiles(dirPath);
+        // query entry info
+        httpRequests.getEntryInfo(dirPath);
+        // console.info(dirPath);
     }
 
-    forwardStripeSettings (){
-
+    backTrackDirectoryStack (){
+        let directoryStack = [...this.directoryStack];
+        let dirPath = '';
+        directoryStack.reverse().forEach(path => dirPath += path);
+        this.setState({dirPath});
+        return dirPath;
     }
 
-    stripeFormChange (key, value){
+    returnUpperDirectory (){
+        this.directoryStack.shift();
+        let lastDirPath = this.backTrackDirectoryStack();
+        httpRequests.getFiles(lastDirPath);
+        httpRequests.getEntryInfo(lastDirPath);
+    }
+
+    enterDirectory (dirPath){
+        this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
+        let nextDirPath = this.backTrackDirectoryStack();
+        httpRequests.getFiles(nextDirPath);
+        httpRequests.getEntryInfo(nextDirPath);
+    }
+
+    getEntryInfo (dirPath, readonly){
+        this.setState({readonly});
+        let currentDirPath = this.backTrackDirectoryStack();
+        currentDirPath = currentDirPath + (this.directoryStack.length > 1 ? '/' : '') + dirPath;
+        httpRequests.getEntryInfo(currentDirPath);
+    }
+
+    entryInfoFormChange (key, value){
         let stripe = Object.assign({}, this.state.stripe);
         if (key === 'stripeMode'){
             value = (value === 'buddyMirror') ? 1 : 0;
@@ -43,15 +77,27 @@ class FSOperation extends Component {
         this.setState({stripe});
     }
 
-    saveStripeConfig (){
-
+    async saveStripeConfig (){
+        if (this.state.stripe.chunkSize < this.minChunkSize){
+            return message.error(lang('块大小不能小于64KB（65536Byte）', 'Chunk size can not be less than 64KB(65536Byte)'));
+        }
+        try {
+            await httpRequests.saveEntryInfo(this.stripe);
+            message.success(lang('条带设置保存成功！', 'Stripe setting has been saved successfully!'));
+        } catch (e){
+            message.error(e);
+        }
     }
 
     render (){
-        let {fileList} = this.props;
-        let {stripe} = this.state;
+        let {entryInfo} = this.state;
+        let {files} = this.props;
+        files = [...files];
+        if (this.directoryStack.length > 1){
+            files.unshift({name: '..', isDir: true});
+        }
         let tableProps = {
-            dataSource: fileList,
+            dataSource: files,
             pagination: false,
             rowKey: 'name',
             locale: {
@@ -59,11 +105,31 @@ class FSOperation extends Component {
             },
             scroll: {y: 500},
             columns: [
-                {title: lang('名称', 'Name'), width: 125, dataIndex: 'name'},
-                {title: lang('入口', 'Portal'), width: 70, dataIndex: 'portal'},
-                {title: lang('用户/权限/组', 'User/Perm/Group'), width: 120, dataIndex: 'user',
-                    render: (text, record) => `${text}/${record.permission}/${record.group}`
+                {title: lang('名称', 'Name'), width: 125, dataIndex: 'name',
+                    render: (text, record) => (
+                        record.isDir ?
+                            ((text === '..' && !record.hasOwnProperty('user')) ?
+                                <a onClick={this.returnUpperDirectory.bind(this, text)} title={lang('点击返回上层目录', 'Click Enter Upper Directory')}>
+                                    <b>..</b>
+                                </a> :
+                                <a onClick={this.enterDirectory.bind(this, text)} title={lang('点击进入目录', 'Click Enter Directory')}>
+                                    <Icon type="folder" /> {text}
+                                </a>
+                            ) :
+                            <span><Icon type="file" /> {text}</span>
+                    )
                 },
+                {title: lang('入口 / 大小', 'Entries / Size'), width: 120, dataIndex: 'size',
+                    render: (text, record) => (
+                        record.isDir && record.hasOwnProperty('user') ?
+                            text + lang(' 入口', ' Entries') :
+                            formatStorageSize(text)
+                    )
+                },
+                {title: lang('用户', 'User'), width: 120, dataIndex: 'user'},
+                {title: lang('组', 'Group'), width: 120, dataIndex: 'group'},
+                {title: lang('权限', 'Permission'), width: 120, dataIndex: 'permissions'},
+                /*
                 {title: lang('最后状态时间', 'Last Status Time'), width: 125, dataIndex: 'lastStatusTime',
                     render: text => timeFormat(text)
                 },
@@ -73,13 +139,20 @@ class FSOperation extends Component {
                 {title: lang('最后访问时间', 'Last Access Time'), width: 125, dataIndex: 'lastAccessTime',
                     render: text => timeFormat(text)
                 },
-                {title: lang('操作', 'Ops'), width: 40,
-                    render: () => (
-                        <div>
-                            <a onClick={this.forwardStripeSettings.bind(this)} title={lang('设置', 'Settings')}>
+                */
+                {title: lang('操作', 'Operation'), width: 60,
+                    render: (text, record) => (
+                        record.isDir && record.hasOwnProperty('user') ?
+                            <a onClick={() => {this.getEntryInfo.bind(this, record.name, false)()}} title={lang('设置', 'Settings')}>
                                 <Icon style={{fontSize: 15}} type="setting" />
-                            </a>
-                        </div>
+                            </a> :
+                            (!record.isDir ?
+                                <a onClick={() => {this.getEntryInfo.bind(this, record.name, true)()}} title={lang('显示', 'Settings')}>
+                                    <Icon style={{fontSize: 15}} type="setting" />
+                                </a> :
+                                <a onClick={() => {this.returnUpperDirectory.bind(this)()}} title={lang('返回上一级', 'Return Upper Directory')}>
+                                    <Icon style={{fontSize: 15}} type="rollback" />
+                                </a>)
                     )
                 }
             ],
@@ -92,13 +165,13 @@ class FSOperation extends Component {
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-query-wrapper">
                         <Form layout="inline">
-                            <Form.Item label={lang('文件路径', 'File Path')}>
+                            <Form.Item label={lang('路径', 'Path')}>
                                 <Input placeholder={lang('请输入路径', 'enter path')} size="small"
                                        style={{width: 250}}
-                                       value={this.state.path}
+                                       value={this.state.dirPath}
                                        onChange={({target: {value}}) => {
-                                           this.setState({path: value});
-                                           this.queryPath.bind(this, value)();
+                                           this.setState({dirPath: value});
+                                           this.queryDirPath.bind(this, value)();
                                        }}
                                 />
                             </Form.Item>
@@ -123,30 +196,33 @@ class FSOperation extends Component {
                         <section className="fs-page-item-content">
                             <Form className="fs-stripe-form">
                                 <Form.Item label={lang('路径', 'Path')}>
-                                    <span>{stripe.dirPath}</span>
+                                    <span>{entryInfo.dirPath}</span>
                                 </Form.Item>
                                 <Form.Item label={lang('默认目标数', 'Default Targets Number')}>
-                                    <Input placeholder={lang('请输入默认目标数', 'enter default target number')} style={{width: 130}} size="small"
-                                           value={stripe.numTargets}
+                                    <Input placeholder={lang('请输入默认目标数', 'enter default target number')} style={{width: 150}} size="small"
+                                           value={entryInfo.numTargets}
                                            onChange={({target: {value}}) => {
-                                               this.stripeFormChange.bind(this, 'defaultTargetNumber', value)();
+                                               this.entryInfoFormChange.bind(this, 'numTargets', value)();
                                            }}
                                     />
                                 </Form.Item>
                                 <Form.Item label={lang('块大小', 'Block Size')}>
-                                    <Input placeholder={lang('请输入块大小', 'enter block size')} style={{width: 130}} size="small"
-                                           value={stripe.chunkSize}
+                                    <Input placeholder={lang('请输入块大小', 'enter block size')} style={{width: 150}} size="small"
+                                           value={entryInfo.chunkSize}
                                            onChange={({target: {value}}) => {
-                                               this.stripeFormChange.bind(this, 'blockSize', value)();
+                                               this.entryInfoFormChange.bind(this, 'chunkSize', value)();
                                            }}
                                     /><span style={{marginLeft: 12}}>{lang('字节', 'Byte')}</span>
+                                    <Popover content={lang('块大小不能小于64KB（65536Byte）', 'Chunk size can not be less than 64KB(65536Byte)')}>
+                                        <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                                    </Popover>
                                 </Form.Item>
                                 <Form.Item label={lang('条带模式', 'Stripe Mode')}>
-                                    <Select style={{width: 130}} size="small"
+                                    <Select style={{width: 150}} size="small"
                                             placeholder={lang('请选择条带模式', 'select stripe mode')}
-                                            value={stripe.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
+                                            value={entryInfo.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
                                             onChange={value => {
-                                                this.stripeFormChange.bind(this, 'buddyMirror', value)();
+                                                this.entryInfoFormChange.bind(this, 'buddyMirror', value)();
                                             }}
                                     >
                                         <Select.Option value="raid0">RAID 0</Select.Option>
@@ -157,13 +233,18 @@ class FSOperation extends Component {
                                  <Form.Item label={lang('元数据镜像', 'Metadata Image')} {...formItemLayout}>
                                     <Checkbox checked={stripe.isMetadataImage}
                                         onChange={({target: {checked}}) => {
-                                            this.stripeFormChange.bind(this, 'isMetadataImage', checked)();
+                                            this.entryInfoFormChange.bind(this, 'isMetadataImage', checked)();
                                         }}
                                     />
                                 </Form.Item>
                                 */}
                                 <Form.Item style={{marginTop: 20}} wrapperCol={{sm: {offset: 17}}}>
-                                    <Button icon="save" size="small" onClick={this.saveStripeConfig.bind(this)}>{lang('保存', 'Save')}</Button>
+                                    <Button icon="save" size="small"
+                                        disabled={this.state.readonly}
+                                        onClick={this.saveStripeConfig.bind(this)}
+                                    >
+                                        {lang('保存', 'Save')}
+                                    </Button>
                                 </Form.Item>
                             </Form>
                         </section>
@@ -175,8 +256,8 @@ class FSOperation extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {fsOperation: {stripe, fileList}}} = state;
-    return {language, stripe, fileList};
+    const {language, main: {fsOperation: {entryInfo, files}}} = state;
+    return {language, entryInfo, files};
 };
 
 export default connect(mapStateToProps)(FSOperation);
