@@ -201,6 +201,13 @@ const model = {
                 res.data = [];
             }
         }
+        let dirList = [], fileList = [];
+        for (let i in res.data) {
+            res.data[i].isDir ? dirList.push(res.data[i]) : fileList.push(res.data[i]);
+        }
+        dirList = dirList.sort((prev, next) => (prev.name > next.name));
+        fileList = fileList.sort((prev, next) => (prev.name > next.name));
+        res.data = dirList.concat(fileList);
         return res;
     },
     async setPattern(param) {
