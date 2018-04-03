@@ -4,23 +4,6 @@ const socket = require('../module/socket');
 const model = {
     '/api/testapi': ctx => {
         ctx.body = ctx;
-        let startTime = new Date();
-        let current = 1;
-        socket.postInitStatus({current: 0, status: 0, total: 8});
-        let test = setInterval((boom) => {
-            let currentTime = new Date();
-            let intervalTime = new Date() - startTime;
-            if (intervalTime > 5 * 1000) {
-                current += 1;
-                startTime = currentTime;
-            }
-            if (current === 2) 
-                startTime -= 3 * 1000;
-            if (current === 8) {
-                clearInterval(test);
-            }
-            socket.postInitStatus({current, status: 0, total: 8});
-        }, 1000);
     },
     '/api/getuser': async ctx => {
         ctx.body = await service.getUser(ctx.param);
