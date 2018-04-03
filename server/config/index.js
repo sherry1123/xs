@@ -28,7 +28,10 @@ exports.api = {
         createcluster: 'http://192.168.100.101:9090/cluster/create',
         createstatus: 'http://192.168.100.101:9090/cluster/createstatus',
         listdisk: 'http://192.168.100.101:9090/disk/list/',
-        destroycluster: 'http://192.168.100.101:9090/cluster/destroy'
+        destroycluster: 'http://192.168.100.101:9090/cluster/destroy',
+        entryinfo: 'http://192.168.100.101:9090/cluster/getentryinfo',
+        getfiles: 'http://192.168.100.101:9090/cluster/getfiles',
+        setpattern: 'http://192.168.100.101:9090/cluster/setpattern'
     },
     admon: {
         nodelist: 'http://192.168.100.101:8000/XML_NodeList',

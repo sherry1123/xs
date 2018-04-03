@@ -117,6 +117,15 @@ const model = {
     },
     '/api/getdisklist': async ctx => {
         ctx.body = await service.getDiskList(ctx.param);
+    },
+    '/api/getentryinfo': async ctx => {
+        ctx.body = await service.getEntryInfo(ctx.param);
+    },
+    '/api/getfiles': async ctx => {
+        ctx.body = await service.getFiles(ctx.param);
+    },
+    '/api/setpattern': async ctx => {
+        ctx.body = await service.setPattern(ctx.param);
     }
 };
 module.exports = model;

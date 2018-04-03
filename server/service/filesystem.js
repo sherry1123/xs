@@ -179,6 +179,33 @@ const model = {
             }
         }
         return res;
+    },
+    async getEntryInfo(param) {
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.entryinfo, param, token, true);
+        if (!res.errorId) {
+            res.data.chunkSize = model.toByte(Number(res.data.chunkSize.replace(/[a-zA-Z]/, '')), res.data.chunkSize.replace(/\d+/, ''));
+            res.data.numTargets = Number(res.data.numTargets);
+        }
+        return res;
+    },
+    async getFiles(param) {
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.getfiles, param, token, true);
+        if (!res.errorId) {
+            if (res.data) {
+                for (let i of Object.keys(res.data)) {
+                    res.data[i].size = Number(res.data[i].size);
+                }
+            } else {
+                res.data = [];
+            }
+        }
+        return res;
+    },
+    async setPattern(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.setpattern, param, token, true);
     }
 };
 module.exports = model;

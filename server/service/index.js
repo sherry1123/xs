@@ -572,6 +572,48 @@ const model = {
             result = responseHandler(22, error, param);
         }
         return result;
+    },
+    async getEntryInfo(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getEntryInfo(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(22, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    async getFiles(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getFiles(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(22, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
+    },
+    async setPattern(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.setPattern(param);
+            if (!res.errorId) {
+                result = responseHandler(0, 'set pattern successfully');
+            } else {
+                result = responseHandler(22, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(22, error, param);
+        }
+        return result;
     }
 };
 module.exports = model;
