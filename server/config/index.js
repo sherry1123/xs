@@ -28,7 +28,10 @@ exports.api = {
         createcluster: 'http://192.168.100.101:9090/cluster/create',
         createstatus: 'http://192.168.100.101:9090/cluster/createstatus',
         listdisk: 'http://192.168.100.101:9090/disk/list/',
-        destroycluster: 'http://192.168.100.101:9090/cluster/destroy'
+        destroycluster: 'http://192.168.100.101:9090/cluster/destroy',
+        entryinfo: 'http://192.168.100.101:9090/cluster/getentryinfo',
+        getfiles: 'http://192.168.100.101:9090/cluster/getfiles',
+        setpattern: 'http://192.168.100.101:9090/cluster/setpattern'
     },
     admon: {
         nodelist: 'http://192.168.100.101:8000/XML_NodeList',
@@ -42,7 +45,7 @@ exports.api = {
     }
 }
 exports.logs = {
-    path: '/logs/server.log',
+    path: '/var/log/orcafs-gui.log',
     maxSize: 1024 * 1024 * 10,
     backup: 3
 };
@@ -96,5 +99,24 @@ exports.errors = {
     19: 'get hardware error',
     20: 'add hardware error',
     21: 'test mail error',
-    22: 'send mail error'
+    22: 'send mail error',
+    23: 'get nodelist error',
+    24: 'get metadata nodes overview error',
+    25: 'get metadata node detail error',
+    26: 'get storage nodes overview error',
+    27: 'get storage node detail error',
+    28: 'get client stats error',
+    29: 'get user stats error',
+    30: 'get storage nodes status and disk summary error',
+    31: 'get storage nodes throughput error',
+    32: 'get storage node status and disk summary error',
+    33: 'get storage node throughput error',
+    34: 'get metadata nodes status error',
+    35: 'get metadata nodes request error',
+    36: 'get metadata node status error',
+    37: 'get known problems error',
+    38: 'get disk list error',
+    39: 'get entry info error',
+    40: 'get files error',
+    41: 'set pattern error'
 };

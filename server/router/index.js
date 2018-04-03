@@ -33,5 +33,8 @@ router.all('/api/getmetanodesrequest', controller['/api/getmetanodesrequest']);
 router.all('/api/getmetanodesummary', controller['/api/getmetanodesummary']);
 router.all('/api/getknownproblems', controller['/api/getknownproblems']);
 router.all('/api/getdisklist', controller['/api/getdisklist']);
+router.all('/api/getentryinfo', controller['/api/getentryinfo']);
+router.all('/api/getfiles', controller['/api/getfiles']);
+router.all('/api/setpattern', controller['/api/setpattern']);
 
 module.exports = router;
