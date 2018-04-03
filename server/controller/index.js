@@ -1,6 +1,5 @@
 const config = require('../config');
 const service = require('../service');
-const socket = require('../module/socket');
 const model = {
     '/api/testapi': ctx => {
         ctx.body = ctx;
