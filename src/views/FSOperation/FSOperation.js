@@ -31,7 +31,7 @@ class FSOperation extends Component {
         this.setState({entryInfo});
     }
 
-    queryDirPath (dirPath){
+    async queryDirPath (dirPath){
         // query files
         httpRequests.getFiles(dirPath);
         // query entry info

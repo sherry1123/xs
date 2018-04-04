@@ -8,7 +8,7 @@ import managementAction from '../redux/actions/managementAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
 const errorHandler = e => {
-    console.error('http request error: ' + (e.message || 'no clear error message'));
+    console.info('http request error: ' + (e.message || 'no clear error message'));
 };
 
 export default  {
