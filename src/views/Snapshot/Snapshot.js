@@ -1,11 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, Modal, Table} from 'antd';
+import {Button, Icon, Input, Modal, Table} from 'antd';
 import lang from "../../components/Language/lang";
 import {formatStorageSize, timeFormat} from '../../services';
 
 class Snapshot extends Component {
-    rollback (name){
+    constructor (props){
+        super(props);
+        this.state = {
+            query: ''
+        };
+    }
+
+    queryChange (){
+
+    }
+
+    searchInTable (){
+
+    }
+
+    delete (name){
         Modal.confirm({
             title: lang(`确定删除这个快照: ${name} ?`, `Are you sure you want to delete this snapshot: ${name} ?`),
             content: lang('此操作不可恢复', 'You can\'t undo this action'),
@@ -20,7 +35,7 @@ class Snapshot extends Component {
         });
     }
 
-    delete (name){
+    rollback (name){
         Modal.confirm({
             title: lang(`确定回滚这个快照: ${name} ?`, `Are you sure you want to rollback this snapshot: ${name} ?`),
             content: lang('此操作不可恢复', 'You can\'t undo this action'),
@@ -81,6 +96,12 @@ class Snapshot extends Component {
                 </section>
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
+                        <Input.Search style={{marginRight: 15, width: 150}} size="small"
+                            placeholder={lang('快照名称', 'snapshot name')}
+                            value={this.state.query}
+                            onChange={this.queryChange.bind(this)}
+                            onSearch={this.searchInTable.bind(this)}
+                        />
                         <Button className="fs-create-snapshot-button"
                             size="small"
                             onClick={() => {

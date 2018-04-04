@@ -7,6 +7,10 @@ import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
+const errorHandler = e => {
+    console.error('http request error: ' + (e.message || 'no clear error message'));
+};
+
 export default  {
     // redux store check
     checkStoreIsReady (){
@@ -26,7 +30,7 @@ export default  {
             // await fetchPost('/api/testapi', config);
             await fetchPost('/api/init', config);
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -35,7 +39,7 @@ export default  {
             let data = await fetchPost('/api/getuser');
             store.dispatch(initializeAction.setDefaultUser(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -44,7 +48,7 @@ export default  {
             await this.checkStoreIsReady();
             return await fetchMock(IPs);
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -64,7 +68,7 @@ export default  {
             let data = await fetchGet('/api/getknownproblems');
             store.dispatch(generalAction.setKnownProblems(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -74,7 +78,7 @@ export default  {
             let data = await fetchGet('/api/getmetanodessummary');
             store.dispatch(metadataNodeAction.setMetadataNodeOverviewSummary(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -83,7 +87,7 @@ export default  {
             let data = await fetchGet('/api/getmetanodesrequest');
             store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -93,7 +97,7 @@ export default  {
                 let data = await fetchGet('/api/getmetanodesummary', {node, nodeNumID});
                 store.dispatch(metadataNodeAction.setMetadataNodeDetailSummary(data));
             } catch (e){
-                console.info(e.message);
+                errorHandler(e);
             }
         }
     },
@@ -104,7 +108,7 @@ export default  {
             let data = await fetchGet('/api/getstoragenodessummary');
             store.dispatch(storageNodeAction.setStorageNodeOverviewSummary(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -113,7 +117,7 @@ export default  {
             let data = await fetchGet('/api/getstoragenodesthroughput');
             store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -124,7 +128,7 @@ export default  {
                 let data = await fetchGet('/api/getstoragenodesummary', {node, nodeNumID});
                 store.dispatch(storageNodeAction.setStorageNodeDetailSummary(data));
             } catch (e){
-                console.info(e.message);
+                errorHandler(e);
             }
         }
     },
@@ -135,7 +139,7 @@ export default  {
                 let data = await fetchGet('/api/getstoragenodethroughput', {node, nodeNumID});
                 store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
             } catch (e){
-                console.info(e.message);
+                errorHandler(e);
             }
         }
     },
@@ -146,7 +150,7 @@ export default  {
             let data = await fetchGet('/api/geteventlog');
             store.dispatch(managementAction.setSystemEventLogs(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -155,7 +159,7 @@ export default  {
             let data = await fetchGet('/api/getauditlog');
             store.dispatch(managementAction.setSystemAuditLogs(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -165,7 +169,7 @@ export default  {
             let data = await fetchGet('/api/getentryinfo', {dir});
             store.dispatch(fsOperationAction.setEntryInfo(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -174,7 +178,7 @@ export default  {
             let data = await fetchGet('api/getfiles', {dir});
             store.dispatch(fsOperationAction.setFiles(data));
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
@@ -182,7 +186,7 @@ export default  {
         try {
             await fetchPost('/api/setpattern',  data);
         } catch (e){
-            console.info(e.message);
+            errorHandler(e);
         }
     },
 
