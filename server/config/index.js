@@ -25,24 +25,24 @@ exports.api = {
         knownproblems: 'http://localhost:3457/hardware/getknownproblems'
     },
     orcafs: {
-        gettoken: 'http://192.168.100.101:9090/token/get',
-        createcluster: 'http://192.168.100.101:9090/cluster/create',
-        createstatus: 'http://192.168.100.101:9090/cluster/createstatus',
-        listdisk: 'http://192.168.100.101:9090/disk/list/',
-        destroycluster: 'http://192.168.100.101:9090/cluster/destroy',
-        entryinfo: 'http://192.168.100.101:9090/cluster/getentryinfo',
-        getfiles: 'http://192.168.100.101:9090/cluster/getfiles',
-        setpattern: 'http://192.168.100.101:9090/cluster/setpattern'
+        gettoken: 'http://localhost:9090/token/get',
+        createcluster: 'http://localhost:9090/cluster/create',
+        createstatus: 'http://localhost:9090/cluster/createstatus',
+        listdisk: 'http://localhost:9090/disk/list/',
+        destroycluster: 'http://localhost:9090/cluster/destroy',
+        entryinfo: 'http://localhost:9090/cluster/getentryinfo',
+        getfiles: 'http://localhost:9090/cluster/getfiles',
+        setpattern: 'http://localhost:9090/cluster/setpattern'
     },
     admon: {
-        nodelist: 'http://192.168.100.101:8000/XML_NodeList',
-        metanodesoverview: 'http://192.168.100.101:8000/XML_MetanodesOverview',
-        metanode: 'http://192.168.100.101:8000/XML_Metanode',
-        storagenodesoverview: 'http://192.168.100.101:8000/XML_StoragenodesOverview',
-        storagenode: 'http://192.168.100.101:8000/XML_Storagenode',
-        clientstats: 'http://192.168.100.101:8000/XML_ClientStats',
-        userstats: 'http://192.168.100.101:8000/XML_UserStats',
-        knownproblems: 'http://192.168.100.101:8000/XML_KnownProblems'
+        nodelist: 'http://localhost:8000/XML_NodeList',
+        metanodesoverview: 'http://localhost:8000/XML_MetanodesOverview',
+        metanode: 'http://localhost:8000/XML_Metanode',
+        storagenodesoverview: 'http://localhost:8000/XML_StoragenodesOverview',
+        storagenode: 'http://localhost:8000/XML_Storagenode',
+        clientstats: 'http://localhost:8000/XML_ClientStats',
+        userstats: 'http://localhost:8000/XML_UserStats',
+        knownproblems: 'http://localhost:8000/XML_KnownProblems'
     }
 }
 exports.logs = {
