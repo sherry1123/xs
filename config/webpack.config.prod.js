@@ -263,10 +263,12 @@ module.exports = {
                     // Make sure to add the new loader(s) before the "file" loader.
                 ],
             },
+            /*
             {
                 test: /\.(woff|svg|eot|tff)\??.*$/,
                 loader: 'url-loader?name=fonts/[name].[md5:hash:hex:7].[ext]',
             },
+            */
         ],
     },
     plugins: [
