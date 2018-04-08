@@ -104,6 +104,7 @@ const model = {
                             socket.postInitStatus({ current: 7, status: 0, total: totalStep + 3 });
                             init.setInitStatus(true);
                             logger.info('init successfully');
+                            await model.restartServer(nodelist);
                         }
                     }
                 }, 1000);
@@ -130,16 +131,17 @@ const model = {
                 let progress = await init.getOrcaFSInitProgress();
                 if (!progress.errorId) {
                     let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                    logger.info({ currentStep, describle, errorMessage, status, totalStep })
                     if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
                         let mongodbStatus = await init.getMongoDBStatus();
+                        let nodelist = ['127.0.0.1'];
                         if (mongodbStatus) {
-                            let nodelist = await database.getSetting({ key: 'nodelist' });
+                            nodelist = await database.getSetting({ key: 'nodelist' });
                             nodelist = JSON.parse(nodelist.value);
                             await init.antiInitMongoDB(nodelist);
                         }
                         logger.info('antiinit successfully');
+                        await model.restartServer(nodelist);
                     }
                 }
             }, 1000);
@@ -775,6 +777,13 @@ const model = {
      */
     getInitCache() {
         return responseHandler(0, { status: init.getInitStatus() ? true : false });
+    },
+    async restartServer(nodelist) {
+        let command = 'sudo service orcafs-gui restart';
+        nodelist = nodelist.reverse();
+        for (let i = 0; i < nodelist.length; i ++) {
+            i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
+        }
     }
 };
 module.exports = model;
