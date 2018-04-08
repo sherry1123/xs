@@ -177,19 +177,19 @@ const model = {
         await model.addAuditLog({ user: param.username, desc: 'logout success' });
         return result;
     },
-     /**
-     * Get User
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     * @param {string} email Email
-     * @param {string} firstname First Name
-     * @param {string} lastname Last Name
-     * @param {string} group Group
-     * @param {string} type Type
-     * @param {boolean} receivemail Receive Email Or Not
-     * @param {int} useravatar User Avatar
-     */
+    /**
+    * Get User
+    * 
+    * @param {string} username Username
+    * @param {string} password Password
+    * @param {string} email Email
+    * @param {string} firstname First Name
+    * @param {string} lastname Last Name
+    * @param {string} group Group
+    * @param {string} type Type
+    * @param {boolean} receivemail Receive Email Or Not
+    * @param {int} useravatar User Avatar
+    */
     async getUser(param) {
         let result = {};
         try {
@@ -200,19 +200,19 @@ const model = {
         }
         return result;
     },
-     /**
-     * Add User
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     * @param {string} email Email
-     * @param {string} firstname First Name
-     * @param {string} lastname Last Name
-     * @param {string} group Group
-     * @param {string} type Type
-     * @param {boolean} receivemail Receive Email Or Not
-     * @param {int} useravatar User Avatar
-     */
+    /**
+    * Add User
+    * 
+    * @param {string} username Username
+    * @param {string} password Password
+    * @param {string} email Email
+    * @param {string} firstname First Name
+    * @param {string} lastname Last Name
+    * @param {string} group Group
+    * @param {string} type Type
+    * @param {boolean} receivemail Receive Email Or Not
+    * @param {int} useravatar User Avatar
+    */
     async addUser(param) {
         let result = {};
         try {
@@ -768,6 +768,12 @@ const model = {
             result = responseHandler(41, error, param);
         }
         return result;
-    }
+    },
+    /**
+     * Get Init Cache
+     */
+    getInitCache() {
+        return responseHandler(0, { status: init.getInitStatus() ? true : false });
+    },
 };
 module.exports = model;
