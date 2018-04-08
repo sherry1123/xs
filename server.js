@@ -9,7 +9,7 @@ const getWorkerFromProgress = worker => ({ name: worker.process.env.NAME, initSt
 const startNewWorker = id => {
 	let { isMaster, initStatus } = cluster.settings;
 	if ((!initStatus && id !== 3) || (initStatus && isMaster) || (initStatus && !isMaster && id !== 2)) {
-		cluster.fork(getWorkerFromConfig(id, initStatus));
+		cluster.fork(getWorkerFromConfig(id, initStatus, isMaster));
 		cluster.workers[id].on('message', messageHandler);
 		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerFromConfig(id, initStatus, isMaster)));
 	}
