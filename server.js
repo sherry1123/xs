@@ -4,14 +4,14 @@ const service = require('./server/service');
 const logger = require('./server/module/logger');
 const init = require('./server/service/initialize');
 const workerNameList = config.process.name;
-const getWorkerFromConfig = (id, initStatus) => ({ NAME: workerNameList[id], INIT_STATUS: initStatus });
-const getWorkerFromProgress = worker => ({ name: worker.process.env.NAME, initStatus: worker.process.env.INIT_STATUS });
+const getWorkerFromConfig = (id, initStatus, isMaster) => ({ NAME: workerNameList[id], INIT_STATUS: initStatus, IS_MASTER: isMaster });
+const getWorkerFromProgress = worker => ({ name: worker.process.env.NAME, initStatus: worker.process.env.INIT_STATUS, isMaster: worker.process.env.IS_MASTER });
 const startNewWorker = id => {
 	let { isMaster, initStatus } = cluster.settings;
 	if ((!initStatus && id !== 3) || (initStatus && isMaster) || (initStatus && !isMaster && id !== 2)) {
 		cluster.fork(getWorkerFromConfig(id, initStatus));
 		cluster.workers[id].on('message', messageHandler);
-		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerFromConfig(id, initStatus)));
+		cluster.workers[id].on('exit', cluster.fork.bind(this, getWorkerFromConfig(id, initStatus, isMaster)));
 	}
 };
 const messageHandler = msg => {

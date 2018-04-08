@@ -4,7 +4,8 @@ exports.process = {
 exports.env = {
     root: process.env.PWD,
     name: process.env.NAME,
-    init: process.env.INIT_STATUS
+    init: process.env.INIT_STATUS,
+    master: process.env.IS_MASTER
 };
 exports.database = {
     name: 'storage',
