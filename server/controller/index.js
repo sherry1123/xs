@@ -1,5 +1,6 @@
 const config = require('../config');
 const service = require('../service');
+const getClientIP = ctx => (ctx.get('x-real-ip'));
 const model = {
     '/api/testapi': ctx => {
         ctx.body = ctx;
@@ -17,13 +18,13 @@ const model = {
         ctx.body = await service.deleteUser(ctx.param);
     },
     '/api/login': async ctx => {
-        ctx.body = await service.login(ctx.param);
+        ctx.body = await service.login(ctx.param, getClientIP(ctx));
         if (!ctx.body.code) {
             ctx.cookies.set('login', 'true', config.cookies);
         }
     },
     '/api/logout': async ctx => {
-        ctx.body = await service.logout(ctx.param);
+        ctx.body = await service.logout(ctx.param, getClientIP(ctx));
         ctx.cookies.set('login', 'false', config.cookies);
     },
     '/api/geteventlog': async ctx => {

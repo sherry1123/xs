@@ -1,3 +1,4 @@
+const os = require('os');
 const email = require('./email');
 const config = require('../config');
 const init = require('./initialize');
@@ -152,12 +153,12 @@ const model = {
      * @param {string} username Username
      * @param {string} password Password
      */
-    async login(param) {
+    async login(param, ip) {
         let result = {};
         try {
             let data = await database.getUser(param);
             if (data.username) {
-                await model.addAuditLog({ user: param.username, desc: 'login success' });
+                await model.addAuditLog({ user: param.username, desc: 'login success', ip });
                 result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
@@ -172,9 +173,9 @@ const model = {
      * 
      * @param {string} username Username
      */
-    async logout(param) {
+    async logout(param, ip) {
         let result = responseHandler(0, 'logout success');
-        await model.addAuditLog({ user: param.username, desc: 'logout success' });
+        await model.addAuditLog({ user: param.username, desc: 'logout success', ip });
         return result;
     },
     /**
@@ -295,7 +296,7 @@ const model = {
      * @param {boolean} read Read Or Not
      */
     async addEventLog(param) {
-        let { time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false } = param;
+        let { time = new Date(), node = os.hostname(), desc, level = 1, source = 'orcafs-gui', read = false } = param;
         try {
             await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
@@ -774,6 +775,6 @@ const model = {
      */
     getInitCache() {
         return responseHandler(0, { status: init.getInitStatus() ? true : false });
-    },
+    }
 };
 module.exports = model;

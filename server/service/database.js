@@ -18,7 +18,7 @@ const model = {
         return await dao.deleteOne(user, param);
     },
     async getEventLog(param) {
-        return await dao.findAll(eventlog, param);
+        return await dao.findAll(eventlog, param, {}, { sort: { time: -1 } });
     },
     async addEventLog(param) {
         return await dao.createOne(eventlog, param);
@@ -27,7 +27,7 @@ const model = {
         return await dao.updateOne(eventlog, query, param);
     },
     async getAuditLog(param) {
-        return await dao.findAll(auditlog, param);
+        return await dao.findAll(auditlog, param, {}, { sort: { time: -1 } });
     },
     async addAuditLog(param) {
         return await dao.createOne(auditlog, param);
@@ -42,7 +42,7 @@ const model = {
         return await dao.createOne(setting, param);
     },
     async getSetting(param) {
-        return await dao.findOne(setting, param, {_id: 0, __v: 0});
+        return await dao.findOne(setting, param, { _id: 0, __v: 0 });
     }
 };
 module.exports = model;
