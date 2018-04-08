@@ -25,6 +25,7 @@ const model = {
             result = await init.getOrcaFSStatus();
         } catch (error) {
             errorHandler(1, error);
+            process.exit(1);
         }
         init.setInitStatus(result);
         return result;

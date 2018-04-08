@@ -35,7 +35,7 @@ const model = {
 	filterRequest() {
 		return async (ctx, next) => {
 			let { api, status } = ctx.state, initApiList = ['checkclusterenv', 'init'], initCacheAPI = 'initcache';
-			initCacheAPI.includes(api) ? await next() : !status === initApiList.includes(api) ? await next() : ctx.body = !status ? responseHandler(4) : responseHandler(5);
+			(api === initCacheAPI) || (!status === initApiList.includes(api)) ? await next() : ctx.body = !status ? responseHandler(4) : responseHandler(5);
 		}
 	},
 	compressResponse() {
