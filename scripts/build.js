@@ -142,10 +142,12 @@ function build(previousFileSizes) {
 }
 
 function copyPublicFolder() {
+    /*
     fs.copySync(paths.appSrc + '/images', paths.appPublic + '/images', {
         dereference: true,
         filter: file => file !== paths.appHtml,
     });
+    */
 
     fs.copySync(paths.appPublic, paths.appBuild, {
         dereference: true,
