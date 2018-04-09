@@ -5,6 +5,8 @@ import generalAction from '../redux/actions/generalAction';
 import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
+import snapshotAction from '../redux/actions/snapshotAction';
+import nasAction from '../redux/actions/nasAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
 const errorHandler = e => {
@@ -47,6 +49,14 @@ export default  {
         try {
             await this.checkStoreIsReady();
             return await fetchMock(IPs);
+        } catch (e){
+            errorHandler(e);
+        }
+    },
+
+    async getInitCache (){
+        try {
+            await fetchPost('api/getinitcache');
         } catch (e){
             errorHandler(e);
         }
@@ -163,6 +173,46 @@ export default  {
         }
     },
 
+    // snapshot
+    async getSnapshotList (){
+        try {
+            let data = await fetchGet('/api/getsnapshots');
+            store.dispatch(snapshotAction.setSnapshotList(data));
+        } catch (e){
+            errorHandler(e);
+        }
+    },
+
+    async createSnapshot (snapshot){
+        await fetchPost('/api/createsnapshot', snapshot);
+    },
+
+    async rollbackSnapshot (snapshot){
+        await fetchPost('/api/rollbacksnapshot', snapshot);
+    },
+
+    async deleteSnapshot (snapshot){
+        await fetchPost('/api/deletesnapshot', snapshot);
+    },
+
+    // NAS
+    async getNasExportList (){
+        try {
+            let data = await fetchGet('/api/getnasexports');
+            store.dispatch(nasAction.setNasExportList(data));
+        } catch (e){
+            errorHandler(e);
+        }
+    },
+
+    async createNasExport (nasExport){
+        await fetchPost('/api/createnasexport', nasExport);
+    },
+
+    async deleteNasExport (nasExport){
+        await fetchPost('/api/deletenasexport', nasExport);
+    },
+
     // fs operation
     async getEntryInfo (dir){
         try {
@@ -174,12 +224,8 @@ export default  {
     },
 
     async getFiles (dir){
-        try {
-            let data = await fetchGet('api/getfiles', {dir});
-            store.dispatch(fsOperationAction.setFiles(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        let data = await fetchGet('api/getfiles', {dir});
+        store.dispatch(fsOperationAction.setFiles(data));
     },
 
     async saveEntryInfo (data){

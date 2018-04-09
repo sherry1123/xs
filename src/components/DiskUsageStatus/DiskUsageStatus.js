@@ -28,8 +28,8 @@ class DiskUsageStatus extends Component {
                 }
             ],
             chartOption: {
-                width: 140,
-                height: 140,
+                width: 146,
+                height: 146,
                 formatter: `${lang('使用率', 'Usage Rate')} \n\n ${usageRate}`,
                 series: [{
                     name: 'totalDiskCapacityStatus',

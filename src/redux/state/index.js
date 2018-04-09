@@ -7,7 +7,7 @@ export default {
         // step 1 role define
         metadataServerIPs: ['192.168.100.101'],
         storageServerIPs: ['192.168.100.101'],
-        clientIPs: ['192.168.10.180'],
+        clientIPs: ['192.168.100.101'],
         managementServerIPs: ['192.168.100.101'],
         enableHA: false,
         floatIPs: ['192.168.100.140'],
@@ -16,7 +16,7 @@ export default {
         enableRAID: false,
         RAIDConfig: {},
         // start initialization
-        initStatus: {current: 0, step: 0, total: 0},
+        initStatus: {current: 0, total: 0, status: 0},
         // init finished
         defaultUser: {username: '--', password: '--'},
     },
@@ -88,6 +88,8 @@ export default {
                     {id: '201', pathStr: '/dev/orca_201', diskSpaceTotal: 999999999, diskSpaceUsed: 899999999, diskSpaceFree: 100000000},
                     {id: '202', pathStr: '/dev/orca_202', diskSpaceTotal: 599999999, diskSpaceUsed: 299999999, diskSpaceFree: 300000000},
                     {id: '203', pathStr: '/dev/orca_203', diskSpaceTotal: 899999999, diskSpaceUsed: 199999999, diskSpaceFree: 700000000},
+                    {id: '204', pathStr: '/dev/orca_204', diskSpaceTotal: 699999999, diskSpaceUsed: 199999999, diskSpaceFree: 500000000},
+                    {id: '205', pathStr: '/dev/orca_205', diskSpaceTotal: 799999999, diskSpaceUsed: 199999999, diskSpaceFree: 600000000},
                     */
                 ],
                 detailThroughput: {
@@ -112,6 +114,21 @@ export default {
                 {id: '5ab301acd1fc4871e88e8e7f',username: 'xxx', desc: 'xxx', desc: 'xxx1', ip: 'xxx', time: Date.now(),},
                 */
             ],
+        },
+        // snapshot
+        snapshot: {
+            snapshotList: [
+                {name: 'snapshot3', size: 9999999999999, createTime: 1522761568579},
+                {name: 'snapshot2', size: 8999999999999, createTime: 1522754568579},
+                {name: 'snapshot1', size: 7999999999999, createTime: 1522750568579},
+            ]
+        },
+        // NAS export
+        nas: {
+            nasExportList: [
+                {type: 'NFS', path: '/test/a'},
+                {type: 'CIFS', path: '/test'},
+            ]
         },
         // file system operation
         // stripe

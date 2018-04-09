@@ -7,6 +7,8 @@ import generalReducer from './generalReducer';
 import metadataNodeReducer from '../reducers/metadataNodeReducer';
 import storageNodeReducer from '../reducers/storageNodeReducer';
 import managementReducer from '../reducers/managementReducer';
+import snapshotReducer from '../reducers/snapshotReducer';
+import nasReducer from '../reducers/nasReducer';
 import fsOperationReducer from '../reducers/fsOperationReducer';
 
 // firstly read environmental parameters from process, also persistent data from localStorage
@@ -45,6 +47,14 @@ export default combineReducers({
 
                 case 'management':
                     state[key] = managementReducer(main[key], action);
+                    break;
+
+                case 'snapshot':
+                    state[key] = snapshotReducer(main[key], action);
+                    break;
+
+                case 'nas':
+                    state[key] = nasReducer(main[key], action);
                     break;
 
                 case 'fsOperation':

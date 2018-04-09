@@ -8,7 +8,7 @@ let isInitialized = Cookie.get('init');
 if (isInitialized !== 'true'){
     let socket = io();
     socket.on('init status', initStatus => {
-        // console.info('ws:', initStatus);
+        console.info('init ws:', initStatus);
         lsSet('initStatus', initStatus);
         store.dispatch(initializeAction.setInitStatus(initStatus));
     });

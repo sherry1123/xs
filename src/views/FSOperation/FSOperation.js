@@ -20,10 +20,10 @@ class FSOperation extends Component {
 
     componentDidMount (){
         let defaultDirPath = this.state.dirPath || '/';
-        this.queryDirPath(defaultDirPath);
         // firstly put the root directory path '/' into directory stack as the earliest one
         this.directoryStack.unshift(defaultDirPath);
-
+        // firstly fetch
+        this.queryDirPath(defaultDirPath);
     }
 
     componentWillReceiveProps (nextProps){
@@ -31,9 +31,17 @@ class FSOperation extends Component {
         this.setState({entryInfo});
     }
 
-    async queryDirPath (dirPath){
+    getFilesByPath (dirPath){
+        try {
+            httpRequests.getFiles(dirPath);
+        } catch (e){
+            message.error(lang('该路径下没有文件或文件夹', 'There are no directories or files under this path'));
+        }
+    }
+
+    queryDirPath (dirPath = this.state.dirPath){
         // query files
-        httpRequests.getFiles(dirPath);
+        this.getFilesByPath(dirPath);
         // query entry info
         httpRequests.getEntryInfo(dirPath);
         // console.info(dirPath);
@@ -50,14 +58,14 @@ class FSOperation extends Component {
     returnUpperDirectory (){
         this.directoryStack.shift();
         let lastDirPath = this.backTrackDirectoryStack();
-        httpRequests.getFiles(lastDirPath);
+        this.getFilesByPath(lastDirPath);
         httpRequests.getEntryInfo(lastDirPath);
     }
 
     enterDirectory (dirPath){
         this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
         let nextDirPath = this.backTrackDirectoryStack();
-        httpRequests.getFiles(nextDirPath);
+        this.getFilesByPath(nextDirPath);
         httpRequests.getEntryInfo(nextDirPath);
     }
 
@@ -171,7 +179,6 @@ class FSOperation extends Component {
                                        value={this.state.dirPath}
                                        onChange={({target: {value}}) => {
                                            this.setState({dirPath: value});
-                                           this.queryDirPath.bind(this, value)();
                                        }}
                                 />
                             </Form.Item>
@@ -179,6 +186,7 @@ class FSOperation extends Component {
                                 <Button shape="circle" icon="search" size="small"
                                         title={lang('获取路径信息', 'Fetch Path Information')}
                                         style={{display: 'inline-block'}}
+                                        onClick={this.queryDirPath.bind(this)}
                                 />
                             </Form.Item>
                         </Form>
@@ -212,25 +220,25 @@ class FSOperation extends Component {
                                            onChange={({target: {value}}) => {
                                                this.entryInfoFormChange.bind(this, 'chunkSize', value)();
                                            }}
-                                    /><span style={{marginLeft: 12}}>{lang('字节', 'Byte')}</span>
-                                    <Popover content={lang('块大小不能小于64KB（65536Byte）', 'Chunk size can not be less than 64KB(65536Byte)')}>
+                                    /><span style={{marginLeft: 12}}>Byte</span>
+                                    <Popover content={lang('块大小不能小于65536Byte（64KB）', 'Chunk size can not be less than 65536Byte(64KB)')}>
                                         <Icon type="question-circle-o" className="fs-info-icon m-l" />
                                     </Popover>
                                 </Form.Item>
                                 <Form.Item label={lang('条带模式', 'Stripe Mode')}>
                                     <Select style={{width: 150}} size="small"
-                                            placeholder={lang('请选择条带模式', 'select stripe mode')}
-                                            value={entryInfo.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
-                                            onChange={value => {
-                                                this.entryInfoFormChange.bind(this, 'buddyMirror', value)();
-                                            }}
+                                        placeholder={lang('请选择条带模式', 'select stripe mode')}
+                                        value={entryInfo.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
+                                        onChange={value => {
+                                            this.entryInfoFormChange.bind(this, 'buddyMirror', value)();
+                                        }}
                                     >
                                         <Select.Option value="raid0">RAID 0</Select.Option>
                                         <Select.Option value="buddyMirror">BuddyMirror</Select.Option>
                                     </Select>
                                 </Form.Item>
                                 {/*
-                                 <Form.Item label={lang('元数据镜像', 'Metadata Image')} {...formItemLayout}>
+                                <Form.Item label={lang('元数据镜像', 'Metadata Image')} {...formItemLayout}>
                                     <Checkbox checked={stripe.isMetadataImage}
                                         onChange={({target: {checked}}) => {
                                             this.entryInfoFormChange.bind(this, 'isMetadataImage', checked)();

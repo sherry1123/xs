@@ -8,7 +8,7 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import RAIDConfiguration from '../../components/RAIDConfiguration/RAIDConfiguration';
 import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
-import {validateIpv4, KeyPressFilter, lsRemove} from '../../services';
+import {validateIpv4, KeyPressFilter, lsGet, lsSet, lsRemove} from '../../services';
 import httpRequests from '../../http/requests';
 import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
@@ -20,7 +20,7 @@ class Initialize extends Component {
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
-            currentStep: 0,
+            currentStep: 2,
             totalStep: 5,
             checking: false,
 
@@ -41,51 +41,77 @@ class Initialize extends Component {
     componentWillMount (){
         let isInitialized = Cookie.get('init');
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('login');
-            let path = '';
-            if (!isLoggedIn || (isLoggedIn === 'false')){
-                path = routerPath.Login;
+            let initStepLocal = lsGet('initStep');
+            if (!initStepLocal){
+                let isLoggedIn = Cookie.get('login');
+                let path = '';
+                if (!isLoggedIn || (isLoggedIn === 'false')){
+                    path = routerPath.Login;
+                } else {
+                    path = routerPath.Main + routerPath.StorageNodes;
+                }
+                this.props.history.replace(path);
             } else {
-                path = routerPath.Main + routerPath.StorageNodes;
+                // if there's a key 'initStep' in localStorage, it means there was an abnormal exit or refresh
+                // action happened on browser before, so need to jump to the step recorded in localStorage
+                let isInitialized = Cookie.get('init');
+                if (isInitialized === 'true'){
+                    // already finished initialization jump to the last step
+                    this.setState({currentStep: this.state.totalStep - 1});
+                } else {
+                    this.setState({currentStep: Number(initStepLocal) || 0});
+                }
             }
-            this.props.history.replace(path);
         }
     }
 
     componentWillReceiveProps (nextProps){
         let {initStatus: {current, total, status}} = nextProps;
+        console.info(current, total, status);
         let {initStep, initProgress, initializationInfo} = this.state;
         initializationInfo = [...initializationInfo];
-        if (current === total - 1){
-            // finished
-            if (this.state.initStep !== (total - 1)){
-                this.clearProgressTime();
-                initializationInfo.unshift({step: total - 1, initProgress: 100});
+        if (current !== undefined){
+            if (status === 0){
+                // initialization is working properly
+                if (current === total - 1){
+                    // initialization finished
+                    if (this.state.initStep !== (total - 1)){
+                        this.clearProgressTime();
+                        initializationInfo.unshift({step: total - 1, initProgress: 100});
+                        this.setState({
+                            initStatusNum: 0,
+                            initStep: total - 1,
+                            initProgress: 100,
+                            initializationInfo
+                        });
+                        httpRequests.getDefaultUser();
+                        setTimeout(() => this.setState({currentStep: 4}), 1500);
+                    }
+                } else {
+                    // initialization progress increase
+                    let currentProgress = (current / total).toFixed(2) * 100;
+                    if (current > initStep){
+                        this.allowIncrease = true;
+                        initProgress = currentProgress;
+                        initializationInfo.unshift({step: current, initProgress});
+                        this.setState({
+                            initStatusNum: status,
+                            initStep: current,
+                            initProgress,
+                            initializationInfo
+                        });
+                    } else if (current === initStep){
+                        this.allowIncrease = initProgress < (currentProgress + parseInt(100 / total, 10));
+                    }
+                }
+            } else {
+                // initialization is failed, status: -1
+                this.allowIncrease = false;
+                initializationInfo.unshift({step: -1, initProgress: -1});
                 this.setState({
-                    initStatusNum: 0,
-                    initStep: total - 1,
-                    initProgress: 100,
+                    initStatusNum: -1,
                     initializationInfo
                 });
-                lsRemove('initStatus');
-                httpRequests.getDefaultUser();
-                setTimeout(() => this.setState({currentStep: 4}), 1500);
-            }
-        } else {
-            // progress increase
-            let currentProgress = (current / total).toFixed(2) * 100;
-            if (current > initStep){
-                this.allowIncrease = true;
-                initProgress = currentProgress;
-                initializationInfo.unshift({step: current, initProgress});
-                this.setState({
-                    initStatusNum: status,
-                    initStep: current,
-                    initProgress,
-                    initializationInfo
-                });
-            } else if (current === initStep){
-                this.allowIncrease = initProgress < (currentProgress + parseInt(100 / total, 10));
             }
         }
     }
@@ -229,10 +255,12 @@ class Initialize extends Component {
     }
 
     prev (){
+        lsRemove('initStep');
         this.setState({currentStep: this.state.currentStep - 1});
     }
 
     async next (){
+        lsSet('initStep', 4);
         let next = this.state.currentStep + 1;
         switch (next){
             case 1:
@@ -330,11 +358,15 @@ class Initialize extends Component {
     }
 
     forwardLogin (){
+        // fetch API to create user and set password
+
+        lsRemove(['initStep', 'initStatus']);
         this.props.history.push(routerPath.Login);
     }
 
     render (){
         let initTipsMap = {
+            '-1': lang('初始化失败，请联系运维人员寻求帮助！', 'Initialization failed, please ask operation and maintenance staff for help!'),
             0: lang('初始化已开始，请稍候 ...', 'Initializing, pleas wait for a moment ...'),
             1: lang('正在初始化管理服务器', 'Initializing management server'),
             2: lang('正在初始化元数据服务器', 'Initializing metadata server'),
@@ -342,7 +374,7 @@ class Initialize extends Component {
             4: lang('正在初始化客户端', 'Initializing client'),
             5: lang('正在初始化数据库', 'Initializing database'),
             6: lang('正在保存初始化配置', 'Saving initialization config'),
-            7: lang('初始化完成！', 'Initialization finished！')
+            7: lang('初始化完成！', 'Initialization finished！'),
         };
         return (
             <section className="fs-initialize-wrapper">
@@ -502,28 +534,6 @@ class Initialize extends Component {
                                         <Divider dashed style={{margin: "12px 0"}} />
                                         {this.props.enableHA &&
                                             <div>
-                                                {this.props.hbIPs.map((ip, i) =>
-                                                    <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
-                                                        label={i === 0 ? lang('心跳IP', 'Heartbeat IP') : null}
-                                                        validateStatus={this.state['hbIPsError'][i].status}
-                                                        help={this.state['hbIPsError'][i].help}
-                                                    >
-                                                        <Input className="fs-ip-input" defaultValue={ip} size="small"
-                                                            addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
-                                                            placeholder={lang('请输入HB IP', 'please enter HB IP')}
-                                                            onKeyDown={event => {this.keyCodeFilter(event)}}
-                                                            addonAfter={
-                                                                <Popover placement="right" content={lang(`对应管理服务器节点${i + 1}`, `Corresponding with management server Node ${i + 1}`)}>
-                                                                    <Icon type="question-circle-o" className="fs-info-icon m-l" />
-                                                                </Popover>
-                                                            }
-                                                            onKeyUp={({target: {value}}) => {
-                                                                this.setIP.bind(this, 'hbIPs', i, value)();
-                                                                this.validateIP.bind(this, 'hbIPs', i, value)();
-                                                            }}
-                                                        />
-                                                    </Form.Item>)
-                                                }
                                                 {this.props.floatIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={`float-${i}`}
                                                         label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Mgmt IP') : null}
@@ -541,6 +551,31 @@ class Initialize extends Component {
                                                             onKeyUp={({target: {value}}) => {
                                                                 this.setIP.bind(this, 'floatIPs', i, value)();
                                                                 this.validateIP.bind(this, 'floatIPs', i, value)();
+                                                            }}
+                                                        />
+                                                    </Form.Item>)
+                                                }
+                                                {this.props.hbIPs.map((ip, i) =>
+                                                    <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
+                                                        label={i === 0 ? lang('连接有效性检测IP', 'Connect validity check IP') : null}
+                                                        validateStatus={this.state['hbIPsError'][i].status}
+                                                        help={this.state['hbIPsError'][i].help}
+                                                    >
+                                                        <Input className="fs-ip-input" defaultValue={ip} size="small"
+                                                            addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
+                                                            placeholder={lang('请输入HB IP', 'please enter HB IP')}
+                                                            onKeyDown={event => {this.keyCodeFilter(event)}}
+                                                            addonAfter={
+                                                                <Popover placement="right"
+                                                                     content={lang(`对应管理服务器节点${i + 1}，不能与管理服务器处于同一网段`,
+                                                                    `Corresponding with management server Node ${i + 1}, can't be in the same network segment with management servers`)}
+                                                                >
+                                                                    <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                                                                </Popover>
+                                                            }
+                                                            onKeyUp={({target: {value}}) => {
+                                                                this.setIP.bind(this, 'hbIPs', i, value)();
+                                                                this.validateIP.bind(this, 'hbIPs', i, value)();
                                                             }}
                                                         />
                                                     </Form.Item>)
@@ -603,16 +638,16 @@ class Initialize extends Component {
                                                     <label>{lang('管理服务器HA配置', 'Mgmt Server HA Configuration')}</label>
                                                 </div>
                                                 <Divider dashed style={{margin: "12px 0"}} />
-                                                {this.props.floatIPs.map((ip, i) =>
+                                                {this.props.hbIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={i}
-                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Management IP') : null}
+                                                        label={i === 0 ? lang('连接有效性检测IP', 'Connect validity check IP') : null}
                                                     >
                                                         <div className="fs-t-c">{ip}</div>
                                                     </Form.Item>)
                                                 }
-                                                {this.props.hbIPs.map((ip, i) =>
+                                                {this.props.floatIPs.map((ip, i) =>
                                                     <Form.Item className="fs-ip-input-item" key={i}
-                                                        label={i === 0 ? lang('心跳IP', 'Heartbeat IP') : null}
+                                                        label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Management IP') : null}
                                                     >
                                                         <div className="fs-t-c">{ip}</div>
                                                     </Form.Item>)
@@ -670,7 +705,11 @@ class Initialize extends Component {
                             <QueueAnim key={1} type="bottom">
                                 <section key="fs-initializing-3" className="fs-initialization-wrapper" ref={ref => this.initInfoWrapper = ref}>
                                     {
-                                        this.state.initializationInfo.map((info, i) => <p className="fs-initialization-info" key={i}>
+                                        this.state.initializationInfo.map((info, i) => info.step === -1 ?
+                                        <p className="fs-initialization-info failed" key={i}>
+                                            {initTipsMap[-1]}
+                                        </p> :
+                                        <p className="fs-initialization-info" key={i}>
                                             {lang('完成百分比：', 'Completion percentage: ') + info.initProgress + '%, ' + initTipsMap[info.step]}
                                         </p>)
                                     }

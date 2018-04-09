@@ -23,6 +23,9 @@ import UserStatistics from '../UserStatistics/UserStatistics';
 // snapshot
 import Snapshot from '../Snapshot/Snapshot';
 
+// NAS
+import NASExport from '../NAS/NASExport';
+
 // management
 // import ManagementKnownProblems from '../Management/ManagementKnownProblems';
 import ManagementSystemLog from '../Management/ManagementSystemLog';
@@ -91,6 +94,8 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
 
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
+
+                        <Route path={`${Main}${routerPath.NASExport}`} component={NASExport} />
 
                         {/*
                         <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />

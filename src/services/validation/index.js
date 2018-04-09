@@ -211,7 +211,7 @@ export const validateUsername = name => {
     return name.match(VALIDATE_USERNAME);
 };
 
-export const validateCephName = name => {
+export const validateFsName = name => {
     if (!name){
         return false;
     }

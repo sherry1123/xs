@@ -1,18 +1,24 @@
 .fs-storage-target-group {
     margin: -12px 0 0 0;
-    min-height: 152px;
+    height: 158px;
+    max-height: 158px;
+    overflow-y: auto;
+    overflow-x: hidden;
     .fs-clear-fix();
     .fs-storage-target-item {
         float: left;
         box-sizing: border-box;
         margin-top: 12px;
         padding: 4px 20px 4px 10px;
-        width: 330px;
+        width: 326px;
         font-size: 12px;
         border-radius: 10px;
         cursor: pointer;
         &:hover {
             box-shadow: 0 2px 8px rgba(200, 200, 200, 0.7);
+        }
+        &:nth-child(odd){
+            margin-left: 2px;
         }
         .fs-storage-target-label {
             .fs-clear-fix();

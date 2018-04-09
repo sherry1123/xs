@@ -99,7 +99,9 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.Snapshot}>
                         <Icon type="camera-o" />{lang('快照', 'Snapshot')}
                     </Menu.Item>
-
+                    <Menu.Item key={routerPath.NASExport}>
+                        <Icon type="export" />{lang('NAS导出', 'NAS Export')}
+                    </Menu.Item>
                     {/*<Menu.SubMenu key="Management"
                         title={
                             <span>

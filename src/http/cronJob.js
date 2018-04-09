@@ -27,6 +27,16 @@ const fetchDataPer15s = () => {
         httpRequests.getStorageNodeDetailThroughput();
     }
 
+    // snapshot
+    if (routerHash.match(main + routerPath.Snapshot)){
+        httpRequests.getSnapshotList();
+    }
+
+    // nas
+    if (routerHash.match(main + routerPath.Nas)){
+        httpRequests.getNasExportList();
+    }
+
     // management - system log
     if (routerHash.match(main + routerPath.ManagementSystemLog)){
         httpRequests.getEventLogs();
@@ -40,4 +50,5 @@ new CronJob('*/15 * * * * *', async () => {
 
 
 // request immediately when access page
-// do something here
+// do something here if need
+

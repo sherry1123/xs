@@ -1,39 +1,41 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Icon, Input, message, Modal, Table} from 'antd';
+import {Button, Form, Icon, Input, message, Modal, Select, Table} from 'antd';
 import lang from "../../components/Language/lang";
 import {formatStorageSize, timeFormat, validateFsName} from '../../services';
 import httpRequests from '../../http/requests';
 
-class Snapshot extends Component {
+class NASExport extends Component {
     constructor (props){
         super(props);
-        let {snapshotList} = this.props;
+        let {nasExportList} = this.props;
         this.state = {
             // table
             query: '',
-            snapshotList,
-            snapshotListBackup: snapshotList,
+            nasExportList,
+            nasExportListBackup: nasExportList,
             // form
             visible: false,
             formValid: false,
             formSubmitting: false,
-            snapshotData: {
-                name: ''
+            nasExportData: {
+                name: '',
+                protocol: ''
             },
             validation: {
-                name: {status: '', help: '', valid: false}
+                name: {status: '', help: '', valid: false},
+                protocol: {status: '', help: '', valid: false}
             }
         };
     }
 
     componentDidMount (){
-        httpRequests.getSnapshotList();
+        httpRequests.getNasExportList();
     }
 
     async componentWillReceiveProps (nextProps){
-        let {snapshotList} = nextProps;
-        await this.setState({snapshotList, snapshotListBackup: snapshotList});
+        let {nasExportList} = nextProps;
+        await this.setState({nasExportList, nasExportListBackup: nasExportList});
         await this.searchInTable(this.state.query, true);
     }
 
@@ -45,16 +47,16 @@ class Snapshot extends Component {
         if (query || dataRefresh){
             await this.setState({
                 query,
-                snapshotList: Object.assign([], this.state.snapshotListBackup).filter(({name}) => name.match(query))
+                nasExportList: Object.assign([], this.state.nasExportListBackup).filter(({name}) => name.match(query))
             });
         } else {
-            this.setState({snapshotList: this.state.snapshotListBackup});
+            this.setState({nasExportList: this.state.nasExportListBackup});
         }
     }
 
     delete (name){
         Modal.confirm({
-            title: lang(`确定删除这个快照: ${name} ?`, `Are you sure you want to delete this snapshot: ${name} ?`),
+            title: lang(`确定删除这个NAS导出: ${name} ?`, `Are you sure you want to delete this NAS export: ${name} ?`),
             content: lang('此操作不可恢复', 'You can\'t undo this action'),
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
@@ -67,36 +69,21 @@ class Snapshot extends Component {
         });
     }
 
-    rollback (name){
-        Modal.confirm({
-            title: lang(`确定回滚这个快照: ${name} ?`, `Are you sure you want to rollback this snapshot: ${name} ?`),
-            content: lang('此操作不可恢复', 'You can\'t undo this action'),
-            okText: lang('回滚', 'Roll Back'),
-            cancelText: lang('取消', 'Cancel'),
-            onOk: () => {
-
-            },
-            onCancel: () => {
-
-            }
-        });
-    }
-
     formValueChange (key, value){
-        let snapshotData = Object.assign({}, this.state.snapshotData, {[key]: value});
-        this.setState({snapshotData});
+        let nasExportData = Object.assign({}, this.state.nasExportData, {[key]: value});
+        this.setState({nasExportData});
     }
 
     async validateForm (key){
         let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
         await this.setState({validation});
         if (key === 'name'){
-            let {name} = this.state.snapshotData;
+            let {name} = this.state.nasExportData;
             if (!name){
                 // no name enter
                 await this.validationUpdateState('name', {
-                    cn: '请输入快照名称',
-                    en: 'please enter snapshot name'
+                    cn: '请输入导出名称',
+                    en: 'please enter export name'
                 }, false);
             } else if (!validateFsName(name)){
                 // name validate failed
@@ -105,16 +92,25 @@ class Snapshot extends Component {
                     en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30.'
                 }, false);
             } else {
-                let isNameDuplicated = this.props.snapshotList.some(snapshot => snapshot.name === name);
+                let isNameDuplicated = this.props.nasExportList.some(nasExport => nasExport.name === name);
                 if (isNameDuplicated){
-                    // this name is duplicated with an existing snapshot's name
+                    // this name is duplicated with an existing NAS export's name
                     await this.validationUpdateState('name', {
-                        cn: '该快照名称已经存在',
-                        en: 'The snapshot name already existed'
+                        cn: '该导出名称已经存在',
+                        en: 'The NAS export name already existed'
                     }, false);
                 }
             }
         }
+        if (key === 'protocol'){
+            if (!this.state.nasExportData){
+                await this.validationUpdateState('name', {
+                    cn: '请选择一个NAS导出协议',
+                    en: 'Please select a NAS export protocol'
+                }, false);
+            }
+        }
+
         // calculate whole form validation
         let formValid = true;
         Object.keys(this.state.validation).forEach(key => {
@@ -128,17 +124,17 @@ class Snapshot extends Component {
         await this.setState({validation});
     }
 
-    async createSnapshot (){
-        let snapshotData = Object.assign({}, this.state.snapshotData);
+    async createNasExport (){
+        let nasExportData = Object.assign({}, this.state.nasExportData);
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.createSnapshot(snapshotData);
-            httpRequests.getSnapshotList();
+            await httpRequests.createNasExport(nasExportData);
+            httpRequests.getNasExportList();
             await this.hide();
-            message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
+            message.success(lang('NAS导出成功!', 'NAS export successfully!'));
             this.setState({formSubmitting: false});
         } catch (reason){
-            message.success(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + reason);
+            message.success(lang('NAS导出失败, 原因: ', 'NAS export failed, reason: ') + reason);
             this.setState({formSubmitting: false});
         }
     }
@@ -149,11 +145,11 @@ class Snapshot extends Component {
 
     render (){
         let tableProps = {
-            dataSource: this.state.snapshotList,
+            dataSource: this.state.nasExportList,
             pagination: true,
             rowKey: 'name',
             locale: {
-                emptyText: lang('暂无快照', 'No Snapshot')
+                emptyText: lang('暂无NAS导出', 'No NAS Export')
             },
             columns: [
                 {title: lang('名称', 'Name'), width: 125, dataIndex: 'name',},
@@ -185,58 +181,71 @@ class Snapshot extends Component {
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
                 <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('快照', 'Snapshot')}</h3>
+                    <h3 className="fs-page-title">{lang('NAS导出', 'NAS Export')}</h3>
                 </section>
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <Input.Search style={{marginRight: 15, width: 150}} size="small"
-                            placeholder={lang('快照名称', 'snapshot name')}
-                            value={this.state.query}
-                            onChange={this.queryChange.bind(this)}
-                            onSearch={this.searchInTable.bind(this)}
+                              placeholder={lang('导出名称', 'export name')}
+                              value={this.state.query}
+                              onChange={this.queryChange.bind(this)}
+                              onSearch={this.searchInTable.bind(this)}
                         />
                         <Button className="fs-create-snapshot-button"
-                            size="small"
-                            onClick={() => {
+                                size="small"
+                                onClick={() => {
 
-                            }}
+                                }}
                         >
-                            {lang('创建快照', 'Create Snapshot')}
+                            {lang('创建NAS导出', 'Create NAS Export')}
                         </Button>
                         <Table {...tableProps} />
                     </section>
                 </section>
-                <Modal title={lang('创建快照', 'Create Snapshot')}
-                    width={220}
-                    closable={false}
-                    maskClosable={false}
-                    visible={this.state.visible}
-                    footer={
-                        <div>
-                            <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
-                                onClick={this.createSnapshot.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                            <Button onClick={this.hide.bind(this)}>
-                                {lang('取消', 'Cancel')}
-                            </Button>
-                        </div>
-                    }
+                <Modal title={lang('创建NAS导出', 'Create NAS Export')}
+                       width={220}
+                       closable={false}
+                       maskClosable={false}
+                       visible={this.state.visible}
+                       footer={
+                           <div>
+                               <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
+                                    onClick={this.createNasExport.bind(this)}
+                               >
+                                   {lang('创建', 'Create')}
+                               </Button>
+                               <Button onClick={this.hide.bind(this)}>
+                                   {lang('取消', 'Cancel')}
+                               </Button>
+                           </div>
+                       }
                 >
                     <Form layout="vertical">
-                        <Form.Item label={lang('快照名称', 'Snapshot Name')}
+                        <Form.Item label={lang('导出名称', 'Export Name')}
                             validateStatus={this.state.validation.name.status}
                             help={this.state.validation.name.help}
                         >
                             <Input style={{width: '100%'}}
-                                   placeholder={lang('请输入快照名称', 'please enter snapshot name')}
-                                   value={this.state.snapshotData.name}
-                                   onChange={({target: {value}}) => {
-                                       this.formValueChange.bind(this, 'name')(value);
-                                       this.validateForm.bind(this)('name');
-                                   }}
+                                placeholder={lang('请输入导出名称', 'please enter export name')}
+                                value={this.state.nasExportData.name}
+                                onChange={({target: {value}}) => {
+                                    this.formValueChange.bind(this, 'name')(value);
+                                    this.validateForm.bind(this)('name');
+                                }}
                             />
+                        </Form.Item>
+                        <Form.Item label={lang('导出协议', 'Export Protocol')}>
+                            <Select style={{width: 150}} size="small"
+                                placeholder={lang('请选择导出协议', 'select export protocol')}
+                                value={'nfs'}
+                                onChange={value => {
+                                    this.formValueChange.bind(this, 'protocol', value)();
+                                    this.validateForm.bind(this)('protocol');
+                                }}
+                            >
+                                <Select.Option value="nfs">NFS</Select.Option>
+                                <Select.Option value="cifs">CIFS</Select.Option>
+                            </Select>
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -246,8 +255,8 @@ class Snapshot extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList}}} = state;
-    return {language, snapshotList};
+    const {language, main: {nas: {nasExportList}}} = state;
+    return {language, nasExportList};
 };
 
-export default connect(mapStateToProps)(Snapshot);
+export default connect(mapStateToProps)(NASExport);

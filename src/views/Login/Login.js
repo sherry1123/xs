@@ -26,7 +26,7 @@ class Login extends Component {
         };
     }
 
-    componentWillMount (){
+    async componentWillMount (){
         let isInitialized = Cookie.get('init');
         if (isInitialized === 'true'){
             let isLoggedIn = Cookie.get('login');
@@ -34,7 +34,12 @@ class Login extends Component {
                 this.props.history.replace(routerPath.Main + routerPath.StorageNodes);
             }
         } else {
-            this.props.history.replace(routerPath.Init);
+            // fetch init API to do reconfirm
+            await httpRequests.getInitCache();
+            let isInitialized = Cookie.get('init');
+            if (isInitialized !== 'true'){
+                this.props.history.replace(routerPath.Init);
+            }
         }
     }
 

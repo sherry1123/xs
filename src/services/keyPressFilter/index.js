@@ -5,10 +5,9 @@ export class KeyPressFilter {
         combCodes2 = [67, 86, 88]
     ){
         this.prevKeyCode = 0;
-        // '0'-'9', '.' , 'Backspace' & 'c', 'v', 'x'
+        // single key
         this.validKeyCodes = validKeyCodes;
         // combination key press
-        // ''ctrl, 'window/command left', 'window/command right'
         this.combCodes1 = combCodes1;
         this.combCodes2 = combCodes2;
         // specially key
@@ -22,7 +21,7 @@ export class KeyPressFilter {
         if (!result){
             result = this.combCodes1.includes(this.prevKeyCode) && this.combCodes2.includes(keyCode);
             if (!result){
-                this.specKeys.length && this.specKeys.forEach(key => {
+                !!this.specKeys.length && this.specKeys.forEach(key => {
                     if (event[key] && this.combCodes2.includes(keyCode)){
                         result = true;
                     }
@@ -35,3 +34,9 @@ export class KeyPressFilter {
         }
     }
 }
+
+/**
+ * Default configurations are applied for entering IPs on initialization page.
+ * Support single key press such as '0'-'9', '.' , 'c', 'v', 'x' & 'Backspace'.
+ * Support combine key press only for 'ctrl', 'left - window/command', 'right - window/command'.
+ */
