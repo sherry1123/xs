@@ -34,7 +34,7 @@ const model = {
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let { api, status } = ctx.state, initApiList = ['checkclusterenv', 'init'], initCacheAPI = 'initcache';
+			let { api, status } = ctx.state, initApiList = ['checkclusterenv', 'init'], initCacheAPI = 'getinitcache';
 			(api === initCacheAPI) || (!status === initApiList.includes(api)) ? await next() : ctx.body = !status ? responseHandler(4) : responseHandler(5);
 		}
 	},

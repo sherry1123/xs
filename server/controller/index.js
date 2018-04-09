@@ -110,7 +110,7 @@ const model = {
     '/api/setpattern': async ctx => {
         ctx.body = await service.setPattern(ctx.param);
     },
-    '/api/initcache': ctx => {
+    '/api/getinitcache': ctx => {
         ctx.body = service.getInitCache();
     }
 };
