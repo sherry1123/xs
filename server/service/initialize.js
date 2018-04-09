@@ -89,10 +89,11 @@ const model = {
     async initMongoDB(param) {
         let { primary, secondary, arbiter, replicaSet } = param;
         if (!replicaSet) {
-            let command = `sudo ${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --fork`;
+            let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --fork`;
             await promise.runCommandInPromise(command);
+            await promise.runCommandInPromise(`sed -i '/MongoDB/ a ${command}' /etc/rc.local`);
         } else {
-            let command = `sudo ${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
+            let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
             let ipList = [primary, secondary, arbiter];
             let conf = {
                 _id: config.database.replicaSet,
@@ -103,6 +104,9 @@ const model = {
                 conf.members.push(i === 2 ? { _id: i, host: ipList[i], arbiterOnly: true } : { _id: i, host: ipList[i], priority: 2 - i });
             }
             await promise.writeFileInPromise('/tmp/.initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
+            for (let i = 0; i < ipList.length; i++) {
+                i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], `sed -i '/MongoDB/ a ${command}' /etc/rc.local`) : await promise.runCommandInPromise(`sed -i '/MongoDB/ a ${command}' /etc/rc.local`);
+            }
             await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
         }
     },
@@ -130,9 +134,15 @@ const model = {
         await database.addUser({ username: 'admin', password: '123456' });
     },
     async antiInitMongoDB(ipList) {
-        let command = `sudo killall mongod; sleep 5; sudo rm -rf ${config.database.dbpath}/*`;
+        let command = `killall mongod; sleep 5; rm -rf ${config.database.dbpath}/*`;
         for (let i = 0; i < ipList.length; i++) {
-            i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
+            if (!i) {
+                await promise.runCommandInPromise(command);
+                await promise.runCommandInPromise("sed -i '/mongod/d' /etc/rc.local");
+            } else {
+                await promise.runCommandInRemoteNodeInPromise(ipList[i], command);
+                await promise.runCommandInRemoteNodeInPromise(ipList[i], "sed -i '/mongod/d' /etc/rc.local");
+            }
         }
     },
     async antiInitOrcaFS() {

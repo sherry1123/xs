@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          orcafs-gui
+# Required-Start:
+# Should-Start:      $OrcaFS-API
+# Required-Stop:
+# Should-Stop:       
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: OrcaFS GUI
+# Description:       Start OrcaFS GUI
+### END INIT INFO
+
+
+APP_NAME="OrcaFS GUI"
+SERVICE_NAME=orcafs-gui
+
+
+APP_BIN=/var/${SERVICE_NAME}/server
+test -x $APP_BIN || { echo "$APP_BIN not installed"; 
+   if [ "$1" = "stop" ]; then exit 0;
+   else exit 3; fi; }
+
+
+RETVAL=0
+# Return values acc. to LSB for all commands but status:
+# 0       - success
+# 1       - generic or unspecified error
+# 2       - unimplemented feature (e.g. "reload")
+# 3       - program is not installed
+
+
+case "$1" in
+   start)
+      if [ "${START_SERVICE}" = "NO" -o "${START_SERVICE}" = "no" ]; then
+         echo "${APP_NAME} not set to be started"
+         exit 0
+      fi
+      echo -n "Starting ${APP_NAME}"
+      mkdir -p /var/lock/subsys
+      pm2 start $APP_BIN -s && touch /var/lock/subsys/${SERVICE_NAME}
+      RETVAL=$?
+      echo
+      ;;
+   stop)
+      echo -n "Shutting down ${APP_NAME}"
+      pm2 stop $APP_BIN -s && rm -f /var/lock/subsys/${SERVICE_NAME}
+      RETVAL=$?
+      echo
+      ;;
+   restart)
+      echo "Restarting ${APP_NAME}"
+      pm2 restart $APP_BIN -s
+      RETVAL=$?
+      ;;
+   status)
+      pm2 status $APP_BIN
+      RETVAL=$?
+      echo
+      ;;
+   *)
+      echo "Usage: $0 {start|stop|status|restart}"
+      exit 2
+      ;;
+   esac
+exit $RETVAL

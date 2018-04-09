@@ -1,3 +1,4 @@
+const os = require('os');
 const email = require('./email');
 const config = require('../config');
 const init = require('./initialize');
@@ -83,6 +84,7 @@ const model = {
      * @param {object} RAIDConfig  RAID Config
      */
     async initCluster(param) {
+        let current = 0, total = 0;
         try {
             let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
@@ -91,18 +93,25 @@ const model = {
                     let progress = await init.getOrcaFSInitProgress();
                     if (!progress.errorId) {
                         let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                        if (currentStep !== totalStep) {
-                            socket.postInitStatus({ current: currentStep, status, total: totalStep + 3 });
-                        }
-                        if (currentStep && currentStep === totalStep && describle.includes('finish')) {
+                        total = totalStep + 3;
+                        if (status) {
                             clearInterval(getInitProgress);
-                            socket.postInitStatus({ current: 5, status: 0, total: totalStep + 3 });
+                            socket.postInitStatus({ current: currentStep, status, total });
+                            errorHandler(7, errorMessage, param);
+                        } else if (currentStep !== totalStep) {
+                            socket.postInitStatus({ current: currentStep, status, total });
+                        } else if (describle.includes('finish')) {
+                            clearInterval(getInitProgress);
+                            current = 5;
+                            socket.postInitStatus({ current, status: 0, total });
                             await init.initMongoDB(mongodbParam);
-                            socket.postInitStatus({ current: 6, status: 0, total: totalStep + 3 });
+                            current = 6;
+                            socket.postInitStatus({ current, status: 0, total });
                             await init.saveInitInfo({ nodelist, initparam: param });
-                            socket.postInitStatus({ current: 7, status: 0, total: totalStep + 3 });
+                            socket.postInitStatus({ current: 7, status: 0, total });
                             init.setInitStatus(true);
                             logger.info('init successfully');
+                            await model.restartServer(nodelist);
                         }
                     }
                 }, 1000);
@@ -112,6 +121,7 @@ const model = {
         } catch (error) {
             errorHandler(7, error, param);
             await model.antiInitCluster(2);
+            socket.postInitStatus({ current, status: -1, total });
         }
     },
     /**
@@ -122,23 +132,25 @@ const model = {
      */
     async antiInitCluster(mode) {
         try {
-            if (mode === 1) {
-                await init.antiInitOrcaFS();
-            }
+            mode === 1 && await init.antiInitOrcaFS();
             let getAntiinitProgress = setInterval(async () => {
                 let progress = await init.getOrcaFSInitProgress();
                 if (!progress.errorId) {
                     let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                    logger.info({ currentStep, describle, errorMessage, status, totalStep })
-                    if (!currentStep && describle.includes('finish')) {
+                    if (status) {
+                        clearInterval(getAntiinitProgress);
+                        errorHandler(8, errorMessage, mode);
+                    } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
                         let mongodbStatus = await init.getMongoDBStatus();
+                        let nodelist = ['127.0.0.1'];
                         if (mongodbStatus) {
-                            let nodelist = await database.getSetting({ key: 'nodelist' });
+                            nodelist = await database.getSetting({ key: 'nodelist' });
                             nodelist = JSON.parse(nodelist.value);
                             await init.antiInitMongoDB(nodelist);
                         }
                         logger.info('antiinit successfully');
+                        await model.restartServer(nodelist);
                     }
                 }
             }, 1000);
@@ -152,12 +164,12 @@ const model = {
      * @param {string} username Username
      * @param {string} password Password
      */
-    async login(param) {
+    async login(param, ip) {
         let result = {};
         try {
             let data = await database.getUser(param);
             if (data.username) {
-                await model.addAuditLog({ user: param.username, desc: 'login success' });
+                await model.addAuditLog({ user: param.username, desc: 'login success', ip });
                 result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
@@ -172,24 +184,24 @@ const model = {
      * 
      * @param {string} username Username
      */
-    async logout(param) {
+    async logout(param, ip) {
         let result = responseHandler(0, 'logout success');
-        await model.addAuditLog({ user: param.username, desc: 'logout success' });
+        await model.addAuditLog({ user: param.username, desc: 'logout success', ip });
         return result;
     },
-     /**
-     * Get User
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     * @param {string} email Email
-     * @param {string} firstname First Name
-     * @param {string} lastname Last Name
-     * @param {string} group Group
-     * @param {string} type Type
-     * @param {boolean} receivemail Receive Email Or Not
-     * @param {int} useravatar User Avatar
-     */
+    /**
+    * Get User
+    * 
+    * @param {string} username Username
+    * @param {string} password Password
+    * @param {string} email Email
+    * @param {string} firstname First Name
+    * @param {string} lastname Last Name
+    * @param {string} group Group
+    * @param {string} type Type
+    * @param {boolean} receivemail Receive Email Or Not
+    * @param {int} useravatar User Avatar
+    */
     async getUser(param) {
         let result = {};
         try {
@@ -200,19 +212,19 @@ const model = {
         }
         return result;
     },
-     /**
-     * Add User
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     * @param {string} email Email
-     * @param {string} firstname First Name
-     * @param {string} lastname Last Name
-     * @param {string} group Group
-     * @param {string} type Type
-     * @param {boolean} receivemail Receive Email Or Not
-     * @param {int} useravatar User Avatar
-     */
+    /**
+    * Add User
+    * 
+    * @param {string} username Username
+    * @param {string} password Password
+    * @param {string} email Email
+    * @param {string} firstname First Name
+    * @param {string} lastname Last Name
+    * @param {string} group Group
+    * @param {string} type Type
+    * @param {boolean} receivemail Receive Email Or Not
+    * @param {int} useravatar User Avatar
+    */
     async addUser(param) {
         let result = {};
         try {
@@ -295,7 +307,7 @@ const model = {
      * @param {boolean} read Read Or Not
      */
     async addEventLog(param) {
-        let { time = new Date(), node = 'cluster', desc, level = 1, source = 'nodejs', read = false } = param;
+        let { time = new Date(), node = os.hostname(), desc, level = 1, source = 'orcafs-gui', read = false } = param;
         try {
             await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
@@ -768,6 +780,19 @@ const model = {
             result = responseHandler(41, error, param);
         }
         return result;
+    },
+    /**
+     * Get Init Cache
+     */
+    getInitCache() {
+        return responseHandler(0, { status: init.getInitStatus() ? true : false });
+    },
+    async restartServer(nodelist) {
+        let command = 'sudo service orcafs-gui restart';
+        nodelist = nodelist.reverse();
+        for (let i = 0; i < nodelist.length; i++) {
+            i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
+        }
     }
 };
 module.exports = model;
