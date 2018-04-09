@@ -84,6 +84,7 @@ const model = {
      * @param {object} RAIDConfig  RAID Config
      */
     async initCluster(param) {
+        let current = 0, total = 0;
         try {
             let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
@@ -92,16 +93,22 @@ const model = {
                     let progress = await init.getOrcaFSInitProgress();
                     if (!progress.errorId) {
                         let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                        if (currentStep !== totalStep) {
-                            socket.postInitStatus({ current: currentStep, status, total: totalStep + 3 });
-                        }
-                        if (currentStep && currentStep === totalStep && describle.includes('finish')) {
+                        total = totalStep + 3;
+                        if (status) {
                             clearInterval(getInitProgress);
-                            socket.postInitStatus({ current: 5, status: 0, total: totalStep + 3 });
+                            socket.postInitStatus({ current: currentStep, status, total });
+                            errorHandler(7, errorMessage, param);
+                        } else if (currentStep !== totalStep) {
+                            socket.postInitStatus({ current: currentStep, status, total });
+                        } else if (describle.includes('finish')) {
+                            clearInterval(getInitProgress);
+                            current = 5;
+                            socket.postInitStatus({ current, status: 0, total });
                             await init.initMongoDB(mongodbParam);
-                            socket.postInitStatus({ current: 6, status: 0, total: totalStep + 3 });
+                            current = 6;
+                            socket.postInitStatus({ current, status: 0, total });
                             await init.saveInitInfo({ nodelist, initparam: param });
-                            socket.postInitStatus({ current: 7, status: 0, total: totalStep + 3 });
+                            socket.postInitStatus({ current: 7, status: 0, total });
                             init.setInitStatus(true);
                             logger.info('init successfully');
                             await model.restartServer(nodelist);
@@ -114,6 +121,7 @@ const model = {
         } catch (error) {
             errorHandler(7, error, param);
             await model.antiInitCluster(2);
+            socket.postInitStatus({ current, status: -1, total });
         }
     },
     /**
@@ -124,14 +132,15 @@ const model = {
      */
     async antiInitCluster(mode) {
         try {
-            if (mode === 1) {
-                await init.antiInitOrcaFS();
-            }
+            mode === 1 && await init.antiInitOrcaFS();
             let getAntiinitProgress = setInterval(async () => {
                 let progress = await init.getOrcaFSInitProgress();
                 if (!progress.errorId) {
                     let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                    if (!currentStep && describle.includes('finish')) {
+                    if (status) {
+                        clearInterval(getAntiinitProgress);
+                        errorHandler(8, errorMessage, mode);
+                    } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
                         let mongodbStatus = await init.getMongoDBStatus();
                         let nodelist = ['127.0.0.1'];
@@ -781,7 +790,7 @@ const model = {
     async restartServer(nodelist) {
         let command = 'sudo service orcafs-gui restart';
         nodelist = nodelist.reverse();
-        for (let i = 0; i < nodelist.length; i ++) {
+        for (let i = 0; i < nodelist.length; i++) {
             i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
         }
     }
