@@ -186,7 +186,7 @@ class FSOperation extends Component {
                                 <Button shape="circle" icon="search" size="small"
                                         title={lang('获取路径信息', 'Fetch Path Information')}
                                         style={{display: 'inline-block'}}
-                                        onClick={this.queryDirPath.bind(this)}
+                                        onClick={() => {this.queryDirPath.bind(this)()}}
                                 />
                             </Form.Item>
                         </Form>
