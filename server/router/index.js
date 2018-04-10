@@ -36,6 +36,6 @@ router.all('/api/getdisklist', controller['/api/getdisklist']);
 router.all('/api/getentryinfo', controller['/api/getentryinfo']);
 router.all('/api/getfiles', controller['/api/getfiles']);
 router.all('/api/setpattern', controller['/api/setpattern']);
-router.all('/api/getinitcache', controller['/api/getinitcache']);
+router.all('/api/syncsystemstatus', controller['/api/syncsystemstatus']);
 
 module.exports = router;

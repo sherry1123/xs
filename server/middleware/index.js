@@ -30,12 +30,13 @@ const model = {
 			await next();
 			let { cookie: { init: initCookie }, status: initStatus } = ctx.state;
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookies);
+			!initStatus && ctx.cookie.set('login', 'false', config.cookies);
 		}
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let { api, status } = ctx.state, initApiList = ['checkclusterenv', 'init'], initCacheAPI = 'getinitcache';
-			(api === initCacheAPI) || (!status === initApiList.includes(api)) ? await next() : ctx.body = !status ? responseHandler(4) : responseHandler(5);
+			let { api, status } = ctx.state, initApiList = ['checkclusterenv', 'init'], syncAPI = 'syncsystemstatus';
+			(api === syncAPI) || (!status === initApiList.includes(api)) ? await next() : ctx.body = !status ? responseHandler(4) : responseHandler(5);
 		}
 	},
 	compressResponse() {
