@@ -8,9 +8,8 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import RAIDConfiguration from '../../components/RAIDConfiguration/RAIDConfiguration';
 import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
-import {validateIpv4, KeyPressFilter, lsGet, lsSet, lsRemove} from '../../services';
+import {validateIpv4, KeyPressFilter, lsGet, lsSet, lsRemove, ckGet} from '../../services';
 import httpRequests from '../../http/requests';
-import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
 
 class Initialize extends Component {
@@ -39,11 +38,11 @@ class Initialize extends Component {
     }
 
     componentWillMount (){
-        let isInitialized = Cookie.get('init');
+        let isInitialized = ckGet('init');
+        let initStepLocal = lsGet('initStep');
         if (isInitialized === 'true'){
-            let initStepLocal = lsGet('initStep');
             if (!initStepLocal){
-                let isLoggedIn = Cookie.get('login');
+                let isLoggedIn = ckGet('login');
                 let path = '';
                 if (!isLoggedIn || (isLoggedIn === 'false')){
                     path = routerPath.Login;
@@ -52,22 +51,16 @@ class Initialize extends Component {
                 }
                 this.props.history.replace(path);
             } else {
-                // if there's a key 'initStep' in localStorage, it means there was an abnormal exit or refresh
-                // action happened on browser before, so need to jump to the step recorded in localStorage
-                let isInitialized = Cookie.get('init');
-                if (isInitialized === 'true'){
-                    // already finished initialization jump to the last step
-                    this.setState({currentStep: this.state.totalStep - 1});
-                } else {
-                    this.setState({currentStep: Number(initStepLocal) || 0});
-                }
+                // if isInitialized is true and there's a key 'initStep' in localStorage,
+                // it means initialization was finished and there was an abnormal exit or refresh
+                // action happened on browser before, so need to jump to the last step
+                this.setState({currentStep: this.state.totalStep - 1});
             }
         }
     }
 
     componentWillReceiveProps (nextProps){
         let {initStatus: {current, total, status}} = nextProps;
-        console.info(current, total, status);
         let {initStep, initProgress, initializationInfo} = this.state;
         initializationInfo = [...initializationInfo];
         if (current !== undefined){
@@ -260,8 +253,8 @@ class Initialize extends Component {
     }
 
     async next (){
-        lsSet('initStep', 4);
         let next = this.state.currentStep + 1;
+        lsSet('initStep', next);
         switch (next){
             case 1:
                 await this.setState({checking: true});
@@ -327,7 +320,7 @@ class Initialize extends Component {
                 clearInterval(initTimer);
                 setTimeout(() => this.setState({currentStep: 4}), 1500);
                 if (process.env.NODE_ENV === 'development'){
-                    Cookie.set('init', 'true');
+                    ckSet('init', 'true');
                 }
             }
         }, 300);

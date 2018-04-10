@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import generalAction from "../../redux/actions/generalAction";
 import {Button, Form, Icon, Input, message} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
+import {ckGet} from '../../services';
 import httpRequests from '../../http/requests';
-import Cookie from 'js-cookie';
 import routerPath from '../routerPath';
-import generalAction from "../../redux/actions/generalAction";
 
 class Login extends Component {
     constructor (props){
@@ -26,20 +26,15 @@ class Login extends Component {
         };
     }
 
-    async componentWillMount (){
-        let isInitialized = Cookie.get('init');
+    componentWillMount (){
+        let isInitialized = ckGet('init');
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('login');
+            let isLoggedIn = ckGet('login');
             if (!!isLoggedIn && (isLoggedIn !== 'false')){
                 this.props.history.replace(routerPath.Main + routerPath.StorageNodes);
             }
         } else {
-            // fetch init API to do reconfirm
-            await httpRequests.getInitCache();
-            let isInitialized = Cookie.get('init');
-            if (isInitialized !== 'true'){
-                this.props.history.replace(routerPath.Init);
-            }
+            this.props.history.replace(routerPath.Init);
         }
     }
 

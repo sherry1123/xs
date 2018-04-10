@@ -7,20 +7,20 @@ import Init from './Initialize/Initialize';
 import Login from './Login/Login';
 import Main from './Main/Main';
 import Error from './Error/Error';
-import Cookie from 'js-cookie';
+import {ckGet} from '../services';
 import routerPath from './routerPath';
 
 export default class App extends Component {
     constructor (props){
         super(props);
-        let isInitialized = Cookie.get('init');
+        let isInitialized = ckGet('init');
         let defaultPath = '';
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('login');
+            let isLoggedIn = ckGet('login');
             if (!isLoggedIn){
                 defaultPath = routerPath.Login;
             } else {
-                defaultPath = `${routerPath.Main}${routerPath.StorageNodes}`;
+                defaultPath = `${routerPath.Main}${routerPath.MetadataNodes}`;
             }
         } else {
             defaultPath = routerPath.Init;

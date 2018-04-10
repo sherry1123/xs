@@ -24,10 +24,8 @@ const initRequest = (url, options) => {
 
 const initSearchUrl = (url, param) => (param ? url + '?' + stringify(param) : url);
 
-const fetchGet = (url, param) => (initRequest(initSearchUrl(url, param), {method: 'GET'}));
+export const fetchGet = (url, param) => (initRequest(initSearchUrl(url, param), {method: 'GET'}));
 
-const fetchPost = (url, param) => (initRequest(url, {method: 'POST', body: JSON.stringify(param)}));
+export const fetchPost = (url, param) => (initRequest(url, {method: 'POST', body: JSON.stringify(param)}));
 
-const fetchMock = () => new Promise(resolve => setTimeout(resolve(true), 1500));
-
-export {fetchGet, fetchPost, fetchMock};
+export const fetchMock = () => new Promise(resolve => setTimeout(resolve(true), 1500));
