@@ -16,8 +16,8 @@ import httpRequests from "./http/requests";
     try {
         await httpRequests.syncUpSystemStatus();
         console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
-    } catch ({message}){
-        console.info('Sync up system status failed: ', message);
+    } catch ({msg}){
+        console.info('Sync up system status failed: ', msg);
     }
 
     // create react app

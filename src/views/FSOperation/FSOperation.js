@@ -104,7 +104,7 @@ class FSOperation extends Component {
         if (chunkSize < this.minChunkSize){
             return message.error(lang('块大小不能小于64KB（65536Byte）', 'Chunk size can not be less than 64KB(65536Byte)'));
         }
-        if ((chunkSize > 0) && ((chunkSize & (chunkSize - 1)) === 0)){
+        if (!((chunkSize > 0) && ((chunkSize & (chunkSize - 1)) === 0))){
             return message.error(lang('块大小必须是2的幂', 'Chunk size must be power of 2'));
         }
         try {
