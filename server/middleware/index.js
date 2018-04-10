@@ -30,7 +30,7 @@ const model = {
 			await next();
 			let { cookie: { init: initCookie }, status: initStatus } = ctx.state;
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookies);
-			!initStatus && ctx.cookie.set('login', 'false', config.cookies);
+			!initStatus && ctx.cookies.set('login', 'false', config.cookies);
 		}
 	},
 	filterRequest() {
