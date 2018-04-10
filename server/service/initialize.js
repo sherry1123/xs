@@ -126,7 +126,7 @@ const model = {
         await promise.writeFileInPromise(path, data);
     },
     async saveInitInfo(param) {
-        await promise.runCommandInPromise(`sleep 20`);
+        await promise.runCommandInPromise('sleep 20');
         await mongoose.connect(`mongodb://localhost/${config.database.name}`);
         for (let i of Object.keys(param)) {
             await database.addSetting({ key: i, value: JSON.stringify(param[i]) });
