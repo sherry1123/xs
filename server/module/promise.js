@@ -32,7 +32,7 @@ exports.copyFileInPromise = (src, dest) => {
 };
 exports.chmodFileInPromise = (path, mode) => {
     return new Promise((resolve, reject) => {
-        child.exec(`sudo chmod ${mode} ${path}`, (error, stdout, stderr) => {
+        child.exec(`chmod ${mode} ${path}`, (error, stdout, stderr) => {
             error ? reject(stderr) : resolve(stdout);
         });
     });
