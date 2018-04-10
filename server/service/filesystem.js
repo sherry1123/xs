@@ -170,9 +170,8 @@ const model = {
         return data;
     },
     async getDiskList(param) {
-        let { ip } = param;
         let token = await model.getToken();
-        let res = await request.get(config.api.orcafs.listdisk + ip, {}, token, true);
+        let res = await request.get(config.api.orcafs.listdisk + param.ip, {}, token, true);
         if (!res.errorId) {
             for (let i in res.data) {
                 res.data[i].totalSpace = model.toByte(Number(res.data[i].totalSpace.replace(/\SB/, '')), res.data[i].totalSpace.replace(/\S+\d/, '')[0]);
