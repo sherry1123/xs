@@ -5,16 +5,23 @@ import lang from '../../components/Language/lang';
 import {formatStorageSize} from '../../services';
 import httpRequests from '../../http/requests';
 
+// according to previous file system operation page's design, directory browser or stripe setting
+// is independent components for each other, so introduce 'fsOperation' state in redux to provide state
+// record for page jumping, but now they're in a same component, maybe this state management design should be changed.
+
 class FSOperation extends Component {
     constructor (props){
         super(props);
+        // entry stripe
         let {entryInfo} = props;
         this.minChunkSize = 65536;
+        // directory table
+        this.queryDirLock = false;
         this.directoryStack = [];
         this.state = {
             dirPath: entryInfo.dirPath,
             entryInfo,
-            readonly: false
+            entryInfoReadonly: false // files only allow read, directories allow read and set
         };
     }
 
@@ -32,11 +39,15 @@ class FSOperation extends Component {
     }
 
     async getFilesByPath (dirPath){
+        this.queryDirLock = true;
         try {
             await httpRequests.getFiles(dirPath);
+            await this.setState({dirPath});
         } catch (e){
-            message.warning(lang('该路径不存', 'This path is not existed'));
+            // should use code to distinguish it's network error or actually no such directory
+            message.warning(lang('该路径不存在', 'This path is not existed'));
         }
+        this.queryDirLock = false;
     }
 
     queryDirPath (dirPath = this.state.dirPath){
@@ -51,49 +62,56 @@ class FSOperation extends Component {
         let directoryStack = [...this.directoryStack];
         let dirPath = '';
         directoryStack.reverse().forEach(path => dirPath += path);
-        this.setState({dirPath});
         return dirPath;
     }
 
     returnUpperDirectory (){
-        this.directoryStack.shift();
-        let lastDirPath = this.backTrackDirectoryStack();
-        this.getFilesByPath(lastDirPath);
-        httpRequests.getEntryInfo(lastDirPath);
+        if (!this.queryDirLock){
+            this.directoryStack.shift();
+            let lastDirPath = this.backTrackDirectoryStack(); // state => render
+            this.getFilesByPath(lastDirPath); // props => render
+            httpRequests.getEntryInfo(lastDirPath);
+        }
     }
 
     enterDirectory (dirPath){
-        this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
-        let nextDirPath = this.backTrackDirectoryStack();
-        this.getFilesByPath(nextDirPath);
-        httpRequests.getEntryInfo(nextDirPath);
+        if (!this.queryDirLock){
+            this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
+            let nextDirPath = this.backTrackDirectoryStack();
+            this.getFilesByPath(nextDirPath);
+            httpRequests.getEntryInfo(nextDirPath);
+        }
     }
 
-    getEntryInfo (dirPath, readonly){
-        this.setState({readonly});
+    getEntryInfo (dirPath, entryInfoReadonly){
+        this.setState({entryInfoReadonly});
         let currentDirPath = this.backTrackDirectoryStack();
         currentDirPath = currentDirPath + (this.directoryStack.length > 1 ? '/' : '') + dirPath;
         httpRequests.getEntryInfo(currentDirPath);
     }
 
     entryInfoFormChange (key, value){
-        let stripe = Object.assign({}, this.state.stripe);
+        let entryInfo = Object.assign({}, this.state.entryInfo);
         if (key === 'stripeMode'){
             value = (value === 'buddyMirror') ? 1 : 0;
         }
-        stripe[key] = value;
-        this.setState({stripe});
+        entryInfo[key] = value;
+        this.setState({entryInfo});
     }
 
     async saveStripeConfig (){
-        if (this.state.stripe.chunkSize < this.minChunkSize){
+        let {chunkSize} = this.state.entryInfo;
+        if (chunkSize < this.minChunkSize){
             return message.error(lang('块大小不能小于64KB（65536Byte）', 'Chunk size can not be less than 64KB(65536Byte)'));
         }
+        if ((chunkSize > 0) && ((chunkSize & (chunkSize - 1)) === 0)){
+            return message.error(lang('块大小必须是2的幂', 'Chunk size must be power of 2'));
+        }
         try {
-            await httpRequests.saveEntryInfo(this.stripe);
+            await httpRequests.saveEntryInfo(this.state.entryInfo);
             message.success(lang('条带设置保存成功！', 'Stripe setting has been saved successfully!'));
-        } catch (e){
-            message.error(e);
+        } catch ({msg}){
+            message.error(lang('条带设置保存失败，原因：', 'Stripe setting saving failed, reason: ') + msg);
         }
     }
 
@@ -107,6 +125,7 @@ class FSOperation extends Component {
         let tableProps = {
             dataSource: files,
             pagination: false,
+            // loading: this.queryDirLock,
             rowKey: 'name',
             locale: {
                 emptyText: lang('暂无文件', 'No Files')
@@ -117,10 +136,10 @@ class FSOperation extends Component {
                     render: (text, record) => (
                         record.isDir ?
                             ((text === '..' && !record.hasOwnProperty('user')) ?
-                                <a onClick={this.returnUpperDirectory.bind(this, text)} title={lang('点击返回上层目录', 'Click Enter Upper Directory')}>
+                                <a onClick={this.returnUpperDirectory.bind(this, text)} title={lang('返回上层目录', 'Return Upper Directory')}>
                                     <b>..</b>
                                 </a> :
-                                <a onClick={this.enterDirectory.bind(this, text)} title={lang('点击进入目录', 'Click Enter Directory')}>
+                                <a onClick={this.enterDirectory.bind(this, text)} title={lang('进入目录', 'Enter Directory')}>
                                     <Icon type="folder" /> {text}
                                 </a>
                             ) :
@@ -158,7 +177,7 @@ class FSOperation extends Component {
                                 <a onClick={() => {this.getEntryInfo.bind(this, record.name, true)()}} title={lang('显示', 'Settings')}>
                                     <Icon style={{fontSize: 15}} type="setting" />
                                 </a> :
-                                <a onClick={() => {this.returnUpperDirectory.bind(this)()}} title={lang('返回上一级', 'Return Upper Directory')}>
+                                <a onClick={() => {this.returnUpperDirectory.bind(this)()}} title={lang('返回上层目录', 'Return Upper Directory')}>
                                     <Icon style={{fontSize: 15}} type="rollback" />
                                 </a>)
                     )
@@ -221,7 +240,7 @@ class FSOperation extends Component {
                                                this.entryInfoFormChange.bind(this, 'chunkSize', value)();
                                            }}
                                     /><span style={{marginLeft: 12}}>Byte</span>
-                                    <Popover content={lang('块大小不能小于65536Byte（64KB）', 'Chunk size can not be less than 65536Byte(64KB)')}>
+                                    <Popover content={lang('块大小不能小于65536Byte，并且必须是2的幂', 'Chunk size can not be less than 65536Byte, and must be power of 2')}>
                                         <Icon type="question-circle-o" className="fs-info-icon m-l" />
                                     </Popover>
                                 </Form.Item>
@@ -248,7 +267,7 @@ class FSOperation extends Component {
                                 */}
                                 <Form.Item style={{marginTop: 20}} wrapperCol={{sm: {offset: 17}}}>
                                     <Button icon="save" size="small"
-                                        disabled={this.state.readonly}
+                                        disabled={this.state.entryInfoReadonly}
                                         onClick={this.saveStripeConfig.bind(this)}
                                     >
                                         {lang('保存', 'Save')}

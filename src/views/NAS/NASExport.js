@@ -133,8 +133,8 @@ class NASExport extends Component {
             await this.hide();
             message.success(lang('NAS导出成功!', 'NAS export successfully!'));
             this.setState({formSubmitting: false});
-        } catch (reason){
-            message.success(lang('NAS导出失败, 原因: ', 'NAS export failed, reason: ') + reason);
+        } catch ({msg}){
+            message.success(lang('NAS导出失败, 原因: ', 'NAS export failed, reason: ') + msg);
             this.setState({formSubmitting: false});
         }
     }

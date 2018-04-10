@@ -10,7 +10,7 @@ import nasAction from '../redux/actions/nasAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
 const errorHandler = e => {
-    console.info('http request error: ' + (e.message || 'no clear error message'));
+    console.info('http request error: ' + (e.msg || 'no clear error message'));
 };
 
 export default  {
@@ -28,11 +28,7 @@ export default  {
 
     // synchronized system status browser cookie with http server
     async syncUpSystemStatus (){
-        try {
-            await fetchPost('/api/syncsystemstatus');
-        } catch (e){
-            errorHandler(e);
-        }
+        await fetchPost('/api/syncsystemstatus');
     },
 
     // initialize
@@ -230,11 +226,7 @@ export default  {
     },
 
     async saveEntryInfo (data){
-        try {
-            await fetchPost('/api/setpattern',  data);
-        } catch (e){
-            errorHandler(e);
-        }
+        await fetchPost('/api/setpattern', data)
     },
 
 };

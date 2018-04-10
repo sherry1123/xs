@@ -6,15 +6,15 @@ const initRequest = (url, options) => {
         options.headers = {'Content-Type': 'application/json; charset=utf-8'};
         try {
             let response = await fetch(url, options);
-            if (response.ok) {
-                let {code, data, message} = await response.json();
+            if (response.ok){
+                let {code, data, msg} = await response.json();
                 if (code === 0){
                     resolve(data);
                 } else {
-                    reject({code, message});
+                    reject({code, msg});
                 }
             } else {
-                reject({message: response.statusText});
+                reject({msg: response.statusText});
             }
         } catch (error){
             reject(error);

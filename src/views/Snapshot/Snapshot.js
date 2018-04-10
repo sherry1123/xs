@@ -137,8 +137,8 @@ class Snapshot extends Component {
             await this.hide();
             message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
             this.setState({formSubmitting: false});
-        } catch (reason){
-            message.success(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + reason);
+        } catch ({msg}){
+            message.success(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
             this.setState({formSubmitting: false});
         }
     }
