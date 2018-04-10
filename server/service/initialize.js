@@ -91,7 +91,7 @@ const model = {
         if (!replicaSet) {
             let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --fork`;
             await promise.runCommandInPromise(command);
-            await promise.runCommandInPromise(`sed -i '/MongoDB/ a ${command}' /etc/rc.local`);
+            await promise.runCommandInPromise(`sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
         } else {
             let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
             let ipList = [primary, secondary, arbiter];
@@ -105,7 +105,7 @@ const model = {
             }
             await promise.writeFileInPromise('/tmp/.initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
             for (let i = 0; i < ipList.length; i++) {
-                i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], `sed -i '/MongoDB/ a ${command}' /etc/rc.local`) : await promise.runCommandInPromise(`sed -i '/MongoDB/ a ${command}' /etc/rc.local`);
+                i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], `sed -i "/MongoDB/ a ${command}" /etc/rc.local`) : await promise.runCommandInPromise(`sed -i '/MongoDB/ a ${command}' /etc/rc.local`);
             }
             await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
         }
@@ -126,7 +126,7 @@ const model = {
         await promise.writeFileInPromise(path, data);
     },
     async saveInitInfo(param) {
-        await promise.runCommandInPromise(`sleep 20`);
+        await promise.runCommandInPromise('sleep 20');
         await mongoose.connect(`mongodb://localhost/${config.database.name}`);
         for (let i of Object.keys(param)) {
             await database.addSetting({ key: i, value: JSON.stringify(param[i]) });
@@ -138,10 +138,10 @@ const model = {
         for (let i = 0; i < ipList.length; i++) {
             if (!i) {
                 await promise.runCommandInPromise(command);
-                await promise.runCommandInPromise("sed -i '/mongod/d' /etc/rc.local");
+                await promise.runCommandInPromise('sed -i "/mongod/d" /etc/rc.local');
             } else {
                 await promise.runCommandInRemoteNodeInPromise(ipList[i], command);
-                await promise.runCommandInRemoteNodeInPromise(ipList[i], "sed -i '/mongod/d' /etc/rc.local");
+                await promise.runCommandInRemoteNodeInPromise(ipList[i], 'sed -i "/mongod/d" /etc/rc.local');
             }
         }
     },

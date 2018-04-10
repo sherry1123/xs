@@ -38,7 +38,6 @@ const model = {
         } else {
             try {
                 result = await init.getMongoDBMasterOrNot();
-                //todo
             } catch (error) {
                 errorHandler(2, error);
             }
@@ -788,7 +787,7 @@ const model = {
         return responseHandler(0, { status: init.getInitStatus() ? true : false });
     },
     async restartServer(nodelist) {
-        let command = 'sudo service orcafs-gui restart';
+        let command = 'service orcafs-gui restart';
         nodelist = nodelist.reverse();
         for (let i = 0; i < nodelist.length; i++) {
             i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
