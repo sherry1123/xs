@@ -1,5 +1,6 @@
 const config = require('../config');
 const service = require('../service');
+const getUser = ctx => (ctx.cookies.get('user'));
 const getClientIP = ctx => (ctx.get('x-real-ip'));
 const model = {
     '/api/testapi': ctx => {
@@ -21,11 +22,13 @@ const model = {
         ctx.body = await service.login(ctx.param, getClientIP(ctx));
         if (!ctx.body.code) {
             ctx.cookies.set('login', 'true', config.cookies);
+            ctx.cookies.set('user', ctx.param.username, config.cookies);
         }
     },
     '/api/logout': async ctx => {
         ctx.body = await service.logout(ctx.param, getClientIP(ctx));
         ctx.cookies.set('login', 'false', config.cookies);
+        ctx.cookies.set('user', '', config.cookies);
     },
     '/api/geteventlog': async ctx => {
         ctx.body = await service.getEventLog(ctx.param);
@@ -108,7 +111,7 @@ const model = {
         ctx.body = await service.getFiles(ctx.param);
     },
     '/api/setpattern': async ctx => {
-        ctx.body = await service.setPattern(ctx.param);
+        ctx.body = await service.setPattern(ctx.param, getUser(ctx), getClientIP(ctx));
     },
     '/api/syncsystemstatus': ctx => {
         ctx.body = { code: 0 };
