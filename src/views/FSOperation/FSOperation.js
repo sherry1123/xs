@@ -31,11 +31,11 @@ class FSOperation extends Component {
         this.setState({entryInfo});
     }
 
-    getFilesByPath (dirPath){
+    async getFilesByPath (dirPath){
         try {
-            httpRequests.getFiles(dirPath);
+            await httpRequests.getFiles(dirPath);
         } catch (e){
-            message.error(lang('该路径下没有文件或文件夹', 'There are no directories or files under this path'));
+            message.warning(lang('该路径不存', 'This path is not existed'));
         }
     }
 
