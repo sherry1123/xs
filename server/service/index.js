@@ -11,7 +11,7 @@ const request = require('../module/request');
 const responseHandler = (code, result, param) => {
     if (code) {
         errorHandler(code, result, param);
-        return { code, message: result ? typeof result === 'object' ? result.message || '' : result : '' };
+        return { code, msg: result ? typeof result === 'object' ? result.message || '' : result : '' };
     } else {
         return { code, data: result };
     }

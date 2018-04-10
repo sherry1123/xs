@@ -2,7 +2,7 @@ const config = require('../config');
 const promise = require('../module/promise');
 const init = require('../service/initialize');
 const cookieHandler = value => (value ? value === 'true' : undefined);
-const responseHandler = code => ({ code, message: config.errors[code] });
+const responseHandler = code => ({ code, msg: config.errors[code] });
 const model = {
 	initRequest() {
 		return async (ctx, next) => {
