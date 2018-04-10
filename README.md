@@ -33,7 +33,21 @@ This framework supplies a series of design principles, practical patterns and hi
  - - __./src/socket__      - socket.io client
  - - __./src/styleSheets__ - less style sheets for common using and specific components
  - - __./src/views__       - business-view components placed by module or category
- - - __./src/index.js__    - the portal of build for whole frontend project for webpack
+ - - __./src/index.js__    - the build portal of whole frontend project for webpack
+
+ ###  Component Tree
+ ```
+ - index.js (project bootstrap)
+    |- App
+        |- Initialize
+        |- Login
+        |- Main
+            |- MetadataNodes
+            |- StorageNodes
+            |- FSOperation
+            |- Snapshot
+            ...
+ ```
 
 
 ## Backend

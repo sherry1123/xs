@@ -47,8 +47,3 @@ const fetchDataPer15s = () => {
 new CronJob('*/15 * * * * *', async () => {
     fetchDataPer15s();
 }, null, true);
-
-
-// request immediately when access page
-// do something here if need
-

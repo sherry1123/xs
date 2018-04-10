@@ -26,6 +26,15 @@ export default  {
         });
     },
 
+    // synchronized system status browser cookie with http server
+    async syncUpSystemStatus (){
+        try {
+            await fetchPost('/api/syncsystemstatus');
+        } catch (e){
+            errorHandler(e);
+        }
+    },
+
     // initialize
     async startInitialization (config){
         try {
@@ -49,14 +58,6 @@ export default  {
         try {
             await this.checkStoreIsReady();
             return await fetchMock(IPs);
-        } catch (e){
-            errorHandler(e);
-        }
-    },
-
-    async getInitCache (){
-        try {
-            await fetchPost('api/getinitcache');
         } catch (e){
             errorHandler(e);
         }

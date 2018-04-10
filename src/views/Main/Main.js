@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
-import Cookie from 'js-cookie';
+import {ckGet} from '../../services';
 import routerPath from '../routerPath';
 
 // bar
@@ -40,9 +40,9 @@ import FSOperation from '../FSOperation/FSOperation';
 
 export default class Main extends Component {
     componentWillMount (){
-        let isInitialized = Cookie.get('init');
+        let isInitialized = ckGet('init');
         if (isInitialized === 'true'){
-            let isLoggedIn = Cookie.get('login');
+            let isLoggedIn = ckGet('login');
             if (!isLoggedIn || (isLoggedIn === 'false')){
                 this.props.history.replace(routerPath.Login);
             }

@@ -1,8 +1,11 @@
 // fetch
 export {fetchGet, fetchPost, fetchMock} from './fetch';
 
-// localStorage
+// localStorage operations
 export {lsGet, lsSet, lsRemove} from './localStorage';
+
+// cookie operations
+export {ckGet, ckSet, ckRemove} from './cookie';
 
 // reference mapping
 export {CAPACITY_UNIT_SIZE_MAP, Time_UNIT_MILLISECOND_MAP, INTERVAL_LIST} from './localData';
