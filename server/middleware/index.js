@@ -2,7 +2,7 @@ const config = require('../config');
 const promise = require('../module/promise');
 const init = require('../service/initialize');
 const cookieHandler = value => (value ? value === 'true' : undefined);
-const responseHandler = code => ({ code, message: config.errors[code] });
+const responseHandler = code => ({ code, msg: config.errors[code] });
 const model = {
 	initRequest() {
 		return async (ctx, next) => {
@@ -11,7 +11,8 @@ const model = {
 				api: ctx.url.split('/').pop().replace(/\?\S+/, ''),
 				key: ctx.get('Api-Key'),
 				cookie: {
-					init: cookieHandler(ctx.cookies.get('init'))
+					init: cookieHandler(ctx.cookies.get('init')),
+					login: cookieHandler(ctx.cookies.get('login'))
 				},
 				encoding: ctx.get('Accept-Encoding'),
 				status: init.getInitStatus()
@@ -28,9 +29,9 @@ const model = {
 	syncStatus() {
 		return async (ctx, next) => {
 			await next();
-			let { cookie: { init: initCookie }, status: initStatus } = ctx.state;
+			let { cookie: { init: initCookie, login: loginCookie }, status: initStatus } = ctx.state;
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookies);
-			!initStatus && ctx.cookie.set('login', 'false', config.cookies);
+			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookies);
 		}
 	},
 	filterRequest() {
