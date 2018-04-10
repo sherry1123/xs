@@ -780,12 +780,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Init Cache
-     */
-    getInitCache() {
-        return responseHandler(0, { status: init.getInitStatus() ? true : false });
-    },
     async restartServer(nodelist) {
         let command = 'service orcafs-gui restart';
         nodelist = nodelist.reverse();
