@@ -775,12 +775,12 @@ const model = {
                 await model.addAuditLog({user, desc: 'set pattern successfully', ip});
             } else {
                 result = responseHandler(41, res.message, param);
-                await model.addAuditLog({user, desc: `set pattern failed, reason: ${res.message}`, ip});
+                await model.addAuditLog({user, desc: `set pattern failed`, ip});
                 await model.addEventLog({desc: `set pattern failed, reason: ${res.message}`});
             }
         } catch (error) {
             result = responseHandler(41, error, param);
-            await model.addAuditLog({user, desc: `set pattern failed, reason: ${error}`, ip});
+            await model.addAuditLog({user, desc: `set pattern failed`, ip});
             await model.addEventLog({desc: `set pattern failed. reason: ${error}`});
         }
         return result;
