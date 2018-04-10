@@ -38,7 +38,6 @@ const model = {
         } else {
             try {
                 result = await init.getMongoDBMasterOrNot();
-                //todo
             } catch (error) {
                 errorHandler(2, error);
             }
