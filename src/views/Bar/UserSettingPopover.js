@@ -4,16 +4,16 @@ import {Button} from 'antd';
 import lang from '../../components/Language/lang';
 import mainAction from '../../redux/actions/generalAction';
 import httpRequests from '../../http/requests';
-import routerPath from '../routerPath';
 
 class UserSettingPopover extends Component {
     forwardAccountSetting (){
 
     }
 
-    async logout (){
-        await httpRequests.logout(this.props.user.username);
-        this.props.history.push(routerPath.Login);
+    logout (){
+        // there's no need to forward to Login manually since we will verify
+        // the status in cookie when each fetch request get the response
+        httpRequests.logout(this.props.user.username);
     }
 
     render (){
