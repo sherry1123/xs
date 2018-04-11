@@ -9,6 +9,8 @@ so we can control it by ourselves, add track it through Git. This tool will init
 Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM into CLI project for a better development experience. <br />
 At the same time, the HTTP proxy provided by webpack dev-server is also indispensable: <br />
 [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app) <br />
+Also the code splitting is provided to increase the loading performance: <br />
+[https://serverless-stack.com/chapters/code-splitting-in-create-react-app.html](https://serverless-stack.com/chapters/code-splitting-in-create-react-app.html) <br />
 
 2. The current popular state management framework is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />
 [https://redux.js.org](https://redux.js.org) <br />
@@ -22,18 +24,21 @@ This framework supplies a series of design principles, practical patterns and hi
 
 ####  Folder Directory Structure
 
- - - __./config__          - configurations for cli tools
- - - __./public__          - production build destination
- - - __./scripts__         - npm scripts for running cli tools
- - - __./src__             - source code and static resource for webpack
- - - __./src/component__   - common components and high-level abstractions of mature business-view components
- - - __./src/images__      - image resource
- - - __./src/redux__       - state management
- - - __./src/services__    - useful functions and local data/map
- - - __./src/socket__      - socket.io client
- - - __./src/styleSheets__ - less style sheets for common using and specific components
- - - __./src/views__       - business-view components placed by module or category
- - - __./src/index.js__    - the build portal of whole frontend project for webpack
+ - - __./config__            - configurations for cli tools
+ - - __./public__            - production build destination
+ - - __./scripts__           - npm scripts for running cli tools
+ - - __./src__               - source code and static resource for webpack
+ - - __./src/component__     - common and high-level abstractions of mature business-view components
+ - - __./src/http__          - all http server APIs, and cronjob
+ - - __./src/images__        - image resources
+ - - __./src/redux__         - state management framework
+ - - __./src/services__      - useful functions and local data/map
+ - - __./src/socket__        - socket.io client
+ - - __./src/styleSheets__   - less style sheets for common usage and specific components
+ - - __./src/views__         - business-view components placed by module or category
+ - - __./src/asyncLoad.js__  - a HOC factory for dynamically import component after doing code splitting
+ - - __./src/index.js__      - the build portal of whole frontend project for webpack
+ - - __./src/routerPath.js__ - record the map for current router paths
 
  ###  Component Tree
  ```
