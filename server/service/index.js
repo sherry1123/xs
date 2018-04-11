@@ -766,17 +766,22 @@ const model = {
      * @param {string} dirPath Dir Path
      * @param {int} buddyMirror Buddy Mirror
      */
-    async setPattern(param) {
+    async setPattern(param, user, ip) {
         let result = {};
         try {
             let res = await fileSystem.setPattern(param);
             if (!res.errorId) {
                 result = responseHandler(0, 'set pattern successfully');
+                await model.addAuditLog({user, desc: 'set pattern successfully', ip});
             } else {
                 result = responseHandler(41, res.message, param);
+                await model.addAuditLog({user, desc: `set pattern failed`, ip});
+                await model.addEventLog({desc: `set pattern failed, reason: ${res.message}`});
             }
         } catch (error) {
             result = responseHandler(41, error, param);
+            await model.addAuditLog({user, desc: `set pattern failed`, ip});
+            await model.addEventLog({desc: `set pattern failed. reason: ${error}`});
         }
         return result;
     },

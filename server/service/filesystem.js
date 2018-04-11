@@ -210,6 +210,8 @@ const model = {
         return res;
     },
     async setPattern(param) {
+        param.chunkSize = String(param.chunkSize);
+        param.numTargets = String(param.numTargets);
         let token = await model.getToken();
         return await request.post(config.api.orcafs.setpattern, param, token, true);
     }
