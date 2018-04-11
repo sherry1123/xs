@@ -19,21 +19,22 @@ class Initialize extends Component {
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
-            currentStep: 2,
+            // card step
+            currentStep: 0,
             totalStep: 5,
             checking: false,
-
+            // server IP input and corresponding verification result
             metadataServerIPsError: metadataServerIPs.map(() => ({status: '', help: ''})),
             storageServerIPsError: storageServerIPs.map(() => ({status: '', help: ''})),
             clientIPsError: clientIPs.map(() => ({status: '', help: ''})),
             managementServerIPsError: managementServerIPs.map(() => ({status: '', help: ''})),
             floatIPsError: floatIPs.map(() => ({status: '', help: ''})),
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
-
+            // running initialization
             initStatusNum: 0,
-            initStep: 0,
+            initProgressStep: 0,
             initProgress: 0,
-            initializationInfo: []
+            initInfoList: []
         };
     }
 
@@ -51,31 +52,47 @@ class Initialize extends Component {
                 }
                 this.props.history.replace(path);
             } else {
-                // if isInitialized is true and there's a key 'initStep' in localStorage,
+                // isInitialized is true and there's a key 'initStep' in localStorage,
                 // it means initialization was finished and there was an abnormal exit or refresh
-                // action happened on browser before, so need to jump to the last step
-                this.setState({currentStep: this.state.totalStep - 1});
+                // action happened on browser before, should jump to the last step
+                this.setState({currentStep: Number(initStepLocal) || this.state.totalStep});
+
+                // console.info('find initStep in localStorage, value is ' + initStepLocal);
+            }
+        } else {
+            // for this case: isInitialized is false and there's a key 'initStep' in localStorage,
+            // it means initialization wasn't finished, so need to jump to the step recorded in localStorage
+            if (!!initStepLocal && initStepLocal > 2){
+                // get some state from localStorage then render them on view
+                let [{current = 0, total = 8}, initInfoList = []] = lsGet(['initStatus', 'initInfoList']);
+                let initProgress = (current / total).toFixed(2) * 100;
+                this.setState({
+                    currentStep: Number(initStepLocal) || 3,
+                    initProgress,
+                    initInfoList
+                });
             }
         }
     }
 
     componentWillReceiveProps (nextProps){
         let {initStatus: {current, total, status}} = nextProps;
-        let {initStep, initProgress, initializationInfo} = this.state;
-        initializationInfo = [...initializationInfo];
+        let {initProgressStep, initProgress, initInfoList} = this.state;
+        initInfoList = [...initInfoList];
         if (current !== undefined){
             if (status === 0){
                 // initialization is working properly
                 if (current === total - 1){
                     // initialization finished
-                    if (this.state.initStep !== (total - 1)){
+                    if (this.state.initProgressStep !== (total - 1)){
+                        lsRemove('initInfoList');
                         this.clearProgressTime();
-                        initializationInfo.unshift({step: total - 1, initProgress: 100});
+                        initInfoList.unshift({step: total - 1, initProgress: 100});
                         this.setState({
                             initStatusNum: 0,
-                            initStep: total - 1,
+                            initProgressStep: total - 1,
                             initProgress: 100,
-                            initializationInfo
+                            initInfoList
                         });
                         httpRequests.getDefaultUser();
                         setTimeout(() => this.setState({currentStep: 4}), 1500);
@@ -83,27 +100,28 @@ class Initialize extends Component {
                 } else {
                     // initialization progress increase
                     let currentProgress = (current / total).toFixed(2) * 100;
-                    if (current > initStep){
+                    if (current > initProgressStep){
                         this.allowIncrease = true;
                         initProgress = currentProgress;
-                        initializationInfo.unshift({step: current, initProgress});
+                        initInfoList.unshift({step: current, initProgress});
                         this.setState({
                             initStatusNum: status,
-                            initStep: current,
+                            initProgressStep: current,
                             initProgress,
-                            initializationInfo
+                            initInfoList
                         });
-                    } else if (current === initStep){
+                        lsSet('initInfoList', initInfoList);
+                    } else if (current === initProgressStep){
                         this.allowIncrease = initProgress < (currentProgress + parseInt(100 / total, 10));
                     }
                 }
             } else {
                 // initialization is failed, status: -1
                 this.allowIncrease = false;
-                initializationInfo.unshift({step: -1, initProgress: -1});
+                initInfoList.unshift({step: -1, initProgress: -1});
                 this.setState({
                     initStatusNum: -1,
-                    initializationInfo
+                    initInfoList
                 });
             }
         }
@@ -115,7 +133,8 @@ class Initialize extends Component {
             notification.open({
                 message: lang('提示', 'Tooltip'),
                 description: lang('您已为管理服务器启用HA，请配置两个有效的管理服务器IP及对应的HB IP，并配置存储集群服务管理IP。这些设置将确保HA功能能够正常工作。',
-                    'You have enabled HA for management server, please configure two valid management server IPs and corresponding Heartbeat IPs, also the storage cluster service management IP needs to be configured. All those settings will ensure that the HA function can work properly.')
+                    `You have enabled HA for management server, please configure two valid management server IPs and corresponding Heartbeat IPs, 
+                    also the storage cluster service management IP needs to be configured. All those settings will ensure that the HA function can work properly.`)
             });
         } else {
             await this.removeIP('managementServerIPs', 1);
@@ -196,7 +215,7 @@ class Initialize extends Component {
                     await this.setErrorArr('managementServerIPs', i, {status: 'error', help: errorHelp});
                 } else {
                     if (!!this.state.managementServerIPsError[i].status){
-                        console.info('清除', this.state.managementServerIPsError[i].status);
+                        // console.info('清除', this.state.managementServerIPsError[i].status);
                         await this.setErrorArr('managementServerIPs', i, {status: '', help: ''});
                     }
                 }
@@ -255,9 +274,11 @@ class Initialize extends Component {
     async next (){
         let next = this.state.currentStep + 1;
         lsSet('initStep', next);
+        // console.info('set initStep to ' + next);
         switch (next){
             case 1:
                 await this.setState({checking: true});
+
                 // validate basic pattern of all IPs
                 await Promise.all(this.categoryArr.map(async (category) => {
                     let ips = this.props[category];
@@ -288,11 +309,11 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                if (!this.state.enableRAID){
-                    this.setState({currentStep: next});
-                } else {
+                if (this.state.enableRAID){
+                    // get disk or RAID configuration data
 
                 }
+                this.setState({currentStep: next});
                 break;
             case 3:
                 this.setState({currentStep: next});
@@ -304,28 +325,9 @@ class Initialize extends Component {
     }
 
     startInitialization (){
-        /*
-        let initTimer = setInterval(async () => {
-            initProgress += (initProgress === 10 || initProgress === 40 || initProgress === 70 ? 10 : 1);
-            let info = `initialize xxx server, ${lang('进度:', 'progress:')} ${initProgress}%`;
-            let infoArr = initProgress === 100 ? [info, lang('初始化已完成!', 'Initialization done!')] : [info];
-            let newState =  update(this.state, {
-                initializationInfo: {$unshift: infoArr},
-                initProgress: {$set: initProgress}
-            });
-            await this.setState(Object.assign(this.state, newState));
-            let list = this.initInfoWrapper;
-            list && (list.scrollTop = list.scrollHeight);
-            if (initProgress === 100){
-                clearInterval(initTimer);
-                setTimeout(() => this.setState({currentStep: 4}), 1500);
-                if (process.env.NODE_ENV === 'development'){
-                    ckSet('init', 'true');
-                }
-            }
-        }, 300);
-        */
-
+        this.setState({
+            initInfoList: [{step: 0, initProgress: 0}]
+        });
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID} = this.props;
         httpRequests.startInitialization({
             metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID
@@ -353,14 +355,14 @@ class Initialize extends Component {
     forwardLogin (){
         // fetch API to create user and set password
 
-        lsRemove(['initStep', 'initStatus']);
+        lsRemove(['initStep', 'initStatus', 'initInfoList']);
         this.props.history.push(routerPath.Login);
     }
 
     render (){
         let initTipsMap = {
             '-1': lang('初始化失败，请联系运维人员寻求帮助！', 'Initialization failed, please ask operation and maintenance staff for help!'),
-            0: lang('初始化已开始，请稍候 ...', 'Initializing, pleas wait for a moment ...'),
+            0: lang('初始化已开始，请稍候', 'Initializing, pleas wait for a moment'),
             1: lang('正在初始化管理服务器', 'Initializing management server'),
             2: lang('正在初始化元数据服务器', 'Initializing metadata server'),
             3: lang('正在初始化存储服务器', 'Initializing storage server'),
@@ -696,9 +698,9 @@ class Initialize extends Component {
                                 />
                             </QueueAnim>
                             <QueueAnim key={1} type="bottom">
-                                <section key="fs-initializing-3" className="fs-initialization-wrapper" ref={ref => this.initInfoWrapper = ref}>
+                                <section key="fs-initializing-3" className="fs-initialization-wrapper">
                                     {
-                                        this.state.initializationInfo.map((info, i) => info.step === -1 ?
+                                        this.state.initInfoList.map((info, i) => info.step === -1 ?
                                         <p className="fs-initialization-info failed" key={i}>
                                             {initTipsMap[-1]}
                                         </p> :

@@ -16,7 +16,7 @@ At the same time, the HTTP proxy provided by webpack dev-server is also indispen
 3. For router implementation we use 'react-router': <br />
 [https://reacttraining.com/react-router/web/example/basic](https://reacttraining.com/react-router/web/example/basic) <br />
 
-4. We use the 'antd' as UI component library that is refined by Ant Financial RD team(UED team): <br />
+4. We use the 'antd' as UI component library that is refined by Ant Financial R&D team(UED team): <br />
 This framework supplies a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently. <br />
 [https://ant.design](https://ant.design)
 

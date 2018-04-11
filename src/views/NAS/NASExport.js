@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Select, Table} from 'antd';
 import lang from "../../components/Language/lang";
-import {formatStorageSize, timeFormat, validateFsName} from '../../services';
 import httpRequests from '../../http/requests';
 
 class NASExport extends Component {
@@ -19,11 +18,11 @@ class NASExport extends Component {
             formValid: false,
             formSubmitting: false,
             nasExportData: {
-                name: '',
+                path: '',
                 protocol: ''
             },
             validation: {
-                name: {status: '', help: '', valid: false},
+                path: {status: '', help: '', valid: false},
                 protocol: {status: '', help: '', valid: false}
             }
         };
@@ -47,16 +46,16 @@ class NASExport extends Component {
         if (query || dataRefresh){
             await this.setState({
                 query,
-                nasExportList: Object.assign([], this.state.nasExportListBackup).filter(({name}) => name.match(query))
+                nasExportList: Object.assign([], this.state.nasExportListBackup).filter(({path}) => path.match(query))
             });
         } else {
             this.setState({nasExportList: this.state.nasExportListBackup});
         }
     }
 
-    delete (name){
+    delete ({type, path}){
         Modal.confirm({
-            title: lang(`确定删除这个NAS导出: ${name} ?`, `Are you sure you want to delete this NAS export: ${name} ?`),
+            title: lang(`确定删除这个NAS导出: ${type}@${path} ?`, `Are you sure you want to delete this NAS export: ${type}@${path} ?`),
             content: lang('此操作不可恢复', 'You can\'t undo this action'),
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
@@ -77,33 +76,17 @@ class NASExport extends Component {
     async validateForm (key){
         let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
         await this.setState({validation});
-        if (key === 'name'){
-            let {name} = this.state.nasExportData;
-            if (!name){
-                // no name enter
+        if (key === 'path'){
+            // *** should confirm whether one path with a same protocol can be exported more than one time
+            if (!this.state.nasExportData.path){
                 await this.validationUpdateState('name', {
-                    cn: '请输入导出名称',
-                    en: 'please enter export name'
+                    cn: '请输入要做导出的路径',
+                    en: 'Please enter export path'
                 }, false);
-            } else if (!validateFsName(name)){
-                // name validate failed
-                await this.validationUpdateState('name', {
-                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位或末尾位）的组合，长度3-30位',
-                    en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30.'
-                }, false);
-            } else {
-                let isNameDuplicated = this.props.nasExportList.some(nasExport => nasExport.name === name);
-                if (isNameDuplicated){
-                    // this name is duplicated with an existing NAS export's name
-                    await this.validationUpdateState('name', {
-                        cn: '该导出名称已经存在',
-                        en: 'The NAS export name already existed'
-                    }, false);
-                }
             }
         }
         if (key === 'protocol'){
-            if (!this.state.nasExportData){
+            if (!this.state.nasExportData.protocol){
                 await this.validationUpdateState('name', {
                     cn: '请选择一个NAS导出协议',
                     en: 'Please select a NAS export protocol'
@@ -147,28 +130,18 @@ class NASExport extends Component {
         let tableProps = {
             dataSource: this.state.nasExportList,
             pagination: true,
-            rowKey: 'name',
+            rowKey: record => record.type + '@' + record.path,
             locale: {
                 emptyText: lang('暂无NAS导出', 'No NAS Export')
             },
             columns: [
-                {title: lang('名称', 'Name'), width: 125, dataIndex: 'name',},
-                {title: lang('大小', 'Size'), width: 120, dataIndex: 'size',
-                    render: (text) => formatStorageSize(text)
-                },
-                {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
-                    render: (text) => timeFormat(text)
-                },
+                {title: lang('协议类型', 'Protocol'), width: 125, dataIndex: 'protocol',},
+                {title: lang('导出路径', 'Export Path'), width: 120, dataIndex: 'path',},
                 {title: lang('操作', 'Operation'), width: 80,
                     render: (text, record) => (
                         <div>
-                            <a title={lang('回滚', 'Rollback')}
-                               onClick={this.rollback.bind(this, record.name)}
-                            >
-                                <Icon style={{fontSize: 15}} type="rollback" />
-                            </a>
                             <a title={lang('删除', 'Delete')}
-                               onClick={this.delete.bind(this, record.name)}
+                               onClick={this.delete.bind(this, record)}
                                style={{marginLeft: 10}}
                             >
                                 <Icon style={{fontSize: 15}} type="delete" />
@@ -186,16 +159,14 @@ class NASExport extends Component {
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <Input.Search style={{marginRight: 15, width: 150}} size="small"
-                              placeholder={lang('导出名称', 'export name')}
+                              placeholder={lang('导出路径', 'export path')}
                               value={this.state.query}
                               onChange={this.queryChange.bind(this)}
                               onSearch={this.searchInTable.bind(this)}
                         />
                         <Button className="fs-create-snapshot-button"
-                                size="small"
-                                onClick={() => {
-
-                                }}
+                            size="small"
+                            onClick={() => {this.setState({visible: true});}}
                         >
                             {lang('创建NAS导出', 'Create NAS Export')}
                         </Button>
@@ -203,41 +174,31 @@ class NASExport extends Component {
                     </section>
                 </section>
                 <Modal title={lang('创建NAS导出', 'Create NAS Export')}
-                       width={220}
+                       width={250}
                        closable={false}
                        maskClosable={false}
                        visible={this.state.visible}
                        footer={
                            <div>
                                <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
-                                    onClick={this.createNasExport.bind(this)}
+                                    size='small' onClick={this.createNasExport.bind(this)}
                                >
                                    {lang('创建', 'Create')}
                                </Button>
-                               <Button onClick={this.hide.bind(this)}>
+                               <Button size='small' onClick={this.hide.bind(this)}>
                                    {lang('取消', 'Cancel')}
                                </Button>
                            </div>
                        }
                 >
-                    <Form layout="vertical">
-                        <Form.Item label={lang('导出名称', 'Export Name')}
-                            validateStatus={this.state.validation.name.status}
-                            help={this.state.validation.name.help}
+                    <Form>
+                        <Form.Item label={lang('导出协议', 'Export Protocol')}
+                            validateStatus={this.state.validation.protocol.status}
+                            help={this.state.validation.protocol.help}
                         >
-                            <Input style={{width: '100%'}}
-                                placeholder={lang('请输入导出名称', 'please enter export name')}
-                                value={this.state.nasExportData.name}
-                                onChange={({target: {value}}) => {
-                                    this.formValueChange.bind(this, 'name')(value);
-                                    this.validateForm.bind(this)('name');
-                                }}
-                            />
-                        </Form.Item>
-                        <Form.Item label={lang('导出协议', 'Export Protocol')}>
                             <Select style={{width: 150}} size="small"
                                 placeholder={lang('请选择导出协议', 'select export protocol')}
-                                value={'nfs'}
+                                value={this.state.nasExportData.protocol}
                                 onChange={value => {
                                     this.formValueChange.bind(this, 'protocol', value)();
                                     this.validateForm.bind(this)('protocol');
@@ -246,6 +207,19 @@ class NASExport extends Component {
                                 <Select.Option value="nfs">NFS</Select.Option>
                                 <Select.Option value="cifs">CIFS</Select.Option>
                             </Select>
+                        </Form.Item>
+                        <Form.Item label={lang('导出路径', 'Export Path')}
+                            validateStatus={this.state.validation.path.status}
+                            help={this.state.validation.path.help}
+                        >
+                            <Input style={{width: 150}} size="small"
+                                   placeholder={lang('请输入导出路径', 'please enter export path')}
+                                   value={this.state.nasExportData.path}
+                                   onChange={({target: {value}}) => {
+                                       this.formValueChange.bind(this, 'path')(value);
+                                       this.validateForm.bind(this)('path');
+                                   }}
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>

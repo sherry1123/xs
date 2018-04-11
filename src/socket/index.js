@@ -1,15 +1,18 @@
 import io from 'socket.io-client';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
-import {lsSet} from '../services';
-import Cookie from 'js-cookie';
+import {lsSet, lsRemove, ckGet} from '../services';
 
-let isInitialized = Cookie.get('init');
+let isInitialized = ckGet('init');
 if (isInitialized !== 'true'){
     let socket = io();
     socket.on('init status', initStatus => {
         console.info('init ws:', initStatus);
-        lsSet('initStatus', initStatus);
         store.dispatch(initializeAction.setInitStatus(initStatus));
+        if (!initStatus.status){
+            lsSet('initStatus', initStatus);
+        } else {
+            lsRemove(['initStep', 'initStatus']);
+        }
     });
 }

@@ -197,9 +197,7 @@ class Snapshot extends Component {
                         />
                         <Button className="fs-create-snapshot-button"
                             size="small"
-                            onClick={() => {
-
-                            }}
+                            onClick={() => {this.setState({visible: true});}}
                         >
                             {lang('创建快照', 'Create Snapshot')}
                         </Button>
@@ -207,29 +205,29 @@ class Snapshot extends Component {
                     </section>
                 </section>
                 <Modal title={lang('创建快照', 'Create Snapshot')}
-                    width={220}
+                    width={250}
                     closable={false}
                     maskClosable={false}
                     visible={this.state.visible}
                     footer={
                         <div>
                             <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
-                                onClick={this.createSnapshot.bind(this)}
+                                size='small' onClick={this.createSnapshot.bind(this)}
                             >
                                 {lang('创建', 'Create')}
                             </Button>
-                            <Button onClick={this.hide.bind(this)}>
+                            <Button size='small' onClick={this.hide.bind(this)}>
                                 {lang('取消', 'Cancel')}
                             </Button>
                         </div>
                     }
                 >
-                    <Form layout="vertical">
+                    <Form>
                         <Form.Item label={lang('快照名称', 'Snapshot Name')}
                             validateStatus={this.state.validation.name.status}
                             help={this.state.validation.name.help}
                         >
-                            <Input style={{width: '100%'}}
+                            <Input style={{width: 150}} size='small'
                                    placeholder={lang('请输入快照名称', 'please enter snapshot name')}
                                    value={this.state.snapshotData.name}
                                    onChange={({target: {value}}) => {

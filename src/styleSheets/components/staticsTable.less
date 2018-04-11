@@ -14,8 +14,8 @@
             right: -5px;
             bottom: -5px;
             left: -5px;
-            // border: 1px solid @page-bg;
-            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
+            // border: 1px solid @light-border;
+            .fs-box-shadow();
         }
         &.header {
             padding: 0 10px;
@@ -27,23 +27,23 @@
             margin-top: 10px;
             font-size: 12px;
             cursor: pointer;
-            color: @title-color;
+            color: @title;
             &:before {
                 top: -2px;
                 right: -2px;
                 bottom: -2px;
                 left: -2px;
-                border: 1px solid @page-bg;
+                border: 1px solid @light-border;
                 border-radius: 6px;
                 box-shadow: none;
             }
             &:hover {
                 transform: scale(1.1, 1.1);
                 font-size: 13px;
-                color: @text-color;
+                color: @text;
                 &:before {
                     border: none;
-                    box-shadow: 0 2px 8px rgba(229, 229, 229, 0.7);
+                    .fs-box-shadow();
                 }
                 .stick {
                     color: @orange;
@@ -54,9 +54,9 @@
         &.no-io {
             margin-top: 15px;
             font-size: 12px;
-            color: @title-color;
+            color: @title;
             &:before {
-                border: 1px solid @page-bg;
+                border: 1px solid @light-border;
                 border-radius: 6px;
                 box-shadow: none;
             }

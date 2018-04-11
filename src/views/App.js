@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import {HashRouter, Switch, Route, Redirect} from 'react-router-dom';
+import asyncLoad from './asyncLoad';
 import {LocaleProvider} from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
 import lang from '../components/Language/lang';
-import Init from './Initialize/Initialize';
-import Login from './Login/Login';
-import Main from './Main/Main';
-import Error from './Error/Error';
 import {ckGet} from '../services';
 import routerPath from './routerPath';
+
+const Initialize = asyncLoad(() => import('./Initialize/Initialize'));
+const Login = asyncLoad(() => import('./Login/Login'));
+const Main = asyncLoad(() => import('./Main/Main'));
+const Error = asyncLoad(() => import('./Error/Error'));
 
 export default class App extends Component {
     constructor (props){
@@ -35,7 +37,7 @@ export default class App extends Component {
             <HashRouter>
                 <LocaleProvider locale={lang(enUS, {})}>
                     <Switch>
-                        <Route path={routerPath.Init} component={Init} />
+                        <Route path={routerPath.Init} component={Initialize} />
                         <Route path={routerPath.Login} component={Login} />
                         <Route path={routerPath.Error} component={Error} />
                         <Route path={routerPath.Main} component={Main} />

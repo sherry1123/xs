@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
+import asyncLoad from '../asyncLoad';
 import {ckGet} from '../../services';
 import routerPath from '../routerPath';
 
@@ -9,34 +10,31 @@ import SideBar from '../Bar/SideBar';
 import FooterBar from '../Bar/FooterBar';
 
 // metadata nodes
-import MetadataNodes from '../MetadataNodes/MetadataNodes';
+const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
 
 // storage nodes
-import StorageNodes from '../StorageNodes/StorageNodes';
+const StorageNodes = asyncLoad(() => import('../StorageNodes/StorageNodes'));
 
 // client statistics metadata
-import ClientStatistics from '../ClientStatistics/ClientStatistics';
+const ClientStatistics = asyncLoad(() => import('../ClientStatistics/ClientStatistics'));
 
 // user statistics metadata
-import UserStatistics from '../UserStatistics/UserStatistics';
+const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'));
 
 // snapshot
-import Snapshot from '../Snapshot/Snapshot';
+const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
 
-// NAS
-import NASExport from '../NAS/NASExport';
+// NAS export
+const NASExport = asyncLoad(() => import('../NAS/NASExport'));
 
 // management
-// import ManagementKnownProblems from '../Management/ManagementKnownProblems';
-import ManagementSystemLog from '../Management/ManagementSystemLog';
+const ManagementSystemLog = asyncLoad(() => import('../Management/ManagementSystemLog'));
 
 // fs operation
-// import FSOperationStripeSettings from '../FSOperation/FSOperationStripeSettings';
-// import FSOperationFileBrowser from '../FSOperation/FSOperationFileBrowser';
-import FSOperation from '../FSOperation/FSOperation';
+const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
 // dashboard
-// import Dashboard from '../Dashboard/Dashboard';
+// const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 
 export default class Main extends Component {
     componentWillMount (){

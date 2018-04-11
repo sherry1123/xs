@@ -18,7 +18,7 @@
                         &.title {
                             display: block;
                             margin: 30px 0 20px;
-                            color: @title-color;
+                            color: @title;
                             &:nth-child(1) {
                                 margin-top: 0;
                             }
@@ -42,13 +42,13 @@
                             text-align: left;
                             // border: 1px solid @border;
                             border-radius: 10px;
-                            box-shadow: 0 2px 8px rgba(229, 229, 229, 0.5);
+                            .fs-box-shadow();
                             user-select: none;
                             &.m-l {
                                 margin-left: 15px;
                             }
                             &:hover {
-                                box-shadow: 0 2px 8px rgba(200, 200, 200, 0.7);
+                                .fs-box-shadow(0.7, 0, 2px, 8px, 200, 200, 200);
                                 .fs-info-block-circle {
                                     border-radius: 0;
                                     transform: rotate(360deg);
@@ -82,7 +82,7 @@
                             .fs-info-block-label {
                                 margin-top: 20px;
                                 font-weight: bold;
-                                color: @title-color;
+                                color: @title;
                             }
                             .fs-info-block-value {
                                 margin: 10px 0;
