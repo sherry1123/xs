@@ -9,7 +9,7 @@ so we can control it by ourselves, add track it through Git. This tool will init
 Also for webpack project, dev server is certainly support. Based on this, we introduce module HRM into CLI project for a better development experience. <br />
 At the same time, the HTTP proxy provided by webpack dev-server is also indispensable: <br />
 [https://github.com/facebookincubator/create-react-app](https://github.com/facebookincubator/create-react-app) <br />
-Also the code splitting is provided to increase the loading performance: <br />
+Also the Code Splitting is provided to improved the loading performance: <br />
 [https://serverless-stack.com/chapters/code-splitting-in-create-react-app.html](https://serverless-stack.com/chapters/code-splitting-in-create-react-app.html) <br />
 
 2. The current popular state management framework is Redux which is inspired by Flux and powered by Dan Abramov. As for React.js we use 'react-redux' instead: <br />
