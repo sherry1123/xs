@@ -44,7 +44,7 @@ const getHardware = () => {
     let memory = getMemoryUsage();
     return { cpu, iops, memory };
 };
-const metaNodesParam = {
+let metaNodesParam = {
     nodeType: 1,
     interval: 15,
     numLines: 15,
