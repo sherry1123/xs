@@ -7,7 +7,7 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import StaticsFilter from '../../components/StaticsTable/StaticsFilter';
 import StaticsTable from '../../components/StaticsTable/StaticsTable';
 import httpRequests from "../../http/requests";
-import {lsGet, lsSet, someUpperCase} from "../../services";
+import {lsGet, lsSet, someUpperCase, USER_STATICS_ITEMS} from "../../services";
 
 class MetadataNodes extends Component {
     constructor (props){
@@ -96,17 +96,7 @@ class MetadataNodes extends Component {
             target: 'user',
             type: 'metadata',
             limit: 10,
-            totalItems: [
-                'userOrClientName', 'sum', 'ack', 'close', 'entInf',
-                'nodeInf', 'fndOwn', 'Ink', 'mkdir', 'create',
-                'rddir', 'refrEnt', 'mdsInf', 'rmdir', 'rmLnk',
-                'mvDirIns', 'mvFiIns', 'open', 'ren', 'setChDrct',
-                'sAttr', 'sDirPat', 'stat', 'statfs', 'trunc',
-                'symInk', 'unInk', 'lookLI', 'statLI', 'revalLI',
-                'openLI', 'createLI', 'mirrorMD', 'hardInk', 'flckAp',
-                'flckEn', 'flckRg', 'dirparent', 'listXA', 'getXA',
-                'rmXA', 'setXA'
-            ],
+            totalItems: USER_STATICS_ITEMS,
             selectedItems: this.state.overviewStaticsFilterItems,
         };
         let overviewStaticsFilterConfig = Object.assign({}, staticsFilterConfig, {
