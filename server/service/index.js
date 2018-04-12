@@ -791,6 +791,18 @@ const model = {
         for (let i = 0; i < nodelist.length; i++) {
             i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
         }
+    },
+    async getSnapshot(param) {
+
+    },
+    async createSnapshot(param) {
+
+    },
+    async deleteSnapshot(param) {
+
+    },
+    async rollback(param) {
+        
     }
 };
 module.exports = model;

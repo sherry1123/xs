@@ -115,6 +115,20 @@ const model = {
     },
     '/api/syncsystemstatus': ctx => {
         ctx.body = { code: 0 };
+    },
+    '/api/getsnapshot': async ctx => {
+        ctx.body = await service.getSnapshot(ctx.param);
+    },
+    '/api/createsnapshot': async ctx => {
+        ctx.body = await service.createSnapshot(ctx.param);
+    },
+    '/api/deletesnapshot': ctx => {
+        ctx.body = { code: 0, data: 'start to delete snapshot' };
+        service.deleteSnapshot(ctx.param);
+    },
+    '/api/rollback': ctx => {
+        ctx.body = { code: 0, data: 'start to rollback snapshot' };
+        service.rollback(ctx.param);
     }
 };
 module.exports = model;

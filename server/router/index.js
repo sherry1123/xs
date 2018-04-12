@@ -37,5 +37,8 @@ router.all('/api/getentryinfo', controller['/api/getentryinfo']);
 router.all('/api/getfiles', controller['/api/getfiles']);
 router.all('/api/setpattern', controller['/api/setpattern']);
 router.all('/api/syncsystemstatus', controller['/api/syncsystemstatus']);
-
+router.all('/api/getsnapshot', controller['/api/getsnapshot']);
+router.all('/api/createsnapshot', controller['/api/createsnapshot']);
+router.all('/api/deletesnapshot', controller['/api/deletesnapshot']);
+router.all('/api/rollback', controller['/api/rollback']);
 module.exports = router;
