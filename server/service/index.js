@@ -83,7 +83,7 @@ const model = {
      * @param {object} RAIDConfig  RAID Config
      */
     async initCluster(param) {
-        let current = 0, total = 0;
+        let current = 0, total = 8;
         try {
             let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
@@ -92,7 +92,6 @@ const model = {
                     let progress = await init.getOrcaFSInitProgress();
                     if (!progress.errorId) {
                         let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                        total = totalStep + 3;
                         if (status) {
                             clearInterval(getInitProgress);
                             socket.postInitStatus({ current: currentStep, status, total });
@@ -116,6 +115,7 @@ const model = {
                 }, 1000);
             } else {
                 errorHandler(7, res.message, param);
+                socket.postInitStatus({ current, status: -1, total });
             }
         } catch (error) {
             errorHandler(7, error, param);
