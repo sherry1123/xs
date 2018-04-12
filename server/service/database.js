@@ -39,10 +39,12 @@ const model = {
         return await dao.createOne(hardware, param);
     },
     async addSetting(param) {
+        param = { key: param.key, value: JSON.stringify(param.value) };
         return await dao.createOne(setting, param);
     },
     async getSetting(param) {
-        return await dao.findOne(setting, param, { _id: 0, __v: 0 });
+        let data = await dao.findOne(setting, param, { _id: 0, __v: 0 });
+        return JSON.parse(data.value);
     }
 };
 module.exports = model;

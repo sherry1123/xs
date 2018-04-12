@@ -129,6 +129,18 @@ const model = {
     '/api/rollback': ctx => {
         ctx.body = { code: 0, data: 'start to rollback snapshot' };
         service.rollback(ctx.param);
+    },
+    '/api/getusermetastats': async ctx => {
+        ctx.body = await service.getUserMetaStats(ctx.param);
+    },
+    '/api/getuserstoragestats': async ctx => {
+        ctx.body = await service.getUserStorageStats(ctx.param);
+    },
+    '/api/getclientmetastats': async ctx => {
+        ctx.body = await service.getClientMetaStats(ctx.param);
+    },
+    '/api/getclientstoragestats': async ctx => {
+        ctx.body = await service.getClientStorageStats(ctx.param);
     }
 };
 module.exports = model;

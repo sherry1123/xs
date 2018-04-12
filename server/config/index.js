@@ -32,7 +32,8 @@ exports.api = {
         destroycluster: 'http://localhost:9090/cluster/destroy',
         entryinfo: 'http://localhost:9090/cluster/getentryinfo',
         getfiles: 'http://localhost:9090/cluster/getfiles',
-        setpattern: 'http://localhost:9090/cluster/setpattern'
+        setpattern: 'http://localhost:9090/cluster/setpattern',
+        getstats: 'http://localhost:9090/cluster/getstats'
     },
     admon: {
         nodelist: 'http://localhost:8000/XML_NodeList',

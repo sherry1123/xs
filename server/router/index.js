@@ -41,4 +41,9 @@ router.all('/api/getsnapshot', controller['/api/getsnapshot']);
 router.all('/api/createsnapshot', controller['/api/createsnapshot']);
 router.all('/api/deletesnapshot', controller['/api/deletesnapshot']);
 router.all('/api/rollback', controller['/api/rollback']);
+router.all('/api/getusermetastats', controller['/api/getusermetastats']);
+router.all('/api/getuserstoragestats', controller['/api/getuserstoragestats']);
+router.all('/api/getclientmetastats', controller['/api/getclientmetastats']);
+router.all('/api/getclientstoragestats', controller['/api/getclientstoragestats']);
+
 module.exports = router;

@@ -145,7 +145,6 @@ const model = {
                         let nodelist = ['127.0.0.1'];
                         if (mongodbStatus) {
                             nodelist = await database.getSetting({ key: 'nodelist' });
-                            nodelist = JSON.parse(nodelist.value);
                             await init.antiInitMongoDB(nodelist);
                         }
                         logger.info('antiinit successfully');
@@ -393,15 +392,14 @@ const model = {
         let api = config.api.agentd.hardware;
         let url = api;
         try {
-            let iplist = await database.getSetting({ key: 'nodelist' });
-            iplist = JSON.parse(iplist.value);
+            let ipList = await database.getSetting({ key: 'nodelist' });
             let data = [];
-            for (let ip of iplist) {
+            for (let ip of ipList) {
                 url = api.replace('localhost', ip);
                 let res = await request.get(url, {}, {}, true);
                 data.push(res);
             }
-            await database.addHardware({ date, iplist, data });
+            await database.addHardware({ date, ipList, data });
         } catch (error) {
             errorHandler(20, error, url);
         }
@@ -793,16 +791,76 @@ const model = {
         }
     },
     async getSnapshot(param) {
-
+        let result = {};
+        return result;
     },
     async createSnapshot(param) {
-
+        let result = {};
+        return result;
     },
     async deleteSnapshot(param) {
 
     },
     async rollback(param) {
         
+    },
+    async getUserMetaStats(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getUserMetaStats(param);
+            logger.info(res);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(40, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(40, error, param);
+        }
+        return result;
+    },
+    async getUserStorageStats(param) {
+        logger.info(param);
+        let result = {};
+        try {
+            let res = await fileSystem.getUserStorageStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(40, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(40, error, param);
+        }
+        return result;
+    },
+    async getClientMetaStats(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getClientMetaStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(40, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(40, error, param);
+        }
+        return result;
+    },
+    async getClientStorageStats(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getClientStorageStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(40, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(40, error, param);
+        }
+        return result;
     }
 };
 module.exports = model;
