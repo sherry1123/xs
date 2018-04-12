@@ -214,6 +214,30 @@ const model = {
         param.numTargets = String(param.numTargets);
         let token = await model.getToken();
         return await request.post(config.api.orcafs.setpattern, param, token, true);
+    },
+    async getUserMetaStats(param) {
+        param.userOrClient = 'user';
+        param.nodeType = 'meta';
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getstats, param, token, true);
+    },
+    async getUserStorageStats(param) {
+        param.userOrClient = 'user';
+        param.nodeType = 'storage';
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getstats, param, token, true);
+    },
+    async getClientMetaStats(param) {
+        param.userOrClient = 'client';
+        param.nodeType = 'meta';
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getstats, param, token, true);
+    },
+    async getClientStorageStats(param) {
+        param.userOrClient = 'client';
+        param.nodeType = 'storage';
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getstats, param, token, true);
     }
 };
 module.exports = model;

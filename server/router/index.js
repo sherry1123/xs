@@ -37,5 +37,16 @@ router.all('/api/getentryinfo', controller['/api/getentryinfo']);
 router.all('/api/getfiles', controller['/api/getfiles']);
 router.all('/api/setpattern', controller['/api/setpattern']);
 router.all('/api/syncsystemstatus', controller['/api/syncsystemstatus']);
+router.all('/api/getsnapshot', controller['/api/getsnapshot']);
+router.all('/api/createsnapshot', controller['/api/createsnapshot']);
+router.all('/api/deletesnapshot', controller['/api/deletesnapshot']);
+router.all('/api/rollback', controller['/api/rollback']);
+router.all('/api/getusermetastats', controller['/api/getusermetastats']);
+router.all('/api/getuserstoragestats', controller['/api/getuserstoragestats']);
+router.all('/api/getclientmetastats', controller['/api/getclientmetastats']);
+router.all('/api/getclientstoragestats', controller['/api/getclientstoragestats']);
+router.all('/api/getsnapshottask', controller['/api/getsnapshottask']);
+router.all('/api/createsnapshottask', controller['/api/createsnapshottask']);
+router.all('/api/deletesnapshottask', controller['/api/deletesnapshottask']);
 
 module.exports = router;

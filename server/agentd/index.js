@@ -28,7 +28,7 @@ const getCpuUsage = () => {
 };
 const getIopsUsage = async () => {
     let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
-    IOPS.used = Number(String(await promise.runCommandInPromise(cmd)).replace('\n', ''));
+    IOPS.used = Number(await promise.runCommandInPromise(cmd));
 };
 const getMemoryUsage = () => {
     let total = os.totalmem();
@@ -44,7 +44,7 @@ const getHardware = () => {
     let memory = getMemoryUsage();
     return { cpu, iops, memory };
 };
-const metaNodesParam = {
+let metaNodesParam = {
     nodeType: 1,
     interval: 15,
     numLines: 15,

@@ -18,6 +18,10 @@ exports.nginx = {
     path: '/etc/nginx/nginx.conf',
     proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 };
+exports.snapshot = {
+    manual: 4,
+    auto: 6
+};
 exports.api = {
     agentd: {
         hardware: 'http://localhost:3457/hardware/getall',
@@ -32,7 +36,8 @@ exports.api = {
         destroycluster: 'http://localhost:9090/cluster/destroy',
         entryinfo: 'http://localhost:9090/cluster/getentryinfo',
         getfiles: 'http://localhost:9090/cluster/getfiles',
-        setpattern: 'http://localhost:9090/cluster/setpattern'
+        setpattern: 'http://localhost:9090/cluster/setpattern',
+        getstats: 'http://localhost:9090/cluster/getstats'
     },
     admon: {
         nodelist: 'http://localhost:8000/XML_NodeList',
@@ -119,5 +124,23 @@ exports.errors = {
     38: 'get disk list error',
     39: 'get entry info error',
     40: 'get files error',
-    41: 'set pattern error'
+    41: 'set pattern error',
+    42: 'get snapshot error',
+    43: 'create snapshot error',
+    44: 'delete snapshot error',
+    45: 'rollback snapshot error',
+    46: 'get user metadata stats error',
+    47: 'get user storage stats error',
+    48: 'get client metadata stats error',
+    49: 'get client storage stats error',
+    50: 'get snapshot task error',
+    51: 'create snapshot task error',
+    52: 'delete snapshot task error'
+
 };
+exports.eventCode = {
+    1: 'delete snapshot successfully',
+    2: 'delete snapshot failed',
+    3: 'rollback snapshot successfully',
+    4: 'rollback snapshot failed'
+}

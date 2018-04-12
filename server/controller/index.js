@@ -115,6 +115,41 @@ const model = {
     },
     '/api/syncsystemstatus': ctx => {
         ctx.body = { code: 0 };
+    },
+    '/api/getsnapshot': async ctx => {
+        ctx.body = await service.getSnapshot(ctx.param);
+    },
+    '/api/createsnapshot': async ctx => {
+        ctx.body = await service.createSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/deletesnapshot': ctx => {
+        ctx.body = { code: 0, data: 'start to delete snapshot' };
+        service.deleteSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/rollback': ctx => {
+        ctx.body = { code: 0, data: 'start to rollback snapshot' };
+        service.rollback(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/getusermetastats': async ctx => {
+        ctx.body = await service.getUserMetaStats(ctx.param);
+    },
+    '/api/getuserstoragestats': async ctx => {
+        ctx.body = await service.getUserStorageStats(ctx.param);
+    },
+    '/api/getclientmetastats': async ctx => {
+        ctx.body = await service.getClientMetaStats(ctx.param);
+    },
+    '/api/getclientstoragestats': async ctx => {
+        ctx.body = await service.getClientStorageStats(ctx.param);
+    },
+    '/api/getsnapshottask': async ctx => {
+        ctx.body = await service.getSnapshotTask(ctx.param);
+    },
+    '/api/createsnapshottask': async ctx => {
+        ctx.body = await service.createSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/deletesnapshottask': async ctx => {
+        ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
     }
 };
 module.exports = model;

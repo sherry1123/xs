@@ -83,7 +83,7 @@ const model = {
      * @param {object} RAIDConfig  RAID Config
      */
     async initCluster(param) {
-        let current = 0, total = 0;
+        let current = 0, total = 8;
         try {
             let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
@@ -92,7 +92,6 @@ const model = {
                     let progress = await init.getOrcaFSInitProgress();
                     if (!progress.errorId) {
                         let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
-                        total = totalStep + 3;
                         if (status) {
                             clearInterval(getInitProgress);
                             socket.postInitStatus({ current: currentStep, status, total });
@@ -116,6 +115,7 @@ const model = {
                 }, 1000);
             } else {
                 errorHandler(7, res.message, param);
+                socket.postInitStatus({ current, status: -1, total });
             }
         } catch (error) {
             errorHandler(7, error, param);
@@ -145,7 +145,6 @@ const model = {
                         let nodelist = ['127.0.0.1'];
                         if (mongodbStatus) {
                             nodelist = await database.getSetting({ key: 'nodelist' });
-                            nodelist = JSON.parse(nodelist.value);
                             await init.antiInitMongoDB(nodelist);
                         }
                         logger.info('antiinit successfully');
@@ -168,7 +167,7 @@ const model = {
         try {
             let data = await database.getUser(param);
             if (data.username) {
-                await model.addAuditLog({ user: param.username, desc: 'login success', ip });
+                await model.addAuditLog({ user: param.username, desc: 'login successfully', ip });
                 result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
@@ -184,8 +183,8 @@ const model = {
      * @param {string} username Username
      */
     async logout(param, ip) {
-        let result = responseHandler(0, 'logout success');
-        await model.addAuditLog({ user: param.username, desc: 'logout success', ip });
+        let result = responseHandler(0, 'logout successfully');
+        await model.addAuditLog({ user: param.username, desc: 'logout successfully', ip });
         return result;
     },
     /**
@@ -228,7 +227,7 @@ const model = {
         let result = {};
         try {
             await database.addUser(param)
-            result = responseHandler(0, 'create user success');
+            result = responseHandler(0, 'create user successfully');
         } catch (error) {
             result = responseHandler(11, error, param);
         }
@@ -253,7 +252,7 @@ const model = {
             let { username, password } = param;
             let query = { username, password };
             await database.updateUser(query, param);
-            result = responseHandler(0, 'update user success');
+            result = responseHandler(0, 'update user successfully');
         } catch (error) {
             result = responseHandler(12, error, param);
         }
@@ -269,7 +268,7 @@ const model = {
         let result = {};
         try {
             await database.deleteUser(param);
-            result = responseHandler(0, 'delete user success');
+            result = responseHandler(0, 'delete user successfully');
         } catch (error) {
             result = responseHandler(13, error, param);
         }
@@ -331,7 +330,7 @@ const model = {
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }
-            result = responseHandler(0, 'update event log success');
+            result = responseHandler(0, 'update event log successfully');
         } catch (error) {
             result = responseHandler(16, error, param);
         }
@@ -393,15 +392,14 @@ const model = {
         let api = config.api.agentd.hardware;
         let url = api;
         try {
-            let iplist = await database.getSetting({ key: 'nodelist' });
-            iplist = JSON.parse(iplist.value);
+            let ipList = await database.getSetting({ key: 'nodelist' });
             let data = [];
-            for (let ip of iplist) {
+            for (let ip of ipList) {
                 url = api.replace('localhost', ip);
                 let res = await request.get(url, {}, {}, true);
                 data.push(res);
             }
-            await database.addHardware({ date, iplist, data });
+            await database.addHardware({ date, ipList, data });
         } catch (error) {
             errorHandler(20, error, url);
         }
@@ -424,7 +422,7 @@ const model = {
         let result = {};
         try {
             await email.sendMail(param);
-            result = responseHandler(0, 'test mail success');
+            result = responseHandler(0, 'test mail successfully');
         } catch (error) {
             result = responseHandler(21, error, param);
         }
@@ -772,16 +770,16 @@ const model = {
             let res = await fileSystem.setPattern(param);
             if (!res.errorId) {
                 result = responseHandler(0, 'set pattern successfully');
-                await model.addAuditLog({user, desc: 'set pattern successfully', ip});
+                await model.addAuditLog({ user, desc: 'set pattern successfully', ip });
             } else {
                 result = responseHandler(41, res.message, param);
-                await model.addAuditLog({user, desc: `set pattern failed`, ip});
-                await model.addEventLog({desc: `set pattern failed, reason: ${res.message}`});
+                await model.addAuditLog({ user, desc: `set pattern failed`, ip });
+                await model.addEventLog({ desc: `set pattern failed, reason: ${res.message}` });
             }
         } catch (error) {
             result = responseHandler(41, error, param);
-            await model.addAuditLog({user, desc: `set pattern failed`, ip});
-            await model.addEventLog({desc: `set pattern failed. reason: ${error}`});
+            await model.addAuditLog({ user, desc: `set pattern failed`, ip });
+            await model.addEventLog({ desc: `set pattern failed. reason: ${error}` });
         }
         return result;
     },
@@ -790,6 +788,174 @@ const model = {
         nodelist = nodelist.reverse();
         for (let i = 0; i < nodelist.length; i++) {
             i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
+        }
+    },
+    async getSnapshot(param) {
+        let result = {};
+        try {
+            let data = await database.getSnapshot(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(42, error, param);
+        }
+        return result;
+    },
+    async createSnapshot(param, user, ip) {
+        let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
+        try {
+            await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
+            result = responseHandler(0, 'create snapshot successfully');
+            await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
+        } catch (error) {
+            result = responseHandler(43, error, param);
+            await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
+            await model.addEventLog({ desc: `create snapshot failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteSnapshot(param, user, ip) {
+        try {
+            await database.updateSnapshot(param, { deleting: true });
+            await promise.runTimeOutInPromise(5);
+            await database.deleteSnapshot(param);
+            await model.addAuditLog({ user, desc: 'delete snapshot successfully', ip });
+            socket.postEventStatus({ channel: 'snapshot', code: 1 });
+        } catch (error) {
+            errorHandler(44, error, param);
+            await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
+            await model.addEventLog({ desc: `delete snapshot failed. reason: ${error}` });
+            socket.postEventStatus({ channel: 'snapshot', code: 2 });
+        }
+    },
+    async rollback(param, user, ip) {
+        try {
+            await database.updateSnapshot(param, { rollbacking: true });
+            await promise.runTimeOutInPromise(5);
+            await database.updateSnapshot(param, { rollbacking: false });
+            await model.addAuditLog({ user, desc: 'rollback snapshot successfully', ip });
+            socket.postEventStatus({ channel: 'snapshot', code: 3 });
+        } catch (error) {
+            errorHandler(45, error, param);
+            await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
+            await model.addEventLog({ desc: `rollback snapshot failed. reason: ${error}` });
+            socket.postEventStatus({ channel: 'snapshot', code: 4 });
+        }
+    },
+    async getUserMetaStats(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getUserMetaStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(46, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(46, error, param);
+        }
+        return result;
+    },
+    async getUserStorageStats(param) {
+        logger.info(param);
+        let result = {};
+        try {
+            let res = await fileSystem.getUserStorageStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(47, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(47, error, param);
+        }
+        return result;
+    },
+    async getClientMetaStats(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getClientMetaStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(48, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(48, error, param);
+        }
+        return result;
+    },
+    async getClientStorageStats(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getClientStorageStats(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(49, res.message, param);
+            }
+        } catch (error) {
+            result = responseHandler(49, error, param);
+        }
+        return result;
+    },
+    async getSnapshotTask(param) {
+        let result = {};
+        try {
+            let data = await database.getSnapshotTask(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(50, error, param);
+        }
+        return result;
+    },
+    async createSnapshotTask(param, user, ip) {
+        let result = {};
+        let { name, createTime = new Date(), startTime, interval, deleteRound = false } = param;
+        try {
+            await database.addSnapshotTask({ name, createTime, startTime, interval, deleteRound });
+            result = responseHandler(0, 'create snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'create snapshot task successfully', ip });
+        } catch (error) {
+            result = responseHandler(51, error, param);
+            await model.addAuditLog({ user, desc: `create snapshot task failed`, ip });
+            await model.addEventLog({ desc: `create snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteSnapshotTask(param, user, ip) {
+        let result = {};
+        try {
+            await database.deleteSnapshotTask(param);
+            result = responseHandler(0, 'delete snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'delete snapshot task successfully', ip });
+        } catch (error) {
+            result = responseHandler(52, error, param);
+            await model.addAuditLog({ user, desc: `delete snapshot task failed`, ip });
+            await model.addEventLog({ desc: `delete snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async runSnapshotTask() {
+        let currentTime = new Date();
+        let taskList = await database.getSnapshotTask();
+        for (let task of taskList) {
+            let { name, startTime, interval, deleteRound } = task;
+            let timeGap = currentTime - startTime;
+            if (timeGap > 0) {
+                let timeGapInSecond = Math.floor(timeGap / 1000);
+                if (timeGapInSecond % interval < 5) {
+                    let autoSnapshotList = await database.getSnapshot({ isAuto: true });
+                    let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
+                    if (autoSnapshotList.length < config.snapshot.auto) {
+                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                    } else if (deleteRound) {
+                        let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
+                        let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
+                        await database.deleteSnapshot({ name: nameToDelete });
+                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                    }
+                }
+            }
         }
     }
 };

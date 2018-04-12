@@ -5,7 +5,7 @@ const child = require('child_process');
 exports.runCommandInPromise = command => {
     return new Promise((resolve, reject) => {
         child.exec(command, (error, stdout, stderr) => {
-            error ? reject(stderr) : resolve(stdout);
+            error ? reject(stderr) : resolve(String(stdout).trim());
         });
     });
 };
@@ -73,5 +73,12 @@ exports.xmlToJsonInPromise = (xml, options = {}) => {
         xml2js.parseString(xml, options, (error, result) => {
             error ? reject(error) : resolve(result);
         });
+    });
+};
+exports.runTimeOutInPromise = second => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, 1000 * second);
     });
 };
