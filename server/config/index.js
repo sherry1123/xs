@@ -120,7 +120,15 @@ exports.errors = {
     38: 'get disk list error',
     39: 'get entry info error',
     40: 'get files error',
-    41: 'set pattern error'
+    41: 'set pattern error',
+    42: 'get snapshot error',
+    43: 'create snapshot error',
+    44: 'delete snapshot error',
+    45: 'rollback snapshot error',
+    46: 'get user metadata stats error',
+    47: 'get user storage stats error',
+    48: 'get client metadata stats error',
+    49: 'get client storage stats error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',

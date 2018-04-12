@@ -796,7 +796,7 @@ const model = {
             let data = await database.getSnapshot(param);
             result = responseHandler(0, data);
         } catch (error) {
-            result = responseHandler(19, error, param);
+            result = responseHandler(42, error, param);
         }
         return result;
     },
@@ -806,7 +806,7 @@ const model = {
             await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
             result = responseHandler(0, 'create snapshot successfully');
         } catch (error) {
-            result = responseHandler(19, error, param);
+            result = responseHandler(43, error, param);
         }
         return result;
     },
@@ -817,7 +817,7 @@ const model = {
             await database.deleteSnapshot(param);
             socket.postEventStatus({ channel: 'snapshot', code: 1 });
         } catch (error) {
-            errorHandler(19, error, param);
+            errorHandler(44, error, param);
             socket.postEventStatus({ channel: 'snapshot', code: 2 });
         }
     },
@@ -828,7 +828,7 @@ const model = {
             await database.updateSnapshot(param, { rollbacking: false });
             socket.postEventStatus({ channel: 'snapshot', code: 3 });
         } catch (error) {
-            errorHandler(19, error, param);
+            errorHandler(45, error, param);
             socket.postEventStatus({ channel: 'snapshot', code: 4 });
         }
     },
@@ -840,10 +840,10 @@ const model = {
             if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
-                result = responseHandler(40, res.message, param);
+                result = responseHandler(46, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(40, error, param);
+            result = responseHandler(46, error, param);
         }
         return result;
     },
@@ -855,10 +855,10 @@ const model = {
             if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
-                result = responseHandler(40, res.message, param);
+                result = responseHandler(47, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(40, error, param);
+            result = responseHandler(47, error, param);
         }
         return result;
     },
@@ -869,10 +869,10 @@ const model = {
             if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
-                result = responseHandler(40, res.message, param);
+                result = responseHandler(48, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(40, error, param);
+            result = responseHandler(48, error, param);
         }
         return result;
     },
@@ -883,10 +883,10 @@ const model = {
             if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
-                result = responseHandler(40, res.message, param);
+                result = responseHandler(49, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(40, error, param);
+            result = responseHandler(49, error, param);
         }
         return result;
     }
