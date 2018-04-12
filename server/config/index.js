@@ -18,6 +18,10 @@ exports.nginx = {
     path: '/etc/nginx/nginx.conf',
     proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 };
+exports.snapshot = {
+    manual: 40,
+    auto: 60
+};
 exports.api = {
     agentd: {
         hardware: 'http://localhost:3457/hardware/getall',
