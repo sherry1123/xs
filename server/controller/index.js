@@ -120,15 +120,15 @@ const model = {
         ctx.body = await service.getSnapshot(ctx.param);
     },
     '/api/createsnapshot': async ctx => {
-        ctx.body = await service.createSnapshot(ctx.param);
+        ctx.body = await service.createSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
     },
     '/api/deletesnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to delete snapshot' };
-        service.deleteSnapshot(ctx.param);
+        service.deleteSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
     },
     '/api/rollback': ctx => {
         ctx.body = { code: 0, data: 'start to rollback snapshot' };
-        service.rollback(ctx.param);
+        service.rollback(ctx.param, getUser(ctx), getClientIP(ctx));
     },
     '/api/getusermetastats': async ctx => {
         ctx.body = await service.getUserMetaStats(ctx.param);

@@ -167,7 +167,7 @@ const model = {
         try {
             let data = await database.getUser(param);
             if (data.username) {
-                await model.addAuditLog({ user: param.username, desc: 'login success', ip });
+                await model.addAuditLog({ user: param.username, desc: 'login successfully', ip });
                 result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
@@ -183,8 +183,8 @@ const model = {
      * @param {string} username Username
      */
     async logout(param, ip) {
-        let result = responseHandler(0, 'logout success');
-        await model.addAuditLog({ user: param.username, desc: 'logout success', ip });
+        let result = responseHandler(0, 'logout successfully');
+        await model.addAuditLog({ user: param.username, desc: 'logout successfully', ip });
         return result;
     },
     /**
@@ -227,7 +227,7 @@ const model = {
         let result = {};
         try {
             await database.addUser(param)
-            result = responseHandler(0, 'create user success');
+            result = responseHandler(0, 'create user successfully');
         } catch (error) {
             result = responseHandler(11, error, param);
         }
@@ -252,7 +252,7 @@ const model = {
             let { username, password } = param;
             let query = { username, password };
             await database.updateUser(query, param);
-            result = responseHandler(0, 'update user success');
+            result = responseHandler(0, 'update user successfully');
         } catch (error) {
             result = responseHandler(12, error, param);
         }
@@ -268,7 +268,7 @@ const model = {
         let result = {};
         try {
             await database.deleteUser(param);
-            result = responseHandler(0, 'delete user success');
+            result = responseHandler(0, 'delete user successfully');
         } catch (error) {
             result = responseHandler(13, error, param);
         }
@@ -330,7 +330,7 @@ const model = {
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }
-            result = responseHandler(0, 'update event log success');
+            result = responseHandler(0, 'update event log successfully');
         } catch (error) {
             result = responseHandler(16, error, param);
         }
@@ -422,7 +422,7 @@ const model = {
         let result = {};
         try {
             await email.sendMail(param);
-            result = responseHandler(0, 'test mail success');
+            result = responseHandler(0, 'test mail successfully');
         } catch (error) {
             result = responseHandler(21, error, param);
         }
@@ -800,35 +800,44 @@ const model = {
         }
         return result;
     },
-    async createSnapshot(param) {
+    async createSnapshot(param, user, ip) {
         let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
         try {
             await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
             result = responseHandler(0, 'create snapshot successfully');
+            await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
         } catch (error) {
             result = responseHandler(43, error, param);
+            await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
+            await model.addEventLog({ desc: `create snapshot. reason: ${error}` });
         }
         return result;
     },
-    async deleteSnapshot(param) {
+    async deleteSnapshot(param, user, ip) {
         try {
             await database.updateSnapshot(param, { deleting: true });
             await promise.runTimeOutInPromise(5);
             await database.deleteSnapshot(param);
+            await model.addAuditLog({ user, desc: 'delete snapshot successfully', ip });
             socket.postEventStatus({ channel: 'snapshot', code: 1 });
         } catch (error) {
             errorHandler(44, error, param);
+            await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
+            await model.addEventLog({ desc: `delete snapshot. reason: ${error}` });
             socket.postEventStatus({ channel: 'snapshot', code: 2 });
         }
     },
-    async rollback(param) {
+    async rollback(param, user, ip) {
         try {
             await database.updateSnapshot(param, { rollbacking: true });
             await promise.runTimeOutInPromise(5);
             await database.updateSnapshot(param, { rollbacking: false });
+            await model.addAuditLog({ user, desc: 'rollback snapshot successfully', ip });
             socket.postEventStatus({ channel: 'snapshot', code: 3 });
         } catch (error) {
             errorHandler(45, error, param);
+            await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
+            await model.addEventLog({ desc: `rollback snapshot. reason: ${error}` });
             socket.postEventStatus({ channel: 'snapshot', code: 4 });
         }
     },
