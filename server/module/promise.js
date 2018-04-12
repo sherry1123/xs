@@ -75,3 +75,10 @@ exports.xmlToJsonInPromise = (xml, options = {}) => {
         });
     });
 };
+exports.runTimeOutInPromise = second => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, 1000 * second);
+    });
+};

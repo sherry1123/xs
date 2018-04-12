@@ -770,16 +770,16 @@ const model = {
             let res = await fileSystem.setPattern(param);
             if (!res.errorId) {
                 result = responseHandler(0, 'set pattern successfully');
-                await model.addAuditLog({user, desc: 'set pattern successfully', ip});
+                await model.addAuditLog({ user, desc: 'set pattern successfully', ip });
             } else {
                 result = responseHandler(41, res.message, param);
-                await model.addAuditLog({user, desc: `set pattern failed`, ip});
-                await model.addEventLog({desc: `set pattern failed, reason: ${res.message}`});
+                await model.addAuditLog({ user, desc: `set pattern failed`, ip });
+                await model.addEventLog({ desc: `set pattern failed, reason: ${res.message}` });
             }
         } catch (error) {
             result = responseHandler(41, error, param);
-            await model.addAuditLog({user, desc: `set pattern failed`, ip});
-            await model.addEventLog({desc: `set pattern failed. reason: ${error}`});
+            await model.addAuditLog({ user, desc: `set pattern failed`, ip });
+            await model.addEventLog({ desc: `set pattern failed. reason: ${error}` });
         }
         return result;
     },
@@ -792,17 +792,45 @@ const model = {
     },
     async getSnapshot(param) {
         let result = {};
+        try {
+            let data = await database.getSnapshot(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(19, error, param);
+        }
         return result;
     },
     async createSnapshot(param) {
-        let result = {};
+        let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
+        try {
+            await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
+            result = responseHandler(0, 'create snapshot successfully');
+        } catch (error) {
+            result = responseHandler(19, error, param);
+        }
         return result;
     },
     async deleteSnapshot(param) {
-
+        try {
+            await database.updateSnapshot(param, { deleting: true });
+            await promise.runTimeOutInPromise(5);
+            await database.deleteSnapshot(param);
+            socket.postEventStatus({ channel: 'snapshot', code: 1 });
+        } catch (error) {
+            errorHandler(19, error, param);
+            socket.postEventStatus({ channel: 'snapshot', code: 2 });
+        }
     },
     async rollback(param) {
-        
+        try {
+            await database.updateSnapshot(param, { rollbacking: true });
+            await promise.runTimeOutInPromise(5);
+            await database.updateSnapshot(param, { rollbacking: false });
+            socket.postEventStatus({ channel: 'snapshot', code: 3 });
+        } catch (error) {
+            errorHandler(19, error, param);
+            socket.postEventStatus({ channel: 'snapshot', code: 4 });
+        }
     },
     async getUserMetaStats(param) {
         let result = {};

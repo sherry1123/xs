@@ -4,6 +4,7 @@ const setting = require('../model/setting');
 const eventlog = require('../model/eventlog');
 const auditlog = require('../model/auditlog');
 const hardware = require('../model/hardware');
+const snapshot = require('../model/snapshot');
 const model = {
     async getUser(param) {
         return await dao.findOne(user, param);
@@ -45,6 +46,18 @@ const model = {
     async getSetting(param) {
         let data = await dao.findOne(setting, param, { _id: 0, __v: 0 });
         return JSON.parse(data.value);
+    },
+    async getSnapshot(param) {
+        return await dao.findAll(snapshot, param);
+    },
+    async addSnapshot(param) {
+        return await dao.createOne(snapshot, param);
+    },
+    async updateSnapshot(query, param) {
+        return await dao.updateOne(snapshot, query, param);
+    },
+    async deleteSnapshot(param) {
+        return await dao.deleteOne(snapshot, param);
     }
 };
 module.exports = model;

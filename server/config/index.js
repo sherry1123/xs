@@ -122,3 +122,9 @@ exports.errors = {
     40: 'get files error',
     41: 'set pattern error'
 };
+exports.eventCode = {
+    1: 'delete snapshot successfully',
+    2: 'delete snapshot failed',
+    3: 'rollback snapshot successfully',
+    4: 'rollback snapshot failed'
+}
