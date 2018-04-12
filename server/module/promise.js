@@ -5,7 +5,7 @@ const child = require('child_process');
 exports.runCommandInPromise = command => {
     return new Promise((resolve, reject) => {
         child.exec(command, (error, stdout, stderr) => {
-            error ? reject(stderr) : resolve(stdout);
+            error ? reject(stderr) : resolve(String(stdout).trim());
         });
     });
 };

@@ -845,7 +845,6 @@ const model = {
         let result = {};
         try {
             let res = await fileSystem.getUserMetaStats(param);
-            logger.info(res);
             if (!res.errorId) {
                 result = responseHandler(0, res.data);
             } else {
@@ -935,6 +934,29 @@ const model = {
             await model.addEventLog({ desc: `delete snapshot task failed. reason: ${error}` });
         }
         return result;
+    },
+    async runSnapshotTask() {
+        let currentTime = new Date();
+        let taskList = await database.getSnapshotTask();
+        for (let task of taskList) {
+            let { name, startTime, interval, deleteRound } = task;
+            let timeGap = currentTime - startTime;
+            if (timeGap > 0) {
+                let timeGapInSecond = Math.floor(timeGap / 1000);
+                if (timeGapInSecond % interval < 5) {
+                    let autoSnapshotList = await database.getSnapshot({ isAuto: true });
+                    let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
+                    if (autoSnapshotList.length < config.snapshot.auto) {
+                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                    } else if (deleteRound) {
+                        let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
+                        let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
+                        await database.deleteSnapshot({ name: nameToDelete });
+                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                    }
+                }
+            }
+        }
     }
 };
 module.exports = model;

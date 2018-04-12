@@ -16,7 +16,7 @@ const model = {
         let command = `${config.database.bin}/mongo --quiet --eval "db.serverStatus().ok"`;
         let result = false;
         try {
-            result = String(await promise.runCommandInPromise(command)).replace('\n', '') === '1';
+            result = await promise.runCommandInPromise(command) === '1';
         } catch (error) {
             result = false;
         }
@@ -35,7 +35,7 @@ const model = {
         let command = `${config.database.bin}/mongo --quiet --eval "db.isMaster().ismaster"`;
         let result = false;
         try {
-            result = String(await promise.runCommandInPromise(command)).replace('\n', '') === 'true';
+            result = await promise.runCommandInPromise(command) === 'true';
         } catch (error) {
             result = false;
         }
