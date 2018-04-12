@@ -141,6 +141,15 @@ const model = {
     },
     '/api/getclientstoragestats': async ctx => {
         ctx.body = await service.getClientStorageStats(ctx.param);
+    },
+    '/api/getsnapshottask': async ctx => {
+        ctx.body = await service.getSnapshotTask(ctx.param);
+    },
+    '/api/createsnapshottask': async ctx => {
+        ctx.body = await service.createSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/deletesnapshottask': async ctx => {
+        ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
     }
 };
 module.exports = model;

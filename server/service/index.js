@@ -809,7 +809,7 @@ const model = {
         } catch (error) {
             result = responseHandler(43, error, param);
             await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
-            await model.addEventLog({ desc: `create snapshot. reason: ${error}` });
+            await model.addEventLog({ desc: `create snapshot failed. reason: ${error}` });
         }
         return result;
     },
@@ -823,7 +823,7 @@ const model = {
         } catch (error) {
             errorHandler(44, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
-            await model.addEventLog({ desc: `delete snapshot. reason: ${error}` });
+            await model.addEventLog({ desc: `delete snapshot failed. reason: ${error}` });
             socket.postEventStatus({ channel: 'snapshot', code: 2 });
         }
     },
@@ -837,7 +837,7 @@ const model = {
         } catch (error) {
             errorHandler(45, error, param);
             await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
-            await model.addEventLog({ desc: `rollback snapshot. reason: ${error}` });
+            await model.addEventLog({ desc: `rollback snapshot failed. reason: ${error}` });
             socket.postEventStatus({ channel: 'snapshot', code: 4 });
         }
     },
@@ -896,6 +896,43 @@ const model = {
             }
         } catch (error) {
             result = responseHandler(49, error, param);
+        }
+        return result;
+    },
+    async getSnapshotTask(param) {
+        let result = {};
+        try {
+            let data = await database.getSnapshotTask(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(50, error, param);
+        }
+        return result;
+    },
+    async createSnapshotTask(param, user, ip) {
+        let result = {};
+        let { name, createTime = new Date(), startTime, interval, deleteRound = false } = param;
+        try {
+            await database.addSnapshotTask({ name, createTime, startTime, interval, deleteRound });
+            result = responseHandler(0, 'create snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'create snapshot task successfully', ip });
+        } catch (error) {
+            result = responseHandler(51, error, param);
+            await model.addAuditLog({ user, desc: `create snapshot task failed`, ip });
+            await model.addEventLog({ desc: `create snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteSnapshotTask(param, user, ip) {
+        let result = {};
+        try {
+            await database.deleteSnapshotTask(param);
+            result = responseHandler(0, 'delete snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'delete snapshot task successfully', ip });
+        } catch (error) {
+            result = responseHandler(52, error, param);
+            await model.addAuditLog({ user, desc: `delete snapshot task failed`, ip });
+            await model.addEventLog({ desc: `delete snapshot task failed. reason: ${error}` });
         }
         return result;
     }

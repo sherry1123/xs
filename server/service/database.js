@@ -5,6 +5,7 @@ const eventlog = require('../model/eventlog');
 const auditlog = require('../model/auditlog');
 const hardware = require('../model/hardware');
 const snapshot = require('../model/snapshot');
+const snapshottask = require('../model/snapshottask');
 const model = {
     async getUser(param) {
         return await dao.findOne(user, param);
@@ -58,6 +59,15 @@ const model = {
     },
     async deleteSnapshot(param) {
         return await dao.deleteOne(snapshot, param);
+    },
+    async getSnapshotTask(param) {
+        return await dao.findAll(snapshottask, param);
+    },
+    async addSnapshotTask(param) {
+        return await dao.createOne(snapshottask, param);
+    },
+    async deleteSnapshotTask(param) {
+        return await dao.deleteOne(snapshottask, param);
     }
 };
 module.exports = model;

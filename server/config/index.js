@@ -132,7 +132,11 @@ exports.errors = {
     46: 'get user metadata stats error',
     47: 'get user storage stats error',
     48: 'get client metadata stats error',
-    49: 'get client storage stats error'
+    49: 'get client storage stats error',
+    50: 'get snapshot task error',
+    51: 'create snapshot task error',
+    52: 'delete snapshot task error'
+
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',
