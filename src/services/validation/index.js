@@ -39,7 +39,7 @@ const VALIDATE_CEPHNAME = /^([a-zA-Z0-9])\w{2,29}$/;
 //First name and Last name can only contain letter, no special characters allowed except hyphen or space.
 const VALIDATE_FIRSTLASTNAME = /^[a-zA-Z]+([-|\s]?[a-zA-Z])*$/;
 const VALIDATE_PASSWORD = /^\d{6,21}$/;
-const VALIDATE_IMAGENUMBER = /^[1-9]\d*$/;
+const VALIDATE_NOT_ZERO_INTEGER = /^[1-9]\d*$/;
 const VALIDATE_TARGETNAME = /^[a-zA-Z0-9]{3,30}$/;
 const VALIDATE_FC_INITIATOR = /^(?:(?:[0-9]|[a-f]){2}:){7}(?:[0-9]|[a-f]){2}$/;
 const VALIDATE_NET_MASKS = [
@@ -554,11 +554,11 @@ export const validatePassword = password => {
     return password.match(VALIDATE_PASSWORD);
 };
 
-export const checkImageNumber = num => {
+export const validateNotZeroInteger = num => {
     if (!num){
         return false;
     }
-    return VALIDATE_IMAGENUMBER.exec(num);
+    return VALIDATE_NOT_ZERO_INTEGER.exec(num);
 };
 
 export const validataTargetName = name => {

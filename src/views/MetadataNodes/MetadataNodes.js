@@ -4,16 +4,23 @@ import {Icon, Select, Popover} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import lang from '../../components/Language/lang';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
+import StaticsFilter from '../../components/StaticsTable/StaticsFilter';
 import StaticsTable from '../../components/StaticsTable/StaticsTable';
 import httpRequests from "../../http/requests";
-import {lsGet, lsSet} from "../../services";
+import {lsGet, lsSet, someUpperCase} from "../../services";
 
 class MetadataNodes extends Component {
     constructor (props){
         super(props);
+        let defaultFilterItems = ['userOrClientName', 'mkdir', 'rmdir', 'sum', 'create', 'open', 'stat', 'statLI'];
+        let overviewStaticsFilterItems = lsGet('metadataNodeOverviewStaticFilterItems') || defaultFilterItems;
+        let detailStaticsFilterItems = lsGet('metadataNodeDetailStaticFilterItems') || defaultFilterItems;
         this.state = {
             currentMetadataNode: this.props.status.filter(node => node.value)[0] || {},
-            expandSwitchNode: true
+            expandSwitchNode: true,
+
+            overviewStaticsFilterItems,
+            detailStaticsFilterItems,
         };
     }
 
@@ -63,7 +70,15 @@ class MetadataNodes extends Component {
         }
     }
 
+    setStaticsFilter (type, selectedItems){
+        if (Array.isArray(selectedItems)){
+            this.setState({[type + 'StaticsFilterItems']: selectedItems});
+            lsSet(`metadataNode${someUpperCase(type)}StaticFilterItems`, selectedItems);
+        }
+    }
+
     render (){
+        // summary
         let totalNodesCount = this.props.status.length || 0;
         let upNodesCount = this.props.status.filter(node => node.value).length || 0;
         let downNodesCount = 0;
@@ -74,8 +89,34 @@ class MetadataNodes extends Component {
                 downNodes.push(node);
             }
         });
+        // tip
         let downNodesDetail = !downNodesCount ? lang('无异常元数据节点', 'There\'s no metadata nodes down') : (lang('异常元数据节点：', 'Down Metadata Nodes: ') + downNodes.join(','));
-        let staticsFilter = ['ip', 'mkdir', 'rmdir', 'sum', 'create', 'open', 'stat', 'unlnk', 'lookLI', 'statLI'];
+        // statics
+        let staticsFilterConfig = {
+            target: 'user',
+            type: 'metadata',
+            limit: 10,
+            totalItems: [
+                'userOrClientName', 'sum', 'ack', 'close', 'entInf',
+                'nodeInf', 'fndOwn', 'Ink', 'mkdir', 'create',
+                'rddir', 'refrEnt', 'mdsInf', 'rmdir', 'rmLnk',
+                'mvDirIns', 'mvFiIns', 'open', 'ren', 'setChDrct',
+                'sAttr', 'sDirPat', 'stat', 'statfs', 'trunc',
+                'symInk', 'unInk', 'lookLI', 'statLI', 'revalLI',
+                'openLI', 'createLI', 'mirrorMD', 'hardInk', 'flckAp',
+                'flckEn', 'flckRg', 'dirparent', 'listXA', 'getXA',
+                'rmXA', 'setXA'
+            ],
+            selectedItems: this.state.overviewStaticsFilterItems,
+        };
+        let overviewStaticsFilterConfig = Object.assign({}, staticsFilterConfig, {
+            extensionTitle: lang(' - 元数据节点总览', ' - Metadata Node Overview'),
+            getFilter: selectedItems => this.setStaticsFilter('overview', selectedItems),
+        });
+        let detailStaticsFilterConfig = Object.assign({}, staticsFilterConfig, {
+            extensionTitle: lang(' - 元数据节点详情', ' - Metadata Node Detail'),
+            getFilter: selectedItems => this.setStaticsFilter('detail', selectedItems),
+        });
         return (
             <section className="fs-page-content fs-node-wrapper fs-storage">
                 <section className="fs-page-big-title">
@@ -116,8 +157,13 @@ class MetadataNodes extends Component {
                                 </QueueAnim>
                                 <span className="fs-info-item title">
                                     <span className="fs-info-label">{lang('用户操作总览', 'User Operation Overview')}</span>
+                                    <Icon className="fs-static-table-filter-icon" type="setting"
+                                        title={lang('过滤配置', 'Filter Setting')}
+                                        onClick={() =>{this.overviewStaticFilter.getWrappedInstance().show()}}
+                                    />
+                                    <StaticsFilter {...overviewStaticsFilterConfig} ref={ref => this.overviewStaticFilter = ref} />
                                 </span>
-                                <StaticsTable data={this.props.userOperationStatics} filter={staticsFilter} relaceFirstItem="user ID" />
+                                <StaticsTable data={this.props.overviewStatics} filter={this.state.overviewStaticsFilterItems} replaceFirstItem="User ID" />
                             </section>
                         </section>
                     </div>
@@ -175,9 +221,16 @@ class MetadataNodes extends Component {
                                     </div>
                                 </QueueAnim>
                                 <span className="fs-info-item title">
-                                    <span className="fs-info-label">{lang('该节点用户操作', 'User Operation On This Node')}</span>
+                                    <span className="fs-info-label">
+                                        {lang('该节点用户操作', 'User Operation On This Node')}
+                                    </span>
+                                    <Icon className="fs-static-table-filter-icon" type="setting"
+                                        title={lang('过滤配置', 'Filter Setting')}
+                                        onClick={() =>{this.detailStaticFilter.getWrappedInstance().show()}}
+                                    />
+                                    <StaticsFilter {...detailStaticsFilterConfig} ref={ref => this.detailStaticFilter = ref} />
                                 </span>
-                                <StaticsTable data={this.props.userOperationStatics} filter={staticsFilter} relaceFirstItem="user ID" />
+                                <StaticsTable data={this.props.detailStatics} filter={this.state.detailStaticsFilterItems} replaceFirstItem="User ID" />
                             </section>
                         </section>
                     </div>
@@ -188,8 +241,8 @@ class MetadataNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {metadataNode: {overview: {status, userOperationStatics}}}} = state;
-    return {language, status, userOperationStatics};
+    const {language, main: {metadataNode: {overview: {status, statics: overviewStatics}, detail: {statics: detailStatics}}}} = state;
+    return {language, status, overviewStatics, detailStatics};
 };
 
 export default connect(mapStateToProps)(MetadataNodes);

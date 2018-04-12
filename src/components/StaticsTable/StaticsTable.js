@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon} from 'antd';
 import QueueAnim from 'rc-queue-anim';
-import lang from '../../components/Language/lang';
+import lang from '../Language/lang';
 
 class StaticsTable extends Component {
     constructor (props){
@@ -26,7 +26,7 @@ class StaticsTable extends Component {
     componentWillReceiveProps (nextProps){
         let {filter, data} = nextProps;
         let rows = this.filterRows(filter, data);
-        this.setState({rows: rows});
+        this.setState({header: filter, rows});
     }
 
     filterRows (filter, data){
@@ -46,8 +46,8 @@ class StaticsTable extends Component {
         row['_index'] = Date.now();
         stickRows.push(row);
         // remove it from normal rows
-        let {ip} = row;
-        let rows = this.state.rows.filter(row => row.ip !== ip);
+        let {userOrClientName} = row;
+        let rows = this.state.rows.filter(row => row.userOrClientName !== userOrClientName);
         // re-render
         this.setState({rows, stickRows});
     }
@@ -64,7 +64,7 @@ class StaticsTable extends Component {
                     <div className="fs-statics-table-row header" key={1}>
                         {
                             this.state.header.map((item, i) => <div className="fs-statics-table-item header" key={i}>
-                                {i === 0 && this.props.relaceFirstItem ? this.props.relaceFirstItem : item}
+                                {i === 0 && this.props.replaceFirstItem ? this.props.replaceFirstItem : item}
                             </div>)
                         }
                         <div className="fs-statics-table-item header stick" key={99} />
@@ -75,7 +75,7 @@ class StaticsTable extends Component {
                         this.state.stickRows.map((row, y) => <div className="fs-statics-table-row body" key={y}>
                             {
                                 Object.keys(row).filter(key => key !== '_index').map((key, x) => <div className="fs-statics-table-item body" key={x}>
-                                    {key === 'ip' ? row[key] : row[key].value}
+                                    {row[key] || '-'}
                                 </div>)
                             }
                             <div className="fs-statics-table-item body un-stick" key={99}>
@@ -89,7 +89,7 @@ class StaticsTable extends Component {
                         this.state.rows.map((row, y) => <div className="fs-statics-table-row body" key={y}>
                             {
                                 Object.keys(row).map((key, x) => <div className="fs-statics-table-item body" key={x}>
-                                    {key === 'ip' ? row[key] : row[key].value}
+                                    {row[key] || '-'}
                                 </div>)
                             }
                             <div className="fs-statics-table-item body stick" key={99}>

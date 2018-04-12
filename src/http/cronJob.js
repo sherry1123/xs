@@ -18,6 +18,7 @@ const fetchDataPer15s = () => {
     if (routerHash.match(main + routerPath.MetadataNodes)){
         httpRequests.getMetadataNodeOverviewUserOperationStatics();
         httpRequests.getMetadataNodeDetailSummary();
+        httpRequests.getMetadataNodeDetailUserOperationStatics();
     }
 
     // storage node

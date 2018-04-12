@@ -52,11 +52,11 @@ export default {
                     */
                 ],
                 general: [],
-                userOperationStatics: []
+                statics: []
             },
             detail: {
                 general: [],
-                userOperationStatics: []
+                statics: []
             }
         },
         // storage nodes
@@ -121,6 +121,9 @@ export default {
                 {name: 'snapshot3', size: 9999999999999, createTime: 1522761568579},
                 {name: 'snapshot2', size: 8999999999999, createTime: 1522754568579},
                 {name: 'snapshot1', size: 7999999999999, createTime: 1522750568579},
+            ],
+            snapshotScheduleList: [
+
             ]
         },
         // NAS export

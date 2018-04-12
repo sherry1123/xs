@@ -1,6 +1,7 @@
+import moment from 'moment';
 import lang from '../../components/Language/lang';
 
-export const timeLeftFormat = seconds => {
+const timeLeftFormat = seconds => {
     let hour = 60 * 60;
     let day = hour * 24;
     let week = day * 7;
@@ -28,7 +29,10 @@ export const timeLeftFormat = seconds => {
     return result;
 };
 
-export const timeFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+const timeFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+    if (!date) return '--';
+    return moment(date).format(fmt);
+    /*
     if (!date) return '--';
     let dateOrigin = new Date(date);
     let o = {
@@ -49,4 +53,7 @@ export const timeFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
         }
     }
     return fmt;
+    */
 };
+
+export {timeLeftFormat, timeFormat};

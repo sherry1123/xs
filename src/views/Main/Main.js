@@ -23,6 +23,7 @@ const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'
 
 // snapshot
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
+const SnapshotSchedule = asyncLoad(() => import('../Snapshot/SnapshotSchedule'));
 
 // NAS export
 const NASExport = asyncLoad(() => import('../NAS/NASExport'));
@@ -92,6 +93,8 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
 
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
+
+                        <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
 
                         <Route path={`${Main}${routerPath.NASExport}`} component={NASExport} />
 

@@ -163,7 +163,7 @@ class Snapshot extends Component {
                 {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
                     render: (text) => timeFormat(text)
                 },
-                {title: lang('操作', 'Operation'), width: 80,
+                {title: lang('操作', 'Operations'), width: 80,
                     render: (text, record) => (
                         <div>
                             <a title={lang('回滚', 'Rollback')}

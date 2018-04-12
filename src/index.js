@@ -7,17 +7,19 @@ import App from "./views/App";
 import "./styleSheets/index.less";
 import './socket';
 import './http/cronJob';
+import {lsGet} from './services';
 import httpRequests from "./http/requests";
 
 (async () => {
+    const NODE_ENV = process.env.NODE_ENV;
     // each time access the page should firstly fetch 'syncUpSystemStatus' api to sync up
     // initialization and login status recorded in browser cookie with http server before
     // react app created, it will help react components to do exact system status verifications.
     try {
         await httpRequests.syncUpSystemStatus();
-        console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
+        NODE_ENV === 'development' && console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
     } catch ({msg}){
-        console.info('Sync up system status failed: ', msg);
+        console.error('Sync up system status failed: ', msg);
     }
 
     // create react app
@@ -36,5 +38,15 @@ import httpRequests from "./http/requests";
 
     if (module.hot){
         module.hot.accept('./views/App', () => render(App));
+    }
+
+    if (NODE_ENV === 'production'){
+        let language = lsGet('language');
+        console.log(
+            language === 'english' ?
+            '%c Warning: For the stable operation of the system, if you are not the operation and maintenance personnel of OrcaFS, don\'t do anything in the Developer Tool!' :
+            '%c 警告：为了系统的稳定运行，如果您非OrcaFS的运维人员请勿在开发者工具里做任何操作！',
+            'color: #f15cfd'
+        );
     }
 })();

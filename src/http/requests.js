@@ -91,7 +91,7 @@ export default  {
 
     async getMetadataNodeOverviewUserOperationStatics (){
         try {
-            let data = await fetchGet('/api/getmetanodesrequest');
+            let data = await fetchGet('/api/getusermetastats', {nodeId: 0});
             store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
         } catch (e){
             errorHandler(e);
@@ -106,6 +106,15 @@ export default  {
             } catch (e){
                 errorHandler(e);
             }
+        }
+    },
+
+    async getMetadataNodeDetailUserOperationStatics ({nodeNumID} = (lsGet('currentMetadataNode') || {})){
+        try {
+            let data = await fetchGet('/api/getusermetastats', {nodeId: nodeNumID});
+            store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
+        } catch (e){
+            errorHandler(e);
         }
     },
 
@@ -190,6 +199,18 @@ export default  {
 
     async deleteSnapshot (snapshot){
         await fetchPost('/api/deletesnapshot', snapshot);
+    },
+
+    async getSnapshotScheduleList (){
+
+    },
+
+    async createSnapshotSchedule (){
+
+    },
+
+    async deleteSnapshotSchedule (){
+
     },
 
     // NAS

@@ -16,8 +16,11 @@ export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';
 // format digit to time, date
 export {timeLeftFormat, timeFormat} from './format/time';
 
+// case
+export {someUpperCase} from './format/toUpperCase';
+
 // validation
-export {validateIpv4, validateFsName, validateEmail, validatePort} from './validation';
+export {validateIpv4, validateFsName, validateEmail, validatePort, validateNotZeroInteger} from './validation';
 
 // key press filter
 export {KeyPressFilter} from './keyPressFilter';

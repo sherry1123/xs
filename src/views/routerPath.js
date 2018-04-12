@@ -25,6 +25,7 @@ const routerPath = {
     UserStatistics: '/user-statistics',
 
     Snapshot: '/snapshot',
+    SnapshotSchedule: '/snapshot-schedule',
 
     NASExport: '/nas-export',
 
@@ -44,7 +45,7 @@ export const pathToMenu = {
     StorageNodes: [routerPath.StorageNodes],
     ClientStatistics: [routerPath.ClientStatistics],
     UserStatistics: [routerPath.UserStatistics],
-    Snapshot: [routerPath.Snapshot],
+    Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
     NASExport: [routerPath.NASExport],
     Management: [/*routerPath.ManagementKnownProblems,*/ routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperation/*, routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser*/],
