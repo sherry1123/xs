@@ -33,6 +33,11 @@ const fetchDataPer15s = () => {
         httpRequests.getSnapshotList();
     }
 
+    // snapshot schedule
+    if (routerHash.match(main + routerPath.SnapshotSchedule)){
+        httpRequests.getSnapshotScheduleList();
+    }
+
     // nas
     if (routerHash.match(main + routerPath.Nas)){
         httpRequests.getNasExportList();

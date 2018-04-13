@@ -118,9 +118,12 @@ export default {
         // snapshot
         snapshot: {
             snapshotList: [
-                {name: 'snapshot3', size: 9999999999999, createTime: 1522761568579},
-                {name: 'snapshot2', size: 8999999999999, createTime: 1522754568579},
-                {name: 'snapshot1', size: 7999999999999, createTime: 1522750568579},
+                /*
+                {name: 'snapshot3', isAuto: false, createTime: 1522761568579},
+                {name: 'snapshot2', isAuto: false, createTime: 1522754568579},
+                {name: 'snapshot1', isAuto: false, createTime: 1522750568579},
+                {name: 'test-20180413095300', isAuto: true, createTime: 1522750868579},
+                */
             ],
             snapshotScheduleList: [
 

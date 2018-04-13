@@ -11,10 +11,12 @@ import snapshotReducer from '../reducers/snapshotReducer';
 import nasReducer from '../reducers/nasReducer';
 import fsOperationReducer from '../reducers/fsOperationReducer';
 
-// firstly read environmental parameters from process, also persistent data from localStorage
+// firstly correct State with data from environmental parameters and persistent data from localStorage
+State.language = lsGet('language') || '';
 const {VERSION, NODE_ENV} = process.env;
 State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 State.main.general.menuExpand = lsGet('menuExpand');
+
 
 // export a combined reducer
 export default combineReducers({

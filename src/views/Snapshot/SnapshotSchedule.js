@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import update from "react-addons-update";
-import {Button, Col, DatePicker, Form, Icon, Input, message, Modal, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Col, /*DatePicker,*/ Form, Icon, Input, message, Modal, Row, Select, Switch, Table, Tooltip} from "antd";
 import lang from "../../components/Language/lang";
-import moment from 'moment';
+// import moment from 'moment';
 import {timeLeftFormat, timeFormat, validateNotZeroInteger, validateFsName, TIME_UNIT_MILLISECOND_MAP} from "../../services";
 import httpRequests from '../../http/requests';
 
@@ -17,15 +17,16 @@ class SnapshotSchedule extends Component {
             snapshotScheduleList,
             snapshotScheduleListBackup: snapshotScheduleList,
             // create form
+            formSubmitting: false,
             scheduleData: {
                 name: '',
-                startTime: moment(new Date(new Date().getTime() + 3 * 60 * 1000)),
+                // startTime: moment(new Date(new Date().getTime() + 3 * 60 * 1000)),
                 interval: '', intervalNumber: '', intervalUnit: 'Hour',
                 deleteRound: false
             },
             validation: {
                 name: {status: '', help: '', valid: false},
-                startTime: {status: '', help: '', valid: true},
+                // startTime: {status: '', help: '', valid: true},
                 interval: {status: '', help: '', valid: false}
             },
         };
@@ -51,7 +52,7 @@ class SnapshotSchedule extends Component {
     async searchInTable (query, dataRefresh){
         if (query || dataRefresh){
             let snapshotScheduleList = Object.assign([], this.state.snapshotScheduleListBackup);
-            let newSnapshotScheduleList = snapshotScheduleList.filter(({name}) => name.match(query));
+            let newSnapshotScheduleList = snapshotScheduleList.filter(({name = ''}) => name.match(query));
             await this.setState({query, snapshotScheduleList: newSnapshotScheduleList});
         } else {
             this.setState({snapshotScheduleList: this.state.snapshotScheduleListBackup});
@@ -164,10 +165,7 @@ class SnapshotSchedule extends Component {
                 }, false);
             }
             // validate schedule name duplication
-            let isScheduleNameDuplicated = this.state.scheduleData.images.some(imagePath => {
-                let [poolName, imageName] = imagePath.split('/');
-                return this.state.nameArray.includes(poolName + '/' + imageName + '/' + this.state.scheduleData.name);
-            });
+            let isScheduleNameDuplicated = this.props.snapshotScheduleList.some(schedule => schedule.name === this.state.scheduleData.name);
             if (isScheduleNameDuplicated){
                 this.validationUpdateState('name', {cn: '名称已经存在', en: 'The name already existed'}, false);
             }
@@ -185,8 +183,16 @@ class SnapshotSchedule extends Component {
         this.setState({formValid});
     }
 
-    createSnapshotSchedule (){
-        httpRequests.createSnapshotSchedule();
+    async createSnapshotSchedule (snapshotSchedule = this.state.scheduleData){
+        try {
+            await httpRequests.createSnapshotSchedule(snapshotSchedule);
+            httpRequests.getSnapshotScheduleList();
+            await this.hide();
+            message.success(lang(`定时快照任务 ${snapshotSchedule.name} 创建成功！要执行此计划请先启用它。`, `Create snapshot schedule ${snapshotSchedule.name} successfully! If wanna running this schedule, need to enable it.`));
+            this.setState({formSubmitting: false});
+        } catch (e){
+            message.error(lang(`定时快照任务 ${snapshotSchedule.name} 创建失败！`, `Create snapshot schedule ${snapshotSchedule.name} failed!`));
+        }
     }
 
     deleteSchedule (schedule, index){
@@ -212,6 +218,37 @@ class SnapshotSchedule extends Component {
         });
     }
 
+    async scheduleStatusSwitch (snapshotSchedule, index, checked){
+        if (checked){
+            let isRunningOne = this.props.snapshotScheduleList.some(schedule => schedule.isRunning);
+            if (isRunningOne){
+                message.warning(lang('已经有一个定时快照计划在执行了，请先关闭它！', 'Already a timed snapshot schedule is running now, please firstly disable it.'));
+            } else {
+                try {
+                    await httpRequests.enableSnapshotSchedule(snapshotSchedule);
+                    let snapshotScheduleList = Object.assign([], this.state.snapshotScheduleList);
+                    let schedule = snapshotScheduleList[index];
+                    schedule.isRunning = true;
+                    snapshotScheduleList.splice(index, 1, schedule);
+                    this.setState({snapshotScheduleList});
+                } catch (e){
+                    message.error(lang(`启用定时快照计划 ${snapshotSchedule.name} 失败！`, `Enable timed snapshot schedule ${snapshotSchedule.name} failed!`));
+                }
+            }
+        } else {
+            try {
+                await httpRequests.disableSnapshotSchedule(snapshotSchedule);
+                let snapshotScheduleList = Object.assign([], this.state.snapshotScheduleList);
+                let schedule = snapshotScheduleList[index];
+                schedule.isRunning = false;
+                snapshotScheduleList.splice(index, 1, schedule);
+                this.setState({snapshotScheduleList});
+            } catch (e){
+                message.error(lang(`关闭定时快照计划 ${snapshotSchedule.name} 失败！`, `Disable timed snapshot schedule ${snapshotSchedule.name} failed!`));
+            }
+        }
+    }
+
     hide (){
         this.setState({visible: false});
     }
@@ -235,7 +272,7 @@ class SnapshotSchedule extends Component {
             }, {
                 title: lang('开始时间', 'Start Time'),
                 dataIndex: 'startTime',
-                render: text => timeFormat(text)
+                render: (text, record) => record.isRunning ? timeFormat(text) : '--'
             }, {
                 title: lang('间隔时间', 'Interval Time'),
                 dataIndex: 'interval',
@@ -246,35 +283,45 @@ class SnapshotSchedule extends Component {
                 render: text => timeFormat(text)
             }, {
                 title: lang('操作', 'Operations'),
-                width: 80,
-                render: (text, record, index) => <a onClick={this.deleteSchedule.bind(this, record, index)} title={lang('删除', 'delete')}>
-                    <Icon style={{fontSize: 15}} type="delete" />
-                </a>
+                width: 120,
+                render: (text, record, index) => <div>
+                    <Switch size="small" style={{marginTop: -6}}
+                        title={record.isRunning ? lang('关闭', 'Disable') : lang('启用', 'Enable')}
+                        checked={record.isRunning}
+                        onChange={this.scheduleStatusSwitch.bind(this, record, index)}
+                    />
+                    <a onClick={this.deleteSchedule.bind(this, record, index)} title={lang('删除', 'delete')}
+                        style={{marginLeft: 10}}
+                    >
+                        <Icon style={{fontSize: 15}} type="delete" />
+                    </a>
+                </div>
+
             }],
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
                 <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('定时快照', 'Snapshot Schedule')}</h3>
+                    <h3 className="fs-page-title">{lang('定时快照计划', 'Timed Snapshot Schedule')}</h3>
                 </section>
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <Input.Search style={{marginRight: 15, width: 150}} size="small"
-                              placeholder={lang('定时快照名称', 'Snapshot schedule name')}
-                              value={this.state.query}
-                              onChange={this.queryChange.bind(this)}
-                              onSearch={this.searchInTable.bind(this)}
+                            placeholder={lang('定时快照名称', 'Snapshot schedule name')}
+                            value={this.state.query}
+                            onChange={this.queryChange.bind(this)}
+                            onSearch={this.searchInTable.bind(this)}
                         />
                         <Button className="fs-create-snapshot-button"
-                                size="small"
-                                onClick={() => {this.setState({visible: true});}}
+                            size="small"
+                            onClick={() => {this.setState({visible: true});}}
                         >
-                            {lang('创建定时快照', 'Create Schedule')}
+                            {lang('创建计划', 'Create Schedule')}
                         </Button>
                         <Table {...tableProps} />
                     </section>
                 </section>
-                <Modal title={lang('创建定时快照', 'Create Snapshot Schedule')}
+                <Modal title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
                        width={320}
                        closable={false}
                        maskClosable={false}
@@ -295,7 +342,7 @@ class SnapshotSchedule extends Component {
                        }
                 >
                     <Form layout="vertical">
-                        <Form.Item label={lang('任务名称', 'Schedule Name')}
+                        <Form.Item label={lang('计划名称', 'Schedule Name')}
                             validateStatus={this.state.validation.name.status}
                             help={this.state.validation.name.help}
                         >
@@ -307,6 +354,7 @@ class SnapshotSchedule extends Component {
                                    }}
                             />
                         </Form.Item>
+                        {/*
                         <Form.Item label={lang('开始时间', 'Start Time')}
                            validateStatus={this.state.validation.startTime.status}
                            help={this.state.validation.startTime.help}
@@ -322,6 +370,7 @@ class SnapshotSchedule extends Component {
                                 }}
                             />
                         </Form.Item>
+                        */}
                         <Form.Item label={lang('间隔时间', 'Interval Time')}
                            validateStatus={this.state.validation.interval.status}
                            help={this.state.validation.interval.help}

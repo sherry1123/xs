@@ -182,7 +182,7 @@ export default  {
     // snapshot
     async getSnapshotList (){
         try {
-            let data = await fetchGet('/api/getsnapshots');
+            let data = await fetchGet('/api/getsnapshot');
             store.dispatch(snapshotAction.setSnapshotList(data));
         } catch (e){
             errorHandler(e);
@@ -201,16 +201,30 @@ export default  {
         await fetchPost('/api/deletesnapshot', snapshot);
     },
 
+    // snapshot schedule
     async getSnapshotScheduleList (){
-
+        try {
+            let data = await fetchGet('/api/getsnapshottask');
+            store.dispatch(snapshotAction.setSnapshotScheduleList(data));
+        } catch (e){
+            errorHandler(e);
+        }
     },
 
-    async createSnapshotSchedule (){
-
+    async createSnapshotSchedule (snapshotSchedule){
+        await fetchPost('/api/createsnapshottask', snapshotSchedule);
     },
 
-    async deleteSnapshotSchedule (){
+    async enableSnapshotSchedule (snapshotSchedule){
+        await fetchPost('/api/enablesnapshottask', snapshotSchedule);
+    },
 
+    async disableSnapshotSchedule (snapshotSchedule){
+        await fetchPost('/api/disablesnapshottask', snapshotSchedule);
+    },
+
+    async deleteSnapshotSchedule (snapshotSchedule){
+        await fetchPost('/api/deletesnapshottask', snapshotSchedule);
     },
 
     // NAS

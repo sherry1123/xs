@@ -100,7 +100,7 @@ class SideBar extends Component {
                         <Icon type="camera-o" />{lang('快照', 'Snapshot')}
                     </Menu.Item>
                     <Menu.Item key={routerPath.SnapshotSchedule}>
-                        <Icon type="schedule" />{lang('定时快照', 'Snapshot Schedule')}
+                        <Icon type="schedule" />{lang('定时快照', 'Timed Snapshot')}
                     </Menu.Item>
                     <Menu.Item key={routerPath.NASExport}>
                         <Icon type="export" />{lang('NAS导出', 'NAS Export')}

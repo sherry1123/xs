@@ -23,7 +23,7 @@ export const METADATA_STATICS_ITEMS = [
     'rddir', 'refrEnt', 'mdsInf', 'rmdir', 'rmLnk',
     'mvDirIns', 'mvFiIns', 'open', 'ren', 'setChDrct',
     'sAttr', 'sDirPat', 'stat', 'statfs', 'trunc',
-    'symInk', 'unInk', 'lookLI', 'statLI', 'revalLI',
+    'symlnk', 'unlnk', 'lookLI', 'statLI', 'revalLI',
     'openLI', 'createLI', 'mirrorMD', 'hardlnk', 'flckAp',
     'flckEn', 'flckRg', 'dirparent', 'listXA', 'getXA',
     'rmXA', 'setXA'
@@ -36,3 +36,23 @@ export const STORAGE_STATICS_ITEMS = [
     'gendbg', 'hrtbeat', 'remNode', 'nodeInf', 'storInf',
     'unInk'
 ];
+
+export const socketEventStatus = {
+    // code 1-20 for snapshot channel
+    1: () => ({
+        chinese: target => `快照 ${target} 删除成功！`,
+        english: target => `Snapshot ${target} deleted successfully！`
+    }),
+    2: () => ({
+        chinese: target => `快照 ${target} 删除失败！`,
+        english: target => `Snapshot ${target} deleted failed！`
+    }),
+    3: () => ({
+        chinese: target => `快照 ${target} 回滚成功！`,
+        english: target => `Snapshot ${target} rollback successfully！`
+    }),
+    4: () => ({
+        chinese: target => `快照 ${target} 回滚失败！`,
+        english: target => `Snapshot ${target} rollback failed！`
+    }),
+};

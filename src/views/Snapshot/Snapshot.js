@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Table} from 'antd';
 import lang from "../../components/Language/lang";
-import {formatStorageSize, timeFormat, validateFsName} from '../../services';
+import {timeFormat, validateFsName} from '../../services';
 import httpRequests from '../../http/requests';
 
 class Snapshot extends Component {
@@ -45,41 +45,11 @@ class Snapshot extends Component {
         if (query || dataRefresh){
             await this.setState({
                 query,
-                snapshotList: Object.assign([], this.state.snapshotListBackup).filter(({name}) => name.match(query))
+                snapshotList: Object.assign([], this.state.snapshotListBackup).filter(({name = ''}) => name.match(query))
             });
         } else {
             this.setState({snapshotList: this.state.snapshotListBackup});
         }
-    }
-
-    delete (name){
-        Modal.confirm({
-            title: lang(`确定删除这个快照: ${name} ?`, `Are you sure you want to delete this snapshot: ${name} ?`),
-            content: lang('此操作不可恢复', 'You can\'t undo this action'),
-            okText: lang('删除', 'Delete'),
-            cancelText: lang('取消', 'Cancel'),
-            onOk: () => {
-
-            },
-            onCancel: () => {
-
-            }
-        });
-    }
-
-    rollback (name){
-        Modal.confirm({
-            title: lang(`确定回滚这个快照: ${name} ?`, `Are you sure you want to rollback this snapshot: ${name} ?`),
-            content: lang('此操作不可恢复', 'You can\'t undo this action'),
-            okText: lang('回滚', 'Roll Back'),
-            cancelText: lang('取消', 'Cancel'),
-            onOk: () => {
-
-            },
-            onCancel: () => {
-
-            }
-        });
     }
 
     formValueChange (key, value){
@@ -138,9 +108,60 @@ class Snapshot extends Component {
             message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
             this.setState({formSubmitting: false});
         } catch ({msg}){
-            message.success(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
+            message.error(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
             this.setState({formSubmitting: false});
         }
+    }
+
+    deleteSnapshot (snapshot){
+        Modal.confirm({
+            title: lang(`确定删除这个快照: ${snapshot.name} ?`, `Are you sure you want to delete this snapshot: ${snapshot.name} ?`),
+            content: lang('此操作不可恢复', 'You can\'t undo this action'),
+            okText: lang('删除', 'Delete'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.deleteSnapshot(snapshot);
+                    httpRequests.getSnapshotList();
+                    message.success(lang(`已开始删除快照 ${snapshot.name}!`, `Start deleting snapshot ${snapshot.name}!`));
+                } catch ({msg}){
+                    message.error(lang(`删除快照 ${snapshot.name} 失败, 原因: `, `Delete snapshot ${snapshot.name} failed, reason: `) + msg);
+                }
+            },
+            onCancel: () => {
+
+            }
+        });
+    }
+
+    rollbackSnapshot (snapshot){
+        Modal.confirm({
+            title: lang(`确定回滚这个快照: ${snapshot.name} ?`, `Are you sure you want to rollback this snapshot: ${snapshot.name} ?`),
+            content: lang('此操作不可恢复', 'You can\'t undo this action'),
+            okText: lang('回滚', 'Roll Back'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.rollbackSnapshot(snapshot);
+                    httpRequests.getSnapshotList();
+                    message.success(lang(`已开始回滚快照 ${snapshot.name}!`, `Start rolling back snapshot ${snapshot.name}!`));
+                } catch ({msg}){
+                    message.error(lang(`回滚快照 ${snapshot.name} 失败, 原因: `, `Rollback snapshot ${snapshot.name} failed, reason: `) + msg);
+                }
+            },
+            onCancel: () => {
+
+            }
+        });
+    }
+
+    show (){
+        this.setState({
+            visible: true,
+            // reset form data and validations
+            snapshotData: {name: ''},
+            validation: {name: {status: '', help: '', valid: false}}
+        });
     }
 
     hide (){
@@ -157,28 +178,25 @@ class Snapshot extends Component {
             },
             columns: [
                 {title: lang('名称', 'Name'), width: 125, dataIndex: 'name',},
-                {title: lang('大小', 'Size'), width: 120, dataIndex: 'size',
-                    render: (text) => formatStorageSize(text)
+                {title: lang('定时创建', 'Schedule Created'), width: 120, dataIndex: 'isAuto',
+                    render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
-                    render: (text) => timeFormat(text)
+                    render: text => timeFormat(text)
                 },
                 {title: lang('操作', 'Operations'), width: 80,
-                    render: (text, record) => (
-                        <div>
-                            <a title={lang('回滚', 'Rollback')}
-                               onClick={this.rollback.bind(this, record.name)}
-                            >
-                                <Icon style={{fontSize: 15}} type="rollback" />
-                            </a>
-                            <a title={lang('删除', 'Delete')}
-                               onClick={this.delete.bind(this, record.name)}
-                               style={{marginLeft: 10}}
-                            >
-                                <Icon style={{fontSize: 15}} type="delete" />
-                            </a>
-                        </div>
-                    )
+                    render: (text, record, index) => {
+                        return (!record.rollbacking && !record.deleting) ?
+                            <div>
+                                <a onClick={this.rollbackSnapshot.bind(this, record, index)} title={lang('回滚', 'Roll Back')}>
+                                    <Icon style={{fontSize: 15}} type="rollback" />
+                                </a>
+                                <a onClick={this.deleteSnapshot.bind(this, record, index)} title={lang('删除', 'Delete')} style={{marginLeft: 10}}>
+                                    <Icon style={{fontSize: 15}} type="delete" />
+                                </a>
+                            </div> :
+                            <a disabled>{record.rollbacking ? lang('回滚中', 'Rolling Back') : lang('删除中', 'Deleting')}</a>;
+                    }
                 }
             ],
         };
@@ -195,9 +213,8 @@ class Snapshot extends Component {
                             onChange={this.queryChange.bind(this)}
                             onSearch={this.searchInTable.bind(this)}
                         />
-                        <Button className="fs-create-snapshot-button"
-                            size="small"
-                            onClick={() => {this.setState({visible: true});}}
+                        <Button className="fs-create-snapshot-button" size="small"
+                            onClick={this.show.bind(this)}
                         >
                             {lang('创建快照', 'Create Snapshot')}
                         </Button>
@@ -205,10 +222,10 @@ class Snapshot extends Component {
                     </section>
                 </section>
                 <Modal title={lang('创建快照', 'Create Snapshot')}
-                    width={250}
+                    width={300}
+                    visible={this.state.visible}
                     closable={false}
                     maskClosable={false}
-                    visible={this.state.visible}
                     footer={
                         <div>
                             <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
@@ -227,7 +244,7 @@ class Snapshot extends Component {
                             validateStatus={this.state.validation.name.status}
                             help={this.state.validation.name.help}
                         >
-                            <Input style={{width: 150}} size='small'
+                            <Input style={{width: 220}} size='small'
                                    placeholder={lang('请输入快照名称', 'please enter snapshot name')}
                                    value={this.state.snapshotData.name}
                                    onChange={({target: {value}}) => {
