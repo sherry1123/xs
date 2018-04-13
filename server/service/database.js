@@ -69,6 +69,9 @@ const model = {
     async addSnapshotTask(param) {
         return await dao.createOne(snapshottask, param);
     },
+    async updateSnapshotTask(query, param) {
+        return await dao.updateOne(snapshottask, query, param);
+    },
     async deleteSnapshotTask(param) {
         return await dao.deleteOne(snapshottask, param);
     }

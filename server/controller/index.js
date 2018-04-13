@@ -148,6 +148,12 @@ const model = {
     '/api/createsnapshottask': async ctx => {
         ctx.body = await service.createSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
     },
+    '/api/enablesnapshottask': async ctx => {
+        ctx.body = await service.enableSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/disablesnapshottask': async ctx => {
+        ctx.body = await service.disableSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
     '/api/deletesnapshottask': async ctx => {
         ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
     }

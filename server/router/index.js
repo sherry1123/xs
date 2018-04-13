@@ -47,6 +47,8 @@ router.all('/api/getclientmetastats', controller['/api/getclientmetastats']);
 router.all('/api/getclientstoragestats', controller['/api/getclientstoragestats']);
 router.all('/api/getsnapshottask', controller['/api/getsnapshottask']);
 router.all('/api/createsnapshottask', controller['/api/createsnapshottask']);
+router.all('/api/enablesnapshottask', controller['/api/enablesnapshottask']);
+router.all('/api/disablesnapshottask', controller['/api/disablesnapshottask']);
 router.all('/api/deletesnapshottask', controller['/api/deletesnapshottask']);
 
 module.exports = router;
