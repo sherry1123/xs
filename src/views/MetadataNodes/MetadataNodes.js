@@ -7,7 +7,7 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import StaticsFilter from '../../components/StaticsTable/StaticsFilter';
 import StaticsTable from '../../components/StaticsTable/StaticsTable';
 import httpRequests from "../../http/requests";
-import {lsGet, lsSet, someUpperCase, USER_STATICS_ITEMS} from "../../services";
+import {lsGet, lsSet, someUpperCase, METADATA_STATICS_ITEMS} from "../../services";
 
 class MetadataNodes extends Component {
     constructor (props){
@@ -96,7 +96,7 @@ class MetadataNodes extends Component {
             target: 'user',
             type: 'metadata',
             limit: 10,
-            totalItems: USER_STATICS_ITEMS,
+            totalItems: METADATA_STATICS_ITEMS,
             selectedItems: this.state.overviewStaticsFilterItems,
         };
         let overviewStaticsFilterConfig = Object.assign({}, staticsFilterConfig, {

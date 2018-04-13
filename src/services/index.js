@@ -8,7 +8,7 @@ export {lsGet, lsSet, lsRemove} from './localStorage';
 export {ckGet, ckSet, ckRemove} from './cookie';
 
 // reference mapping
-export {CAPACITY_UNIT_SIZE_MAP, Time_UNIT_MILLISECOND_MAP, INTERVAL_LIST, USER_STATICS_ITEMS} from './localData';
+export {CAPACITY_UNIT_SIZE_MAP, TIME_UNIT_MILLISECOND_MAP, INTERVAL_LIST, METADATA_STATICS_ITEMS, STORAGE_STATICS_ITEMS} from './localData';
 
 // format digit to Byte, KByte, MByte, GByte, TByte, PByte, EByte, ZByte .etc
 export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';

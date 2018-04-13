@@ -4,7 +4,7 @@ import update from "react-addons-update";
 import {Button, Col, DatePicker, Form, Icon, Input, message, Modal, Row, Select, Switch, Table, Tooltip} from "antd";
 import lang from "../../components/Language/lang";
 import moment from 'moment';
-import {timeLeftFormat, timeFormat, validateNotZeroInteger, validateFsName, Time_UNIT_MILLISECOND_MAP} from "../../services";
+import {timeLeftFormat, timeFormat, validateNotZeroInteger, validateFsName, TIME_UNIT_MILLISECOND_MAP} from "../../services";
 import httpRequests from '../../http/requests';
 
 class SnapshotSchedule extends Component {
@@ -92,7 +92,7 @@ class SnapshotSchedule extends Component {
             intervalNumber = this.state.scheduleData.intervalNumber;
             intervalUnit = value;
         }
-        let milliseconds = Time_UNIT_MILLISECOND_MAP[intervalUnit];
+        let milliseconds = TIME_UNIT_MILLISECOND_MAP[intervalUnit];
         let newState = update(this.state, {scheduleData: {interval: {$set: intervalNumber * milliseconds || 0}}});
         this.setState(Object.assign(this.state, newState));
         // console.info(this.state.scheduleData.interval);
