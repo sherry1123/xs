@@ -29,7 +29,7 @@ const timeLeftFormat = seconds => {
     return result;
 };
 
-const timeFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+const timeFormat = (date, fmt = 'YYYY-MM-DD HH:mm:ss') => {
     if (!date) return '--';
     return moment(date).format(fmt);
     /*
