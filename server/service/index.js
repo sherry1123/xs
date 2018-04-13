@@ -827,7 +827,7 @@ const model = {
             socket.postEventStatus({ channel: 'snapshot', code: 2 });
         }
     },
-    async rollback(param, user, ip) {
+    async rollbackSnapshot(param, user, ip) {
         try {
             await database.updateSnapshot(param, { rollbacking: true });
             await promise.runTimeOutInPromise(5);
