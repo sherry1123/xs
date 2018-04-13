@@ -70,7 +70,7 @@ const model = {
         return await dao.createOne(snapshottask, param);
     },
     async deleteSnapshotTask(param) {
-        return await dao.deleteOne(snapshottask, param);
+        return await dao.deleteOne(snapshottask, { name: param.name });
     }
 };
 module.exports = model;
