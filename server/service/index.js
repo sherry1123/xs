@@ -19,6 +19,7 @@ const responseHandler = (code, result, param) => {
 const errorHandler = (code, message, param = {}) => {
     logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
 };
+const timeHandler = () => (new Date(new Date(new Date().getTime() + 60000).toISOString().replace(/:\d+\.\d+/, ':00.000')));
 const model = {
     async getInitStatus() {
         let result = false;
@@ -794,7 +795,7 @@ const model = {
         let result = {};
         try {
             let data = await database.getSnapshot(param);
-            result = responseHandler(0, data);
+            result = responseHandler(0, data.reverse());
         } catch (error) {
             result = responseHandler(42, error, param);
         }
@@ -802,10 +803,18 @@ const model = {
     },
     async createSnapshot(param, user, ip) {
         let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
+        let result = {};
         try {
-            await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
-            result = responseHandler(0, 'create snapshot successfully');
-            await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
+            let count = await database.getSnapshotCount({ isAuto: false });
+            if (count < config.snapshot.manual) {
+                await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
+                result = responseHandler(0, 'create snapshot successfully');
+                await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
+            } else {
+                result = responseHandler(43, 'the number of snapshots has reached the limit', param);
+                await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
+                await model.addEventLog({ desc: 'create snapshot failed. reason: the number of snapshots has reached the limit' });
+            }
         } catch (error) {
             result = responseHandler(43, error, param);
             await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
@@ -814,31 +823,33 @@ const model = {
         return result;
     },
     async deleteSnapshot(param, user, ip) {
+        let { name } = param;
         try {
-            await database.updateSnapshot(param, { deleting: true });
+            await database.updateSnapshot({ name }, { deleting: true });
             await promise.runTimeOutInPromise(5);
-            await database.deleteSnapshot(param);
+            await database.deleteSnapshot({ name });
             await model.addAuditLog({ user, desc: 'delete snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 1 });
+            socket.postEventStatus({ channel: 'snapshot', code: 1, target: name, result: true });
         } catch (error) {
             errorHandler(44, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
             await model.addEventLog({ desc: `delete snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 2 });
+            socket.postEventStatus({ channel: 'snapshot', code: 2, target: name, result: false });
         }
     },
-    async rollback(param, user, ip) {
+    async rollbackSnapshot(param, user, ip) {
+        let { name } = param;
         try {
-            await database.updateSnapshot(param, { rollbacking: true });
+            await database.updateSnapshot({ name }, { rollbacking: true });
             await promise.runTimeOutInPromise(5);
-            await database.updateSnapshot(param, { rollbacking: false });
+            await database.updateSnapshot({ name }, { rollbacking: false });
             await model.addAuditLog({ user, desc: 'rollback snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 3 });
+            socket.postEventStatus({ channel: 'snapshot', code: 3, target: name, result: true });
         } catch (error) {
             errorHandler(45, error, param);
             await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
             await model.addEventLog({ desc: `rollback snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 4 });
+            socket.postEventStatus({ channel: 'snapshot', code: 4, target: name, result: false });
         }
     },
     async getUserMetaStats(param) {
@@ -902,15 +913,15 @@ const model = {
         let result = {};
         try {
             let data = await database.getSnapshotTask(param);
-            result = responseHandler(0, data);
+            result = responseHandler(0, data.reverse());
         } catch (error) {
             result = responseHandler(50, error, param);
         }
         return result;
     },
     async createSnapshotTask(param, user, ip) {
+        let { name, createTime = new Date(), startTime = timeHandler(), interval, deleteRound = false, isRunning = false } = param;
         let result = {};
-        let { name, createTime = new Date(), startTime, interval, deleteRound = false } = param;
         try {
             await database.addSnapshotTask({ name, createTime, startTime, interval, deleteRound });
             result = responseHandler(0, 'create snapshot task successfully');
@@ -922,14 +933,43 @@ const model = {
         }
         return result;
     },
-    async deleteSnapshotTask(param, user, ip) {
+    async enableSnapshotTask(param, user, ip) {
+        let { name } = param;
         let result = {};
         try {
-            await database.deleteSnapshotTask(param);
+            await database.updateSnapshotTask({ name }, { startTime: timeHandler(), isRunning: true });
+            result = responseHandler(0, 'enable snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'enable snapshot task successfully', ip });
+        } catch (error) {
+            result = responseHandler(52, error, param);
+            await model.addAuditLog({ user, desc: `enable snapshot task failed`, ip });
+            await model.addEventLog({ desc: `enable snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async disableSnapshotTask(param, user, ip) {
+        let { name } = param;
+        let result = {};
+        try {
+            await database.updateSnapshotTask({ name }, { isRunning: false });
+            result = responseHandler(0, 'disable snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'disable snapshot task successfully', ip });
+        } catch (error) {
+            result = responseHandler(53, error, param);
+            await model.addAuditLog({ user, desc: `disable snapshot task failed`, ip });
+            await model.addEventLog({ desc: `disable snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteSnapshotTask(param, user, ip) {
+        let { name } = param;
+        let result = {};
+        try {
+            await database.deleteSnapshotTask({ name });
             result = responseHandler(0, 'delete snapshot task successfully');
             await model.addAuditLog({ user, desc: 'delete snapshot task successfully', ip });
         } catch (error) {
-            result = responseHandler(52, error, param);
+            result = responseHandler(54, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot task failed`, ip });
             await model.addEventLog({ desc: `delete snapshot task failed. reason: ${error}` });
         }
@@ -937,9 +977,9 @@ const model = {
     },
     async runSnapshotTask() {
         let currentTime = new Date();
-        let taskList = await database.getSnapshotTask();
-        for (let task of taskList) {
-            let { name, startTime, interval, deleteRound } = task;
+        let isRunningTask = await database.getSnapshotTask({ isRunning: true });
+        if (isRunningTask.length) {
+            let { name, startTime, interval, deleteRound } = isRunningTask[0];
             let timeGap = currentTime - startTime;
             if (timeGap > 0) {
                 let timeGapInSecond = Math.floor(timeGap / 1000);

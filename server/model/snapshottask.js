@@ -5,6 +5,7 @@ module.exports = mongoose.model('snapshottask',
         createTime: Date,
         startTime: Date,
         interval: Number,
-        deleteRound: Boolean
+        deleteRound: Boolean,
+        isRunning: Boolean
     })
 );

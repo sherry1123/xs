@@ -135,7 +135,9 @@ exports.errors = {
     49: 'get client storage stats error',
     50: 'get snapshot task error',
     51: 'create snapshot task error',
-    52: 'delete snapshot task error'
+    52: 'enable snapshot task error',
+    53: 'disable snapshot task error',
+    54: 'delete snapshot task error'
 
 };
 exports.eventCode = {

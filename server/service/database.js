@@ -51,6 +51,9 @@ const model = {
     async getSnapshot(param) {
         return await dao.findAll(snapshot, param);
     },
+    async getSnapshotCount(param) {
+        return await dao.count(snapshot, param);
+    },
     async addSnapshot(param) {
         return await dao.createOne(snapshot, param);
     },
@@ -65,6 +68,9 @@ const model = {
     },
     async addSnapshotTask(param) {
         return await dao.createOne(snapshottask, param);
+    },
+    async updateSnapshotTask(query, param) {
+        return await dao.updateOne(snapshottask, query, param);
     },
     async deleteSnapshotTask(param) {
         return await dao.deleteOne(snapshottask, param);

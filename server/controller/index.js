@@ -126,9 +126,9 @@ const model = {
         ctx.body = { code: 0, data: 'start to delete snapshot' };
         service.deleteSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
     },
-    '/api/rollback': ctx => {
+    '/api/rollbacksnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to rollback snapshot' };
-        service.rollback(ctx.param, getUser(ctx), getClientIP(ctx));
+        service.rollbackSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
     },
     '/api/getusermetastats': async ctx => {
         ctx.body = await service.getUserMetaStats(ctx.param);
@@ -147,6 +147,12 @@ const model = {
     },
     '/api/createsnapshottask': async ctx => {
         ctx.body = await service.createSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/enablesnapshottask': async ctx => {
+        ctx.body = await service.enableSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/disablesnapshottask': async ctx => {
+        ctx.body = await service.disableSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
     },
     '/api/deletesnapshottask': async ctx => {
         ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
