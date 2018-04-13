@@ -58,10 +58,10 @@ const model = {
         return await dao.createOne(snapshot, param);
     },
     async updateSnapshot(query, param) {
-        return await dao.updateOne(snapshot, { name: query.name }, param);
+        return await dao.updateOne(snapshot, query, param);
     },
     async deleteSnapshot(param) {
-        return await dao.deleteOne(snapshot, { name: param.name });
+        return await dao.deleteOne(snapshot, param);
     },
     async getSnapshotTask(param) {
         return await dao.findAll(snapshottask, param);
@@ -70,7 +70,7 @@ const model = {
         return await dao.createOne(snapshottask, param);
     },
     async deleteSnapshotTask(param) {
-        return await dao.deleteOne(snapshottask, { name: param.name });
+        return await dao.deleteOne(snapshottask, param);
     }
 };
 module.exports = model;
