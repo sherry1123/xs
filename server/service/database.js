@@ -51,14 +51,17 @@ const model = {
     async getSnapshot(param) {
         return await dao.findAll(snapshot, param);
     },
+    async getSnapshotCount(param) {
+        return await dao.count(snapshot, param);
+    },
     async addSnapshot(param) {
         return await dao.createOne(snapshot, param);
     },
     async updateSnapshot(query, param) {
-        return await dao.updateOne(snapshot, query, param);
+        return await dao.updateOne(snapshot, { name: query.name }, param);
     },
     async deleteSnapshot(param) {
-        return await dao.deleteOne(snapshot, param);
+        return await dao.deleteOne(snapshot, { name: param.name });
     },
     async getSnapshotTask(param) {
         return await dao.findAll(snapshottask, param);

@@ -794,7 +794,7 @@ const model = {
         let result = {};
         try {
             let data = await database.getSnapshot(param);
-            result = responseHandler(0, data);
+            result = responseHandler(0, data.reverse());
         } catch (error) {
             result = responseHandler(42, error, param);
         }
@@ -803,9 +803,16 @@ const model = {
     async createSnapshot(param, user, ip) {
         let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
         try {
-            await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
-            result = responseHandler(0, 'create snapshot successfully');
-            await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
+            let count = await database.getSnapshotCount({ isAuto: false });
+            if (count < config.snapshot.manual) {
+                await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
+                result = responseHandler(0, 'create snapshot successfully');
+                await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
+            } else {
+                result = responseHandler(43, 'the number of snapshots has reached the limit', param);
+                await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
+                await model.addEventLog({ desc: 'create snapshot failed. reason: the number of snapshots has reached the limit' });
+            }
         } catch (error) {
             result = responseHandler(43, error, param);
             await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
@@ -819,12 +826,12 @@ const model = {
             await promise.runTimeOutInPromise(5);
             await database.deleteSnapshot(param);
             await model.addAuditLog({ user, desc: 'delete snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 1 });
+            socket.postEventStatus({ channel: 'snapshot', code: 1, target: param.name, result: true });
         } catch (error) {
             errorHandler(44, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
             await model.addEventLog({ desc: `delete snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 2 });
+            socket.postEventStatus({ channel: 'snapshot', code: 2, target: param.name, result: false });
         }
     },
     async rollbackSnapshot(param, user, ip) {
@@ -833,12 +840,12 @@ const model = {
             await promise.runTimeOutInPromise(5);
             await database.updateSnapshot(param, { rollbacking: false });
             await model.addAuditLog({ user, desc: 'rollback snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 3 });
+            socket.postEventStatus({ channel: 'snapshot', code: 3, target: param.name, result: true });
         } catch (error) {
             errorHandler(45, error, param);
             await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
             await model.addEventLog({ desc: `rollback snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 4 });
+            socket.postEventStatus({ channel: 'snapshot', code: 4, target: param.name, result: false });
         }
     },
     async getUserMetaStats(param) {
@@ -902,7 +909,7 @@ const model = {
         let result = {};
         try {
             let data = await database.getSnapshotTask(param);
-            result = responseHandler(0, data);
+            result = responseHandler(0, data.reverse());
         } catch (error) {
             result = responseHandler(50, error, param);
         }
