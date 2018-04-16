@@ -1041,11 +1041,11 @@ const model = {
         return result;
     },
     async createNasExport(param, user, ip) {
-        let { type, path } = param;
-        type = type.toUpperCase();
+        let { protocol, path } = param;
+        protocol = protocol.toUpperCase();
         let result = {};
         try {
-            await database.createNasExport({ type, path });
+            await database.createNasExport({ protocol, path });
             result = responseHandler(0, 'create nas export successfully');
             await model.addAuditLog({ user, desc: 'create nas export successfully', ip });
         } catch (error) {
