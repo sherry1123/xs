@@ -13,7 +13,7 @@ const model = {
         ctx.body = await service.addUser(ctx.param);
     },
     '/api/updateuser': async ctx => {
-        ctx.body = await service.updateUser(ctx.param);
+        ctx.body = await service.updateUser(ctx.param, getClientIP(ctx));
     },
     '/api/deleteuser': async ctx => {
         ctx.body = await service.deleteUser(ctx.param);

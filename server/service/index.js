@@ -249,12 +249,13 @@ const model = {
      * @param {boolean} receivemail Receive Email Or Not
      * @param {int} useravatar User Avatar
      */
-    async updateUser(param) {
+    async updateUser(param, ip) {
         let query = { username: param.username };
         let result = {};
         try {
             await database.updateUser(query, param);
-            result = responseHandler(0, 'update user successfully');
+            result = responseHandler(0, 'change password successfully');
+            await model.addAuditLog({ user: param.username, desc: 'change password successfully', ip });
         } catch (error) {
             result = responseHandler(12, error, param);
         }
