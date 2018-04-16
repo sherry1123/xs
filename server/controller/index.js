@@ -156,6 +156,12 @@ const model = {
     },
     '/api/deletesnapshottask': async ctx => {
         ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/getsnapshotsetting': async ctx => {
+        ctx.body = await service.getSnapshotSetting(ctx.param);
+    },
+    '/api/updatesnapshotsetting': async ctx => {
+        ctx.body = await service.updateSnapshotSetting(ctx.param, getUser(ctx), getClientIP(ctx));
     }
 };
 module.exports = model;

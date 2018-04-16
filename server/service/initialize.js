@@ -132,6 +132,7 @@ const model = {
             await database.addSetting({ key: i, value: param[i] });
         }
         await database.addUser({ username: 'admin', password: '123456' });
+        await database.addSetting({ key: 'snapshotsetting', value: config.snapshot });
     },
     async antiInitMongoDB(ipList) {
         let command = `killall mongod; sleep 5; rm -rf ${config.database.dbpath}/*`;

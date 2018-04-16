@@ -48,6 +48,10 @@ const model = {
         let data = await dao.findOne(setting, param, { _id: 0, __v: 0 });
         return JSON.parse(data.value);
     },
+    async updateSetting(query, param) {
+        param = { value: JSON.stringify(param.value) };
+        return await dao.updateOne(setting, query, param);
+    },
     async getSnapshot(param) {
         return await dao.findAll(snapshot, param);
     },
