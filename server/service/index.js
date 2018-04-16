@@ -637,17 +637,15 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Metadata Nodes Status
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     */
     async getMetaNodesStatus(param) {
         let result = {};
         try {
-            let data = await fileSystem.getMetaNodesOverview(param);
-            data = { general: data.general, status: data.status };
-            result = responseHandler(0, data);
+            let res = await fileSystem.getMetaNodesStatus(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(34, res.message, param);
+            }
         } catch (error) {
             result = responseHandler(34, error, param);
         }

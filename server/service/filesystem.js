@@ -241,7 +241,7 @@ const model = {
     },
     async getMetaNodesStatus(param) {
         let token = await model.getToken();
-        return await request.get(config.api.orcafs.listmetanodes, param, token, true);
+        return await request.get(config.api.orcafs.listmetanodes, {}, token, true);
     }
 };
 module.exports = model;
