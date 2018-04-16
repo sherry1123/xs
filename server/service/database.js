@@ -7,8 +7,11 @@ const hardware = require('../model/hardware');
 const snapshot = require('../model/snapshot');
 const snapshottask = require('../model/snapshottask');
 const model = {
-    async getUser(param) {
+    async login(param) {
         return await dao.findOne(user, param);
+    },
+    async getUser(param) {
+        return await dao.findAll(user, param);
     },
     async addUser(param) {
         return await dao.createOne(user, param);
@@ -35,7 +38,7 @@ const model = {
         return await dao.createOne(auditlog, param);
     },
     async getHardware(param) {
-        return await dao.findAll(hardware, param, { _id: 0, __v: 0 }, { sort: { date: -1 }, limit: 200 });
+        return await dao.findAll(hardware, param, {}, { sort: { date: -1 }, limit: 200 });
     },
     async addHardware(param) {
         return await dao.createOne(hardware, param);

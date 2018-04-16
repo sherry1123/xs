@@ -164,11 +164,12 @@ const model = {
      * @param {string} password Password
      */
     async login(param, ip) {
+        let { username, password } = param;
         let result = {};
         try {
-            let data = await database.getUser(param);
+            let data = await database.login({ username, password });
             if (data.username) {
-                await model.addAuditLog({ user: param.username, desc: 'login successfully', ip });
+                await model.addAuditLog({ user: username, desc: 'login successfully', ip });
                 result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
@@ -184,8 +185,9 @@ const model = {
      * @param {string} username Username
      */
     async logout(param, ip) {
+        let { username } = param;
         let result = responseHandler(0, 'logout successfully');
-        await model.addAuditLog({ user: param.username, desc: 'logout successfully', ip });
+        await model.addAuditLog({ user: username, desc: 'logout successfully', ip });
         return result;
     },
     /**
@@ -248,10 +250,9 @@ const model = {
      * @param {int} useravatar User Avatar
      */
     async updateUser(param) {
+        let query = { username: param.username };
         let result = {};
         try {
-            let { username, password } = param;
-            let query = { username, password };
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user successfully');
         } catch (error) {
