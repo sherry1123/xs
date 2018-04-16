@@ -156,6 +156,21 @@ const model = {
     },
     '/api/deletesnapshottask': async ctx => {
         ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/getsnapshotsetting': async ctx => {
+        ctx.body = await service.getSnapshotSetting(ctx.param);
+    },
+    '/api/updatesnapshotsetting': async ctx => {
+        ctx.body = await service.updateSnapshotSetting(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/getnasexport': async ctx => {
+        ctx.body = await service.getNasExport(ctx.param);
+    },
+    '/api/createnasexport': async ctx => {
+        ctx.body = await service.createNasExport(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
+    '/api/deletenasexport': async ctx => {
+        ctx.body = await service.deleteNasExport(ctx.param, getUser(ctx), getClientIP(ctx));
     }
 };
 module.exports = model;

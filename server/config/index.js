@@ -19,8 +19,9 @@ exports.nginx = {
     proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
 };
 exports.snapshot = {
-    manual: 4,
-    auto: 6
+    total: 64,
+    manual: 25,
+    auto: 39
 };
 exports.api = {
     agentd: {
@@ -137,8 +138,12 @@ exports.errors = {
     51: 'create snapshot task error',
     52: 'enable snapshot task error',
     53: 'disable snapshot task error',
-    54: 'delete snapshot task error'
-
+    54: 'delete snapshot task error',
+    55: 'get snapshot setting error',
+    56: 'update snapshot setting error',
+    57: 'get nas export error',
+    58: 'create nas export error',
+    59: 'delete nas export error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',

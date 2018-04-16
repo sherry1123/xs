@@ -164,11 +164,12 @@ const model = {
      * @param {string} password Password
      */
     async login(param, ip) {
+        let { username, password } = param;
         let result = {};
         try {
-            let data = await database.getUser(param);
+            let data = await database.login({ username, password });
             if (data.username) {
-                await model.addAuditLog({ user: param.username, desc: 'login successfully', ip });
+                await model.addAuditLog({ user: username, desc: 'login successfully', ip });
                 result = responseHandler(0, data);
             } else {
                 result = responseHandler(9, 'username or password error', param);
@@ -184,8 +185,9 @@ const model = {
      * @param {string} username Username
      */
     async logout(param, ip) {
+        let { username } = param;
         let result = responseHandler(0, 'logout successfully');
-        await model.addAuditLog({ user: param.username, desc: 'logout successfully', ip });
+        await model.addAuditLog({ user: username, desc: 'logout successfully', ip });
         return result;
     },
     /**
@@ -248,10 +250,9 @@ const model = {
      * @param {int} useravatar User Avatar
      */
     async updateUser(param) {
+        let query = { username: param.username };
         let result = {};
         try {
-            let { username, password } = param;
-            let query = { username, password };
             await database.updateUser(query, param);
             result = responseHandler(0, 'update user successfully');
         } catch (error) {
@@ -805,8 +806,10 @@ const model = {
         let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
         let result = {};
         try {
+            let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
+            let limit = Number(snapshotSetting.manual);
             let count = await database.getSnapshotCount({ isAuto: false });
-            if (count < config.snapshot.manual) {
+            if (count < limit) {
                 await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
                 result = responseHandler(0, 'create snapshot successfully');
                 await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
@@ -984,9 +987,11 @@ const model = {
             if (timeGap > 0) {
                 let timeGapInSecond = Math.floor(timeGap / 1000);
                 if (timeGapInSecond % interval < 5) {
+                    let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
+                    let limit = Number(snapshotSetting.auto);
                     let autoSnapshotList = await database.getSnapshot({ isAuto: true });
                     let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
-                    if (autoSnapshotList.length < config.snapshot.auto) {
+                    if (autoSnapshotList.length < limit) {
                         await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                     } else if (deleteRound) {
                         let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
@@ -997,6 +1002,71 @@ const model = {
                 }
             }
         }
+    },
+    async getSnapshotSetting(param) {
+        let result = {};
+        try {
+            let data = await database.getSetting({ key: 'snapshotsetting' });
+            for (let i of Object.keys(data)) {
+                data[i] = Number(data[i]);
+            }
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(55, error, param);
+        }
+        return result;
+    },
+    async updateSnapshotSetting(param, user, ip) {
+        let { total, manual, auto } = param;
+        let result = {};
+        try {
+            await database.updateSetting({ key: 'snapshotsetting' }, { value: { total, manual, auto } });
+            result = responseHandler(0, 'update snapshot setting successfully');
+            await model.addAuditLog({ user, desc: 'update snapshot setting successfully', ip });
+        } catch (error) {
+            result = responseHandler(56, error, param);
+            await model.addAuditLog({ user, desc: `update snapshot setting failed`, ip });
+            await model.addEventLog({ desc: `update snapshot setting failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async getNasExport(param) {
+        let result = {};
+        try {
+            let data = await database.getNasExport(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(57, error, param);
+        }
+        return result;
+    },
+    async createNasExport(param, user, ip) {
+        let { type, path } = param;
+        type = type.toUpperCase();
+        let result = {};
+        try {
+            await database.createNasExport({ type, path });
+            result = responseHandler(0, 'create nas export successfully');
+            await model.addAuditLog({ user, desc: 'create nas export successfully', ip });
+        } catch (error) {
+            result = responseHandler(58, error, param);
+            await model.addAuditLog({ user, desc: `create nas export failed`, ip });
+            await model.addEventLog({ desc: `create nas export failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteNasExport(param, user, ip) {
+        let result = {};
+        try {
+            await database.deleteNasExport(param);
+            result = responseHandler(0, 'delete nas export successfully');
+            await model.addAuditLog({ user, desc: 'delete nas export successfully', ip });
+        } catch (error) {
+            result = responseHandler(59, error, param);
+            await model.addAuditLog({ user, desc: `delete nas export failed`, ip });
+            await model.addEventLog({ desc: `delete nas export failed. reason: ${error}` });
+        }
+        return result;
     }
 };
 module.exports = model;
