@@ -59,13 +59,17 @@ export default  {
         }
     },
 
-    // login & logout
-    async login ({username, password}){
-        return await fetchPost('/api/login', {username, password});
+    // user - login, logout, update
+    async login (user){
+        return await fetchPost('/api/login', user);
     },
 
-    async logout (username){
-        return await fetchPost('/api/logout', {username});
+    async logout (user){
+        return await fetchPost('/api/logout', user);
+    },
+
+    async updateUser (user){
+        await fetchPost('/api/updateuser', user);
     },
 
     // main
@@ -230,7 +234,7 @@ export default  {
     // NAS
     async getNasExportList (){
         try {
-            let data = await fetchGet('/api/getnasexports');
+            let data = await fetchGet('/api/getnasexport');
             store.dispatch(nasAction.setNasExportList(data));
         } catch (e){
             errorHandler(e);

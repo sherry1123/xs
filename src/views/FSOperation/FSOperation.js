@@ -132,7 +132,7 @@ class FSOperation extends Component {
             },
             scroll: {y: 500},
             columns: [
-                {title: lang('名称', 'Name'), width: 125, dataIndex: 'name',
+                {title: lang('名称', 'Name'), width: 225, dataIndex: 'name',
                     render: (text, record) => (
                         record.isDir ?
                             ((text === '..' && !record.hasOwnProperty('user')) ?
@@ -146,16 +146,16 @@ class FSOperation extends Component {
                             <span><Icon type="file" /> {text}</span>
                     )
                 },
-                {title: lang('入口 / 大小', 'Entries / Size'), width: 120, dataIndex: 'size',
+                {title: lang('入口 / 大小', 'Entries / Size'), width: 80, dataIndex: 'size',
                     render: (text, record) => (
                         record.isDir && record.hasOwnProperty('user') ?
                             text + lang(' 入口', ' Entries') :
                             formatStorageSize(text)
                     )
                 },
-                {title: lang('用户', 'User'), width: 120, dataIndex: 'user'},
-                {title: lang('组', 'Group'), width: 120, dataIndex: 'group'},
-                {title: lang('权限', 'Permission'), width: 120, dataIndex: 'permissions'},
+                {title: lang('用户', 'User'), width: 100, dataIndex: 'user'},
+                {title: lang('组', 'Group'), width: 100, dataIndex: 'group'},
+                {title: lang('权限', 'Permission'), width: 100, dataIndex: 'permissions'},
                 /*
                 {title: lang('最后状态时间', 'Last Status Time'), width: 125, dataIndex: 'lastStatusTime',
                     render: text => timeFormat(text)

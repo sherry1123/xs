@@ -95,7 +95,7 @@ class MetadataNodes extends Component {
         let staticsFilterConfig = {
             target: 'user',
             type: 'metadata',
-            limit: 10,
+            limit: 8,
             totalItems: METADATA_STATICS_ITEMS,
             selectedItems: this.state.overviewStaticsFilterItems,
         };
