@@ -1062,7 +1062,7 @@ const model = {
             result = responseHandler(0, 'delete nas export successfully');
             await model.addAuditLog({ user, desc: 'delete nas export successfully', ip });
         } catch (error) {
-            result = responseHandler(57, error, param);
+            result = responseHandler(59, error, param);
             await model.addAuditLog({ user, desc: `delete nas export failed`, ip });
             await model.addEventLog({ desc: `delete nas export failed. reason: ${error}` });
         }

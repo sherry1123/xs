@@ -140,7 +140,10 @@ exports.errors = {
     53: 'disable snapshot task error',
     54: 'delete snapshot task error',
     55: 'get snapshot setting error',
-    56: 'update snapshot setting error'
+    56: 'update snapshot setting error',
+    57: 'get nas export error',
+    58: 'create nas export error',
+    59: 'delete nas export error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',
