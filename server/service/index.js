@@ -1029,6 +1029,44 @@ const model = {
             await model.addEventLog({ desc: `update snapshot setting failed. reason: ${error}` });
         }
         return result;
+    },
+    async getNasExport(param) {
+        let result = {};
+        try {
+            let data = await database.getNasExport(param);
+            result = responseHandler(0, data);
+        } catch (error) {
+            result = responseHandler(57, error, param);
+        }
+        return result;
+    },
+    async createNasExport(param, user, ip) {
+        let { type, path } = param;
+        type = type.toUpperCase();
+        let result = {};
+        try {
+            await database.createNasExport({ type, path });
+            result = responseHandler(0, 'create nas export successfully');
+            await model.addAuditLog({ user, desc: 'create nas export successfully', ip });
+        } catch (error) {
+            result = responseHandler(58, error, param);
+            await model.addAuditLog({ user, desc: `create nas export failed`, ip });
+            await model.addEventLog({ desc: `create nas export failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteNasExport(param, user, ip) {
+        let result = {};
+        try {
+            await database.deleteNasExport(param);
+            result = responseHandler(0, 'delete nas export successfully');
+            await model.addAuditLog({ user, desc: 'delete nas export successfully', ip });
+        } catch (error) {
+            result = responseHandler(57, error, param);
+            await model.addAuditLog({ user, desc: `delete nas export failed`, ip });
+            await model.addEventLog({ desc: `delete nas export failed. reason: ${error}` });
+        }
+        return result;
     }
 };
 module.exports = model;

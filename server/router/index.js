@@ -52,5 +52,8 @@ router.all('/api/disablesnapshottask', controller['/api/disablesnapshottask']);
 router.all('/api/deletesnapshottask', controller['/api/deletesnapshottask']);
 router.all('/api/getsnapshotsetting', controller['/api/getsnapshotsetting']);
 router.all('/api/updatesnapshotsetting', controller['/api/updatesnapshotsetting']);
+router.all('/api/getnasexport', controller['/api/getnasexport']);
+router.all('/api/createnasexport', controller['/api/createnasexport']);
+router.all('/api/deletenasexport', controller['/api/deletenasexport']);
 
 module.exports = router;
