@@ -6,7 +6,7 @@ import lang from '../Language/lang';
 class StaticsFilter extends Component {
     constructor (props){
         super(props);
-        let {target, type, extensionTitle = '', limit, totalItems, selectedItems} = this.props;
+        let {target, type, extensionTitle = '', limit = 8, totalItems, selectedItems} = this.props;
         let availableItems = this.sortArrayByFirstLetter(totalItems.filter(item => !selectedItems.includes(item)));
         // selectedItems = this.sortArrayByFirstLetter(selectedItems);
         this.state = {
@@ -46,8 +46,8 @@ class StaticsFilter extends Component {
 
     sortArrayByFirstLetter (items){
         return items.sort((x, y) => {
-            // according to V8's sort policy (start at source code array.js 710 line),
-            // x and y here are not one previous and one next
+            // according to Array sort algorithm of V8 (code start from source array.js 710 line),
+            // x and y here are not exactly one previous and one next
             let a = x.toLowerCase(); // ignore case
             let b = y.toLowerCase();
             if (a < b) return -1;
@@ -57,7 +57,13 @@ class StaticsFilter extends Component {
     }
 
     show (){
-        this.setState({visible: true});
+        let {totalItems, selectedItems} = this.props;
+        let  availableItems = this.sortArrayByFirstLetter(totalItems.filter(item => !selectedItems.includes(item)));
+        this.setState({
+            visible: true,
+            availableItems,
+            selectedItems
+        });
     }
 
     hide (){

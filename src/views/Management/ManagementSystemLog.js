@@ -28,13 +28,6 @@ class ManagementSystemLog extends Component {
                 key: 'level_circle',
                 render: text => <i className={`fs-log-level-circle level-${text}`} />
             }, {
-                title: lang('等级', 'Level'),
-                dataIndex: 'level',
-                key: 'level',
-                render: (text, record) => {
-                    return record.level * 1 === 1 ? lang('低', 'Low') : (record.level * 1 === 2 ? lang('中', 'Warn') : lang('高', 'Fatal'));
-                }
-            }, {
                 title: lang('节点', 'Node'),
                 dataIndex: 'node',
                 key: 'node',
@@ -43,6 +36,13 @@ class ManagementSystemLog extends Component {
                 title: lang('事件描述', 'Description'),
                 dataIndex: 'desc',
                 key: 'desc',
+            }, {
+                title: lang('等级', 'Level'),
+                dataIndex: 'level',
+                key: 'level',
+                render: (text, record) => {
+                    return record.level * 1 === 1 ? lang('低', 'Low') : (record.level * 1 === 2 ? lang('中', 'Warn') : lang('高', 'Fatal'));
+                }
             }, {
                 title: lang('时间', 'Time'),
                 dataIndex: 'time',

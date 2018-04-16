@@ -31,7 +31,7 @@ class Login extends Component {
         if (isInitialized === 'true'){
             let isLoggedIn = ckGet('login');
             if (!!isLoggedIn && (isLoggedIn !== 'false')){
-                this.props.history.replace(routerPath.Main + routerPath.StorageNodes);
+                this.props.history.replace(routerPath.Main + routerPath.MetadataNodes);
             }
         } else {
             this.props.history.replace(routerPath.Init);
@@ -76,7 +76,7 @@ class Login extends Component {
                 let user = await httpRequests.login({username, password});
                 this.props.setUser(user);
                 await this.setState({loginErrorCode: '', doingLogin: false});
-                this.props.history.push(routerPath.Main + routerPath.StorageNodes);
+                this.props.history.push(routerPath.Main + routerPath.MetadataNodes);
             } catch ({code}){
                 this.setState({loginErrorCode: code, doingLogin: false});
             }

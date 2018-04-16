@@ -132,8 +132,10 @@ export default {
         // NAS export
         nas: {
             nasExportList: [
+                /*
                 {protocol: 'NFS', path: '/test/a'},
                 {protocol: 'CIFS', path: '/test'},
+                */
             ]
         },
         // file system operation

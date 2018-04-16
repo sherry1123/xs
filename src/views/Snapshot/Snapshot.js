@@ -106,11 +106,10 @@ class Snapshot extends Component {
             httpRequests.getSnapshotList();
             await this.hide();
             message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
-            this.setState({formSubmitting: false});
         } catch ({msg}){
             message.error(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
-            this.setState({formSubmitting: false});
         }
+        this.setState({formSubmitting: false});
     }
 
     deleteSnapshot (snapshot){
@@ -159,12 +158,13 @@ class Snapshot extends Component {
         this.setState({
             visible: true,
             // reset form data and validations
+            formSubmitting: false,
             snapshotData: {name: ''},
             validation: {name: {status: '', help: '', valid: false}}
         });
     }
 
-    hide (){
+    async hide (){
         this.setState({visible: false});
     }
 
@@ -177,8 +177,8 @@ class Snapshot extends Component {
                 emptyText: lang('暂无快照', 'No Snapshot')
             },
             columns: [
-                {title: lang('名称', 'Name'), width: 125, dataIndex: 'name',},
-                {title: lang('定时创建', 'Schedule Created'), width: 120, dataIndex: 'isAuto',
+                {title: lang('名称', 'Name'), width: 200, dataIndex: 'name',},
+                {title: lang('定时创建', 'Schedule Created'), width: 80, dataIndex: 'isAuto',
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
@@ -207,22 +207,25 @@ class Snapshot extends Component {
                 </section>
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <Input.Search style={{marginRight: 15, width: 150}} size="small"
-                            placeholder={lang('快照名称', 'snapshot name')}
-                            value={this.state.query}
-                            onChange={this.queryChange.bind(this)}
-                            onSearch={this.searchInTable.bind(this)}
-                        />
-                        <Button className="fs-create-snapshot-button" size="small"
-                            onClick={this.show.bind(this)}
-                        >
-                            {lang('创建快照', 'Create Snapshot')}
-                        </Button>
+                        <div className="fs-snapshot-operation-wrapper">
+                            <Input.Search style={{marginRight: 15, width: 150}} size="small"
+                                placeholder={lang('快照名称', 'snapshot name')}
+                                value={this.state.query}
+                                enterButton={true}
+                                onChange={this.queryChange.bind(this)}
+                                onSearch={this.searchInTable.bind(this)}
+                            />
+                            <Button className="fs-create-snapshot-button" size="small"
+                                    onClick={this.show.bind(this)}
+                            >
+                                {lang('创建快照', 'Create Snapshot')}
+                            </Button>
+                        </div>
                         <Table {...tableProps} />
                     </section>
                 </section>
                 <Modal title={lang('创建快照', 'Create Snapshot')}
-                    width={300}
+                    width={320}
                     visible={this.state.visible}
                     closable={false}
                     maskClosable={false}
@@ -244,7 +247,7 @@ class Snapshot extends Component {
                             validateStatus={this.state.validation.name.status}
                             help={this.state.validation.name.help}
                         >
-                            <Input style={{width: 220}} size='small'
+                            <Input style={{width: 270}} size='small'
                                    placeholder={lang('请输入快照名称', 'please enter snapshot name')}
                                    value={this.state.snapshotData.name}
                                    onChange={({target: {value}}) => {
