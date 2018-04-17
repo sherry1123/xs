@@ -26,18 +26,20 @@ class TopBar extends Component {
         }
     }
 
+    /*
     componentWillReceiveProps (nextProps){
         let abnormalNodes = lsGet('abnormalNodes');
         let {metadataNodes, storageNodes} = nextProps;
         let nodes = metadataNodes.concat(storageNodes);
         nodes.forEach(node => {
-            if (node.value){
+            console.info(node);
+            if (node.status){
                 let removeNodes = [];
                 abnormalNodes.forEach(abnormalNode => {
-                    if (node.node === abnormalNode){
+                    if (node.hostname === abnormalNode){
                         notification.open({
                             message: lang('提示', 'Tooltip'),
-                            description: lang(`${node.node} 节点状态已恢复正常。`, `The status of node ${node.node} has recovered to normal.`)
+                            description: lang(`${node.hostname} 节点状态已恢复正常。`, `The status of node ${node.hostname} has recovered to normal.`)
                         });
                         removeNodes.push(abnormalNode);
                     }
@@ -47,17 +49,18 @@ class TopBar extends Component {
                     lsSet('abnormalNodes', abnormalNodes);
                 }
             } else {
-                if (!abnormalNodes.includes(node.node)){
+                if (!abnormalNodes.includes(node.hostname)){
                     notification.open({
                         message: lang('节点异常', 'Some node is abnormal'),
-                        description: lang(`${node.node} 节点现处于异常状态，请检查。`, `The node ${node.node} is abnormal now, please have a check.`)
+                        description: lang(`${node.hostname} 节点现处于异常状态，请检查。`, `The node ${node.hostname} is abnormal now, please have a check.`)
                     });
-                    abnormalNodes.push(node.node);
+                    abnormalNodes.push(node.hostname);
                     lsSet('abnormalNodes', abnormalNodes);
                 }
             }
         });
     }
+    */
 
     render (){
         return (
@@ -87,7 +90,7 @@ class TopBar extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {general: {user, knownProblems}, metadataNode: {overview: {status: metadataNodes}}, storageNode: {overview: {status: storageNodes}}}} = state;
+    let {language, main: {general: {user, knownProblems}, metadataNode: {overview: {nodeList: metadataNodes}}, storageNode: {overview: {status: storageNodes}}}} = state;
     return {language, user, knownProblems, metadataNodes, storageNodes};
 };
 

@@ -102,10 +102,10 @@ export default  {
         }
     },
 
-    async getMetadataNodeDetailSummary ({node, nodeNumID} = (lsGet('currentMetadataNode') || {})){
-        if (node){
+    async getMetadataNodeDetailSummary ({hostname, nodeId} = (lsGet('currentMetadataNode') || {})){
+        if (hostname){
             try {
-                let data = await fetchGet('/api/getmetanodesummary', {node, nodeNumID});
+                let data = await fetchGet('/api/getmetanodesummary', {hostname, nodeId});
                 store.dispatch(metadataNodeAction.setMetadataNodeDetailSummary(data));
             } catch (e){
                 errorHandler(e);
@@ -113,9 +113,9 @@ export default  {
         }
     },
 
-    async getMetadataNodeDetailUserOperationStatics ({nodeNumID} = (lsGet('currentMetadataNode') || {})){
+    async getMetadataNodeDetailUserOperationStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
         try {
-            let data = await fetchGet('/api/getusermetastats', {nodeId: nodeNumID});
+            let data = await fetchGet('/api/getusermetastats', {nodeId});
             store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
         } catch (e){
             errorHandler(e);
@@ -203,6 +203,10 @@ export default  {
 
     async deleteSnapshot (snapshot){
         await fetchPost('/api/deletesnapshot', snapshot);
+    },
+
+    async deleteSnapshotsInBatch (keys){
+        await fetchPost('/api/deletesnapshotsinbatch', keys);
     },
 
     // snapshot schedule

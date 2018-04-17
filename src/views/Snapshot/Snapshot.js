@@ -14,6 +14,8 @@ class Snapshot extends Component {
             query: '',
             snapshotList,
             snapshotListBackup: snapshotList,
+            // table items batch delete
+            batchDeleteSnapshotKeys: [],
             // form
             visible: false,
             formValid: false,
@@ -154,6 +156,21 @@ class Snapshot extends Component {
         });
     }
 
+    async batchDelete (){
+        let {batchDeleteSnapshotKeys} = this.state;
+        if (!batchDeleteSnapshotKeys.length){
+            message.warning(lang('请选择要批量删除的快照', 'Please select the snapshots which you want to delete in batch.'));
+        } else {
+            try {
+                await httpRequests.deleteSnapshotsInBatch(batchDeleteSnapshotKeys);
+                // 先批量从当前本地数据里直接干掉
+
+            } catch ({msg}){
+                message.error(lang('批量删除快照失败，原因：', 'Delete snapshots in batch failed, reason: ') + msg);
+            }
+        }
+    }
+
     show (){
         this.setState({
             visible: true,
@@ -200,6 +217,13 @@ class Snapshot extends Component {
                 }
             ],
         };
+        const rowSelection = {
+            columnWidth: '2%',
+            onChange: (selectedRowKeys) => {
+                console.info(selectedRowKeys);
+                this.setState({batchDeleteSnapshotKeys: selectedRowKeys});
+            },
+        };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
                 <section className="fs-page-big-title">
@@ -208,7 +232,7 @@ class Snapshot extends Component {
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search style={{marginRight: 15, width: 150}} size="small"
+                            <Input.Search className="fs-search-table-input" size="small"
                                 placeholder={lang('快照名称', 'snapshot name')}
                                 value={this.state.query}
                                 enterButton={true}
@@ -216,12 +240,17 @@ class Snapshot extends Component {
                                 onSearch={this.searchInTable.bind(this)}
                             />
                             <Button className="fs-create-snapshot-button" size="small"
-                                    onClick={this.show.bind(this)}
+                                onClick={this.show.bind(this)}
                             >
                                 {lang('创建快照', 'Create Snapshot')}
                             </Button>
+                            <Button className="fs-batch-delete-snapshot-button" size="small" icon="delete"
+                                onClick={this.batchDelete.bind(this)}
+                            >
+                                {lang('批量删除', 'Batch Delete')}
+                            </Button>
                         </div>
-                        <Table {...tableProps} />
+                        <Table rowSelection={rowSelection} {...tableProps} />
                     </section>
                 </section>
                 <Modal title={lang('创建快照', 'Create Snapshot')}

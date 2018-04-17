@@ -6,8 +6,8 @@ const metadataNodeReducer = (state = State.main.storageNode, action) => {
         case metadataNodeActionTypes.SET_METADATA_NODE_OVERVIEW_SUMMARY:
         {
             let {overview} = state;
-            let {data: {status, general}} = action;
-            overview = Object.assign({}, overview, {status, general});
+            let {data} = action;
+            overview = Object.assign({}, overview, {nodeList: data});
             return Object.assign({}, state, {overview});
         }
 

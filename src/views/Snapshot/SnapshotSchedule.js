@@ -4,7 +4,7 @@ import update from "react-addons-update";
 import {Button, Col, /*DatePicker,*/ Form, Icon, Input, message, Modal, Popover, Row, Select, Switch, Table} from "antd";
 import lang from "../../components/Language/lang";
 // import moment from 'moment';
-import {timeLeftFormat, timeFormat, validateNotZeroInteger, validateFsName, TIME_UNIT_MILLISECOND_MAP} from "../../services";
+import {timeLeftFormat, timeFormat, validateNotZeroInteger, validateFsName, timeUnitMilliSecond} from "../../services";
 import httpRequests from '../../http/requests';
 
 class SnapshotSchedule extends Component {
@@ -95,7 +95,7 @@ class SnapshotSchedule extends Component {
             intervalNumber = this.state.scheduleData.intervalNumber;
             intervalUnit = value;
         }
-        let milliseconds = TIME_UNIT_MILLISECOND_MAP[intervalUnit];
+        let milliseconds = timeUnitMilliSecond[intervalUnit];
         let newState = update(this.state, {scheduleData: {interval: {$set: intervalNumber * milliseconds || 0}}});
         this.setState(Object.assign(this.state, newState));
         // console.info(this.state.scheduleData.interval);
@@ -192,7 +192,7 @@ class SnapshotSchedule extends Component {
             await httpRequests.createSnapshotSchedule(schedule);
             httpRequests.getSnapshotScheduleList();
             await this.hide();
-            message.success(lang(`定时快照任务 ${schedule.name} 创建成功！要执行此计划请先启用它。`, `Create snapshot schedule ${schedule.name} successfully! If wanna running this schedule, need to execute it.`));
+            message.success(lang(`定时快照任务 ${schedule.name} 创建成功！要执行此计划请先启用它。`, `Create snapshot schedule ${schedule.name} successfully! If you want to running this schedule, need to execute it.`));
         } catch (e){
             message.error(lang(`定时快照任务 ${schedule.name} 创建失败！`, `Create snapshot schedule ${schedule.name} failed!`));
         }

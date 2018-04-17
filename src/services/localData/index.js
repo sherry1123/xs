@@ -1,23 +1,23 @@
-export const CAPACITY_UNIT_SIZE_MAP = {
+export const capacityUnitSize = {
     'TB': 1024 * 1024 * 1024 * 1024,
     'GB': 1024 * 1024 * 1024,
     'MB': 1024 * 1024
 };
 
-export const TIME_UNIT_MILLISECOND_MAP = {
+export const timeUnitMilliSecond = {
     'Week': 3600 * 24 * 7,
     'Day': 3600 * 24,
     'Hour': 3600,
     'Minute': 60
 };
 
-export const INTERVAL_LIST = [
+export const timeInterval = [
     {name: '小时', value: 3600},
     {name: '天', value: 3600 * 24},
     {name: '周', value: 3600 * 24 * 7}
 ];
 
-export const METADATA_STATICS_ITEMS = [
+export const metadataStaticsItems = [
     'userOrClientName', 'sum', 'ack', 'close', 'entInf',
     'nodeInf', 'fndOwn', 'Ink', 'mkdir', 'create',
     'rddir', 'refrEnt', 'mdsInf', 'rmdir', 'rmLnk',
@@ -29,7 +29,7 @@ export const METADATA_STATICS_ITEMS = [
     'rmXA', 'setXA'
 ];
 
-export const STORAGE_STATICS_ITEMS = [
+export const storageStaticsItems = [
     'userOrClientName', 'sum', 'ack', 'sChDrct', 'getFSize',
     'sAttr', 'statfs', 'trunc', 'close', 'fsync',
     'open', 'ops-rd', 'B-rd', 'ops-wr', 'B-wr',
@@ -37,7 +37,14 @@ export const STORAGE_STATICS_ITEMS = [
     'unInk'
 ];
 
-export const socketEventStatus = {
+export const socketEventChannel = {
+    'snapshot': () => ({
+        chinese: '快照操作',
+        english: 'Snapshot Operation '
+    }),
+};
+
+export const socketEventCode = {
     // code 1-20 for snapshot channel
     1: () => ({
         chinese: target => `快照 ${target} 删除成功！`,
@@ -54,5 +61,9 @@ export const socketEventStatus = {
     4: () => ({
         chinese: target => `快照 ${target} 回滚失败！`,
         english: target => `Snapshot ${target} rollback failed！`
+    }),
+    5: () => ({
+        chinese: target => `批量删除${target.total}个快照完成，删除成功${target.success}个，删除失败${target.failed}个！`,
+        english: target => `Batch delete ${target.total} snapshots complete, ${target.success} successfully deleted, ${target.failed} failed!`
     }),
 };
