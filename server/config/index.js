@@ -38,7 +38,8 @@ exports.api = {
         entryinfo: 'http://localhost:9090/cluster/getentryinfo',
         getfiles: 'http://localhost:9090/cluster/getfiles',
         setpattern: 'http://localhost:9090/cluster/setpattern',
-        getstats: 'http://localhost:9090/cluster/getstats'
+        getstats: 'http://localhost:9090/cluster/getstats',
+        listmetanodes: 'http://localhost:9090/cluster/listmetanodes'
     },
     admon: {
         nodelist: 'http://localhost:8000/XML_NodeList',

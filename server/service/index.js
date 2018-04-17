@@ -249,12 +249,13 @@ const model = {
      * @param {boolean} receivemail Receive Email Or Not
      * @param {int} useravatar User Avatar
      */
-    async updateUser(param) {
+    async updateUser(param, ip) {
         let query = { username: param.username };
         let result = {};
         try {
             await database.updateUser(query, param);
-            result = responseHandler(0, 'update user successfully');
+            result = responseHandler(0, 'change password successfully');
+            await model.addAuditLog({ user: param.username, desc: 'change password successfully', ip });
         } catch (error) {
             result = responseHandler(12, error, param);
         }
@@ -636,17 +637,15 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Metadata Nodes Status
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     */
     async getMetaNodesStatus(param) {
         let result = {};
         try {
-            let data = await fileSystem.getMetaNodesOverview(param);
-            data = { general: data.general, status: data.status };
-            result = responseHandler(0, data);
+            let res = await fileSystem.getMetaNodesStatus(param);
+            if (!res.errorId) {
+                result = responseHandler(0, res.data);
+            } else {
+                result = responseHandler(34, res.message, param);
+            }
         } catch (error) {
             result = responseHandler(34, error, param);
         }
@@ -1041,11 +1040,11 @@ const model = {
         return result;
     },
     async createNasExport(param, user, ip) {
-        let { type, path } = param;
-        type = type.toUpperCase();
+        let { protocol, path } = param;
+        protocol = protocol.toUpperCase();
         let result = {};
         try {
-            await database.createNasExport({ type, path });
+            await database.createNasExport({ protocol, path });
             result = responseHandler(0, 'create nas export successfully');
             await model.addAuditLog({ user, desc: 'create nas export successfully', ip });
         } catch (error) {

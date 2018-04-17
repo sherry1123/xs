@@ -238,6 +238,10 @@ const model = {
         param.nodeType = 'storage';
         let token = await model.getToken();
         return await request.get(config.api.orcafs.getstats, param, token, true);
+    },
+    async getMetaNodesStatus(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.listmetanodes, {}, token, true);
     }
 };
 module.exports = model;
