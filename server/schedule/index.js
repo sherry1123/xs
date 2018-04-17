@@ -7,5 +7,5 @@ new CronJob('*/15 * * * * *', async () => {
 }, null, true);
 
 new CronJob('0 * * * * *', async () => {
-    await snapshot.runSnapshotTask();
+    !snapshot.getRollbackStatus() && await snapshot.runSnapshotTask();
 }, null, true);
