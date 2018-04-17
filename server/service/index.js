@@ -922,10 +922,10 @@ const model = {
         return result;
     },
     async createSnapshotTask(param, user, ip) {
-        let { name, createTime = new Date(), startTime = timeHandler(), interval, deleteRound = false, isRunning = false } = param;
+        let { name, createTime = new Date(), startTime = timeHandler(), autoDisableTime = 0, interval, deleteRound = false, isRunning = false } = param;
         let result = {};
         try {
-            await database.addSnapshotTask({ name, createTime, startTime, interval, deleteRound });
+            await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime, interval, deleteRound, isRunning });
             result = responseHandler(0, 'create snapshot task successfully');
             await model.addAuditLog({ user, desc: 'create snapshot task successfully', ip });
         } catch (error) {
@@ -981,10 +981,10 @@ const model = {
         let currentTime = new Date();
         let isRunningTask = await database.getSnapshotTask({ isRunning: true });
         if (isRunningTask.length) {
-            let { name, startTime, interval, deleteRound } = isRunningTask[0];
+            let { name, startTime, autoDisableTime, interval, deleteRound } = isRunningTask[0];
             let timeGap = currentTime - startTime;
-            if (timeGap > 0) {
-                let timeGapInSecond = Math.floor(timeGap / 1000);
+            let timeGapInSecond = Math.floor(timeGap / 1000);
+            if (timeGap > 0 && timeGapInSecond <= autoDisableTime) {
                 if (timeGapInSecond % interval < 5) {
                     let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
                     let limit = Number(snapshotSetting.auto);
@@ -999,6 +999,8 @@ const model = {
                         await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                     }
                 }
+            } else {
+                await database.updateSnapshotTask({ name }, { isRunning: false });
             }
         }
     },
