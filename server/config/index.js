@@ -144,11 +144,14 @@ exports.errors = {
     56: 'update snapshot setting error',
     57: 'get nas export error',
     58: 'create nas export error',
-    59: 'delete nas export error'
+    59: 'delete nas export error',
+    60: 'start delete snapshots error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',
     2: 'delete snapshot failed',
     3: 'rollback snapshot successfully',
-    4: 'rollback snapshot failed'
+    4: 'rollback snapshot failed',
+    5: 'delete snapshots successfully',
+    6: 'delete snapshots failed'
 }
