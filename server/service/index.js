@@ -3,6 +3,7 @@ const email = require('./email');
 const config = require('../config');
 const init = require('./initialize');
 const database = require('./database');
+const snapshot = require('./snapshot');
 const socket = require('../module/socket');
 const logger = require('../module/logger');
 const fileSystem = require('./filesystem');
@@ -794,7 +795,7 @@ const model = {
     async getSnapshot(param) {
         let result = {};
         try {
-            let data = await database.getSnapshot(param);
+            let data = await snapshot.getSnapshot(param);
             result = responseHandler(0, data.reverse());
         } catch (error) {
             result = responseHandler(42, error, param);
@@ -802,14 +803,9 @@ const model = {
         return result;
     },
     async createSnapshot(param, user, ip) {
-        let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
         let result = {};
         try {
-            let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
-            let limit = Number(snapshotSetting.manual);
-            let count = await database.getSnapshotCount({ isAuto: false });
-            if (count < limit) {
-                await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
+            if (await snapshot.createSnapshot(param)) {
                 result = responseHandler(0, 'create snapshot successfully');
                 await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
             } else {
@@ -825,33 +821,30 @@ const model = {
         return result;
     },
     async deleteSnapshot(param, user, ip) {
-        let { name } = param;
         try {
-            await database.updateSnapshot({ name }, { deleting: true });
-            await promise.runTimeOutInPromise(5);
-            await database.deleteSnapshot({ name });
+            await snapshot.deleteSnapshot(param);
             await model.addAuditLog({ user, desc: 'delete snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 1, target: name, result: true });
+            socket.postEventStatus({ channel: 'snapshot', code: 1, target: param.name, result: true });
         } catch (error) {
             errorHandler(44, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
             await model.addEventLog({ desc: `delete snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 2, target: name, result: false });
+            socket.postEventStatus({ channel: 'snapshot', code: 2, target: param.name, result: false });
         }
     },
     async rollbackSnapshot(param, user, ip) {
-        let { name } = param;
         try {
-            await database.updateSnapshot({ name }, { rollbacking: true });
-            await promise.runTimeOutInPromise(5);
-            await database.updateSnapshot({ name }, { rollbacking: false });
+            snapshot.setRollbackStatus(true);
+            await snapshot.rollbackSnapshot(param);
+            snapshot.setRollbackStatus(false);
             await model.addAuditLog({ user, desc: 'rollback snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 3, target: name, result: true });
+            socket.postEventStatus({ channel: 'snapshot', code: 3, target: param.name, result: true });
         } catch (error) {
+            snapshot.setRollbackStatus(false);
             errorHandler(45, error, param);
             await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
             await model.addEventLog({ desc: `rollback snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 4, target: name, result: false });
+            socket.postEventStatus({ channel: 'snapshot', code: 4, target: param.name, result: false });
         }
     },
     async getUserMetaStats(param) {
@@ -914,7 +907,7 @@ const model = {
     async getSnapshotTask(param) {
         let result = {};
         try {
-            let data = await database.getSnapshotTask(param);
+            let data = await snapshot.getSnapshotTask(param);
             result = responseHandler(0, data.reverse());
         } catch (error) {
             result = responseHandler(50, error, param);
@@ -922,10 +915,9 @@ const model = {
         return result;
     },
     async createSnapshotTask(param, user, ip) {
-        let { name, createTime = new Date(), startTime = timeHandler(), autoDisableTime = 0, interval, deleteRound = false, isRunning = false } = param;
         let result = {};
         try {
-            await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime, interval, deleteRound, isRunning });
+            await snapshot.createSnapshotTask(param);
             result = responseHandler(0, 'create snapshot task successfully');
             await model.addAuditLog({ user, desc: 'create snapshot task successfully', ip });
         } catch (error) {
@@ -936,10 +928,9 @@ const model = {
         return result;
     },
     async enableSnapshotTask(param, user, ip) {
-        let { name } = param;
         let result = {};
         try {
-            await database.updateSnapshotTask({ name }, { startTime: timeHandler(), isRunning: true });
+            await snapshot.enableSnapshotTask(param);
             result = responseHandler(0, 'enable snapshot task successfully');
             await model.addAuditLog({ user, desc: 'enable snapshot task successfully', ip });
         } catch (error) {
@@ -950,10 +941,9 @@ const model = {
         return result;
     },
     async disableSnapshotTask(param, user, ip) {
-        let { name } = param;
         let result = {};
         try {
-            await database.updateSnapshotTask({ name }, { isRunning: false });
+            await snapshot.disableSnapshotTask(param);
             result = responseHandler(0, 'disable snapshot task successfully');
             await model.addAuditLog({ user, desc: 'disable snapshot task successfully', ip });
         } catch (error) {
@@ -964,10 +954,9 @@ const model = {
         return result;
     },
     async deleteSnapshotTask(param, user, ip) {
-        let { name } = param;
         let result = {};
         try {
-            await database.deleteSnapshotTask({ name });
+            await snapshot.deleteSnapshotTask(param);
             result = responseHandler(0, 'delete snapshot task successfully');
             await model.addAuditLog({ user, desc: 'delete snapshot task successfully', ip });
         } catch (error) {
@@ -977,37 +966,10 @@ const model = {
         }
         return result;
     },
-    async runSnapshotTask() {
-        let currentTime = new Date();
-        let isRunningTask = await database.getSnapshotTask({ isRunning: true });
-        if (isRunningTask.length) {
-            let { name, startTime, autoDisableTime, interval, deleteRound } = isRunningTask[0];
-            let timeGap = currentTime - startTime;
-            let timeGapInSecond = Math.floor(timeGap / 1000);
-            if (timeGap > 0 && timeGapInSecond <= autoDisableTime) {
-                if (timeGapInSecond % interval < 5) {
-                    let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
-                    let limit = Number(snapshotSetting.auto);
-                    let autoSnapshotList = await database.getSnapshot({ isAuto: true });
-                    let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
-                    if (autoSnapshotList.length < limit) {
-                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
-                    } else if (deleteRound) {
-                        let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
-                        let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
-                        await database.deleteSnapshot({ name: nameToDelete });
-                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
-                    }
-                }
-            } else {
-                await database.updateSnapshotTask({ name }, { isRunning: false });
-            }
-        }
-    },
     async getSnapshotSetting(param) {
         let result = {};
         try {
-            let data = await database.getSetting({ key: 'snapshotsetting' });
+            let data = await snapshot.getSnapshotSetting();
             for (let i of Object.keys(data)) {
                 data[i] = Number(data[i]);
             }
@@ -1018,10 +980,9 @@ const model = {
         return result;
     },
     async updateSnapshotSetting(param, user, ip) {
-        let { total, manual, auto } = param;
         let result = {};
         try {
-            await database.updateSetting({ key: 'snapshotsetting' }, { value: { total, manual, auto } });
+            await snapshot.updateSnapshotSetting(param);
             result = responseHandler(0, 'update snapshot setting successfully');
             await model.addAuditLog({ user, desc: 'update snapshot setting successfully', ip });
         } catch (error) {
@@ -1070,12 +1031,9 @@ const model = {
         return result;
     },
     async deleteSnapshots(param, user, ip) {
-        let { names } = param;
         try {
-            for (let name of names) {
-                await database.updateSnapshot({ name }, { deleting: true });
-            }
-            model.sendEvent({ channel: 'snapshot', target: names, info: { user, ip } });
+            await snapshot.deleteSnapshots(param);
+            model.sendEvent({ channel: 'snapshot', target: param.names, info: { user, ip } });
             await model.addAuditLog({ user, desc: 'start to delete snapshots successfully', ip });
         } catch (error) {
             errorHandler(60, error, param);
@@ -1106,13 +1064,13 @@ const model = {
                 let success = target.filter(snapshot => (snapshot.result)).length;
                 for (let snapshot of target) {
                     if (snapshot.result) {
-                        await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
-                    } else {
                         await database.deleteSnapshot({ name: snapshot.name });
+                    } else {
+                        await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
                     }
                 }
                 await model.addAuditLog({ user, desc: `delete snapshots failed`, ip });
-                await model.addEventLog({ desc: `delete snapshots failed.`, level: 2, source: 'orcafs' });
+                await model.addEventLog({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
                 socket.postEventStatus({ channel, code, target: { total: target.length, success, failed: target.length - success }, result: false });
                 break;
         }

@@ -1,4 +1,5 @@
 const service = require('../service');
+const snapshot = require('../service/snapshot')
 const CronJob = require('cron').CronJob;
 
 new CronJob('*/15 * * * * *', async () => {
@@ -6,5 +7,5 @@ new CronJob('*/15 * * * * *', async () => {
 }, null, true);
 
 new CronJob('0 * * * * *', async () => {
-    await service.runSnapshotTask();
+    await snapshot.runSnapshotTask();
 }, null, true);
