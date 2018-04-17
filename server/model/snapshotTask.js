@@ -4,6 +4,7 @@ module.exports = mongoose.model('snapshottask',
         name: String,
         createTime: Date,
         startTime: Date,
+        autoDisableTime: Number,
         interval: Number,
         deleteRound: Boolean,
         isRunning: Boolean
