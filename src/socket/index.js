@@ -2,7 +2,9 @@ import io from 'socket.io-client';
 import {notification} from 'antd';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
-import {lsSet, lsRemove, ckGet, socketEventChannel, socketEventCode} from '../services';
+import {lsSet, lsRemove, ckGet,} from '../services';
+import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './conf';
+import httpRequest from '../http/requests';
 import lang from "../components/Language/lang";
 
 let socket = io();
@@ -27,5 +29,10 @@ if (isInitialized !== 'true'){
             message: socketEventChannel[channel]()[language] + lang('通知', 'Notification'),
             description: socketEventCode[code]()[language](target)
         });
+        // request the appointed new data immediately by code
+        if (eventCodeForEventChannel.snapshot.includes(code)){
+            // snapshot
+            httpRequest.getSnapshotList();
+        }
     });
 }

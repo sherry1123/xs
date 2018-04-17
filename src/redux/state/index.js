@@ -129,12 +129,12 @@ export default {
 
             ]
         },
-        // NAS export
-        nas: {
-            nasExportList: [
+        // share
+        share: {
+            shareList: [
                 /*
-                {protocol: 'NFS', path: '/test/a'},
-                {protocol: 'CIFS', path: '/test'},
+                {protocol: 'NFS', path: '/test/a', description: 'xxxx'},
+                {protocol: 'CIFS', path: '/test', description: 'xxxx'},
                 */
             ]
         },

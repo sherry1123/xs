@@ -3,6 +3,7 @@
  * IP, MAC, Domain, Subnet, Port, Net Mask
  */
 
+const VALIDATE_POSITIVE_INTEGER = /^[1-9]+[0-9]*]*$/;
 const VALIDATE_IPV4 = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 /* SPL_IP regex to restrict 127.*.*.* and 0.0.0.0 entry */
 const SPL_IP1 = /^127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]|[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -78,6 +79,12 @@ const VALIDATE_NET_MASKS = [
     '255.255.255.255'
 ];
 
+export const validatePositiveInteger = text => {
+    if (!text){
+        return false;
+    }
+    return VALIDATE_POSITIVE_INTEGER.test(text);
+};
 
 export const validateFCInitiator = initiator => {
     return initiator && initiator.match(VALIDATE_FC_INITIATOR);

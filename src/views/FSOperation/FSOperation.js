@@ -13,7 +13,13 @@ class FSOperation extends Component {
     constructor (props){
         super(props);
         // entry stripe
-        let {entryInfo} = props;
+        let entryInfo = {
+            dirPath: '/',
+            numTargets: 0,
+            chunkSize: 0,
+            buddyMirror: 1,
+            // isMetadataImage: true,
+        };
         this.minChunkSize = 65536;
         // directory table
         this.queryDirLock = false;

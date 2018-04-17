@@ -4,20 +4,20 @@ import {Button, Form, Icon, Input, message, Modal, Select, Table} from 'antd';
 import lang from "../../components/Language/lang";
 import httpRequests from '../../http/requests';
 
-class NASExport extends Component {
+class Share extends Component {
     constructor (props){
         super(props);
-        let {nasExportList} = this.props;
+        let {shareList} = this.props;
         this.state = {
             // table
             query: '',
-            nasExportList,
-            nasExportListBackup: nasExportList,
+            shareList,
+            shareListBackup: shareList,
             // form
             visible: false,
             formValid: false,
             formSubmitting: false,
-            nasExportData: {
+            shareData: {
                 path: '',
                 protocol: ''
             },
@@ -29,12 +29,12 @@ class NASExport extends Component {
     }
 
     componentDidMount (){
-        httpRequests.getNasExportList();
+        httpRequests.getShareList();
     }
 
     async componentWillReceiveProps (nextProps){
-        let {nasExportList} = nextProps;
-        await this.setState({nasExportList, nasExportListBackup: nasExportList});
+        let {shareList} = nextProps;
+        await this.setState({shareList, shareListBackup: shareList});
         await this.searchInTable(this.state.query, true);
     }
 
@@ -46,28 +46,28 @@ class NASExport extends Component {
         if (query || dataRefresh){
             await this.setState({
                 query,
-                nasExportList: Object.assign([], this.state.nasExportListBackup).filter(({path}) => path.match(query))
+                shareList: Object.assign([], this.state.shareListBackup).filter(({path}) => path.match(query))
             });
         } else {
-            this.setState({nasExportList: this.state.nasExportListBackup});
+            this.setState({shareList: this.state.shareListBackup});
         }
     }
 
     delete ({protocol, path}, index){
         Modal.confirm({
-            title: lang(`确定删除这个NAS导出: ${protocol}@${path} ?`, `Are you sure you want to delete this NAS export: ${protocol}@${path} ?`),
+            title: lang(`确定删除这个共享: ${protocol}@${path} ?`, `Are you sure you want to delete this share: ${protocol}@${path} ?`),
             content: lang('此操作不可恢复', 'You can\'t undo this action'),
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
-                    await httpRequests.deleteNasExport({protocol, path});
-                    let nasExportList = Object.assign([], this.state.nasExportList);
-                    nasExportList.splice(index, 1);
-                    this.setState({nasExportList});
-                    message.success(lang(`NAS导出 ${protocol}@${path} 删除成功!`, `Delete NAS export ${protocol}@${path} successfully!`));
+                    await httpRequests.deleteShare({protocol, path});
+                    let shareList = Object.assign([], this.state.shareList);
+                    shareList.splice(index, 1);
+                    this.setState({shareList});
+                    message.success(lang(`共享 ${protocol}@${path} 删除成功!`, `Delete share ${protocol}@${path} successfully!`));
                 } catch ({msg}){
-                    message.error(lang(`NAS导出 ${protocol}@${path} 删除失败, 原因: `, `Delete NAS export ${protocol}@${path} failed, reason: `) + msg);
+                    message.error(lang(`共享 ${protocol}@${path} 删除失败, 原因: `, `Delete share ${protocol}@${path} failed, reason: `) + msg);
                 }
             },
             onCancel: () => {
@@ -77,37 +77,37 @@ class NASExport extends Component {
     }
 
     formValueChange (key, value){
-        let nasExportData = Object.assign({}, this.state.nasExportData, {[key]: value});
-        this.setState({nasExportData});
+        let shareData = Object.assign({}, this.state.shareData, {[key]: value});
+        this.setState({shareData});
     }
 
     async validateForm (key){
         let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
         await this.setState({validation});
-        let {path, protocol} = this.state.nasExportData;
+        let {path, protocol} = this.state.shareData;
         if (key === 'path'){
             if (!path){
                 await this.validationUpdateState('path', {
-                    cn: '请输入要做导出的路径',
-                    en: 'Please enter export path'
+                    cn: '请输入要做共享的路径',
+                    en: 'Please enter share path'
                 }, false);
             }
         }
         if (key === 'protocol'){
             if (!protocol){
                 await this.validationUpdateState('protocol', {
-                    cn: '请选择一个NAS导出协议',
-                    en: 'Please select a NAS export protocol'
+                    cn: '请选择一个协议',
+                    en: 'Please select a protocol'
                 }, false);
             }
         }
         // one path with one protocol group can only be exported once
-        let nasExport = `${path}@${protocol}`;
-        let isNasExportDuplicated = this.prop.nasExportList.some(({path, protocol}) => nasExport === `${path}@${protocol}`);
-        if (isNasExportDuplicated){
+        let share = `${path}@${protocol}`;
+        let isShareDuplicated = this.props.shareList.some(({path, protocol}) => share === `${path}@${protocol}`);
+        if (isShareDuplicated){
             await this.validationUpdateState('name', {
-                cn: '同一路径和同一协议的组合只能被导出一次',
-                en: 'One path with one protocol group can only be exported once'
+                cn: '同一路径和同一协议的组合只能做一次共享',
+                en: 'One path with one protocol group can only be shared once'
             }, false);
         }
 
@@ -124,17 +124,17 @@ class NASExport extends Component {
         await this.setState({validation});
     }
 
-    async createNasExport (){
-        let nasExportData = Object.assign({}, this.state.nasExportData);
+    async createShare (){
+        let shareData = Object.assign({}, this.state.shareData);
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.createNasExport(nasExportData);
-            httpRequests.getNasExportList();
+            await httpRequests.createShare(shareData);
+            httpRequests.getShareList();
             await this.hide();
-            message.success(lang('创建NAS导出成功!', 'Create NAS export successfully!'));
+            message.success(lang('创建共享成功!', 'Create share successfully!'));
             this.setState({formSubmitting: false});
         } catch ({msg}){
-            message.success(lang('创建NAS导出失败, 原因: ', 'Create NAS export failed, reason: ') + msg);
+            message.success(lang('创建共享失败, 原因: ', 'Create share failed, reason: ') + msg);
             this.setState({formSubmitting: false});
         }
     }
@@ -143,7 +143,7 @@ class NASExport extends Component {
         this.setState({
             visible: true,
             formSubmitting: false,
-            nasExportData: {
+            shareData: {
                 path: '',
                 protocol: ''
             },
@@ -160,15 +160,18 @@ class NASExport extends Component {
 
     render (){
         let tableProps = {
-            dataSource: this.state.nasExportList,
+            dataSource: this.state.shareList,
             pagination: true,
             rowKey: record => record._id,
             locale: {
-                emptyText: lang('暂无NAS导出', 'No NAS Export')
+                emptyText: lang('暂无共享', 'No Share')
             },
             columns: [
+                {title: lang('共享路径', 'Share Path'), width: 120, dataIndex: 'path',},
                 {title: lang('协议类型', 'Protocol'), width: 125, dataIndex: 'protocol',},
-                {title: lang('导出路径', 'Export Path'), width: 120, dataIndex: 'path',},
+                {title: lang('描述', 'Description'), width: 120, dataIndex: 'description',
+                    render: text => text || '--'
+                },
                 {title: lang('操作', 'Operation'), width: 80,
                     render: (text, record, index) => (
                         <div>
@@ -186,13 +189,13 @@ class NASExport extends Component {
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
                 <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('NAS导出', 'NAS Export')}</h3>
+                    <h3 className="fs-page-title">{lang('共享', 'Share')}</h3>
                 </section>
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
                             <Input.Search style={{marginRight: 15, width: 150}} size="small"
-                                placeholder={lang('导出路径', 'export path')}
+                                placeholder={lang('共享路径', 'share path')}
                                 value={this.state.query}
                                 enterButton={true}
                                 onChange={this.queryChange.bind(this)}
@@ -202,13 +205,13 @@ class NASExport extends Component {
                                 size="small"
                                 onClick={this.show.bind(this)}
                             >
-                                {lang('创建NAS导出', 'Create NAS Export')}
+                                {lang('创建', 'Create')}
                             </Button>
                         </div>
                         <Table {...tableProps} />
                     </section>
                 </section>
-                <Modal title={lang('创建NAS导出', 'Create NAS Export')}
+                <Modal title={lang('创建共享', 'Create Share')}
                        width={320}
                        closable={false}
                        maskClosable={false}
@@ -216,7 +219,7 @@ class NASExport extends Component {
                        footer={
                            <div>
                                <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
-                                    size='small' onClick={this.createNasExport.bind(this)}
+                                    size='small' onClick={this.createShare.bind(this)}
                                >
                                    {lang('创建', 'Create')}
                                </Button>
@@ -227,34 +230,34 @@ class NASExport extends Component {
                        }
                 >
                     <Form>
-                        <Form.Item label={lang('导出协议', 'Export Protocol')}
+                        <Form.Item label={lang('共享路径', 'Share Path')}
+                           validateStatus={this.state.validation.path.status}
+                           help={this.state.validation.path.help}
+                        >
+                            <Input style={{width: 240}} size="small"
+                               placeholder={lang('请输入共享路径', 'please enter share path')}
+                               value={this.state.shareData.path}
+                               onChange={({target: {value}}) => {
+                                   this.formValueChange.bind(this, 'path')(value);
+                                   this.validateForm.bind(this)('path');
+                               }}
+                            />
+                        </Form.Item>
+                        <Form.Item label={lang('协议', 'Protocol')}
                             validateStatus={this.state.validation.protocol.status}
                             help={this.state.validation.protocol.help}
                         >
-                            <Select style={{width: 100}} size="small"
-                                placeholder={lang('请选择导出协议', 'select export protocol')}
-                                value={this.state.nasExportData.protocol}
+                            <Select style={{width: 240}} size="small"
+                                placeholder={lang('请选择协议', 'please select protocol')}
+                                value={this.state.shareData.protocol}
                                 onChange={value => {
                                     this.formValueChange.bind(this, 'protocol', value)();
                                     this.validateForm.bind(this)('protocol');
                                 }}
                             >
-                                <Select.Option value="nfs">NFS</Select.Option>
-                                <Select.Option value="cifs">CIFS</Select.Option>
+                                <Select.Option value="nfs">NFS (Linux/UNIX/Mac)</Select.Option>
+                                <Select.Option value="cifs">CIFS (Windows/Mac)</Select.Option>
                             </Select>
-                        </Form.Item>
-                        <Form.Item label={lang('导出路径', 'Export Path')}
-                            validateStatus={this.state.validation.path.status}
-                            help={this.state.validation.path.help}
-                        >
-                            <Input style={{width: 240}} size="small"
-                                   placeholder={lang('请输入导出路径', 'please enter export path')}
-                                   value={this.state.nasExportData.path}
-                                   onChange={({target: {value}}) => {
-                                       this.formValueChange.bind(this, 'path')(value);
-                                       this.validateForm.bind(this)('path');
-                                   }}
-                            />
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -264,8 +267,8 @@ class NASExport extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {nas: {nasExportList}}} = state;
-    return {language, nasExportList};
+    const {language, main: {share: {shareList}}} = state;
+    return {language, shareList};
 };
 
-export default connect(mapStateToProps)(NASExport);
+export default connect(mapStateToProps)(Share);

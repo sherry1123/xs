@@ -25,8 +25,8 @@ const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
 const SnapshotSchedule = asyncLoad(() => import('../Snapshot/SnapshotSchedule'));
 
-// NAS export
-const NASExport = asyncLoad(() => import('../NAS/NASExport'));
+// Share
+const Share = asyncLoad(() => import('../Share/Share'));
 
 // management
 const ManagementSystemLog = asyncLoad(() => import('../Management/ManagementSystemLog'));
@@ -96,7 +96,7 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
 
-                        <Route path={`${Main}${routerPath.NASExport}`} component={NASExport} />
+                        <Route path={`${Main}${routerPath.Share}`} component={Share} />
 
                         {/*
                         <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />

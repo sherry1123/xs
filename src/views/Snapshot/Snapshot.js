@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Icon, Input, message, Modal, Table} from 'antd';
+import {Button, Form, Icon, Input, message, Modal, Popconfirm, Table} from 'antd';
 import lang from "../../components/Language/lang";
 import {timeFormat, validateFsName} from '../../services';
 import httpRequests from '../../http/requests';
@@ -115,25 +115,14 @@ class Snapshot extends Component {
         this.setState({formSubmitting: false});
     }
 
-    deleteSnapshot (snapshot){
-        Modal.confirm({
-            title: lang(`确定删除这个快照: ${snapshot.name} ?`, `Are you sure you want to delete this snapshot: ${snapshot.name} ?`),
-            content: lang('此操作不可恢复', 'You can\'t undo this action'),
-            okText: lang('删除', 'Delete'),
-            cancelText: lang('取消', 'Cancel'),
-            onOk: async () => {
-                try {
-                    await httpRequests.deleteSnapshot(snapshot);
-                    httpRequests.getSnapshotList();
-                    message.success(lang(`已开始删除快照 ${snapshot.name}!`, `Start deleting snapshot ${snapshot.name}!`));
-                } catch ({msg}){
-                    message.error(lang(`删除快照 ${snapshot.name} 失败, 原因: `, `Delete snapshot ${snapshot.name} failed, reason: `) + msg);
-                }
-            },
-            onCancel: () => {
-
-            }
-        });
+    async deleteSnapshot (snapshot){
+        try {
+            await httpRequests.deleteSnapshot(snapshot);
+            httpRequests.getSnapshotList();
+            message.success(lang(`已开始删除快照 ${snapshot.name}!`, `Start deleting snapshot ${snapshot.name}!`));
+        } catch ({msg}){
+            message.error(lang(`删除快照 ${snapshot.name} 失败, 原因: `, `Delete snapshot ${snapshot.name} failed, reason: `) + msg);
+        }
     }
 
     rollbackSnapshot (snapshot){
@@ -200,9 +189,27 @@ class Snapshot extends Component {
     }
 
     render (){
+        let {batchDeleteSnapshotNames, snapshotList} = this.state;
+        let rowSelection = {
+            columnWidth: '2%',
+            selectedRowKeys: batchDeleteSnapshotNames,
+            onChange: (selectedRowKeys) => {
+                this.setState({batchDeleteSnapshotNames: selectedRowKeys});
+            },
+            getCheckboxProps: record => ({
+                disabled: record.deleting || record.rollbacking
+            }),
+        };
         let tableProps = {
-            dataSource: this.state.snapshotList,
-            pagination: true,
+            size: 'small',
+            dataSource: snapshotList,
+            pagination: {
+                pageSize: 15,
+                showTotal: (total, range) => lang(
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteSnapshotNames.length} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteSnapshotNames.length}`
+                ),
+            },
             rowKey: 'name',
             locale: {
                 emptyText: lang('暂无快照', 'No Snapshot')
@@ -222,24 +229,19 @@ class Snapshot extends Component {
                                 <a onClick={this.rollbackSnapshot.bind(this, record, index)} title={lang('回滚', 'Roll Back')}>
                                     <Icon style={{fontSize: 15}} type="rollback" />
                                 </a>
-                                <a onClick={this.deleteSnapshot.bind(this, record, index)} title={lang('删除', 'Delete')} style={{marginLeft: 10}}>
-                                    <Icon style={{fontSize: 15}} type="delete" />
-                                </a>
+                                <Popconfirm placement="leftTop"
+                                    title={lang(`确定删除这个快照: ${record.name} ?`, `Are you sure you want to delete this snapshot: ${record.name} ?`)}
+                                    onConfirm={this.deleteSnapshot.bind(this, record, index)}
+                                    okText={lang('确定', 'Yes')}
+                                    cancelText={lang('取消', 'Cancel')}
+                                >
+                                    <a style={{marginLeft: 10}}><Icon style={{fontSize: 15}} type="delete" /></a>
+                                </Popconfirm>
                             </div> :
                             <a disabled>{record.rollbacking ? lang('回滚中', 'Rolling Back') : lang('删除中', 'Deleting')}</a>;
                     }
                 }
             ],
-        };
-        const rowSelection = {
-            columnWidth: '2%',
-            selectedRowKeys: this.state.batchDeleteSnapshotNames,
-            onChange: (selectedRowKeys) => {
-                this.setState({batchDeleteSnapshotNames: selectedRowKeys});
-            },
-            getCheckboxProps: record => ({
-                disabled: record.deleting || record.rollbacking
-            }),
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
@@ -259,9 +261,10 @@ class Snapshot extends Component {
                             <Button className="fs-create-snapshot-button" size="small"
                                 onClick={this.show.bind(this)}
                             >
-                                {lang('创建快照', 'Create Snapshot')}
+                                {lang('创建', 'Create')}
                             </Button>
-                            <Button className="fs-batch-delete-snapshot-button" size="small" icon="delete"
+                            <Button className="fs-batch-delete-snapshot-button" size="small"
+                                disabled={!this.state.batchDeleteSnapshotNames.length}
                                 onClick={this.batchDelete.bind(this)}
                             >
                                 {lang('批量删除', 'Delete In Batch')}

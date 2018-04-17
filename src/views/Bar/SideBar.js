@@ -102,8 +102,8 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.SnapshotSchedule}>
                         <Icon type="schedule" />{lang('定时快照', 'Timed Snapshot')}
                     </Menu.Item>
-                    <Menu.Item key={routerPath.NASExport}>
-                        <Icon type="export" />{lang('NAS导出', 'NAS Export')}
+                    <Menu.Item key={routerPath.Share}>
+                        <Icon type="share-alt" />{lang('共享', 'Share')}
                     </Menu.Item>
                     {/*<Menu.SubMenu key="Management"
                         title={

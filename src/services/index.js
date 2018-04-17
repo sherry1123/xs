@@ -8,7 +8,7 @@ export {lsGet, lsSet, lsRemove} from './localStorage';
 export {ckGet, ckSet, ckRemove} from './cookie';
 
 // reference mapping
-export {timeUnitMilliSecond, metadataStaticsItems, storageStaticsItems, socketEventChannel, socketEventCode} from './localData';
+export {timeUnitMilliSecond, metadataStaticsItems, storageStaticsItems,} from './localData';
 
 // format digit to Byte, KByte, MByte, GByte, TByte, PByte, EByte, ZByte .etc
 export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';
@@ -20,7 +20,7 @@ export {timeLeftFormat, timeFormat} from './format/time';
 export {someUpperCase} from './format/toUpperCase';
 
 // validation
-export {validateIpv4, validateFsName, validateEmail, validatePassword, validateNotZeroInteger} from './validation';
+export {validateIpv4, validateFsName, validateEmail, validatePassword, validateNotZeroInteger, validatePositiveInteger} from './validation';
 
 // key press filter
 export {KeyPressFilter} from './keyPressFilter';

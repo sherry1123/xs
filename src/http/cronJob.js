@@ -38,9 +38,9 @@ const fetchDataPer15s = () => {
         httpRequests.getSnapshotScheduleList();
     }
 
-    // nas
-    if (routerHash.match(main + routerPath.Nas)){
-        httpRequests.getNasExportList();
+    // share
+    if (routerHash.match(main + routerPath.Share)){
+        httpRequests.getShareList();
     }
 
     // management - system log

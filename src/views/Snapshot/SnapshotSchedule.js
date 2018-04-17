@@ -24,12 +24,15 @@ class SnapshotSchedule extends Component {
                 name: '',
                 // startTime: moment(new Date(new Date().getTime() + 3 * 60 * 1000)),
                 interval: '', intervalNumber: '', intervalUnit: 'Hour',
-                deleteRound: false
+                deleteRound: false,
+                autoDisable: false,
+                autoDisableTime: '', autoDisableTimeNumber: '', autoDisableTimeUnit: 'Day',
             },
             validation: {
                 name: {status: '', help: '', valid: false},
                 // startTime: {status: '', help: '', valid: true},
-                interval: {status: '', help: '', valid: false}
+                interval: {status: '', help: '', valid: false},
+                autoDisableTime: {status: '', help: '', valid: false}
             },
         };
     }
@@ -81,26 +84,6 @@ class SnapshotSchedule extends Component {
         }
     }
 
-    intervalChange (key, value){
-        let intervalNumber = 0;
-        let intervalUnit = 0;
-        if (key === 'intervalNumber'){
-            if (!validateNotZeroInteger(value)){
-                // only sizeNumber input may receive a non positive integer text
-                value = value.length > 0 ? this.state.scheduleData.intervalNumber : '';
-            }
-            intervalNumber = value;
-            intervalUnit = this.state.scheduleData.intervalUnit;
-        } else {
-            intervalNumber = this.state.scheduleData.intervalNumber;
-            intervalUnit = value;
-        }
-        let milliseconds = timeUnitMilliSecond[intervalUnit];
-        let newState = update(this.state, {scheduleData: {interval: {$set: intervalNumber * milliseconds || 0}}});
-        this.setState(Object.assign(this.state, newState));
-        // console.info(this.state.scheduleData.interval);
-    }
-
     formValueChange (key, value, target = 'scheduleData'){
         let newScheduleData = Object.assign({}, this.state[target]);
         if (key === 'intervalNumber'){
@@ -109,6 +92,9 @@ class SnapshotSchedule extends Component {
             }
         }
         newScheduleData[key] = value;
+        if (key === 'autoDisable'){
+            newScheduleData.autoDisableTimeNumber = '';
+        }
         let newState = update(this.state, {scheduleData: {$set: newScheduleData}});
         this.setState(Object.assign(this.state, newState));
         // console.info(this.state.scheduleData);
@@ -135,30 +121,7 @@ class SnapshotSchedule extends Component {
         });
         await this.setState(Object.assign(this.state, newState));
 
-        if (key === 'images'){
-            // validate images selection
-            if (!this.state.scheduleData.images.length){
-                this.validationUpdateState('images', {cn: '请选择镜像', en: 'please select image'}, false);
-            }
-            // each image can only create one schedule snapshot
-            let checkOmeImageOneSchedule = true;
-            for (let schedule of this.state.snapshotTaskList){
-                let imagePath = schedule.pool_name + '/' + schedule.image_name;
-                for (let _imagePath of this.state.scheduleData.images){
-                    if (imagePath === _imagePath) {
-                        checkOmeImageOneSchedule = false;
-                        break;
-                    }
-                }
-            }
-
-            if (!checkOmeImageOneSchedule){
-                this.validationUpdateState('images', {
-                    cn: '在所选镜像中，有镜像已创建过一个定时快照任务',
-                    en: 'ne of the selected images has already created a schedule task'
-                } , false);
-            }
-        } else if (key === 'name'){
+        if (key === 'name'){
             // validate schedule name
             if (!validateFsName(this.state.scheduleData.name)){
                 this.validationUpdateState('name', {
@@ -176,10 +139,19 @@ class SnapshotSchedule extends Component {
                 this.validationUpdateState('interval', {cn: '请输入正整数', en: 'please enter a positive integer'}, false);
             }
         }
+
+        if (this.state.scheduleData.autoDisable){
+            // if enable delay disable schedule automatically
+            if (!this.state.scheduleData.autoDisableTimeNumber){
+                this.validationUpdateState('autoDisableTime', {cn: '请输入自动延时关闭时间', en: 'please enter delay disable automatically time'}, false);
+            }
+        } else {
+            this.validationUpdateState('autoDisableTime', {cn: '', en: ''}, true);
+        }
+
         // calculate whole form validation
         let formValid = true;
         Object.keys(this.state.validation).forEach(key => {
-            // console.info(key + ' ' +this.state.validation[key].valid);
             formValid = formValid && this.state.validation[key].valid;
         });
         this.setState({formValid});
@@ -187,12 +159,15 @@ class SnapshotSchedule extends Component {
 
     async createSnapshotSchedule (){
         let schedule = Object.assign({}, this.state.scheduleData);
+        schedule.interval = timeUnitMilliSecond[schedule.intervalUnit] * schedule.intervalNumber;
+        schedule.autoDisableTime = timeUnitMilliSecond[schedule.autoDisableTimeUnit] * schedule.autoDisableTimeNumber;
         this.setState({formSubmitting: true});
+        console.info(schedule.autoDisableTimeUnit, schedule.autoDisableTimeNumber);
         try {
             await httpRequests.createSnapshotSchedule(schedule);
             httpRequests.getSnapshotScheduleList();
             await this.hide();
-            message.success(lang(`定时快照任务 ${schedule.name} 创建成功！要执行此计划请先启用它。`, `Create snapshot schedule ${schedule.name} successfully! If you want to running this schedule, need to execute it.`));
+            message.success(lang(`定时快照任务 ${schedule.name} 创建成功！要启用此计划请先执行它。`, `Create snapshot schedule ${schedule.name} successfully! If you want to running this schedule, need to execute it.`));
         } catch (e){
             message.error(lang(`定时快照任务 ${schedule.name} 创建失败！`, `Create snapshot schedule ${schedule.name} failed!`));
         }
@@ -260,11 +235,14 @@ class SnapshotSchedule extends Component {
             scheduleData: {
                 name: '',
                 interval: '', intervalNumber: '', intervalUnit: 'Hour',
-                deleteRound: false
+                deleteRound: false,
+                autoDisable: false,
+                autoDisableTime: '', autoDisableTimeNumber: '', autoDisableTimeUnit: 'Day',
             },
             validation: {
                 name: {status: '', help: '', valid: false},
-                interval: {status: '', help: '', valid: false}
+                interval: {status: '', help: '', valid: false},
+                autoDisableTime: {status: '', help: '', valid: false},
             },
         });
     }
@@ -298,6 +276,10 @@ class SnapshotSchedule extends Component {
                 dataIndex: 'interval',
                 render: text => timeLeftFormat(text)
             }, {
+                title: lang('自动延时关闭时间', 'Auto Delay Disable Time'),
+                dataIndex: 'autoDisableTime',
+                render: text => text !== 0 ? timeLeftFormat(text) : '--'
+            }, {
                 title: lang('创建时间', 'Create Time'),
                 dataIndex: 'createTime',
                 render: text => timeFormat(text)
@@ -311,7 +293,7 @@ class SnapshotSchedule extends Component {
                         onChange={this.scheduleStatusSwitch.bind(this, record, index)}
                     />
                     <a onClick={this.deleteSchedule.bind(this, record, index)} title={lang('删除', 'delete')}
-                        style={{marginLeft: 10}}
+                       style={{marginLeft: 10}}
                     >
                         <Icon style={{fontSize: 15}} type="delete" />
                     </a>
@@ -338,14 +320,14 @@ class SnapshotSchedule extends Component {
                                 size="small"
                                 onClick={this.show.bind(this)}
                             >
-                                {lang('创建计划', 'Create Schedule')}
+                                {lang('创建', 'Create')}
                             </Button>
                         </div>
                         <Table {...tableProps} />
                     </section>
                 </section>
                 <Modal title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
-                       width={320}
+                       width={360}
                        closable={false}
                        maskClosable={false}
                        visible={this.state.visible}
@@ -404,7 +386,6 @@ class SnapshotSchedule extends Component {
                                         <Input type="text" size="small"
                                                value={this.state.scheduleData.intervalNumber}
                                                onChange={({target: {value}}) => {
-                                                   this.intervalChange.bind(this, 'intervalNumber', value)();
                                                    this.formValueChange.bind(this, 'intervalNumber')(value);
                                                    this.numberInputLengthCut.bind(this, 'intervalNumber', 3)();
                                                    this.validateForm.bind(this)('interval');
@@ -420,7 +401,6 @@ class SnapshotSchedule extends Component {
                                         <Select style={{width: 100}} size="small"
                                             value={this.state.scheduleData.intervalUnit}
                                             onChange={value => {
-                                                this.intervalChange.bind(this, 'intervalUnit', value)();
                                                 this.formValueChange.bind(this, 'intervalUnit')(value);
                                                 this.validateForm.bind(this)('interval');
                                             }}
@@ -428,14 +408,14 @@ class SnapshotSchedule extends Component {
                                             {/*<Select.Option value="Week">{lang('周', 'Week')}</Select.Option>
                                             <Select.Option value="Day">{lang('天', 'Day')}</Select.Option>*/}
                                             <Select.Option value="Hour">{lang('小时', 'Hour')}</Select.Option>
-                                            {/*<Select.Option value="Minute">{lang('分钟', 'Minute')}</Select.Option>*/}
+                                            {process.env.NODE_ENV === 'development' && <Select.Option value="Minute">{lang('分钟', 'Minute')}</Select.Option>}
                                         </Select>
                                     </Form.Item>
                                 </Col>
                             </Row>
                         </Form.Item>
                         <Form.Item>
-                            {lang('自动删除', 'Automatically Delete')}
+                            {lang('自动删除快照', 'Auto Delete Snapshot')}
                             <Switch style={{marginLeft: 10}} size="small"
                                 checked={this.state.scheduleData.deleteRound}
                                 onChange={checked => {
@@ -451,6 +431,52 @@ class SnapshotSchedule extends Component {
                                 <Icon type="question-circle-o" className="fs-info-icon m-ll" />
                             </Popover>
                         </Form.Item>
+                        <Form.Item>
+                            {lang('自动延时关闭计划', 'Auto Delay Disable Schedule')}
+                            <Switch style={{marginLeft: 10}} size="small"
+                                checked={this.state.scheduleData.autoDisable}
+                                onChange={checked => {
+                                    this.formValueChange.bind(this, 'autoDisable')(checked);
+                                    this.validateForm.bind(this)('autoDisableTime');
+                                }}
+                            />
+                            <Popover placement="right"
+                                 content={lang(
+                                     '从开始时间算起到达该时间点后，会自动关闭该定时快照计划',
+                                     'If it times from start time and then reaches this time, will disable this schedule automatically.'
+                                 )}
+                            >
+                                <Icon type="question-circle-o" className="fs-info-icon m-ll" />
+                            </Popover>
+                        </Form.Item>
+                        {
+                            this.state.scheduleData.autoDisable &&
+                            <Form.Item label={lang('延时关闭时间', 'Delay Disable Time')}
+                                validateStatus={this.state.validation.autoDisableTime.status}
+                                help={this.state.validation.autoDisableTime.help}
+                            >
+                                <Row style={{height: 32}}>
+                                    <Col span={6}>
+                                        <Form.Item validateStatus={this.state.validation.autoDisableTime.status}>
+                                            <Input type="text" size="small"
+                                                   value={this.state.scheduleData.autoDisableTimeNumber}
+                                                   onChange={({target: {value}}) => {
+                                                       this.formValueChange.bind(this, 'autoDisableTimeNumber')(value);
+                                                       this.numberInputLengthCut.bind(this, 'autoDisableTimeNumber', 3)();
+                                                       this.validateForm.bind(this)('autoDisableTime');
+                                                   }}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={1}>
+                                        <p className="ant-form-split"> </p>
+                                    </Col>
+                                    <Col span={4}>
+                                        {lang('天', 'Day(s)')}
+                                    </Col>
+                                </Row>
+                            </Form.Item>
+                        }
                     </Form>
                 </Modal>
             </div>

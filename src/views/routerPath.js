@@ -27,7 +27,7 @@ const routerPath = {
     Snapshot: '/snapshot',
     SnapshotSchedule: '/snapshot-schedule',
 
-    NASExport: '/nas-export',
+    Share: '/share',
 
     // ManagementKnownProblems: '/management-known-problems',
     ManagementSystemLog: '/management-system-log',
@@ -46,7 +46,7 @@ export const pathToMenu = {
     ClientStatistics: [routerPath.ClientStatistics],
     UserStatistics: [routerPath.UserStatistics],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
-    NASExport: [routerPath.NASExport],
+    Share: [routerPath.Share],
     Management: [/*routerPath.ManagementKnownProblems,*/ routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperation/*, routerPath.FSOperationStripeSettings, routerPath.FSOperationFileBrowser*/],
 };

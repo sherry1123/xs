@@ -8,7 +8,7 @@ import metadataNodeReducer from '../reducers/metadataNodeReducer';
 import storageNodeReducer from '../reducers/storageNodeReducer';
 import managementReducer from '../reducers/managementReducer';
 import snapshotReducer from '../reducers/snapshotReducer';
-import nasReducer from '../reducers/nasReducer';
+import nasReducer from './shareReducer';
 import fsOperationReducer from '../reducers/fsOperationReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
