@@ -20,7 +20,6 @@ const responseHandler = (code, result, param) => {
 const errorHandler = (code, message, param = {}) => {
     logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
 };
-const timeHandler = () => (new Date(new Date(new Date().getTime() + 60000).toISOString().replace(/:\d+\.\d+/, ':00.000')));
 const model = {
     async getInitStatus() {
         let result = false;
