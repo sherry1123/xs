@@ -12,10 +12,11 @@ class Snapshot extends Component {
         this.state = {
             // table
             query: '',
+            enableBatchDelete: false,
             snapshotList,
             snapshotListBackup: snapshotList,
             // table items batch delete
-            batchDeleteSnapshotKeys: [],
+            batchDeleteSnapshotNames: [],
             // form
             visible: false,
             formValid: false,
@@ -156,18 +157,31 @@ class Snapshot extends Component {
         });
     }
 
-    async batchDelete (){
-        let {batchDeleteSnapshotKeys} = this.state;
-        if (!batchDeleteSnapshotKeys.length){
+    batchDelete (){
+        let {batchDeleteSnapshotNames} = this.state;
+        let batchCount = batchDeleteSnapshotNames.length;
+        if (!batchCount){
             message.warning(lang('请选择要批量删除的快照', 'Please select the snapshots which you want to delete in batch.'));
         } else {
-            try {
-                await httpRequests.deleteSnapshotsInBatch(batchDeleteSnapshotKeys);
-                // 先批量从当前本地数据里直接干掉
+            Modal.confirm({
+                title: lang(`确定批量删除所选的这${batchCount}个快照?`, `Are you sure to delete the selected ${batchCount} snapshots in batch?`),
+                content: lang('此操作不可恢复', 'You can\'t undo this action'),
+                okText: lang('删除', 'Delete'),
+                cancelText: lang('取消', 'Cancel'),
+                onOk: async () => {
+                    try {
+                        await httpRequests.deleteSnapshotsInBatch(batchDeleteSnapshotNames);
+                        await this.setState({batchDeleteSnapshotNames: []});
+                        httpRequests.getSnapshotList();
+                        message.success(lang('已开始批量删除快照！', 'Start deleting snapshots in batch!'));
+                    } catch ({msg}){
+                        message.error(lang('批量删除快照失败，原因：', 'Delete snapshots in batch failed, reason: ') + msg);
+                    }
+                },
+                onCancel: () => {
 
-            } catch ({msg}){
-                message.error(lang('批量删除快照失败，原因：', 'Delete snapshots in batch failed, reason: ') + msg);
-            }
+                }
+            });
         }
     }
 
@@ -195,7 +209,7 @@ class Snapshot extends Component {
             },
             columns: [
                 {title: lang('名称', 'Name'), width: 200, dataIndex: 'name',},
-                {title: lang('定时创建', 'Schedule Created'), width: 80, dataIndex: 'isAuto',
+                {title: lang('定时创建', 'Timed Create'), width: 80, dataIndex: 'isAuto',
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
@@ -219,10 +233,13 @@ class Snapshot extends Component {
         };
         const rowSelection = {
             columnWidth: '2%',
+            selectedRowKeys: this.state.batchDeleteSnapshotNames,
             onChange: (selectedRowKeys) => {
-                console.info(selectedRowKeys);
-                this.setState({batchDeleteSnapshotKeys: selectedRowKeys});
+                this.setState({batchDeleteSnapshotNames: selectedRowKeys});
             },
+            getCheckboxProps: record => ({
+                disabled: record.deleting || record.rollbacking
+            }),
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
@@ -247,7 +264,7 @@ class Snapshot extends Component {
                             <Button className="fs-batch-delete-snapshot-button" size="small" icon="delete"
                                 onClick={this.batchDelete.bind(this)}
                             >
-                                {lang('批量删除', 'Batch Delete')}
+                                {lang('批量删除', 'Delete In Batch')}
                             </Button>
                         </div>
                         <Table rowSelection={rowSelection} {...tableProps} />

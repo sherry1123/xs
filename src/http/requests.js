@@ -205,8 +205,8 @@ export default  {
         await fetchPost('/api/deletesnapshot', snapshot);
     },
 
-    async deleteSnapshotsInBatch (keys){
-        await fetchPost('/api/deletesnapshotsinbatch', keys);
+    async deleteSnapshotsInBatch (names){
+        await fetchPost('/api/deletesnapshots', {names});
     },
 
     // snapshot schedule

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {/*Badge, Icon,*/ Popover, notification} from 'antd';
+import {/*Badge, Icon,*/ Popover/*, notification*/} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
 // import WarningPopover from './WarningPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
