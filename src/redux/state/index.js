@@ -44,18 +44,18 @@ export default {
         // metadata nodes
         metadataNode: {
             overview: {
-                status: [
+                nodeList: [
                     /*
                     {node: 'ClusterMe1', nodeNumID: 'cm1', value: true},
                     {node: 'ClusterMe2', nodeNumID: 'cm2', value: true},
                     {node: 'ClusterMe3', nodeNumID: 'cm3', value: false},
                     */
                 ],
-                general: [],
+                // general: [],
                 statics: []
             },
             detail: {
-                general: [],
+                // general: [],
                 statics: []
             }
         },

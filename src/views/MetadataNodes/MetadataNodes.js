@@ -7,7 +7,7 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import StaticsFilter from '../../components/StaticsTable/StaticsFilter';
 import StaticsTable from '../../components/StaticsTable/StaticsTable';
 import httpRequests from "../../http/requests";
-import {lsGet, lsSet, someUpperCase, METADATA_STATICS_ITEMS} from "../../services";
+import {lsGet, lsSet, someUpperCase, metadataStaticsItems} from "../../services";
 
 class MetadataNodes extends Component {
     constructor (props){
@@ -16,7 +16,7 @@ class MetadataNodes extends Component {
         let overviewStaticsFilterItems = lsGet('metadataNodeOverviewStaticFilterItems') || defaultFilterItems;
         let detailStaticsFilterItems = lsGet('metadataNodeDetailStaticFilterItems') || defaultFilterItems;
         this.state = {
-            currentMetadataNode: this.props.status.filter(node => node.value)[0] || {},
+            currentMetadataNode: this.props.nodeList.filter(node => node.status)[0] || {},
             expandSwitchNode: true,
 
             overviewStaticsFilterItems,
@@ -31,21 +31,21 @@ class MetadataNodes extends Component {
     }
 
     componentWillReceiveProps (nextProps){
-        let {status} = nextProps;
+        let {nodeList} = nextProps;
         let currentMetadataNode = {};
-        if (status.length){
-            currentMetadataNode = status.filter(node => node.value)[0] || {};
-            if (!currentMetadataNode.node){
+        if (nodeList.length){
+            currentMetadataNode = nodeList.filter(node => node.status)[0] || {};
+            if (!currentMetadataNode.hasOwnProperty('hostname')){
                 // if there is no up node, use the first node as current node directly, even if it's down
-                currentMetadataNode = status[0];
+                currentMetadataNode = nodeList[0];
             }
         }
         let newState = {};
-        if (currentMetadataNode.node && !this.state.currentMetadataNode.node){
+        if (currentMetadataNode.hasOwnProperty('hostname') && !this.state.currentMetadataNode.hasOwnProperty('hostname')){
             // when firstly get the nodes data, request the first node data as current node
             newState['currentMetadataNode'] = currentMetadataNode;
             lsSet('currentMetadataNode', currentMetadataNode);
-            this.getCurrentMetadataNodeData();
+            // this.getCurrentMetadataNodeData();
         }
         this.setState(newState);
     }
@@ -55,20 +55,22 @@ class MetadataNodes extends Component {
         this.setState({expandSwitchNode});
     }
 
-    switchNode (nodeNumID){
-        let currentMetadataNode = this.props.nodes.filter(node => node.nodeNumID === nodeNumID)[0] || {};
+    switchNode (nodeId){
+        let currentMetadataNode = this.props.nodeList.filter(node => node.nodeId === nodeId)[0] || {};
         this.setState({currentMetadataNode});
         // fetch current node data
         lsSet('currentMetadataNode', currentMetadataNode);
-        this.getCurrentMetadataNodeData();
+        // this.getCurrentMetadataNodeData();
     }
 
+    /*
     getCurrentMetadataNodeData (){
         let currentMetadataNode = lsGet('currentMetadataNode');
         if (currentMetadataNode){
             httpRequests.getMetadataNodeDetailSummary(currentMetadataNode);
         }
     }
+    */
 
     setStaticsFilter (type, selectedItems){
         if (Array.isArray(selectedItems)){
@@ -79,14 +81,14 @@ class MetadataNodes extends Component {
 
     render (){
         // summary
-        let totalNodesCount = this.props.status.length || 0;
-        let upNodesCount = this.props.status.filter(node => node.value).length || 0;
+        let totalNodesCount = this.props.nodeList.length || 0;
+        let upNodesCount = this.props.nodeList.filter(node => node.status).length || 0;
         let downNodesCount = 0;
         let downNodes = [];
-        this.props.status.forEach(({node, value}) => {
-            if (!value){
+        this.props.nodeList.forEach(({hostname, status}) => {
+            if (!status){
                 downNodesCount ++;
-                downNodes.push(node);
+                downNodes.push(hostname);
             }
         });
         // tip
@@ -96,7 +98,7 @@ class MetadataNodes extends Component {
             target: 'user',
             type: 'metadata',
             limit: 8,
-            totalItems: METADATA_STATICS_ITEMS,
+            totalItems: metadataStaticsItems,
             selectedItems: this.state.overviewStaticsFilterItems,
         };
         let overviewStaticsFilterConfig = Object.assign({}, staticsFilterConfig, {
@@ -160,23 +162,23 @@ class MetadataNodes extends Component {
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {this.state.currentMetadataNode.node} {lang('节点详情', 'Node Detail')}
+                                {this.state.currentMetadataNode.hostname} {lang('节点详情', 'Node Detail')}
                                 {
-                                    !!this.props.status.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
+                                    !!this.props.nodeList.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
                                         <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
                                             title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                             onClick={this.changeExpandSwitchNode.bind(this)}
                                         />
                                         <Select style={{width: 170}} size="small"
                                             notFoundContent={lang('暂无节点', 'No Nodes')}
-                                            value={this.state.currentMetadataNode.nodeNumID}
+                                            value={this.state.currentMetadataNode.nodeId}
                                             onChange={this.switchNode.bind(this)}
                                         >
                                             {
-                                                this.props.status.map(({node, nodeNumID, value}) =>
-                                                    <Select.Option key={node} value={nodeNumID} node={node} disabled={!value}>
-                                                        <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
-                                                        {node}
+                                                this.props.nodeList.map(({hostname, nodeId, status}) =>
+                                                    <Select.Option key={hostname} value={nodeId} node={hostname} disabled={!status}>
+                                                        <Icon className={status ? 'fs-option-node up' : 'fs-option-node down'} title={status ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                        {hostname}
                                                     </Select.Option>
                                                 )
                                             }
@@ -193,18 +195,31 @@ class MetadataNodes extends Component {
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentMetadataNode.node || '--'}</div>
+                                            <div className="fs-info-block-value">{this.state.currentMetadataNode.hostname || '--'}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('状态', 'Node Status')}</div>
                                             <div className="fs-info-block-value">
                                                 {
-                                                    this.state.currentMetadataNode.value === true ?
+                                                    this.state.currentMetadataNode.status === true ?
                                                         <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
-                                                        this.state.currentMetadataNode.value !== undefined ?
+                                                        this.state.currentMetadataNode.status !== undefined ?
                                                             <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span> :
                                                             '--'
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="fs-info-block-item m-l">
+                                            <i className="fs-info-block-circle orange" />
+                                            <div className="fs-info-block-label">{lang('根节点', 'Root Node')}</div>
+                                            <div className="fs-info-block-value">
+                                                {
+                                                    this.state.currentMetadataNode.isRoot === true ?
+                                                        lang('是', 'Yes') :
+                                                            this.state.currentMetadataNode.status !== undefined ?
+                                                                lang('否', 'No') :
+                                                                '--'
                                                 }
                                             </div>
                                         </div>
@@ -231,8 +246,8 @@ class MetadataNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {metadataNode: {overview: {status, statics: overviewStatics}, detail: {statics: detailStatics}}}} = state;
-    return {language, status, overviewStatics, detailStatics};
+    const {language, main: {metadataNode: {overview: {nodeList, statics: overviewStatics}, detail: {statics: detailStatics}}}} = state;
+    return {language, nodeList, overviewStatics, detailStatics};
 };
 
 export default connect(mapStateToProps)(MetadataNodes);
