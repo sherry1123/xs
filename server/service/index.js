@@ -1066,6 +1066,65 @@ const model = {
             await model.addEventLog({ desc: `delete nas export failed. reason: ${error}` });
         }
         return result;
+    },
+    async deleteSnapshots(param, user, ip) {
+        let { names } = param;
+        try {
+            for (let name of names) {
+                await database.updateSnapshot({ name }, { deleting: true });
+            }
+            model.sendEvent({ channel: 'snapshot', target: names, info: { user, ip } });
+            await model.addAuditLog({ user, desc: 'start to delete snapshots successfully', ip });
+        } catch (error) {
+            errorHandler(60, error, param);
+            await model.addAuditLog({ user, desc: `start to delete snapshots failed`, ip });
+            await model.addEventLog({ desc: `start to delete snapshots failed. reason: ${error}` });
+        }
+    },
+    async sendEvent(param) {
+        let { channel, target, info } = param;
+        for (let i in target) {
+            target[i] = { name: target[i], result: Math.random() > 0.5 ? true : false };
+        }
+        let result = 0;
+        for (let i of target) {
+            if (i.result) {
+                result += 1;
+            }
+        }
+        await promise.runTimeOutInPromise(10);
+        await request.post('http://localhost/api/receiveevent', { channel, code: result === target.length ? 5 : 6, target, info }, {}, true);
+
+    },
+    async receiveEvent(param) {
+        let { channel, code, target, info: { user, ip } } = param;
+        switch (code) {
+            case 5:
+                socket.postEventStatus({ channel, code, target: { total: target.length, success: target.length, failed: 0 }, result: true });
+                for (let i of target) {
+                    await database.deleteSnapshot({ name: i.name });
+                }
+                await model.addAuditLog({ user, desc: 'delete snapshots successfully', ip });
+                break;
+            case 6:
+                let success = 0;
+                for (let i of target) {
+                    if (i.result) {
+                        success += 1;
+                    }
+                }
+                socket.postEventStatus({ channel, code, target: { total: target.length, success, failed: target.length - success }, result: false });
+                for (let i of target) {
+                    if (i.result) {
+                        await await database.updateSnapshot({ name: i.name }, { deleting: false });
+                    } else {
+                        await database.deleteSnapshot({ name: i.name });
+                    }
+                }
+                await model.addAuditLog({ user, desc: `delete snapshots failed`, ip });
+                await model.addEventLog({ desc: `delete snapshots failed.`, level: 2, source: 'orcafs' });
+                break;
+        }
     }
 };
 module.exports = model;
