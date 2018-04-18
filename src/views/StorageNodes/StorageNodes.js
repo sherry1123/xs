@@ -14,29 +14,29 @@ class StorageNodes extends Component {
     constructor (props){
         super(props);
         this.state = {
-            currentStorageNode: this.props.status.filter(node => node.status)[0] || {},
+            currentStorageNode: this.props.nodeList.filter(node => node.status)[0] || {},
             expandSwitchNode: true
         };
     }
 
     componentDidMount (){
         // request overview data
-        httpRequests.getStorageNodeOverviewSummary();
+        httpRequests.getStorageNodes();
         httpRequests.getStorageNodeDiskStatus();
         httpRequests.getStorageNodeTargets();
-        setTimeout(() => httpRequests.getStorageNodeOverviewThroughput(), 1000);
+        setTimeout(() => httpRequests.getStorageNodesThroughput(), 1000);
         // request detail data
         setTimeout(() => httpRequests.getStorageNodeDetailThroughput(), 1500);
     }
 
     componentWillReceiveProps (nextProps){
-        let {status} = nextProps;
+        let {nodeList} = nextProps;
         let currentStorageNode = {};
-        if (status.length){
-            currentStorageNode = status.filter(node => node.status)[0] || {};
+        if (nodeList.length){
+            currentStorageNode = nodeList.filter(node => node.status)[0] || {};
             if (currentStorageNode.hasOwnProperty('hostname')){
                 // if there is no up node, use the first node as current node directly, even if it's down
-                currentStorageNode = status[0];
+                currentStorageNode = nodeList[0];
             }
         }
         let newState = {};
@@ -54,7 +54,7 @@ class StorageNodes extends Component {
     }
 
     switchNode (nodeId){
-        let currentStorageNode = this.props.status.filter(node => node.nodeId === nodeId)[0];
+        let currentStorageNode = this.props.nodeList.filter(node => node.nodeId === nodeId)[0];
         this.setState({currentStorageNode});
         // fetch current node data
         lsSet('currentStorageNode', currentStorageNode);
@@ -75,11 +75,11 @@ class StorageNodes extends Component {
     }
 
     render (){
-        let totalNodesCount = this.props.status.length || 0;
-        let upNodesCount = this.props.status.filter(node => node.status).length || 0;
+        let totalNodesCount = this.props.nodeList.length || 0;
+        let upNodesCount = this.props.nodeList.filter(node => node.status).length || 0;
         let downNodesCount = 0;
         let downNodes = [];
-        this.props.status.forEach(({hostname, status}) => {
+        this.props.nodeList.forEach(({hostname, status}) => {
             if (!status){
                 downNodesCount ++;
                 downNodes.push(hostname);
@@ -142,7 +142,7 @@ class StorageNodes extends Component {
                             <h3 className="fs-page-title item">
                                 {this.state.currentStorageNode.hostname} {lang('节点详情', 'Node Detail')}
                                 {
-                                    !!this.props.status.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
+                                    !!this.props.nodeList.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
                                         <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
                                             title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                             onClick={this.changeExpandSwitchNode.bind(this)}
@@ -153,7 +153,7 @@ class StorageNodes extends Component {
                                             onChange={this.switchNode.bind(this)}
                                         >
                                             {
-                                                this.props.status.map(({hostname, nodeId, status}) =>
+                                                this.props.nodeList.map(({hostname, nodeId, status}) =>
                                                     <Select.Option key={nodeId} value={nodeId} node={hostname} disabled={!status}>
                                                         <Icon className="fs-option-node" title={status ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
                                                         {hostname}
@@ -208,8 +208,8 @@ class StorageNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {storageNode: {overview: {diskSpace, status, overviewThroughput}, detail: {storageTargets, detailThroughput}}}} = state;
-    return {language, diskSpace, status, overviewThroughput, storageTargets, detailThroughput};
+    const {language, main: {storageNode: {overview: {diskSpace, nodeList, overviewThroughput}, detail: {storageTargets, detailThroughput}}}} = state;
+    return {language, diskSpace, nodeList, overviewThroughput, storageTargets, detailThroughput};
 };
 
 export default connect(mapStateToProps)(StorageNodes);

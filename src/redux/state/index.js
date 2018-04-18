@@ -62,7 +62,7 @@ export default {
         // storage nodes
         storageNode: {
             overview: {
-                status: [
+                nodeList: [
                     /*
                     {node: 'ClusterMe1', nodeNumID: 'cm1', value: true},
                     {node: 'ClusterMe2', nodeNumID: 'cm2', value: true},

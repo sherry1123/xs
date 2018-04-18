@@ -3,12 +3,12 @@ import {storageNodeActionTypes} from '../actions/storageNodeAction';
 
 const storageNodeReducer = (state = State.main.storageNode, action) => {
     switch (action.type){
-        // set storage nodes overview node status
-        case storageNodeActionTypes.SET_STORAGE_NODE_OVERVIEW_SUMMARY:
+        // set storage nodes list
+        case storageNodeActionTypes.SET_STORAGE_NODES:
         {
             let {overview} = state;
-            let {data: status} = action;
-            overview = Object.assign({}, overview, {status});
+            let {data: nodeList} = action;
+            overview = Object.assign({}, overview, {nodeList});
             return Object.assign({}, state, {overview});
         }
 

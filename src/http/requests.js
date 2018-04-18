@@ -84,16 +84,16 @@ export default  {
     },
 
     // metadata node
-    async getMetadataNodeOverviewSummary (){
+    async getMetadataNodes (){
         try {
             let data = await fetchGet('/api/getmetanodestatus');
-            store.dispatch(metadataNodeAction.setMetadataNodeOverviewSummary(data));
+            store.dispatch(metadataNodeAction.setMetadataNodes(data));
         } catch (e){
             errorHandler(e);
         }
     },
 
-    async getMetadataNodeOverviewUserOperationStatics (){
+    async getMetadataNodesStatics (){
         try {
             let data = await fetchGet('/api/getusermetastats', {nodeId: 0});
             store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
@@ -102,18 +102,7 @@ export default  {
         }
     },
 
-    async getMetadataNodeDetailSummary ({hostname, nodeId} = (lsGet('currentMetadataNode') || {})){
-        if (!!hostname){
-            try {
-                let data = await fetchGet('/api/getmetanodesummary', {hostname, nodeId});
-                store.dispatch(metadataNodeAction.setMetadataNodeDetailSummary(data));
-            } catch (e){
-                errorHandler(e);
-            }
-        }
-    },
-
-    async getMetadataNodeDetailUserOperationStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
+    async getMetadataNodeDetailStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
         try {
             let data = await fetchGet('/api/getusermetastats', {nodeId});
             store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
@@ -123,10 +112,10 @@ export default  {
     },
 
     // storage node
-    async getStorageNodeOverviewSummary (){
+    async getStorageNodes (){
         try {
             let data = await fetchGet('/api/getstoragenodestatus');
-            store.dispatch(storageNodeAction.setStorageNodeOverviewSummary(data));
+            store.dispatch(storageNodeAction.setStorageNodes(data));
         } catch (e){
             errorHandler(e);
         }
@@ -141,7 +130,7 @@ export default  {
         }
     },
 
-    async getStorageNodeOverviewThroughput (){
+    async getStorageNodesThroughput (){
         try {
             let data = await fetchGet('/api/getstoragenodesthroughput');
             store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));

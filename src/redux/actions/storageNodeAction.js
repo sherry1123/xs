@@ -1,5 +1,5 @@
 export const storageNodeActionTypes = {
-    SET_STORAGE_NODE_OVERVIEW_SUMMARY: 'SET_STORAGE_NODE_OVERVIEW_SUMMARY',
+    SET_STORAGE_NODES: 'SET_STORAGE_NODES',
     SET_STORAGE_NODE_DISK_STATUS: 'SET_STORAGE_NODE_DISK_STATUS',
     SET_STORAGE_NODE_OVERVIEW_THROUGHPUT: 'SET_STORAGE_NODE_OVERVIEW_THROUGHPUT',
     SET_STORAGE_NODE_DETAIL_TARGETS: 'SET_STORAGE_NODE_DETAIL_TARGETS',
@@ -7,8 +7,8 @@ export const storageNodeActionTypes = {
 };
 
 export default {
-    setStorageNodeOverviewSummary: data => ({
-        type: storageNodeActionTypes.SET_STORAGE_NODE_OVERVIEW_SUMMARY,
+    setStorageNodes: data => ({
+        type: storageNodeActionTypes.SET_STORAGE_NODES,
         data
     }),
 
