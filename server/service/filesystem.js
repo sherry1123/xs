@@ -16,48 +16,6 @@ const model = {
     async getToken() {
         return await request.get(config.api.orcafs.gettoken, {}, {}, true);
     },
-    async getNodeList(param) {
-        let res = await request.get(config.api.admon.nodelist, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
-        let data = json.data;
-        for (let i of Object.keys(data)) {
-            data[i] = Array.isArray(data[i]) ? data[i] : typeof data[i] === 'object' ? [data[i]] : [];
-            data[i] = data[i].map(j => ({ node: j.node['_'], nodeNumID: Number(j.node.nodeNumID), group: j.node.group }));
-        }
-        return data;
-    },
-    async getMetaNodesOverview(param) {
-        let res = await request.get(config.api.admon.metanodesoverview, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
-        let data = json.data;
-        for (let i of Object.keys(data)) {
-            data[i] = data[i].value ? data[i].value : data[i];
-        }
-        data.general = { nodeCount: Number(data.general.nodeCount), rootNode: data.general.rootNode };
-        data.status = Array.isArray(data.status) ? data.status : typeof data.status === 'object' ? [data.status] : [];
-        data.status = data.status.map(i => ({ value: i['_'] === 'true', node: i.node, nodeNumID: Number(i.nodeNumID) }));
-        for (let i of Object.keys(data)) {
-            if (String(i).includes('Requests') && Array.isArray(data[i])) {
-                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
-            }
-        }
-        return data;
-    },
-    async getMetaNode(param) {
-        let res = await request.get(config.api.admon.metanode, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
-        let data = json.data;
-        for (let i of Object.keys(data)) {
-            data[i] = data[i].value ? data[i].value : data[i];
-        }
-        data.general = { status: data.general.status === 'true', nodeID: data.general.nodeID, nodeNumID: Number(data.general.nodeNumID), rootNode: data.general.rootNode === 'Yes' };
-        for (let i of Object.keys(data)) {
-            if (String(i).includes('Requests') && Array.isArray(data[i])) {
-                data[i] = data[i].map(j => ({ value: Number(j['_']), time: Number(j['time']) }));
-            }
-        }
-        return data;
-    },
     async getStorageNodesOverview(param) {
         param.timeSpanPerf = 1;
         let res = await request.get(config.api.admon.storagenodesoverview, param, {}, false);
@@ -99,74 +57,6 @@ const model = {
                 }
             }
         }
-        return data;
-    },
-    async getClientStats(param) {
-        let res = await request.get(config.api.admon.clientstats, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
-        let data = json.data;
-        for (let i of Object.keys(data)) {
-            data[i] = data[i].host ? data[i].host : data[i];
-        }
-        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof data.hosts === 'object' ? [data.hosts] : [];
-        for (let i of Object.keys(data)) {
-            if (Array.isArray(data[i])) {
-                for (let j in data[i]) {
-                    for (let k of Object.keys(data[i][j])) {
-                        data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
-                    }
-                }
-            } else if (typeof data[i] === 'object') {
-                for (let j of Object.keys(data[i])) {
-                    data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
-                }
-            } else if (typeof data[i] === 'string' && String(i).includes('ID')) {
-                data[i] = Number(data[i]);
-            }
-        }
-        return data;
-    },
-    async getUserStats(param) {
-        let res = await request.get(config.api.admon.userstats, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
-        let data = json.data;
-        for (let i of Object.keys(data)) {
-            data[i] = data[i].host ? data[i].host : data[i];
-        }
-        data.hosts = Array.isArray(data.hosts) ? data.hosts : typeof data.hosts === 'object' ? [data.hosts] : data.hosts;
-        for (let i of Object.keys(data)) {
-            if (Array.isArray(data[i])) {
-                for (let j in data[i]) {
-                    for (let k of Object.keys(data[i][j])) {
-                        data[i][j][k] = k === 'ip' ? data[i][j][k] : { value: Number(data[i][j][k]['_']), id: Number(data[i][j][k].id) };
-                    }
-                }
-            } else if (typeof data[i] === 'object') {
-                for (let j of Object.keys(data[i])) {
-                    data[i][j] = { value: Number(data[i][j]['_']), id: Number(data[i][j].id) };
-                }
-            } else if (typeof data[i] === 'string' && String(i).includes('ID')) {
-                data[i] = Number(data[i]);
-            }
-        }
-        return data;
-    },
-    async getKnownProblems(param) {
-        let res = await request.get(config.api.admon.knownproblems, param, {}, false);
-        let json = await promise.xmlToJsonInPromise(res, { explicitArray: false, mergeAttrs: true });
-        let data = json.data;
-        for (let i of Object.keys(data)) {
-            data[i] = Array.isArray(data[i]) ? data[i] : typeof data[i] === 'object' ? [data[i]] : [];
-        }
-        for (let i of Object.keys(data)) {
-            let type = i.replace('dead', '').replace('Nodes', '');
-            let reason = 'Dead';
-            for (let j in data[i]) {
-                data[i][j].type = type;
-                data[i][j].reason = reason;
-            }
-        }
-        data = data.deadMetaNodes.concat(data.deadStorageNodes);
         return data;
     },
     async getDiskList(param) {
@@ -239,15 +129,34 @@ const model = {
         let token = await model.getToken();
         return await request.get(config.api.orcafs.getstats, param, token, true);
     },
-    async getMetaNodesStatus(param) {
+    async getMetaNodeStatus(param) {
         let token = await model.getToken();
-        let res = await request.get(config.api.orcafs.listmetanodes, {}, token, true);
-        if (!res.errorId) {
-            for (let i in res.data) {
-                res.data[i].value = res.data[i].status;
-            }
+        return await request.get(config.api.orcafs.listmetanodes, {}, token, true);
+    },
+    async getStorageNodeStatus(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.liststoragenodes, {}, token, true);
+    },
+    async getStorageDiskSpace(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getstoragespace, {}, token, true);
+    },
+    async getStorageTarget(param) {
+        let token = await model.getToken();
+        //return await request.get(config.api.orcafs.liststoragetargets, param, token, true);
+        return {
+            errorId: 0,
+            data: [
+                {
+                    targetId: 101,
+                    nodeId: 1,
+                    totalSpace: 53660876800,
+                    usedSpace: 26324500480,
+                    freeSpace: 27336376320,
+                    storagePath: '/Orcafs-storage'
+                }
+            ]
         }
-        return res;
     }
 };
 module.exports = model;

@@ -35,44 +35,16 @@ const model = {
         }
         return result;
     },
-    /**
-     * Check The Cluster Initialization Environment
-     * 
-     * @param {array} meta Metadata Servers
-     * @param {array} storage Object Storage Servers
-     * @param {array} client Client Servers
-     * @param {array} mgmt Management Servers
-     * @param {boolean} HA High Availability
-     * @param {array} floatIP Cluster Service Management IP
-     * @param {array} heartbeatIP Heart Beat IP
-     */
     async checkClusterEnv(param) {
         let { ipList } = param;
         let result = {};
         try {
-            let data = await init.checkClusterEnv(ipList);
-            result = handler.response(0, data);
+            result = handler.response(0, '');
         } catch (error) {
             result = handler.response(6, error, param);
         }
         return result;
     },
-    /**
-     * Initialize The Cluster
-     * 
-     * According to the parameters to determine whether the cluster is turned on high availability and the type of the database cluster.
-     * First initialize the file system, and then the database, finally save the initialization information.
-     * 
-     * @param {array} meta Metadata Servers
-     * @param {array} storage Object Storage Servers
-     * @param {array} client Client Servers
-     * @param {array} mgmt Management Servers
-     * @param {boolean} HA High Availability
-     * @param {array} floatIP Cluster Service Management IP
-     * @param {array} heartbeatIP Heart Beat IP
-     * @param {boolean} RAID Redundant Array Of Independent Disks
-     * @param {object} RAIDConfig  RAID Config
-     */
     async initCluster(param) {
         let current = 0, total = 8;
         try {
@@ -114,12 +86,6 @@ const model = {
             socket.postInitStatus({ current, status: -1, total });
         }
     },
-    /**
-     * Antiinitialize The Cluster
-     * 
-     * 
-     * @param {number} mode 1 => All; 2 => Only Database
-     */
     async antiInitCluster(mode) {
         try {
             mode === 1 && await init.antiInitOrcaFS();
@@ -147,12 +113,6 @@ const model = {
             handler.error(8, error, mode);
         }
     },
-    /**
-     * Login
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     */
     async login(param, ip) {
         let { username, password } = param;
         let result = {};
@@ -169,30 +129,12 @@ const model = {
         }
         return result;
     },
-    /**
-     * Logout
-     * 
-     * @param {string} username Username
-     */
     async logout(param, ip) {
         let { username } = param;
         let result = handler.response(0, 'logout successfully');
         await model.addAuditLog({ user: username, desc: 'logout successfully', ip });
         return result;
     },
-    /**
-    * Get User
-    * 
-    * @param {string} username Username
-    * @param {string} password Password
-    * @param {string} email Email
-    * @param {string} firstname First Name
-    * @param {string} lastname Last Name
-    * @param {string} group Group
-    * @param {string} type Type
-    * @param {boolean} receivemail Receive Email Or Not
-    * @param {int} useravatar User Avatar
-    */
     async getUser(param) {
         let result = {};
         try {
@@ -203,19 +145,6 @@ const model = {
         }
         return result;
     },
-    /**
-    * Add User
-    * 
-    * @param {string} username Username
-    * @param {string} password Password
-    * @param {string} email Email
-    * @param {string} firstname First Name
-    * @param {string} lastname Last Name
-    * @param {string} group Group
-    * @param {string} type Type
-    * @param {boolean} receivemail Receive Email Or Not
-    * @param {int} useravatar User Avatar
-    */
     async addUser(param) {
         let result = {};
         try {
@@ -226,19 +155,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Update User
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     * @param {string} email Email
-     * @param {string} firstname First Name
-     * @param {string} lastname Last Name
-     * @param {string} group Group
-     * @param {string} type Type
-     * @param {boolean} receivemail Receive Email Or Not
-     * @param {int} useravatar User Avatar
-     */
     async updateUser(param, ip) {
         let query = { username: param.username };
         let result = {};
@@ -251,12 +167,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Delete User
-     * 
-     * @param {string} username Username
-     * @param {string} password Password
-     */
     async deleteUser(param) {
         let result = {};
         try {
@@ -267,16 +177,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Event Log
-     * 
-     * @param {date} date Date
-     * @param {string} node Node
-     * @param {string} desc Description
-     * @param {int} level Level
-     * @param {string} source Source
-     * @param {boolean} read Read Or Not
-     */
     async getEventLog(param) {
         let result = {};
         try {
@@ -287,16 +187,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Add Event Log
-     * 
-     * @param {date} date Date
-     * @param {string} node Node
-     * @param {string} desc Description
-     * @param {int} level Level
-     * @param {string} source Source
-     * @param {boolean} read Read Or Not
-     */
     async addEventLog(param) {
         let { time = new Date(), node = os.hostname(), desc, level = 1, source = 'orcafs-gui', read = false } = param;
         try {
@@ -305,16 +195,6 @@ const model = {
             handler.error(15, error, param);
         }
     },
-    /**
-     * Update Event Log
-     * 
-     * @param {date} date Date
-     * @param {string} node Node
-     * @param {string} desc Description
-     * @param {int} level Level
-     * @param {string} source Source
-     * @param {boolean} read Read Or Not
-     */
     async updateEventLog(param) {
         let result = {};
         try {
@@ -329,16 +209,6 @@ const model = {
         }
         return result;
     },
-    /**
-    * Get Audit Log
-    * 
-    * @param {date} date Date
-    * @param {string} user User
-    * @param {string} group User Group
-    * @param {string} desc Description
-    * @param {int} level Level
-    * @param {string} ip User IP
-    */
     async getAuditLog(param) {
         let result = {};
         try {
@@ -349,16 +219,6 @@ const model = {
         }
         return result;
     },
-    /**
-    * Get Audit Log
-    * 
-    * @param {date} date Date
-    * @param {string} user User
-    * @param {string} group User Group
-    * @param {string} desc Description
-    * @param {int} level Level
-    * @param {string} ip User IP
-    */
     async addAuditLog(param) {
         let { time = new Date(), user, group = 'admin', desc, level = 1, ip = '127.0.0.1' } = param;
         try {
@@ -367,9 +227,6 @@ const model = {
             handler.error(18, error, param);
         }
     },
-    /**
-    * Get Hardware
-    */
     async getHardware(param) {
         let result = {};
         try {
@@ -395,20 +252,6 @@ const model = {
             handler.error(20, error, api);
         }
     },
-    /**
-     * Test Mail
-     * 
-     * @param {string} host SMTP Address
-     * @param {int} port SMTP Relay Port
-     * @param {boolean} secure Protection
-     * @param {string} user Username
-     * @param {string} pass Password
-     * @param {string} from Sender's Email
-     * @param {string} to Receiver's Email
-     * @param {string} subject Subject
-     * @param {string} text Email Text
-     * @param {string} html Email Html
-     */
     async testMail(param) {
         let result = {};
         try {
@@ -419,20 +262,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Send Mail
-     * 
-     * @param {string} host SMTP Address
-     * @param {int} port SMTP Relay Port
-     * @param {boolean} secure Protection
-     * @param {string} user Username
-     * @param {string} pass Password
-     * @param {string} from Sender's Email
-     * @param {string} to Receiver's Email
-     * @param {string} subject Subject
-     * @param {string} text Email Text
-     * @param {string} html Email Html
-     */
     async sendMail(param) {
         try {
             await email.sendMail(param);
@@ -440,144 +269,6 @@ const model = {
             handler.error(22, error, param);
         }
     },
-    /**
-     * Get Node List
-     * 
-     * @param {boolean} clients Get Client Nodes Or Not
-     * @param {boolean} admon Get Admon Node Or Not
-     */
-    async getNodeList(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getNodeList(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(23, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Metadata Nodes Overview
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     */
-    async getMetaNodesOverview(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getMetaNodesOverview(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(24, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Metadata Node Detail
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     * @param {string} node Node's Hostname
-     * @param {int} nodeNumID Node's ID
-     */
-    async getMetaNode(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getMetaNode(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(25, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Storage Nodes Overview
-     * 
-     * @param {string} group The Group Which The Node Belongs
-     */
-    async getStorageNodesOverview(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getStorageNodesOverview(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(26, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Storage Node Detail
-     * 
-     * @param {string} node Node's Hostname
-     * @param {int} nodeNumID Node's ID
-     */
-    async getStorageNode(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getStorageNode(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(27, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Client Stats
-     * 
-     * @param {int} nodeType Node's Type, 1 => Meta, 2 => Storage
-     * @param {int} interval Interval, The Unit Is Second
-     * @param {int} numLines The Number Of Clients
-     * @param {int} requestorID The ID Of The Requestor
-     * @param {int} nextDataSequenceID The Next Data Sequence's ID
-     */
-    async getClientStats(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getClientStats(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(28, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get User Stats
-     * 
-     * @param {int} nodeType Node's Type, 1 => Meta, 2 => Storage
-     * @param {int} interval Interval, The Unit Is Second
-     * @param {int} numLines The Number Of Clients
-     * @param {int} requestorID The ID Of The Requestor
-     * @param {int} nextDataSequenceID The Next Data Sequence's ID
-     */
-    async getUserStats(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getUserStats(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(29, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Storage Nodes Status And Disk Summary
-     * 
-     * @param {string} group The Group Which The Node Belongs
-     */
-    async getStorageNodesStatusAndDIskSummary(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getStorageNodesOverview(param);
-            data = { status: data.status, diskSpace: data.diskSpace };
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(30, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Storage Nodes Throughput
-     * 
-     * @param {string} group The Group Which The Node Belongs
-     */
     async getStorageNodesThroughput(param) {
         let result = {};
         try {
@@ -589,31 +280,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Storage Node Status And Disk Summary
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     * @param {string} node Node's Hostname
-     * @param {int} nodeNumID Node's ID
-     */
-    async getStorageNodeStatusAndDIskSummary(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getStorageNode(param);
-            data = { general: data.general, storageTargets: data.storageTargets };
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(32, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Storage Node Throughput
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     * @param {string} node Node's Hostname
-     * @param {int} nodeNumID Node's ID
-     */
     async getStorageNodeThroughput(param) {
         let result = {};
         try {
@@ -625,10 +291,10 @@ const model = {
         }
         return result;
     },
-    async getMetaNodesStatus(param) {
+    async getMetaNodeStatus(param) {
         let result = {};
         try {
-            let res = await fileSystem.getMetaNodesStatus(param);
+            let res = await fileSystem.getMetaNodeStatus(param);
             if (!res.errorId) {
                 result = handler.response(0, res.data);
             } else {
@@ -639,60 +305,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Metadata Nodes Request
-     * 
-     * @param {int} interval Interval, The Unit Is Second
-     * @param {int} numLines The Number Of Clients
-     * @param {int} requestorID The ID Of The Requestor
-     * @param {int} nextDataSequenceID The Next Data Sequence's ID
-     */
-    async getMetaNodesRequest(param) {
-        let result = {};
-        try {
-            let data = await request.get(config.api.agentd.metanodes, param, {}, true);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(35, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Metadata Node Status
-     * 
-     * @param {int} timeSpanRequests The Length Of Statistical Time, The Unit Is Minute, The Interval Is One Second
-     * @param {string} node Node's Hostname
-     * @param {int} nodeNumID Node's ID
-     */
-    async getMetaNodeStatus(param) {
-        let result = {};
-        try {
-            let data = await fileSystem.getMetaNode(param);
-            data = { general: data.general };
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(36, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Known Problems
-     */
-    async getKnownProblems(param) {
-        let result = {};
-        try {
-            let data = await request.get(config.api.agentd.knownproblems, param, {}, true);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(37, error, param);
-        }
-        return result;
-    },
-    /**
-     * Get Disk List
-     * 
-     * @param {string} ip Node's IP
-     */
     async getDiskList(param) {
         let result = {};
         try {
@@ -707,11 +319,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Entry Info
-     * 
-     * @param {string} dir Entry Path
-     */
     async getEntryInfo(param) {
         let result = {};
         try {
@@ -726,11 +333,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Entry Info
-     * 
-     * @param {string} dir Entry Path
-     */
     async getFiles(param) {
         let result = {};
         try {
@@ -745,14 +347,6 @@ const model = {
         }
         return result;
     },
-    /**
-     * Get Entry Info
-     * 
-     * @param {string} chunkSize Chunk Size
-     * @param {string} numTargets The Number Of Targets
-     * @param {string} dirPath Dir Path
-     * @param {int} buddyMirror Buddy Mirror
-     */
     async setPattern(param, user, ip) {
         let result = {};
         try {
@@ -1082,6 +676,48 @@ const model = {
         } catch (error) {
             handler.error(63, error);
         }
+    },
+    async getStorageNodeStatus(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getStorageNodeStatus(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
+            } else {
+                result = handler.response(65, res.message, param);
+            }
+        } catch (error) {
+            result = handler.response(65, error, param);
+        }
+        return result;
+    },
+    async getStorageDiskSpace(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getStorageDiskSpace(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
+            } else {
+                result = handler.response(65, res.message, param);
+            }
+        } catch (error) {
+            result = handler.response(65, error, param);
+        }
+        return result;
+    },
+    async getStorageTarget(param) {
+        let result = {};
+        try {
+            let res = await fileSystem.getStorageTarget(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
+            } else {
+                result = handler.response(65, res.message, param);
+            }
+        } catch (error) {
+            result = handler.response(65, error, param);
+        }
+        return result;
     }
 };
 module.exports = model;
