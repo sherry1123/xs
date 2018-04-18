@@ -7,7 +7,7 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import DiskUsageStatus from '../../components/DiskUsageStatus/DiskUsageStatus';
 import StorageTargetGroup from '../../components/StorageTargetGroup/StorageTargetGroup';
-import {lsGet, lsSet, formatStorageSize} from '../../services';
+import {lsSet, formatStorageSize} from '../../services';
 import httpRequests from '../../http/requests';
 
 class StorageNodes extends Component {
