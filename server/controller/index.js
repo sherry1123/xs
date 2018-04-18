@@ -92,6 +92,9 @@ const model = {
     '/api/createsnapshot': async ctx => {
         ctx.body = await service.createSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/updatesnapshot': async ctx => {
+        ctx.body = await service.updateSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/deletesnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to delete snapshot' };
         service.deleteSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));

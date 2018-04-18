@@ -29,6 +29,7 @@ router.all('/api/getsnapshotsetting', controller['/api/getsnapshotsetting']);
 router.all('/api/updatesnapshotsetting', controller['/api/updatesnapshotsetting']);
 router.all('/api/getsnapshot', controller['/api/getsnapshot']);
 router.all('/api/createsnapshot', controller['/api/createsnapshot']);
+router.all('/api/updatesnapshot', controller['/api/updatesnapshot']);
 router.all('/api/deletesnapshot', controller['/api/deletesnapshot']);
 router.all('/api/deletesnapshots', controller['/api/deletesnapshots']);
 router.all('/api/rollbacksnapshot', controller['/api/rollbacksnapshot']);

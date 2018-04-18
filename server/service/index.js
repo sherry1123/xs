@@ -401,6 +401,18 @@ const model = {
         }
         return result;
     },
+    async updateSnapshot(param, user, ip) {
+        let result = {};
+        try {
+            await snapshot.updateSnapshot(param);
+            await model.addAuditLog({ user, desc: 'update snapshot successfully', ip });
+        } catch (error) {
+            result = handler.response(43, error, param);
+            await model.addAuditLog({ user, desc: `update snapshot failed`, ip });
+            await model.addEventLog({ desc: `update snapshot failed. reason: ${error}` });
+        }
+        return result;
+    },
     async deleteSnapshot(param, user, ip) {
         try {
             await snapshot.deleteSnapshot(param);

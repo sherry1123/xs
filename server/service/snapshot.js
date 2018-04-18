@@ -20,16 +20,20 @@ const model = {
         return await database.getSnapshot(param);
     },
     async createSnapshot(param) {
-        let { name, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
+        let { name, description, isAuto = false, deleting = false, rollbacking = false, createTime = new Date() } = param;
         let setting = await model.getSnapshotSetting();
         let limit = Number(setting.manual);
         let count = await database.getSnapshotCount({ isAuto: false });
         if (count < limit) {
-            await database.addSnapshot({ name, isAuto, deleting, rollbacking, createTime });
+            await database.addSnapshot({ name, description, isAuto, deleting, rollbacking, createTime });
             return true;
         } else {
             return false;
         }
+    },
+    async updateSnapshot(param) {
+        let { name, description } = param;
+        await database.updateSnapshot({ name }, { description });
     },
     async deleteSnapshot(param) {
         let { name } = param;
@@ -90,12 +94,12 @@ const model = {
                 let autoSnapshotList = await database.getSnapshot({ isAuto: true });
                 let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
                 if (autoSnapshotList.length < limit) {
-                    await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                    await database.addSnapshot({ name: nameToCreate, description: '', isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                 } else if (deleteRound) {
                     let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
                     let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
                     await database.deleteSnapshot({ name: nameToDelete });
-                    await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                    await database.addSnapshot({ name: nameToCreate, description: '', isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                 }
             } else if (autoDisableTime && timeGapInSecond > autoDisableTime) {
                 await database.updateSnapshotTask({ name }, { isRunning: false });
