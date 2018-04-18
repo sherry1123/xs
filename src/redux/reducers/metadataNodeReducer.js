@@ -3,7 +3,7 @@ import {metadataNodeActionTypes} from '../actions/metadataNodeAction';
 
 const metadataNodeReducer = (state = State.main.storageNode, action) => {
     switch (action.type){
-        case metadataNodeActionTypes.SET_METADATA_NODE_OVERVIEW_SUMMARY:
+        case metadataNodeActionTypes.SET_METADATA_NODES:
         {
             let {overview} = state;
             let {data} = action;

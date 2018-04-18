@@ -10,20 +10,19 @@ const fetchDataPer15s = () => {
     // main
     if (routerHash.match(main)){
         // httpRequests.getKnownProblems();
-        httpRequests.getMetadataNodeOverviewSummary();
-        httpRequests.getStorageNodeOverviewSummary();
+        httpRequests.getMetadataNodes();
+        httpRequests.getStorageNodes();
     }
 
     // metadata node
     if (routerHash.match(main + routerPath.MetadataNodes)){
-        httpRequests.getMetadataNodeOverviewUserOperationStatics();
-        // httpRequests.getMetadataNodeDetailSummary();
-        httpRequests.getMetadataNodeDetailUserOperationStatics();
+        httpRequests.getMetadataNodesStatics();
+        httpRequests.getMetadataNodeDetailStatics();
     }
 
     // storage node
     if (routerHash.match(main + routerPath.StorageNodes)){
-        httpRequests.getStorageNodeOverviewThroughput();
+        httpRequests.getStorageNodesThroughput();
         httpRequests.getStorageNodeDiskStatus();
         httpRequests.getStorageNodeTargets();
         httpRequests.getStorageNodeDetailThroughput();

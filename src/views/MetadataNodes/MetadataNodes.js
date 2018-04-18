@@ -25,8 +25,8 @@ class MetadataNodes extends Component {
     }
 
     componentDidMount (){
-        httpRequests.getMetadataNodeOverviewSummary();
-        httpRequests.getMetadataNodeOverviewUserOperationStatics();
+        httpRequests.getMetadataNodes();
+        httpRequests.getMetadataNodesStatics();
         // httpRequests.getMetadataNodeDetailSummary();
     }
 
