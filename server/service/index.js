@@ -418,10 +418,11 @@ const model = {
     async rollbackSnapshot(param, user, ip) {
         try {
             process.send('rollback start');
+            socket.postEventStatus({ channel: 'snapshot', code: 3, target: param.name, result: true });
             await snapshot.rollbackSnapshot(param);
             process.send('rollback end');
             await log.audit({ user, desc: 'rollback snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 3, target: param.name, result: true });
+            socket.postEventStatus({ channel: 'snapshot', code: 4, target: param.name, result: true });
         } catch (error) {
             snapshot.setRollbackStatus(false);
             handler.error(45, error, param);

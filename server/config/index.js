@@ -81,6 +81,7 @@ exports.keys = {
     antiinit: '186716b8d7c8ce050a0710ccf43c89c8'
 };
 exports.errors = {
+    0: 'the cluster is rollbacking',
     1: 'get the cluster initialization status error',
     2: 'get the node is the master node or not error',
     3: 'no key or wrong key',
@@ -150,8 +151,8 @@ exports.errors = {
 exports.eventCode = {
     1: 'delete snapshot successfully',
     2: 'delete snapshot failed',
-    3: 'rollback snapshot successfully',
-    4: 'rollback snapshot failed',
+    3: 'rollback start',
+    4: 'rollback end',
     5: 'delete snapshots successfully',
     6: 'delete snapshots failed'
 }

@@ -50,7 +50,7 @@ const model = {
     async rollbackSnapshot(param) {
         let { name } = param;
         await database.updateSnapshot({ name }, { rollbacking: true });
-        await promise.runTimeOutInPromise(10);
+        await promise.runTimeOutInPromise(60);
         await database.updateSnapshot({ name }, { rollbacking: false });
     },
     async getSnapshotTask(param) {
