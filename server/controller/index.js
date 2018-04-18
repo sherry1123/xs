@@ -134,11 +134,11 @@ const model = {
     '/api/createnasexport': async ctx => {
         ctx.body = await service.createNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletenasexport': async ctx => {
-        ctx.body = await service.deleteNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
-    },
     '/api/updatenasexport': async ctx => {
         ctx.body = await service.updateNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/deletenasexport': async ctx => {
+        ctx.body = await service.deleteNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/geteventlog': async ctx => {
         ctx.body = await service.getEventLog(ctx.param);

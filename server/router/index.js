@@ -42,15 +42,14 @@ router.all('/api/deletesnapshottask', controller['/api/deletesnapshottask']);
 router.all('/api/deletesnapshottask', controller['/api/deletesnapshottasks']);
 router.all('/api/getnasexport', controller['/api/getnasexport']);
 router.all('/api/createnasexport', controller['/api/createnasexport']);
-router.all('/api/deletenasexport', controller['/api/deletenasexport']);
 router.all('/api/updatenasexport', controller['/api/updatenasexport']);
+router.all('/api/deletenasexport', controller['/api/deletenasexport']);
 router.all('/api/geteventlog', controller['/api/geteventlog']);
 router.all('/api/updateeventlog', controller['/api/updateeventlog']);
 router.all('/api/getauditlog', controller['/api/getauditlog']);
 router.all('/api/getentryinfo', controller['/api/getentryinfo']);
 router.all('/api/getfiles', controller['/api/getfiles']);
 router.all('/api/setpattern', controller['/api/setpattern']);
-
 router.all('/api/getstoragenodesthroughput', controller['/api/getstoragenodesthroughput']);
 router.all('/api/getstoragenodethroughput', controller['/api/getstoragenodethroughput']);
 
