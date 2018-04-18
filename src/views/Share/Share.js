@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Icon, Input, message, Modal, Select, Table} from 'antd';
+import {Button, Icon, Input, message, Modal, Table} from 'antd';
+import CreateShare from './CreateShare';
+import EditShare from './EditShare';
 import lang from "../../components/Language/lang";
 import httpRequests from '../../http/requests';
 
@@ -13,18 +15,7 @@ class Share extends Component {
             query: '',
             shareList,
             shareListBackup: shareList,
-            // form
-            visible: false,
-            formValid: false,
-            formSubmitting: false,
-            shareData: {
-                path: '',
-                protocol: ''
-            },
-            validation: {
-                path: {status: '', help: '', valid: false},
-                protocol: {status: '', help: '', valid: false}
-            }
+            readDeleteWarning: false
         };
     }
 
@@ -55,8 +46,13 @@ class Share extends Component {
 
     delete ({protocol, path}, index){
         Modal.confirm({
-            title: lang(`确定删除这个共享: ${protocol}@${path} ?`, `Are you sure you want to delete this share: ${protocol}@${path} ?`),
-            content: lang('此操作不可恢复', 'You can\'t undo this action'),
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行删除共享 ${protocol}@${path} 的操作。`, `You are about to delete share ${protocol}@${path}`)}</p>
+                <p>{lang(`该操作将导致共享不可用，并且断开正在访问该共享目录的用户的连接。`, `This operation will make the share unavailable and interrupt the connections of the users to this directory.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保无任何业务运行在该共享上。`, `A suggestion: before deleting this share, ensure that there's no service is running on this share.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -76,86 +72,12 @@ class Share extends Component {
         });
     }
 
-    formValueChange (key, value){
-        let shareData = Object.assign({}, this.state.shareData, {[key]: value});
-        this.setState({shareData});
+    create (){
+        this.createShareWrapper.getWrappedInstance().show();
     }
 
-    async validateForm (key){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
-        await this.setState({validation});
-        let {path, protocol} = this.state.shareData;
-        if (key === 'path'){
-            if (!path){
-                await this.validationUpdateState('path', {
-                    cn: '请输入要做共享的路径',
-                    en: 'Please enter share path'
-                }, false);
-            }
-        }
-        if (key === 'protocol'){
-            if (!protocol){
-                await this.validationUpdateState('protocol', {
-                    cn: '请选择一个协议',
-                    en: 'Please select a protocol'
-                }, false);
-            }
-        }
-        // one path with one protocol group can only be exported once
-        let share = `${path}@${protocol}`;
-        let isShareDuplicated = this.props.shareList.some(({path, protocol}) => share === `${path}@${protocol}`);
-        if (isShareDuplicated){
-            await this.validationUpdateState('name', {
-                cn: '同一路径和同一协议的组合只能做一次共享',
-                en: 'One path with one protocol group can only be shared once'
-            }, false);
-        }
-
-        // calculate whole form validation
-        let formValid = true;
-        Object.keys(this.state.validation).forEach(key => {
-            formValid = formValid && this.state.validation[key].valid;
-        });
-        this.setState({formValid});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: (value.cn || value.en) ? 'error' : '', help: lang(value.cn, value.en), valid: valid}});
-        await this.setState({validation});
-    }
-
-    async createShare (){
-        let shareData = Object.assign({}, this.state.shareData);
-        this.setState({formSubmitting: true});
-        try {
-            await httpRequests.createShare(shareData);
-            httpRequests.getShareList();
-            await this.hide();
-            message.success(lang('创建共享成功!', 'Create share successfully!'));
-            this.setState({formSubmitting: false});
-        } catch ({msg}){
-            message.success(lang('创建共享失败, 原因: ', 'Create share failed, reason: ') + msg);
-            this.setState({formSubmitting: false});
-        }
-    }
-
-    show (){
-        this.setState({
-            visible: true,
-            formSubmitting: false,
-            shareData: {
-                path: '',
-                protocol: ''
-            },
-            validation: {
-                path: {status: '', help: '', valid: false},
-                protocol: {status: '', help: '', valid: false}
-            }
-        });
-    }
-
-    hide (){
-        this.setState({visible: false});
+    edit (shareData){
+        this.editShareWrapper.getWrappedInstance().show(shareData);
     }
 
     render (){
@@ -175,6 +97,12 @@ class Share extends Component {
                 {title: lang('操作', 'Operation'), width: 80,
                     render: (text, record, index) => (
                         <div>
+                            <a title={lang('编辑', 'Edit')}
+                               onClick={this.edit.bind(this, record)}
+                               style={{marginLeft: 10}}
+                            >
+                                <Icon style={{fontSize: 15}} type="edit" />
+                            </a>
                             <a title={lang('删除', 'Delete')}
                                onClick={this.delete.bind(this, record, index)}
                                style={{marginLeft: 10}}
@@ -203,7 +131,7 @@ class Share extends Component {
                             />
                             <Button className="fs-create-snapshot-button"
                                 size="small"
-                                onClick={this.show.bind(this)}
+                                onClick={this.create.bind(this, true)}
                             >
                                 {lang('创建', 'Create')}
                             </Button>
@@ -211,56 +139,8 @@ class Share extends Component {
                         <Table {...tableProps} />
                     </section>
                 </section>
-                <Modal title={lang('创建共享', 'Create Share')}
-                       width={320}
-                       closable={false}
-                       maskClosable={false}
-                       visible={this.state.visible}
-                       footer={
-                           <div>
-                               <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
-                                    size='small' onClick={this.createShare.bind(this)}
-                               >
-                                   {lang('创建', 'Create')}
-                               </Button>
-                               <Button size='small' onClick={this.hide.bind(this)}>
-                                   {lang('取消', 'Cancel')}
-                               </Button>
-                           </div>
-                       }
-                >
-                    <Form>
-                        <Form.Item label={lang('共享路径', 'Share Path')}
-                           validateStatus={this.state.validation.path.status}
-                           help={this.state.validation.path.help}
-                        >
-                            <Input style={{width: 240}} size="small"
-                               placeholder={lang('请输入共享路径', 'please enter share path')}
-                               value={this.state.shareData.path}
-                               onChange={({target: {value}}) => {
-                                   this.formValueChange.bind(this, 'path')(value);
-                                   this.validateForm.bind(this)('path');
-                               }}
-                            />
-                        </Form.Item>
-                        <Form.Item label={lang('协议', 'Protocol')}
-                            validateStatus={this.state.validation.protocol.status}
-                            help={this.state.validation.protocol.help}
-                        >
-                            <Select style={{width: 240}} size="small"
-                                placeholder={lang('请选择协议', 'please select protocol')}
-                                value={this.state.shareData.protocol}
-                                onChange={value => {
-                                    this.formValueChange.bind(this, 'protocol', value)();
-                                    this.validateForm.bind(this)('protocol');
-                                }}
-                            >
-                                <Select.Option value="nfs">NFS (Linux/UNIX/Mac)</Select.Option>
-                                <Select.Option value="cifs">CIFS (Windows/Mac)</Select.Option>
-                            </Select>
-                        </Form.Item>
-                    </Form>
-                </Modal>
+                <CreateShare ref={ref => this.createShareWrapper = ref} />
+                <EditShare ref={ref => this.editShareWrapper = ref} />
             </div>
         );
     }

@@ -27,7 +27,7 @@ class MetadataNodes extends Component {
     componentDidMount (){
         httpRequests.getMetadataNodeOverviewSummary();
         httpRequests.getMetadataNodeOverviewUserOperationStatics();
-        httpRequests.getMetadataNodeDetailSummary();
+        // httpRequests.getMetadataNodeDetailSummary();
     }
 
     componentWillReceiveProps (nextProps){
@@ -177,7 +177,7 @@ class MetadataNodes extends Component {
                                             {
                                                 this.props.nodeList.map(({hostname, nodeId, status}) =>
                                                     <Select.Option key={hostname} value={nodeId} node={hostname} disabled={!status}>
-                                                        <Icon className={status ? 'fs-option-node up' : 'fs-option-node down'} title={status ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                        <Icon className="fs-option-node up" title={status ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
                                                         {hostname}
                                                     </Select.Option>
                                                 )

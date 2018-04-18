@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {HashRouter, Switch, Route, Redirect} from 'react-router-dom';
-import asyncLoad from './asyncLoad';
-import {LocaleProvider} from 'antd';
+import {Icon, LocaleProvider, Spin} from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
+import asyncLoad from './asyncLoad';
 import lang from '../components/Language/lang';
 import {ckGet} from '../services';
 import routerPath from './routerPath';
@@ -15,6 +15,7 @@ const Error = asyncLoad(() => import('./Error/Error'));
 export default class App extends Component {
     constructor (props){
         super(props);
+        let isRollingBack = ckGet('rollbacking') === 'true';
         let isInitialized = ckGet('init');
         let defaultPath = '';
         if (isInitialized === 'true'){
@@ -28,7 +29,8 @@ export default class App extends Component {
             defaultPath = routerPath.Init;
         }
         this.state = {
-            defaultPath
+            defaultPath,
+            isRollingBack
         };
     }
 
@@ -36,14 +38,19 @@ export default class App extends Component {
         return (
             <HashRouter>
                 <LocaleProvider locale={lang(enUS, {})}>
-                    <Switch>
-                        <Route path={routerPath.Init} component={Initialize} />
-                        <Route path={routerPath.Login} component={Login} />
-                        <Route path={routerPath.Error} component={Error} />
-                        <Route path={routerPath.Main} component={Main} />
+                    <Spin spinning={this.state.isRollingBack}
+                        indicator={<Icon type="setting" spin style={{fontSize: 60}} />}
+                        tip={lang('快照正在回滚中，暂无法进行任何操作，请稍候 ...', 'Snapshot is rolling back, no operation is allowed to do, please wait ...')}
+                    >
+                        <Switch>
+                            <Route path={routerPath.Init} component={Initialize} />
+                            <Route path={routerPath.Login} component={Login} />
+                            <Route path={routerPath.Error} component={Error} />
+                            <Route path={routerPath.Main} component={Main} />
 
-                        <Redirect from='/' to={this.state.defaultPath} />
-                    </Switch>
+                            <Redirect from='/' to={this.state.defaultPath} />
+                        </Switch>
+                    </Spin>
                 </LocaleProvider>
             </HashRouter>
         );

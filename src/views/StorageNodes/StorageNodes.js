@@ -163,7 +163,7 @@ class StorageNodes extends Component {
                                             {
                                                 this.props.status.map(({node, nodeNumID, value}) =>
                                                     <Select.Option key={nodeNumID} value={nodeNumID} node={node} disabled={!value}>
-                                                        <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                        <Icon className="fs-option-node" title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
                                                         {node}
                                                     </Select.Option>
                                                 )

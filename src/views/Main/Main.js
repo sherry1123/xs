@@ -23,7 +23,7 @@ const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'
 
 // snapshot
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
-const SnapshotSchedule = asyncLoad(() => import('../Snapshot/SnapshotSchedule'));
+const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
 
 // Share
 const Share = asyncLoad(() => import('../Share/Share'));

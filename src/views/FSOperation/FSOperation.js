@@ -197,24 +197,14 @@ class FSOperation extends Component {
                 </section>
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-query-wrapper">
-                        <Form layout="inline">
-                            <Form.Item label={lang('路径', 'Path')}>
-                                <Input placeholder={lang('请输入路径', 'enter path')} size="small"
-                                       style={{width: 250}}
-                                       value={this.state.dirPath}
-                                       onChange={({target: {value}}) => {
-                                           this.setState({dirPath: value});
-                                       }}
-                                />
-                            </Form.Item>
-                            <Form.Item className="fs-login-username-input-wrapper">
-                                <Button shape="circle" icon="search" size="small"
-                                        title={lang('获取路径信息', 'Fetch Path Information')}
-                                        style={{display: 'inline-block'}}
-                                        onClick={() => {this.queryDirPath.bind(this)()}}
-                                />
-                            </Form.Item>
-                        </Form>
+                        <Input.Search className="fs-search-table-input" size="small"
+                            style={{width: 250}}
+                            placeholder={lang('请输入路径', 'enter path')}
+                            value={this.state.dirPath}
+                            enterButton={true}
+                            onChange={({target: {value}}) =>  this.setState({dirPath: value})}
+                            onSearch={() => {this.queryDirPath.bind(this)()}}
+                        />
                     </section>
                 </section>
                 <div className="fs-page-item-group">

@@ -8,7 +8,7 @@ import metadataNodeReducer from '../reducers/metadataNodeReducer';
 import storageNodeReducer from '../reducers/storageNodeReducer';
 import managementReducer from '../reducers/managementReducer';
 import snapshotReducer from '../reducers/snapshotReducer';
-import nasReducer from './shareReducer';
+import shareReducer from './shareReducer';
 import fsOperationReducer from '../reducers/fsOperationReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
@@ -55,8 +55,8 @@ export default combineReducers({
                     state[key] = snapshotReducer(main[key], action);
                     break;
 
-                case 'nas':
-                    state[key] = nasReducer(main[key], action);
+                case 'share':
+                    state[key] = shareReducer(main[key], action);
                     break;
 
                 case 'fsOperation':

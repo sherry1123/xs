@@ -53,3 +53,6 @@ const fetchDataPer15s = () => {
 new CronJob('*/15 * * * * *', async () => {
     fetchDataPer15s();
 }, null, true);
+
+// request something when access app
+httpRequests.getFiles('/');

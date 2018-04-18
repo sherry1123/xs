@@ -6,7 +6,7 @@ import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
 import snapshotAction from '../redux/actions/snapshotAction';
-import nasAction from '../redux/actions/shareAction';
+import shareAction from '../redux/actions/shareAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
 const errorHandler = e => {
@@ -235,11 +235,15 @@ export default  {
         await fetchPost('/api/deletesnapshottask', snapshotSchedule);
     },
 
+    async deleteSnapshotSchedulesInBatch (names){
+        await fetchPost('/api/deletesnapshotschedules', {names});
+    },
+
     // share
     async getShareList (){
         try {
             let data = await fetchGet('/api/getnasexport');
-            store.dispatch(nasAction.setShareList(data));
+            store.dispatch(shareAction.setShareList(data));
         } catch (e){
             errorHandler(e);
         }
@@ -247,6 +251,10 @@ export default  {
 
     async createShare (nasExport){
         await fetchPost('/api/createnasexport', nasExport);
+    },
+
+    async updateShare (nasExport){
+        await fetchPost('/api/updatenasexport', nasExport);
     },
 
     async deleteShare (nasExport){

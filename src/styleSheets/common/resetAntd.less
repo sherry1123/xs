@@ -17,11 +17,13 @@ input[type="number"]{
     font-size: 12px !important;
 }
 
-.fnt-form {
-    .ant-form-item {
-        margin-bottom: 15px;
-        .ant-form-item-label {
-            white-space: normal !important;
+.ant-form {
+    .ant-row {
+        &.ant-form-item {
+            margin-bottom: 5px !important;
+            .ant-form-item-label {
+                white-space: normal !important;
+            }
         }
     }
 }
@@ -142,12 +144,13 @@ input[type="number"]{
 .anticon {
     &.fs-option-node {
         margin-right: 15px;
-        &.up {
-            color: @green;
-        }
-        &.down {
-            color: @red;;
-        }
+    }
+}
+
+.ant-spin {
+    .ant-spin-text {
+        margin-top: 80px;
+        font-size: 18px;
     }
 }
 
