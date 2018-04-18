@@ -1,8 +1,7 @@
 const database = require('./database');
 const promise = require('../module/promise');
+const handler = require('../module/handler');
 let rollbacking = false;
-const currentTimeHandler = () => (new Date(new Date().toISOString().replace(/:\d+\.\d+/, ':00.000')));
-const startTimeHandler = () => (new Date(new Date(new Date().getTime() + 60000).toISOString().replace(/:\d+\.\d+/, ':00.000')));
 const model = {
     getRollbackStatus() {
         return rollbacking;
@@ -54,12 +53,12 @@ const model = {
         return await database.getSnapshotTask(param);
     },
     async createSnapshotTask(param) {
-        let { name, createTime = new Date(), startTime = startTimeHandler(), autoDisableTime = 0, interval, deleteRound = false, isRunning = false } = param;
+        let { name, createTime = new Date(), startTime = handler.startTime(), autoDisableTime = 0, interval, deleteRound = false, isRunning = false } = param;
         await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime, interval, deleteRound, isRunning });
     },
     async enableSnapshotTask(param) {
         let { name } = param;
-        await database.updateSnapshotTask({ name }, { startTime: startTimeHandler(), isRunning: true });
+        await database.updateSnapshotTask({ name }, { startTime: handler.startTime(), isRunning: true });
     },
     async disableSnapshotTask(param) {
         let { name } = param;
@@ -70,7 +69,7 @@ const model = {
         await database.deleteSnapshotTask({ name });
     },
     async runSnapshotTask() {
-        let currentTime = currentTimeHandler();
+        let currentTime = handler.currentTime();
         let isRunningTask = await database.getSnapshotTask({ isRunning: true });
         if (isRunningTask.length) {
             let { name, startTime, autoDisableTime, interval, deleteRound } = isRunningTask[0];
