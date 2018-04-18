@@ -24,7 +24,8 @@ const fetchDataPer15s = () => {
     // storage node
     if (routerHash.match(main + routerPath.StorageNodes)){
         httpRequests.getStorageNodeOverviewThroughput();
-        httpRequests.getStorageNodeDetailSummary();
+        httpRequests.getStorageNodeDiskStatus();
+        httpRequests.getStorageNodeTargets();
         httpRequests.getStorageNodeDetailThroughput();
     }
 

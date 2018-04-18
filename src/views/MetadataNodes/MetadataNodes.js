@@ -45,7 +45,6 @@ class MetadataNodes extends Component {
             // when firstly get the nodes data, request the first node data as current node
             newState['currentMetadataNode'] = currentMetadataNode;
             lsSet('currentMetadataNode', currentMetadataNode);
-            // this.getCurrentMetadataNodeData();
         }
         this.setState(newState);
     }
@@ -60,17 +59,7 @@ class MetadataNodes extends Component {
         this.setState({currentMetadataNode});
         // fetch current node data
         lsSet('currentMetadataNode', currentMetadataNode);
-        // this.getCurrentMetadataNodeData();
     }
-
-    /*
-    getCurrentMetadataNodeData (){
-        let currentMetadataNode = lsGet('currentMetadataNode');
-        if (currentMetadataNode){
-            httpRequests.getMetadataNodeDetailSummary(currentMetadataNode);
-        }
-    }
-    */
 
     setStaticsFilter (type, selectedItems){
         if (Array.isArray(selectedItems)){
