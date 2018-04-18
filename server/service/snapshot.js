@@ -1,6 +1,7 @@
 const database = require('./database');
 const promise = require('../module/promise');
 let rollbacking = false;
+const currentTimeHandler = () => (new Date(new Date().toISOString().replace(/:\d+\.\d+/, ':00.000')));
 const startTimeHandler = () => (new Date(new Date(new Date().getTime() + 60000).toISOString().replace(/:\d+\.\d+/, ':00.000')));
 const model = {
     getRollbackStatus() {
@@ -69,28 +70,25 @@ const model = {
         await database.deleteSnapshotTask({ name });
     },
     async runSnapshotTask() {
-        let currentTime = new Date();
+        let currentTime = currentTimeHandler();
         let isRunningTask = await database.getSnapshotTask({ isRunning: true });
         if (isRunningTask.length) {
             let { name, startTime, autoDisableTime, interval, deleteRound } = isRunningTask[0];
-            let timeGap = currentTime - startTime;
-            let timeGapInSecond = Math.floor(timeGap / 1000);
-            if (timeGap > 0 && (!autoDisableTime || timeGapInSecond < autoDisableTime)) {
-                if (timeGapInSecond % interval < 5) {
-                    let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
-                    let limit = Number(snapshotSetting.auto);
-                    let autoSnapshotList = await database.getSnapshot({ isAuto: true });
-                    let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
-                    if (autoSnapshotList.length < limit) {
-                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
-                    } else if (deleteRound) {
-                        let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
-                        let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
-                        await database.deleteSnapshot({ name: nameToDelete });
-                        await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
-                    }
+            let timeGapInSecond = (currentTime - startTime) / 1000;
+            if (timeGapInSecond >= interval && (!autoDisableTime || timeGapInSecond <= autoDisableTime)) {
+                let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
+                let limit = Number(snapshotSetting.auto);
+                let autoSnapshotList = await database.getSnapshot({ isAuto: true });
+                let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
+                if (autoSnapshotList.length < limit) {
+                    await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
+                } else if (deleteRound) {
+                    let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
+                    let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
+                    await database.deleteSnapshot({ name: nameToDelete });
+                    await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                 }
-            } else {
+            } else if (timeGapInSecond){
                 await database.updateSnapshotTask({ name }, { isRunning: false });
             }
         }

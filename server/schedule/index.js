@@ -3,9 +3,9 @@ const snapshot = require('../service/snapshot')
 const CronJob = require('cron').CronJob;
 
 new CronJob('*/15 * * * * *', async () => {
-    await service.addHardware();
+    await service.runHardwareTask();
 }, null, true);
 
 new CronJob('0 * * * * *', async () => {
-    !snapshot.getRollbackStatus() && await snapshot.runSnapshotTask();
+    !snapshot.getRollbackStatus() && await service.runSnapshotTask();
 }, null, true);

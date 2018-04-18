@@ -105,7 +105,7 @@ exports.errors = {
     17: 'get audit log error',
     18: 'add audit log error',
     19: 'get hardware error',
-    20: 'add hardware error',
+    20: 'run hardware task error',
     21: 'test mail error',
     22: 'send mail error',
     23: 'get nodelist error',
@@ -147,7 +147,8 @@ exports.errors = {
     59: 'delete nas export error',
     60: 'start delete snapshots error',
     61: 'the cluster is rollbacking',
-    62: 'update nas export error'
+    62: 'update nas export error',
+    63: 'run snapshot task error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',

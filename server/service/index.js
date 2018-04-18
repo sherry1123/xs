@@ -390,7 +390,7 @@ const model = {
         }
         return result;
     },
-    async addHardware() {
+    async runHardwareTask() {
         let date = new Date();
         let api = config.api.agentd.hardware;
         let url = api;
@@ -1086,6 +1086,13 @@ const model = {
                 await model.addEventLog({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
                 socket.postEventStatus({ channel, code, target: { total: target.length, success, failed: target.length - success }, result: false });
                 break;
+        }
+    },
+    async runSnapshotTask() {
+        try {
+            await snapshot.runSnapshotTask();
+        } catch (error) {
+            errorHandler(63, error);
         }
     }
 };
