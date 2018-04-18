@@ -74,7 +74,7 @@ const model = {
         if (isRunningTask.length) {
             let { name, startTime, autoDisableTime, interval, deleteRound } = isRunningTask[0];
             let timeGapInSecond = (currentTime - startTime) / 1000;
-            if (timeGapInSecond >= interval && (!autoDisableTime || timeGapInSecond <= autoDisableTime)) {
+            if (timeGapInSecond >= interval && !(timeGapInSecond % interval) && (!autoDisableTime || timeGapInSecond <= autoDisableTime)) {
                 let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
                 let limit = Number(snapshotSetting.auto);
                 let autoSnapshotList = await database.getSnapshot({ isAuto: true });
@@ -87,7 +87,7 @@ const model = {
                     await database.deleteSnapshot({ name: nameToDelete });
                     await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                 }
-            } else if (timeGapInSecond){
+            } else if (autoDisableTime && timeGapInSecond > autoDisableTime){
                 await database.updateSnapshotTask({ name }, { isRunning: false });
             }
         }
