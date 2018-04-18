@@ -29,10 +29,17 @@ if (isInitialized !== 'true'){
             message: socketEventChannel[channel]()[language] + lang('通知', 'Notification'),
             description: socketEventCode[code]()[language](target)
         });
+
+        // post handlers
         // request the appointed new data immediately by code
         if (eventCodeForEventChannel.snapshot.includes(code)){
             // snapshot
             httpRequest.getSnapshotList();
+        }
+        // snapshot(system) rolling back
+        if (code === 7){
+            // reload page and go through the system status logic in App.js
+            window.location.reload();
         }
     });
 }

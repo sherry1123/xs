@@ -7,14 +7,14 @@ import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import DiskUsageStatus from '../../components/DiskUsageStatus/DiskUsageStatus';
 import StorageTargetGroup from '../../components/StorageTargetGroup/StorageTargetGroup';
-import {lsGet, lsSet, formatStorageSize} from '../../services';
+import {lsSet, formatStorageSize} from '../../services';
 import httpRequests from '../../http/requests';
 
 class StorageNodes extends Component {
     constructor (props){
         super(props);
         this.state = {
-            currentStorageNode: this.props.status.filter(node => node.value)[0] || {},
+            currentStorageNode: this.props.status.filter(node => node.status)[0] || {},
             expandSwitchNode: true
         };
     }
@@ -22,9 +22,10 @@ class StorageNodes extends Component {
     componentDidMount (){
         // request overview data
         httpRequests.getStorageNodeOverviewSummary();
+        httpRequests.getStorageNodeDiskStatus();
+        httpRequests.getStorageNodeTargets();
         setTimeout(() => httpRequests.getStorageNodeOverviewThroughput(), 1000);
         // request detail data
-        this.getCurrentStorageNodeData();
         setTimeout(() => httpRequests.getStorageNodeDetailThroughput(), 1500);
     }
 
@@ -32,18 +33,17 @@ class StorageNodes extends Component {
         let {status} = nextProps;
         let currentStorageNode = {};
         if (status.length){
-            currentStorageNode = status.filter(node => node.value)[0] || {};
-            if (!currentStorageNode.node){
+            currentStorageNode = status.filter(node => node.status)[0] || {};
+            if (currentStorageNode.hasOwnProperty('hostname')){
                 // if there is no up node, use the first node as current node directly, even if it's down
                 currentStorageNode = status[0];
             }
         }
         let newState = {};
-        if (currentStorageNode.node && !this.state.currentStorageNode.node){
+        if (currentStorageNode.hasOwnProperty('hostname') && !this.state.currentStorageNode.hasOwnProperty('hostname')){
             // when firstly get the nodes data, request the first node data as current node
             newState['currentStorageNode'] = currentStorageNode;
             lsSet('currentStorageNode', currentStorageNode);
-            this.getCurrentStorageNodeData();
         }
         this.setState(newState);
     }
@@ -53,19 +53,11 @@ class StorageNodes extends Component {
         this.setState({expandSwitchNode});
     }
 
-    switchNode (nodeNumID){
-        let currentStorageNode = this.props.status.filter(node => node.nodeNumID === nodeNumID)[0];
+    switchNode (nodeId){
+        let currentStorageNode = this.props.status.filter(node => node.nodeId === nodeId)[0];
         this.setState({currentStorageNode});
         // fetch current node data
         lsSet('currentStorageNode', currentStorageNode);
-        this.getCurrentStorageNodeData();
-    }
-
-    getCurrentStorageNodeData (){
-        let currentStorageNode = lsGet('currentStorageNode');
-        if (currentStorageNode){
-            httpRequests.getStorageNodeDetailSummary(currentStorageNode);
-        }
     }
 
     generateThroughChartOption (type){
@@ -84,13 +76,13 @@ class StorageNodes extends Component {
 
     render (){
         let totalNodesCount = this.props.status.length || 0;
-        let upNodesCount = this.props.status.filter(node => node.value).length || 0;
+        let upNodesCount = this.props.status.filter(node => node.status).length || 0;
         let downNodesCount = 0;
         let downNodes = [];
-        this.props.status.forEach(({node, value}) => {
-            if (!value){
+        this.props.status.forEach(({hostname, status}) => {
+            if (!status){
                 downNodesCount ++;
-                downNodes.push(node);
+                downNodes.push(hostname);
             }
         });
         let downNodesDetail = !downNodesCount ? lang('无异常存储节点', 'There\'s no storage nodes down') : (lang('异常存储节点：', 'Down Storage Nodes: ') + downNodes.join(','));
@@ -148,7 +140,7 @@ class StorageNodes extends Component {
                     <div className="fs-node-item">
                         <section className="fs-page-item-wrapper m-t-0 fs-node-info-wrapper">
                             <h3 className="fs-page-title item">
-                                {this.state.currentStorageNode.node} {lang('节点详情', 'Node Detail')}
+                                {this.state.currentStorageNode.hostname} {lang('节点详情', 'Node Detail')}
                                 {
                                     !!this.props.status.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
                                         <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
@@ -157,14 +149,14 @@ class StorageNodes extends Component {
                                         />
                                         <Select style={{width: 170}} size="small"
                                             notFoundContent={lang('暂无节点', 'No Nodes')}
-                                            value={this.state.currentStorageNode.nodeNumID}
+                                            value={this.state.currentStorageNode.nodeId}
                                             onChange={this.switchNode.bind(this)}
                                         >
                                             {
-                                                this.props.status.map(({node, nodeNumID, value}) =>
-                                                    <Select.Option key={nodeNumID} value={nodeNumID} node={node} disabled={!value}>
-                                                        <Icon className={value ? 'fs-option-node up' : 'fs-option-node down'} title={value ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
-                                                        {node}
+                                                this.props.status.map(({hostname, nodeId, status}) =>
+                                                    <Select.Option key={nodeId} value={nodeId} node={hostname} disabled={!status}>
+                                                        <Icon className="fs-option-node" title={status ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
+                                                        {hostname}
                                                     </Select.Option>
                                                 )
                                             }
@@ -181,16 +173,16 @@ class StorageNodes extends Component {
                                         <div className="fs-info-block-item">
                                             <i className="fs-info-block-circle purple" />
                                             <div className="fs-info-block-label">{lang('节点名称', 'Node Name')}</div>
-                                            <div className="fs-info-block-value">{this.state.currentStorageNode.node || '--'}</div>
+                                            <div className="fs-info-block-value">{this.state.currentStorageNode.hostname || '--'}</div>
                                         </div>
                                         <div className="fs-info-block-item m-l">
                                             <i className="fs-info-block-circle yellow" />
                                             <div className="fs-info-block-label">{lang('状态', 'Node Status')}</div>
                                             <div className="fs-info-block-value">
                                                 {
-                                                    this.state.currentStorageNode.value ?
+                                                    this.state.currentStorageNode.status ?
                                                         <span>{lang('正常', 'Up')} <i className="fs-node-status-circle up" title={lang('正常', 'Up')} /></span> :
-                                                        this.state.currentStorageNode.value !== undefined ?
+                                                        this.state.currentStorageNode.status !== undefined ?
                                                             <span>{lang('异常', 'Down')} <i className="fs-node-status-circle down" title={lang('异常', 'Down')} /></span> :
                                                             '--'
                                                 }

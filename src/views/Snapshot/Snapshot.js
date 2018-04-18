@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Icon, Input, message, Modal, Popconfirm, Table} from 'antd';
+import {Button, Icon, Input, message, Modal, Table} from 'antd';
+import CreateSnapshot from './CreateSnapshot';
 import lang from "../../components/Language/lang";
-import {timeFormat, validateFsName} from '../../services';
+import {timeFormat} from '../../services';
 import httpRequests from '../../http/requests';
 
 class Snapshot extends Component {
@@ -55,81 +56,20 @@ class Snapshot extends Component {
         }
     }
 
-    formValueChange (key, value){
-        let snapshotData = Object.assign({}, this.state.snapshotData, {[key]: value});
-        this.setState({snapshotData});
+    create (){
+        this.createSnapshotWrapper.getWrappedInstance().show();
     }
 
-    async validateForm (key){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
-        await this.setState({validation});
-        if (key === 'name'){
-            let {name} = this.state.snapshotData;
-            if (!name){
-                // no name enter
-                await this.validationUpdateState('name', {
-                    cn: '请输入快照名称',
-                    en: 'please enter snapshot name'
-                }, false);
-            } else if (!validateFsName(name)){
-                // name validate failed
-                await this.validationUpdateState('name', {
-                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位或末尾位）的组合，长度3-30位',
-                    en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30.'
-                }, false);
-            } else {
-                let isNameDuplicated = this.props.snapshotList.some(snapshot => snapshot.name === name);
-                if (isNameDuplicated){
-                    // this name is duplicated with an existing snapshot's name
-                    await this.validationUpdateState('name', {
-                        cn: '该快照名称已经存在',
-                        en: 'The snapshot name already existed'
-                    }, false);
-                }
-            }
-        }
-        // calculate whole form validation
-        let formValid = true;
-        Object.keys(this.state.validation).forEach(key => {
-            formValid = formValid && this.state.validation[key].valid;
-        });
-        this.setState({formValid});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: (value.cn || value.en) ? 'error' : '', help: lang(value.cn, value.en), valid: valid}});
-        await this.setState({validation});
-    }
-
-    async createSnapshot (){
-        let snapshotData = Object.assign({}, this.state.snapshotData);
-        this.setState({formSubmitting: true});
-        try {
-            await httpRequests.createSnapshot(snapshotData);
-            httpRequests.getSnapshotList();
-            await this.hide();
-            message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
-        } catch ({msg}){
-            message.error(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
-        }
-        this.setState({formSubmitting: false});
-    }
-
-    async deleteSnapshot (snapshot){
-        try {
-            await httpRequests.deleteSnapshot(snapshot);
-            httpRequests.getSnapshotList();
-            message.success(lang(`已开始删除快照 ${snapshot.name}!`, `Start deleting snapshot ${snapshot.name}!`));
-        } catch ({msg}){
-            message.error(lang(`删除快照 ${snapshot.name} 失败, 原因: `, `Delete snapshot ${snapshot.name} failed, reason: `) + msg);
-        }
-    }
-
-    rollbackSnapshot (snapshot){
+    rollback (snapshot){
         Modal.confirm({
-            title: lang(`确定回滚这个快照: ${snapshot.name} ?`, `Are you sure you want to rollback this snapshot: ${snapshot.name} ?`),
-            content: lang('此操作不可恢复', 'You can\'t undo this action'),
-            okText: lang('回滚', 'Roll Back'),
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行回滚快照 ${snapshot.name} 的操作。`, `You are about to rollback snapshot ${snapshot.name}.`)}</p>
+                <p>{lang(`该操作将会将系统恢复至创建该快照的那个时间点的状态，在回滚期间内无法做任何操作。`, `This operation will recover system to the time point that create this snapshot at. Can't do any operations during rolling back.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的快照的创建时间是否是想要恢复到的时间点，并确保已无业务运行在系统上。`, `A suggestion: before executing this operation, ensure that the selected snapshot's create time is what you want the system to recover to, and ensure that there's no service is running on the system.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
@@ -146,6 +86,32 @@ class Snapshot extends Component {
         });
     }
 
+    delete (snapshot){
+        Modal.confirm({
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行删除快照 ${snapshot.name} 的操作。`, `You are about to delete snapshot ${snapshot.name}.`)}</p>
+                <p>{lang(`该操作将会从系统中删除该快照。`, `This operation will delete this snapshot from the system. `)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot and it's no longer necessary.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okText: lang('删除', 'Delete'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.deleteSnapshot(snapshot);
+                    httpRequests.getSnapshotList();
+                    message.success(lang(`已开始删除快照 ${snapshot.name}!`, `Start deleting snapshot ${snapshot.name}!`));
+                } catch ({msg}){
+                    message.error(lang(`删除快照 ${snapshot.name} 失败, 原因: `, `Delete snapshot ${snapshot.name} failed, reason: `) + msg);
+                }
+            },
+            onCancel: () => {
+
+            }
+        });
+    }
+
     batchDelete (){
         let {batchDeleteSnapshotNames} = this.state;
         let batchCount = batchDeleteSnapshotNames.length;
@@ -153,8 +119,13 @@ class Snapshot extends Component {
             message.warning(lang('请选择要批量删除的快照', 'Please select the snapshots which you want to delete in batch.'));
         } else {
             Modal.confirm({
-                title: lang(`确定批量删除所选的这${batchCount}个快照?`, `Are you sure to delete the selected ${batchCount} snapshots in batch?`),
-                content: lang('此操作不可恢复', 'You can\'t undo this action'),
+                title: lang('警告', 'Warning'),
+                content: <div style={{fontSize: 12}}>
+                    <p>{lang(`您将要执行删除这 ${batchCount} 个快照的操作。`, `You are about to delete these ${batchCount} snapshot(s).`)}</p>
+                    <p>{lang(`该操作将会从系统中删除这些快照。`, `This operation will delete the snapshot(s) from the system. `)}</p>
+                    <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它(们)已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot(s) and it's(they're) no longer necessary.`)}</p>
+                </div>,
+                iconType: 'exclamation-circle-o',
                 okText: lang('删除', 'Delete'),
                 cancelText: lang('取消', 'Cancel'),
                 onOk: async () => {
@@ -174,32 +145,8 @@ class Snapshot extends Component {
         }
     }
 
-    show (){
-        this.setState({
-            visible: true,
-            // reset form data and validations
-            formSubmitting: false,
-            snapshotData: {name: ''},
-            validation: {name: {status: '', help: '', valid: false}}
-        });
-    }
-
-    async hide (){
-        this.setState({visible: false});
-    }
-
     render (){
         let {batchDeleteSnapshotNames, snapshotList} = this.state;
-        let rowSelection = {
-            columnWidth: '2%',
-            selectedRowKeys: batchDeleteSnapshotNames,
-            onChange: (selectedRowKeys) => {
-                this.setState({batchDeleteSnapshotNames: selectedRowKeys});
-            },
-            getCheckboxProps: record => ({
-                disabled: record.deleting || record.rollbacking
-            }),
-        };
         let tableProps = {
             size: 'small',
             dataSource: snapshotList,
@@ -209,14 +156,25 @@ class Snapshot extends Component {
                     `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteSnapshotNames.length} 项`,
                     `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteSnapshotNames.length}`
                 ),
+                size: 'normal',
             },
             rowKey: 'name',
             locale: {
                 emptyText: lang('暂无快照', 'No Snapshot')
             },
+            rowSelection: {
+                columnWidth: '2%',
+                selectedRowKeys: batchDeleteSnapshotNames,
+                onChange: (selectedRowKeys) => {
+                    this.setState({batchDeleteSnapshotNames: selectedRowKeys});
+                },
+                getCheckboxProps: record => ({
+                    disabled: record.deleting || record.rollbacking
+                }),
+            },
             columns: [
                 {title: lang('名称', 'Name'), width: 200, dataIndex: 'name',},
-                {title: lang('定时创建', 'Timed Create'), width: 80, dataIndex: 'isAuto',
+                {title: lang('定时计划创建', 'Timed Schedule Create'), width: 80, dataIndex: 'isAuto',
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
@@ -226,17 +184,12 @@ class Snapshot extends Component {
                     render: (text, record, index) => {
                         return (!record.rollbacking && !record.deleting) ?
                             <div>
-                                <a onClick={this.rollbackSnapshot.bind(this, record, index)} title={lang('回滚', 'Roll Back')}>
+                                <a onClick={this.rollback.bind(this, record, index)} title={lang('回滚', 'Roll Back')}>
                                     <Icon style={{fontSize: 15}} type="rollback" />
                                 </a>
-                                <Popconfirm placement="leftTop"
-                                    title={lang(`确定删除这个快照: ${record.name} ?`, `Are you sure you want to delete this snapshot: ${record.name} ?`)}
-                                    onConfirm={this.deleteSnapshot.bind(this, record, index)}
-                                    okText={lang('确定', 'Yes')}
-                                    cancelText={lang('取消', 'Cancel')}
-                                >
-                                    <a style={{marginLeft: 10}}><Icon style={{fontSize: 15}} type="delete" /></a>
-                                </Popconfirm>
+                                <a onClick={this.delete.bind(this, record, index)} title={lang('删除', 'Delete')} style={{marginLeft: 10}}>
+                                    <Icon style={{fontSize: 15}} type="delete" />
+                                </a>
                             </div> :
                             <a disabled>{record.rollbacking ? lang('回滚中', 'Rolling Back') : lang('删除中', 'Deleting')}</a>;
                     }
@@ -251,62 +204,32 @@ class Snapshot extends Component {
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search className="fs-search-table-input" size="small"
+                            <Input.Search
+                                className="fs-search-table-input" size="small"
                                 placeholder={lang('快照名称', 'snapshot name')}
                                 value={this.state.query}
                                 enterButton={true}
                                 onChange={this.queryChange.bind(this)}
                                 onSearch={this.searchInTable.bind(this)}
                             />
-                            <Button className="fs-create-snapshot-button" size="small"
-                                onClick={this.show.bind(this)}
+                            <Button
+                                className="fs-create-snapshot-button" size="small"
+                                onClick={this.create.bind(this)}
                             >
                                 {lang('创建', 'Create')}
                             </Button>
-                            <Button className="fs-batch-delete-snapshot-button" size="small"
+                            <Button
+                                className="fs-batch-delete-snapshot-button" size="small"
                                 disabled={!this.state.batchDeleteSnapshotNames.length}
                                 onClick={this.batchDelete.bind(this)}
                             >
                                 {lang('批量删除', 'Delete In Batch')}
                             </Button>
                         </div>
-                        <Table rowSelection={rowSelection} {...tableProps} />
+                        <Table {...tableProps} />
+                        <CreateSnapshot ref={ref => this.createSnapshotWrapper = ref} />
                     </section>
                 </section>
-                <Modal title={lang('创建快照', 'Create Snapshot')}
-                    width={320}
-                    visible={this.state.visible}
-                    closable={false}
-                    maskClosable={false}
-                    footer={
-                        <div>
-                            <Button type="primary" disabled={!this.state.formValid} loading={this.state.formSubmitting}
-                                size='small' onClick={this.createSnapshot.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                            <Button size='small' onClick={this.hide.bind(this)}>
-                                {lang('取消', 'Cancel')}
-                            </Button>
-                        </div>
-                    }
-                >
-                    <Form>
-                        <Form.Item label={lang('快照名称', 'Snapshot Name')}
-                            validateStatus={this.state.validation.name.status}
-                            help={this.state.validation.name.help}
-                        >
-                            <Input style={{width: 270}} size='small'
-                                   placeholder={lang('请输入快照名称', 'please enter snapshot name')}
-                                   value={this.state.snapshotData.name}
-                                   onChange={({target: {value}}) => {
-                                       this.formValueChange.bind(this, 'name')(value);
-                                       this.validateForm.bind(this)('name');
-                                   }}
-                            />
-                        </Form.Item>
-                    </Form>
-                </Modal>
             </div>
         );
     }

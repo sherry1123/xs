@@ -70,9 +70,9 @@ export default {
                     */
                 ],
                 diskSpace: {
-                    diskSpaceTotal: 0,
-                    diskSpaceUsed: 0,
-                    diskSpaceFree: 0,
+                    total: 0,
+                    used: 0,
+                    free: 0,
                 },
                 overviewThroughput: {
                     read: [],
@@ -82,14 +82,13 @@ export default {
                 },
             },
             detail: {
-                general: {},
                 storageTargets: [
                     /*
-                    {id: '201', pathStr: '/dev/orca_201', diskSpaceTotal: 999999999, diskSpaceUsed: 899999999, diskSpaceFree: 100000000},
-                    {id: '202', pathStr: '/dev/orca_202', diskSpaceTotal: 599999999, diskSpaceUsed: 299999999, diskSpaceFree: 300000000},
-                    {id: '203', pathStr: '/dev/orca_203', diskSpaceTotal: 899999999, diskSpaceUsed: 199999999, diskSpaceFree: 700000000},
-                    {id: '204', pathStr: '/dev/orca_204', diskSpaceTotal: 699999999, diskSpaceUsed: 199999999, diskSpaceFree: 500000000},
-                    {id: '205', pathStr: '/dev/orca_205', diskSpaceTotal: 799999999, diskSpaceUsed: 199999999, diskSpaceFree: 600000000},
+                    {targetId: '201', storagePath: '/dev/orca_201', totalSpace: 999999999, usedSpace: 899999999, freeSpace: 100000000},
+                    {targetId: '202', storagePath: '/dev/orca_202', totalSpace: 599999999, usedSpace: 299999999, freeSpace: 300000000},
+                    {targetId: '203', storagePath: '/dev/orca_203', totalSpace: 899999999, usedSpace: 199999999, freeSpace: 700000000},
+                    {targetId: '204', storagePath: '/dev/orca_204', totalSpace: 699999999, usedSpace: 199999999, freeSpace: 500000000},
+                    {targetId: '205', storagePath: '/dev/orca_205', totalSpace: 799999999, usedSpace: 199999999, freeSpace: 600000000},
                     */
                 ],
                 detailThroughput: {

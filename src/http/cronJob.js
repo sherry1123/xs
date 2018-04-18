@@ -24,7 +24,8 @@ const fetchDataPer15s = () => {
     // storage node
     if (routerHash.match(main + routerPath.StorageNodes)){
         httpRequests.getStorageNodeOverviewThroughput();
-        httpRequests.getStorageNodeDetailSummary();
+        httpRequests.getStorageNodeDiskStatus();
+        httpRequests.getStorageNodeTargets();
         httpRequests.getStorageNodeDetailThroughput();
     }
 
@@ -53,3 +54,6 @@ const fetchDataPer15s = () => {
 new CronJob('*/15 * * * * *', async () => {
     fetchDataPer15s();
 }, null, true);
+
+// request something when access app
+httpRequests.getFiles('/');

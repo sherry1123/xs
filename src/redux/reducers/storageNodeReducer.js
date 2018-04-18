@@ -3,12 +3,21 @@ import {storageNodeActionTypes} from '../actions/storageNodeAction';
 
 const storageNodeReducer = (state = State.main.storageNode, action) => {
     switch (action.type){
-        // set storage nodes overview summary: node status and disk space
+        // set storage nodes overview node status
         case storageNodeActionTypes.SET_STORAGE_NODE_OVERVIEW_SUMMARY:
         {
             let {overview} = state;
-            let {data: {status, diskSpace}} = action;
-            overview = Object.assign({}, overview, {status, diskSpace});
+            let {data: status} = action;
+            overview = Object.assign({}, overview, {status});
+            return Object.assign({}, state, {overview});
+        }
+
+        // set storage nodes disk space
+        case storageNodeActionTypes.SET_STORAGE_NODE_DISK_STATUS:
+        {
+            let {overview} = state;
+            let {data: diskSpace} = action;
+            overview = Object.assign({}, overview, {diskSpace});
             return Object.assign({}, state, {overview});
         }
 
@@ -33,11 +42,11 @@ const storageNodeReducer = (state = State.main.storageNode, action) => {
         }
 
         // set storage nodes detail general
-        case storageNodeActionTypes.SET_STORAGE_NODE_DETAIL_SUMMARY:
+        case storageNodeActionTypes.SET_STORAGE_NODE_DETAIL_TARGETS:
         {
             let {detail} = state;
-            let {data: {general, storageTargets}} = action;
-            detail = Object.assign({}, detail, {general, storageTargets});
+            let {data: storageTargets} = action;
+            detail = Object.assign({}, detail, {storageTargets});
             return Object.assign({}, state, {detail});
         }
 

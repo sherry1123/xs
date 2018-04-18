@@ -7,23 +7,23 @@ import lang from '../Language/lang';
 
 class DiskUsageStatus extends Component {
     render (){
-        let {diskSpaceTotal, diskSpaceUsed, diskSpaceFree} = this.props.diskStatus;
-        let usageRate = diskSpaceUsed / diskSpaceTotal * 100;
+        let {total, used, free} = this.props.diskStatus;
+        let usageRate = used / total * 100;
         usageRate = usageRate ? usageRate.toFixed(2) + '%' : '--';
         let option = {
             width: 340,
             infoData: [
                 {
                     label: lang('总容量', 'Total'),
-                    value: formatStorageSize(diskSpaceTotal),
+                    value: formatStorageSize(total),
                     color: 'blue'
                 }, {
                     label: lang('已使用容量', 'Used'),
-                    value: formatStorageSize(diskSpaceUsed),
+                    value: formatStorageSize(used),
                     color: 'orange'
                 }, {
                     label: lang('剩余容量', 'Remaining'),
-                    value: formatStorageSize(diskSpaceFree),
+                    value: formatStorageSize(free),
                     color: 'dark-gray'
                 }
             ],
@@ -39,8 +39,8 @@ class DiskUsageStatus extends Component {
                         data: ['Used Disk Capacity', 'RemainingDiskCapacity']
                     },
                     data: [
-                        {value: diskSpaceUsed, name: 'UsedDiskCapacity'},
-                        {value: diskSpaceFree, name: 'RemainingDiskCapacity'},
+                        {value: used, name: 'UsedDiskCapacity'},
+                        {value: free, name: 'RemainingDiskCapacity'},
                     ]
                 }]
             }

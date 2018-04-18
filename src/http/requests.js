@@ -6,7 +6,7 @@ import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
 import snapshotAction from '../redux/actions/snapshotAction';
-import nasAction from '../redux/actions/shareAction';
+import shareAction from '../redux/actions/shareAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
 const errorHandler = e => {
@@ -86,7 +86,7 @@ export default  {
     // metadata node
     async getMetadataNodeOverviewSummary (){
         try {
-            let data = await fetchGet('/api/getmetanodessummary');
+            let data = await fetchGet('/api/getmetanodestatus');
             store.dispatch(metadataNodeAction.setMetadataNodeOverviewSummary(data));
         } catch (e){
             errorHandler(e);
@@ -103,7 +103,7 @@ export default  {
     },
 
     async getMetadataNodeDetailSummary ({hostname, nodeId} = (lsGet('currentMetadataNode') || {})){
-        if (hostname){
+        if (!!hostname){
             try {
                 let data = await fetchGet('/api/getmetanodesummary', {hostname, nodeId});
                 store.dispatch(metadataNodeAction.setMetadataNodeDetailSummary(data));
@@ -125,8 +125,17 @@ export default  {
     // storage node
     async getStorageNodeOverviewSummary (){
         try {
-            let data = await fetchGet('/api/getstoragenodessummary');
+            let data = await fetchGet('/api/getstoragenodestatus');
             store.dispatch(storageNodeAction.setStorageNodeOverviewSummary(data));
+        } catch (e){
+            errorHandler(e);
+        }
+    },
+
+    async getStorageNodeDiskStatus (){
+        try {
+            let data = await fetchGet('/api/getstoragediskspace');
+            store.dispatch(storageNodeAction.setStorageNodeDiskStatus(data));
         } catch (e){
             errorHandler(e);
         }
@@ -141,22 +150,21 @@ export default  {
         }
     },
 
-    async getStorageNodeDetailSummary ({node, nodeNumID} = (lsGet('currentStorageNode') || {})){
-        // if called by CronJob there will be no parameters, so get it from localStorage
-        if (node){
+    async getStorageNodeTargets ({nodeId} = (lsGet('currentStorageNode') || {})){
+        if (!!nodeId){
             try {
-                let data = await fetchGet('/api/getstoragenodesummary', {node, nodeNumID});
-                store.dispatch(storageNodeAction.setStorageNodeDetailSummary(data));
+                let data = await fetchGet('/api/getstoragetarget', {nodeId});
+                store.dispatch(storageNodeAction.setStorageNodeDetailTargets(data));
             } catch (e){
                 errorHandler(e);
             }
         }
     },
 
-    async getStorageNodeDetailThroughput ({node, nodeNumID} = (lsGet('currentStorageNode') || {})){
-        if (node){
+    async getStorageNodeDetailThroughput ({hostname, nodeId} = (lsGet('currentStorageNode') || {})){
+        if (!!hostname){
             try {
-                let data = await fetchGet('/api/getstoragenodethroughput', {node, nodeNumID});
+                let data = await fetchGet('/api/getstoragenodethroughput', {node: hostname, nodeNumID: nodeId});
                 store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
             } catch (e){
                 errorHandler(e);
@@ -235,11 +243,15 @@ export default  {
         await fetchPost('/api/deletesnapshottask', snapshotSchedule);
     },
 
+    async deleteSnapshotSchedulesInBatch (names){
+        await fetchPost('/api/deletesnapshotschedules', {names});
+    },
+
     // share
     async getShareList (){
         try {
             let data = await fetchGet('/api/getnasexport');
-            store.dispatch(nasAction.setShareList(data));
+            store.dispatch(shareAction.setShareList(data));
         } catch (e){
             errorHandler(e);
         }
@@ -247,6 +259,10 @@ export default  {
 
     async createShare (nasExport){
         await fetchPost('/api/createnasexport', nasExport);
+    },
+
+    async updateShare (nasExport){
+        await fetchPost('/api/updatenasexport', nasExport);
     },
 
     async deleteShare (nasExport){
