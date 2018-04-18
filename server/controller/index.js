@@ -172,6 +172,9 @@ const model = {
     '/api/deletenasexport': async ctx => {
         ctx.body = await service.deleteNasExport(ctx.param, getUser(ctx), getClientIP(ctx));
     },
+    '/api/updatenasexport': async ctx => {
+        ctx.body = await service.updateNasExport(ctx.param, getUser(ctx), getClientIP(ctx));
+    },
     '/api/deletesnapshots': ctx => {
         ctx.body = { code: 0, data: 'start to delete snapshots' };
         service.deleteSnapshots(ctx.param, getUser(ctx), getClientIP(ctx));

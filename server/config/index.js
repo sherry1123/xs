@@ -146,7 +146,8 @@ exports.errors = {
     58: 'create nas export error',
     59: 'delete nas export error',
     60: 'start delete snapshots error',
-    61: 'the cluster is rollbacking'
+    61: 'the cluster is rollbacking',
+    62: 'update nas export error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',

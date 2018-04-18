@@ -1002,11 +1002,11 @@ const model = {
         return result;
     },
     async createNasExport(param, user, ip) {
-        let { protocol, path } = param;
+        let { path, protocol, description } = param;
         protocol = protocol.toUpperCase();
         let result = {};
         try {
-            await database.createNasExport({ protocol, path });
+            await database.createNasExport({ path, protocol, description });
             result = responseHandler(0, 'create nas export successfully');
             await model.addAuditLog({ user, desc: 'create nas export successfully', ip });
         } catch (error) {
@@ -1026,6 +1026,20 @@ const model = {
             result = responseHandler(59, error, param);
             await model.addAuditLog({ user, desc: `delete nas export failed`, ip });
             await model.addEventLog({ desc: `delete nas export failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async updateNasExport(param, user, ip) {
+        let query = { path: param.path, protocol: param.protocol };
+        let result = {};
+        try {
+            await database.updateNasExport(query, param);
+            result = responseHandler(0, 'update nas export successfully');
+            await model.addAuditLog({ user, desc: 'update nas export successfully', ip });
+        } catch (error) {
+            result = responseHandler(62, error, param);
+            await model.addAuditLog({ user, desc: `update nas export failed`, ip });
+            await model.addEventLog({ desc: `update nas export failed. reason: ${error}` });
         }
         return result;
     },
