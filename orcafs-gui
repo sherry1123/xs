@@ -34,19 +34,19 @@ RETVAL=0
 case "$1" in
    start)
       mkdir -p /var/lock/subsys
-      pm2 start $APP_BIN -s && touch /var/lock/subsys/${SERVICE_NAME}
+      pm2 start $APP_BIN --name ${SERVICE_NAME} -s && touch /var/lock/subsys/${SERVICE_NAME}
       RETVAL=$?
       ;;
    stop)
-      pm2 stop $APP_BIN -s && rm -f /var/lock/subsys/${SERVICE_NAME}
+      pm2 stop ${SERVICE_NAME} -s && rm -f /var/lock/subsys/${SERVICE_NAME}
       RETVAL=$?
       ;;
    restart)
-      pm2 restart $APP_BIN -s
+      pm2 restart ${SERVICE_NAME} -s
       RETVAL=$?
       ;;
    status)
-      pm2 status $APP_BIN
+      pm2 status ${SERVICE_NAME}
       RETVAL=$?
       ;;
    *)
