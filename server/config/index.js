@@ -25,9 +25,7 @@ exports.snapshot = {
 };
 exports.api = {
     agentd: {
-        hardware: 'http://localhost:3457/hardware/getall',
-        metanodes: 'http://localhost:3457/hardware/getmetanodes',
-        knownproblems: 'http://localhost:3457/hardware/getknownproblems'
+        hardware: 'http://localhost:3457/hardware/getall'
     },
     orcafs: {
         gettoken: 'http://localhost:9090/token/get',
@@ -39,17 +37,14 @@ exports.api = {
         getfiles: 'http://localhost:9090/cluster/getfiles',
         setpattern: 'http://localhost:9090/cluster/setpattern',
         getstats: 'http://localhost:9090/cluster/getstats',
-        listmetanodes: 'http://localhost:9090/cluster/listmetanodes'
+        listmetanodes: 'http://localhost:9090/cluster/listmetanodes',
+        liststoragenodes: 'http://localhost:9090/cluster/liststoragenodes',
+        getstoragespace: 'http://localhost:9090/cluster/getstoragespace',
+        liststoragetargets: 'http://localhost:9090/cluster/liststoragetargets'
     },
     admon: {
-        nodelist: 'http://localhost:8000/XML_NodeList',
-        metanodesoverview: 'http://localhost:8000/XML_MetanodesOverview',
-        metanode: 'http://localhost:8000/XML_Metanode',
         storagenodesoverview: 'http://localhost:8000/XML_StoragenodesOverview',
-        storagenode: 'http://localhost:8000/XML_Storagenode',
-        clientstats: 'http://localhost:8000/XML_ClientStats',
-        userstats: 'http://localhost:8000/XML_UserStats',
-        knownproblems: 'http://localhost:8000/XML_KnownProblems'
+        storagenode: 'http://localhost:8000/XML_Storagenode'
     }
 }
 exports.logs = {
@@ -149,7 +144,8 @@ exports.errors = {
     61: 'the cluster is rollbacking',
     62: 'update nas export error',
     63: 'run snapshot task error',
-    64: 'gzip response body error'
+    64: 'gzip response body error',
+    65: 'get storage nodes status error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',
