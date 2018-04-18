@@ -9,24 +9,14 @@ const logger = require('../module/logger');
 const fileSystem = require('./filesystem');
 const promise = require('../module/promise');
 const request = require('../module/request');
-const responseHandler = (code, result, param) => {
-    if (code) {
-        errorHandler(code, result, param);
-        return { code, msg: result ? typeof result === 'object' ? result.message || '' : result : '' };
-    } else {
-        return { code, data: result };
-    }
-};
-const errorHandler = (code, message, param = {}) => {
-    logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
-};
+const handler = require('../module/handler');
 const model = {
     async getInitStatus() {
         let result = false;
         try {
             result = await init.getOrcaFSStatus();
         } catch (error) {
-            errorHandler(1, error);
+            handler.error(1, error);
         }
         init.setInitStatus(result);
         return result;
@@ -40,7 +30,7 @@ const model = {
             try {
                 result = await init.getMongoDBMasterOrNot();
             } catch (error) {
-                errorHandler(2, error);
+                handler.error(2, error);
             }
         }
         return result;
@@ -61,9 +51,9 @@ const model = {
         let result = {};
         try {
             let data = await init.checkClusterEnv(ipList);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(6, error, param);
+            result = handler.response(6, error, param);
         }
         return result;
     },
@@ -96,7 +86,7 @@ const model = {
                         if (status) {
                             clearInterval(getInitProgress);
                             socket.postInitStatus({ current: currentStep, status, total });
-                            errorHandler(7, errorMessage, param);
+                            handler.error(7, errorMessage, param);
                         } else if (currentStep !== totalStep) {
                             socket.postInitStatus({ current: currentStep, status, total });
                         } else if (describle.includes('finish')) {
@@ -115,11 +105,11 @@ const model = {
                     }
                 }, 1000);
             } else {
-                errorHandler(7, res.message, param);
+                handler.error(7, res.message, param);
                 socket.postInitStatus({ current, status: -1, total });
             }
         } catch (error) {
-            errorHandler(7, error, param);
+            handler.error(7, error, param);
             await model.antiInitCluster(2);
             socket.postInitStatus({ current, status: -1, total });
         }
@@ -139,7 +129,7 @@ const model = {
                     let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
                     if (status) {
                         clearInterval(getAntiinitProgress);
-                        errorHandler(8, errorMessage, mode);
+                        handler.error(8, errorMessage, mode);
                     } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
                         let mongodbStatus = await init.getMongoDBStatus();
@@ -154,7 +144,7 @@ const model = {
                 }
             }, 1000);
         } catch (error) {
-            errorHandler(8, error, mode);
+            handler.error(8, error, mode);
         }
     },
     /**
@@ -170,12 +160,12 @@ const model = {
             let data = await database.login({ username, password });
             if (data.username) {
                 await model.addAuditLog({ user: username, desc: 'login successfully', ip });
-                result = responseHandler(0, data);
+                result = handler.response(0, data);
             } else {
-                result = responseHandler(9, 'username or password error', param);
+                result = handler.response(9, 'username or password error', param);
             }
         } catch (error) {
-            result = responseHandler(9, error, param);
+            result = handler.response(9, error, param);
         }
         return result;
     },
@@ -186,7 +176,7 @@ const model = {
      */
     async logout(param, ip) {
         let { username } = param;
-        let result = responseHandler(0, 'logout successfully');
+        let result = handler.response(0, 'logout successfully');
         await model.addAuditLog({ user: username, desc: 'logout successfully', ip });
         return result;
     },
@@ -207,9 +197,9 @@ const model = {
         let result = {};
         try {
             let data = await database.getUser(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(10, error, param);
+            result = handler.response(10, error, param);
         }
         return result;
     },
@@ -230,9 +220,9 @@ const model = {
         let result = {};
         try {
             await database.addUser(param)
-            result = responseHandler(0, 'create user successfully');
+            result = handler.response(0, 'create user successfully');
         } catch (error) {
-            result = responseHandler(11, error, param);
+            result = handler.response(11, error, param);
         }
         return result;
     },
@@ -254,10 +244,10 @@ const model = {
         let result = {};
         try {
             await database.updateUser(query, param);
-            result = responseHandler(0, 'change password successfully');
+            result = handler.response(0, 'change password successfully');
             await model.addAuditLog({ user: param.username, desc: 'change password successfully', ip });
         } catch (error) {
-            result = responseHandler(12, error, param);
+            result = handler.response(12, error, param);
         }
         return result;
     },
@@ -271,9 +261,9 @@ const model = {
         let result = {};
         try {
             await database.deleteUser(param);
-            result = responseHandler(0, 'delete user successfully');
+            result = handler.response(0, 'delete user successfully');
         } catch (error) {
-            result = responseHandler(13, error, param);
+            result = handler.response(13, error, param);
         }
         return result;
     },
@@ -291,9 +281,9 @@ const model = {
         let result = {};
         try {
             let data = await database.getEventLog(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(14, error, param);
+            result = handler.response(14, error, param);
         }
         return result;
     },
@@ -312,7 +302,7 @@ const model = {
         try {
             await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
-            errorHandler(15, error, param);
+            handler.error(15, error, param);
         }
     },
     /**
@@ -333,9 +323,9 @@ const model = {
             for (let query of querys) {
                 await database.updateEventLog(query, param);
             }
-            result = responseHandler(0, 'update event log successfully');
+            result = handler.response(0, 'update event log successfully');
         } catch (error) {
-            result = responseHandler(16, error, param);
+            result = handler.response(16, error, param);
         }
         return result;
     },
@@ -353,9 +343,9 @@ const model = {
         let result = {};
         try {
             let data = await database.getAuditLog(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(17, error, param);
+            result = handler.response(17, error, param);
         }
         return result;
     },
@@ -374,7 +364,7 @@ const model = {
         try {
             await database.addAuditLog({ time, user, group, desc, level, ip });
         } catch (error) {
-            errorHandler(18, error, param);
+            handler.error(18, error, param);
         }
     },
     /**
@@ -384,27 +374,25 @@ const model = {
         let result = {};
         try {
             let data = await database.getHardware(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(19, error, param);
+            result = handler.response(19, error, param);
         }
         return result;
     },
-    async addHardware() {
+    async runHardwareTask() {
         let date = new Date();
         let api = config.api.agentd.hardware;
-        let url = api;
         try {
             let ipList = await database.getSetting({ key: 'nodelist' });
             let data = [];
             for (let ip of ipList) {
-                url = api.replace('localhost', ip);
-                let res = await request.get(url, {}, {}, true);
+                let res = await request.get(api.replace('localhost', ip), {}, {}, true);
                 data.push(res);
             }
             await database.addHardware({ date, ipList, data });
         } catch (error) {
-            errorHandler(20, error, url);
+            handler.error(20, error, api);
         }
     },
     /**
@@ -425,9 +413,9 @@ const model = {
         let result = {};
         try {
             await email.sendMail(param);
-            result = responseHandler(0, 'test mail successfully');
+            result = handler.response(0, 'test mail successfully');
         } catch (error) {
-            result = responseHandler(21, error, param);
+            result = handler.response(21, error, param);
         }
         return result;
     },
@@ -449,7 +437,7 @@ const model = {
         try {
             await email.sendMail(param);
         } catch (error) {
-            errorHandler(22, error, param);
+            handler.error(22, error, param);
         }
     },
     /**
@@ -462,9 +450,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getNodeList(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(23, error, param);
+            result = handler.response(23, error, param);
         }
         return result;
     },
@@ -477,9 +465,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getMetaNodesOverview(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(24, error, param);
+            result = handler.response(24, error, param);
         }
         return result;
     },
@@ -494,9 +482,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getMetaNode(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(25, error, param);
+            result = handler.response(25, error, param);
         }
         return result;
     },
@@ -509,9 +497,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getStorageNodesOverview(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(26, error, param);
+            result = handler.response(26, error, param);
         }
         return result;
     },
@@ -525,9 +513,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getStorageNode(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(27, error, param);
+            result = handler.response(27, error, param);
         }
         return result;
     },
@@ -544,9 +532,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getClientStats(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(28, error, param);
+            result = handler.response(28, error, param);
         }
         return result;
     },
@@ -563,9 +551,9 @@ const model = {
         let result = {};
         try {
             let data = await fileSystem.getUserStats(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(29, error, param);
+            result = handler.response(29, error, param);
         }
         return result;
     },
@@ -579,9 +567,9 @@ const model = {
         try {
             let data = await fileSystem.getStorageNodesOverview(param);
             data = { status: data.status, diskSpace: data.diskSpace };
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(30, error, param);
+            result = handler.response(30, error, param);
         }
         return result;
     },
@@ -595,9 +583,9 @@ const model = {
         try {
             let data = await fileSystem.getStorageNodesOverview(param);
             data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(31, error, param);
+            result = handler.response(31, error, param);
         }
         return result;
     },
@@ -613,9 +601,9 @@ const model = {
         try {
             let data = await fileSystem.getStorageNode(param);
             data = { general: data.general, storageTargets: data.storageTargets };
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(32, error, param);
+            result = handler.response(32, error, param);
         }
         return result;
     },
@@ -631,9 +619,9 @@ const model = {
         try {
             let data = await fileSystem.getStorageNode(param);
             data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(33, error, param);
+            result = handler.response(33, error, param);
         }
         return result;
     },
@@ -642,12 +630,12 @@ const model = {
         try {
             let res = await fileSystem.getMetaNodesStatus(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(34, res.message, param);
+                result = handler.response(34, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(34, error, param);
+            result = handler.response(34, error, param);
         }
         return result;
     },
@@ -663,9 +651,9 @@ const model = {
         let result = {};
         try {
             let data = await request.get(config.api.agentd.metanodes, param, {}, true);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(35, error, param);
+            result = handler.response(35, error, param);
         }
         return result;
     },
@@ -681,9 +669,9 @@ const model = {
         try {
             let data = await fileSystem.getMetaNode(param);
             data = { general: data.general };
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(36, error, param);
+            result = handler.response(36, error, param);
         }
         return result;
     },
@@ -694,9 +682,9 @@ const model = {
         let result = {};
         try {
             let data = await request.get(config.api.agentd.knownproblems, param, {}, true);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(37, error, param);
+            result = handler.response(37, error, param);
         }
         return result;
     },
@@ -710,12 +698,12 @@ const model = {
         try {
             let res = await fileSystem.getDiskList(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(38, res.message, param);
+                result = handler.response(38, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(38, error, param);
+            result = handler.response(38, error, param);
         }
         return result;
     },
@@ -729,12 +717,12 @@ const model = {
         try {
             let res = await fileSystem.getEntryInfo(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(39, res.message, param);
+                result = handler.response(39, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(39, error, param);
+            result = handler.response(39, error, param);
         }
         return result;
     },
@@ -748,12 +736,12 @@ const model = {
         try {
             let res = await fileSystem.getFiles(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(40, res.message, param);
+                result = handler.response(40, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(40, error, param);
+            result = handler.response(40, error, param);
         }
         return result;
     },
@@ -770,15 +758,15 @@ const model = {
         try {
             let res = await fileSystem.setPattern(param);
             if (!res.errorId) {
-                result = responseHandler(0, 'set pattern successfully');
+                result = handler.response(0, 'set pattern successfully');
                 await model.addAuditLog({ user, desc: 'set pattern successfully', ip });
             } else {
-                result = responseHandler(41, res.message, param);
+                result = handler.response(41, res.message, param);
                 await model.addAuditLog({ user, desc: `set pattern failed`, ip });
                 await model.addEventLog({ desc: `set pattern failed, reason: ${res.message}` });
             }
         } catch (error) {
-            result = responseHandler(41, error, param);
+            result = handler.response(41, error, param);
             await model.addAuditLog({ user, desc: `set pattern failed`, ip });
             await model.addEventLog({ desc: `set pattern failed. reason: ${error}` });
         }
@@ -795,9 +783,9 @@ const model = {
         let result = {};
         try {
             let data = await snapshot.getSnapshot(param);
-            result = responseHandler(0, data.reverse());
+            result = handler.response(0, data.reverse());
         } catch (error) {
-            result = responseHandler(42, error, param);
+            result = handler.response(42, error, param);
         }
         return result;
     },
@@ -805,15 +793,15 @@ const model = {
         let result = {};
         try {
             if (await snapshot.createSnapshot(param)) {
-                result = responseHandler(0, 'create snapshot successfully');
+                result = handler.response(0, 'create snapshot successfully');
                 await model.addAuditLog({ user, desc: 'create snapshot successfully', ip });
             } else {
-                result = responseHandler(43, 'the number of snapshots has reached the limit', param);
+                result = handler.response(43, 'the number of snapshots has reached the limit', param);
                 await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
                 await model.addEventLog({ desc: 'create snapshot failed. reason: the number of snapshots has reached the limit' });
             }
         } catch (error) {
-            result = responseHandler(43, error, param);
+            result = handler.response(43, error, param);
             await model.addAuditLog({ user, desc: `create snapshot failed`, ip });
             await model.addEventLog({ desc: `create snapshot failed. reason: ${error}` });
         }
@@ -825,7 +813,7 @@ const model = {
             await model.addAuditLog({ user, desc: 'delete snapshot successfully', ip });
             socket.postEventStatus({ channel: 'snapshot', code: 1, target: param.name, result: true });
         } catch (error) {
-            errorHandler(44, error, param);
+            handler.error(44, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot failed`, ip });
             await model.addEventLog({ desc: `delete snapshot failed. reason: ${error}` });
             socket.postEventStatus({ channel: 'snapshot', code: 2, target: param.name, result: false });
@@ -840,7 +828,7 @@ const model = {
             socket.postEventStatus({ channel: 'snapshot', code: 3, target: param.name, result: true });
         } catch (error) {
             snapshot.setRollbackStatus(false);
-            errorHandler(45, error, param);
+            handler.error(45, error, param);
             await model.addAuditLog({ user, desc: `rollback snapshot failed`, ip });
             await model.addEventLog({ desc: `rollback snapshot failed. reason: ${error}` });
             socket.postEventStatus({ channel: 'snapshot', code: 4, target: param.name, result: false });
@@ -851,12 +839,12 @@ const model = {
         try {
             let res = await fileSystem.getUserMetaStats(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(46, res.message, param);
+                result = handler.response(46, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(46, error, param);
+            result = handler.response(46, error, param);
         }
         return result;
     },
@@ -866,12 +854,12 @@ const model = {
         try {
             let res = await fileSystem.getUserStorageStats(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(47, res.message, param);
+                result = handler.response(47, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(47, error, param);
+            result = handler.response(47, error, param);
         }
         return result;
     },
@@ -880,12 +868,12 @@ const model = {
         try {
             let res = await fileSystem.getClientMetaStats(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(48, res.message, param);
+                result = handler.response(48, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(48, error, param);
+            result = handler.response(48, error, param);
         }
         return result;
     },
@@ -894,12 +882,12 @@ const model = {
         try {
             let res = await fileSystem.getClientStorageStats(param);
             if (!res.errorId) {
-                result = responseHandler(0, res.data);
+                result = handler.response(0, res.data);
             } else {
-                result = responseHandler(49, res.message, param);
+                result = handler.response(49, res.message, param);
             }
         } catch (error) {
-            result = responseHandler(49, error, param);
+            result = handler.response(49, error, param);
         }
         return result;
     },
@@ -907,9 +895,9 @@ const model = {
         let result = {};
         try {
             let data = await snapshot.getSnapshotTask(param);
-            result = responseHandler(0, data.reverse());
+            result = handler.response(0, data.reverse());
         } catch (error) {
-            result = responseHandler(50, error, param);
+            result = handler.response(50, error, param);
         }
         return result;
     },
@@ -917,10 +905,10 @@ const model = {
         let result = {};
         try {
             await snapshot.createSnapshotTask(param);
-            result = responseHandler(0, 'create snapshot task successfully');
+            result = handler.response(0, 'create snapshot task successfully');
             await model.addAuditLog({ user, desc: 'create snapshot task successfully', ip });
         } catch (error) {
-            result = responseHandler(51, error, param);
+            result = handler.response(51, error, param);
             await model.addAuditLog({ user, desc: `create snapshot task failed`, ip });
             await model.addEventLog({ desc: `create snapshot task failed. reason: ${error}` });
         }
@@ -930,10 +918,10 @@ const model = {
         let result = {};
         try {
             await snapshot.enableSnapshotTask(param);
-            result = responseHandler(0, 'enable snapshot task successfully');
+            result = handler.response(0, 'enable snapshot task successfully');
             await model.addAuditLog({ user, desc: 'enable snapshot task successfully', ip });
         } catch (error) {
-            result = responseHandler(52, error, param);
+            result = handler.response(52, error, param);
             await model.addAuditLog({ user, desc: `enable snapshot task failed`, ip });
             await model.addEventLog({ desc: `enable snapshot task failed. reason: ${error}` });
         }
@@ -943,10 +931,10 @@ const model = {
         let result = {};
         try {
             await snapshot.disableSnapshotTask(param);
-            result = responseHandler(0, 'disable snapshot task successfully');
+            result = handler.response(0, 'disable snapshot task successfully');
             await model.addAuditLog({ user, desc: 'disable snapshot task successfully', ip });
         } catch (error) {
-            result = responseHandler(53, error, param);
+            result = handler.response(53, error, param);
             await model.addAuditLog({ user, desc: `disable snapshot task failed`, ip });
             await model.addEventLog({ desc: `disable snapshot task failed. reason: ${error}` });
         }
@@ -956,10 +944,10 @@ const model = {
         let result = {};
         try {
             await snapshot.deleteSnapshotTask(param);
-            result = responseHandler(0, 'delete snapshot task successfully');
+            result = handler.response(0, 'delete snapshot task successfully');
             await model.addAuditLog({ user, desc: 'delete snapshot task successfully', ip });
         } catch (error) {
-            result = responseHandler(54, error, param);
+            result = handler.response(54, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot task failed`, ip });
             await model.addEventLog({ desc: `delete snapshot task failed. reason: ${error}` });
         }
@@ -972,9 +960,9 @@ const model = {
             for (let i of Object.keys(data)) {
                 data[i] = Number(data[i]);
             }
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(55, error, param);
+            result = handler.response(55, error, param);
         }
         return result;
     },
@@ -982,10 +970,10 @@ const model = {
         let result = {};
         try {
             await snapshot.updateSnapshotSetting(param);
-            result = responseHandler(0, 'update snapshot setting successfully');
+            result = handler.response(0, 'update snapshot setting successfully');
             await model.addAuditLog({ user, desc: 'update snapshot setting successfully', ip });
         } catch (error) {
-            result = responseHandler(56, error, param);
+            result = handler.response(56, error, param);
             await model.addAuditLog({ user, desc: `update snapshot setting failed`, ip });
             await model.addEventLog({ desc: `update snapshot setting failed. reason: ${error}` });
         }
@@ -995,22 +983,22 @@ const model = {
         let result = {};
         try {
             let data = await database.getNasExport(param);
-            result = responseHandler(0, data);
+            result = handler.response(0, data);
         } catch (error) {
-            result = responseHandler(57, error, param);
+            result = handler.response(57, error, param);
         }
         return result;
     },
     async createNasExport(param, user, ip) {
-        let { protocol, path } = param;
+        let { path, protocol, description } = param;
         protocol = protocol.toUpperCase();
         let result = {};
         try {
-            await database.createNasExport({ protocol, path });
-            result = responseHandler(0, 'create nas export successfully');
+            await database.createNasExport({ path, protocol, description });
+            result = handler.response(0, 'create nas export successfully');
             await model.addAuditLog({ user, desc: 'create nas export successfully', ip });
         } catch (error) {
-            result = responseHandler(58, error, param);
+            result = handler.response(58, error, param);
             await model.addAuditLog({ user, desc: `create nas export failed`, ip });
             await model.addEventLog({ desc: `create nas export failed. reason: ${error}` });
         }
@@ -1020,12 +1008,26 @@ const model = {
         let result = {};
         try {
             await database.deleteNasExport(param);
-            result = responseHandler(0, 'delete nas export successfully');
+            result = handler.response(0, 'delete nas export successfully');
             await model.addAuditLog({ user, desc: 'delete nas export successfully', ip });
         } catch (error) {
-            result = responseHandler(59, error, param);
+            result = handler.response(59, error, param);
             await model.addAuditLog({ user, desc: `delete nas export failed`, ip });
             await model.addEventLog({ desc: `delete nas export failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async updateNasExport(param, user, ip) {
+        let query = { path: param.path, protocol: param.protocol };
+        let result = {};
+        try {
+            await database.updateNasExport(query, param);
+            result = handler.response(0, 'update nas export successfully');
+            await model.addAuditLog({ user, desc: 'update nas export successfully', ip });
+        } catch (error) {
+            result = handler.response(62, error, param);
+            await model.addAuditLog({ user, desc: `update nas export failed`, ip });
+            await model.addEventLog({ desc: `update nas export failed. reason: ${error}` });
         }
         return result;
     },
@@ -1035,7 +1037,7 @@ const model = {
             model.sendEvent({ channel: 'snapshot', target: param.names, info: { user, ip } });
             await model.addAuditLog({ user, desc: 'start to delete snapshots successfully', ip });
         } catch (error) {
-            errorHandler(60, error, param);
+            handler.error(60, error, param);
             await model.addAuditLog({ user, desc: `start to delete snapshots failed`, ip });
             await model.addEventLog({ desc: `start to delete snapshots failed. reason: ${error}` });
         }
@@ -1072,6 +1074,13 @@ const model = {
                 await model.addEventLog({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
                 socket.postEventStatus({ channel, code, target: { total: target.length, success, failed: target.length - success }, result: false });
                 break;
+        }
+    },
+    async runSnapshotTask() {
+        try {
+            await snapshot.runSnapshotTask();
+        } catch (error) {
+            handler.error(63, error);
         }
     }
 };

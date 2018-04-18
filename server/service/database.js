@@ -89,6 +89,9 @@ const model = {
     async createNasExport(param) {
         return await dao.createOne(nasExport, param);
     },
+    async updateNasExport(query, param) {
+        return await dao.updateOne(nasExport, query, param);
+    },
     async deleteNasExport(param) {
         return await dao.deleteOne(nasExport, param);
     }

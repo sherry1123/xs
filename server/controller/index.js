@@ -1,7 +1,6 @@
 const config = require('../config');
 const service = require('../service');
-const getUser = ctx => (ctx.cookies.get('user'));
-const getClientIP = ctx => (ctx.get('x-real-ip'));
+const handler = require('../module/handler');
 const model = {
     '/api/testapi': ctx => {
         ctx.body = ctx;
@@ -13,20 +12,20 @@ const model = {
         ctx.body = await service.addUser(ctx.param);
     },
     '/api/updateuser': async ctx => {
-        ctx.body = await service.updateUser(ctx.param, getClientIP(ctx));
+        ctx.body = await service.updateUser(ctx.param, handler.clientIP(ctx));
     },
     '/api/deleteuser': async ctx => {
         ctx.body = await service.deleteUser(ctx.param);
     },
     '/api/login': async ctx => {
-        ctx.body = await service.login(ctx.param, getClientIP(ctx));
+        ctx.body = await service.login(ctx.param, handler.clientIP(ctx));
         if (!ctx.body.code) {
             ctx.cookies.set('login', 'true', config.cookies);
             ctx.cookies.set('user', ctx.param.username, config.cookies);
         }
     },
     '/api/logout': async ctx => {
-        ctx.body = await service.logout(ctx.param, getClientIP(ctx));
+        ctx.body = await service.logout(ctx.param, handler.clientIP(ctx));
         ctx.cookies.set('login', 'false', config.cookies);
         ctx.cookies.set('user', '', config.cookies);
     },
@@ -111,7 +110,7 @@ const model = {
         ctx.body = await service.getFiles(ctx.param);
     },
     '/api/setpattern': async ctx => {
-        ctx.body = await service.setPattern(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.setPattern(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/syncsystemstatus': ctx => {
         ctx.body = { code: 0 };
@@ -120,15 +119,15 @@ const model = {
         ctx.body = await service.getSnapshot(ctx.param);
     },
     '/api/createsnapshot': async ctx => {
-        ctx.body = await service.createSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.createSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/deletesnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to delete snapshot' };
-        service.deleteSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
+        service.deleteSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/rollbacksnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to rollback snapshot' };
-        service.rollbackSnapshot(ctx.param, getUser(ctx), getClientIP(ctx));
+        service.rollbackSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/getusermetastats': async ctx => {
         ctx.body = await service.getUserMetaStats(ctx.param);
@@ -146,35 +145,38 @@ const model = {
         ctx.body = await service.getSnapshotTask(ctx.param);
     },
     '/api/createsnapshottask': async ctx => {
-        ctx.body = await service.createSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.createSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/enablesnapshottask': async ctx => {
-        ctx.body = await service.enableSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.enableSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/disablesnapshottask': async ctx => {
-        ctx.body = await service.disableSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.disableSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/deletesnapshottask': async ctx => {
-        ctx.body = await service.deleteSnapshotTask(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.deleteSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/getsnapshotsetting': async ctx => {
         ctx.body = await service.getSnapshotSetting(ctx.param);
     },
     '/api/updatesnapshotsetting': async ctx => {
-        ctx.body = await service.updateSnapshotSetting(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.updateSnapshotSetting(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/getnasexport': async ctx => {
         ctx.body = await service.getNasExport(ctx.param);
     },
     '/api/createnasexport': async ctx => {
-        ctx.body = await service.createNasExport(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.createNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/deletenasexport': async ctx => {
-        ctx.body = await service.deleteNasExport(ctx.param, getUser(ctx), getClientIP(ctx));
+        ctx.body = await service.deleteNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updatenasexport': async ctx => {
+        ctx.body = await service.updateNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/deletesnapshots': ctx => {
         ctx.body = { code: 0, data: 'start to delete snapshots' };
-        service.deleteSnapshots(ctx.param, getUser(ctx), getClientIP(ctx));
+        service.deleteSnapshots(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/receiveevent': ctx => {
         ctx.body = { code: 0, data: 'orcafs-gui receive event successfully' };
