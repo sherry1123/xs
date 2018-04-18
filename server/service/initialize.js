@@ -2,6 +2,7 @@ const config = require('../config');
 const mongoose = require('../model');
 const promise = require('../module/promise');
 const request = require('../module/request');
+const handler = require('../module/handler');
 const database = require('../service/database');
 const fileSystem = require('../service/filesystem');
 let init = false;
@@ -12,49 +13,25 @@ const model = {
     setInitStatus(status) {
         init = status;
     },
+    async getMongoDBProcess() {
+        let command = `ps aux|grep ${config.database.bin}/mongod|grep grep -v|awk '{print $2}'`;
+        return Boolean(await promise.runCommandInPromise(command));
+    },
     async getMongoDBStatus() {
         let command = `${config.database.bin}/mongo --quiet --eval "db.serverStatus().ok"`;
-        let result = false;
-        try {
-            result = await promise.runCommandInPromise(command) === '1';
-        } catch (error) {
-            result = false;
-        }
-        return result;
+        return await model.getMongoDBProcess() ? await promise.runCommandInPromise(command) === '1' : false;
     },
     async getOrcaFSStatus() {
         let token = await fileSystem.getToken();
-        let result = false;
         let res = await request.get(config.api.orcafs.createstatus, {}, token, true);
-        if (!res.errorId && res.data.currentStep && res.data.currentStep === res.data.totalStep) {
-            result = true;
-        }
-        return result;
+        return !res.errorId && res.data.currentStep && res.data.currentStep === res.data.totalStep ? true : false;
     },
     async getMongoDBMasterOrNot() {
         let command = `${config.database.bin}/mongo --quiet --eval "db.isMaster().ismaster"`;
-        let result = false;
-        try {
-            result = await promise.runCommandInPromise(command) === 'true';
-        } catch (error) {
-            result = false;
-        }
-        return result;
+        return await model.getMongoDBProcess() ? await promise.runCommandInPromise(command) === 'true' : false;
     },
     async getOrcaFSMasterOrNot() {
         //todo
-    },
-    async checkClusterEnv(ipList) {
-        let result = {};
-        for (let ip of ipList) {
-            try {
-                await request.get(`http://${ip}:3456/api/testapi`, false, {}, true);
-                result[ip] = true;
-            } catch (error) {
-                result[ip] = false;
-            }
-        }
-        return result;
     },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;

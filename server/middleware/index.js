@@ -55,6 +55,7 @@ const model = {
 					ctx.body = await promise.gzipDataInPromise(body);
 					ctx.set('Content-Encoding', 'gzip');
 				} catch (error) {
+					handler.error(64, error);
 					ctx.body = body;
 				}
 			}

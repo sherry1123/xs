@@ -148,7 +148,8 @@ exports.errors = {
     60: 'start delete snapshots error',
     61: 'the cluster is rollbacking',
     62: 'update nas export error',
-    63: 'run snapshot task error'
+    63: 'run snapshot task error',
+    64: 'gzip response body error'
 };
 exports.eventCode = {
     1: 'delete snapshot successfully',
