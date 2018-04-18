@@ -53,8 +53,12 @@ const model = {
         return await database.getSnapshotTask(param);
     },
     async createSnapshotTask(param) {
-        let { name, createTime = new Date(), startTime = handler.startTime(), autoDisableTime = 0, interval, deleteRound = false, isRunning = false } = param;
-        await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime, interval, deleteRound, isRunning });
+        let { name, createTime = new Date(), startTime = handler.startTime(), autoDisableTime = 0, interval, deleteRound = false, description, isRunning = false } = param;
+        await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime, interval, deleteRound, description, isRunning });
+    },
+    async updateSnapshotTask(param) {
+        let { name, description } = param;
+        await database.updateSnapshotTask({ name }, { description });
     },
     async enableSnapshotTask(param) {
         let { name } = param;
@@ -67,6 +71,12 @@ const model = {
     async deleteSnapshotTask(param) {
         let { name } = param;
         await database.deleteSnapshotTask({ name });
+    },
+    async deleteSnapshotTasks(param) {
+        let { names } = param;
+        for (let name of names) {
+            await database.deleteSnapshotTask({ name });
+        }
     },
     async runSnapshotTask() {
         let currentTime = handler.currentTime();
@@ -87,7 +97,7 @@ const model = {
                     await database.deleteSnapshot({ name: nameToDelete });
                     await database.addSnapshot({ name: nameToCreate, isAuto: true, deleting: false, rollbacking: false, createTime: currentTime });
                 }
-            } else if (autoDisableTime && timeGapInSecond > autoDisableTime){
+            } else if (autoDisableTime && timeGapInSecond > autoDisableTime) {
                 await database.updateSnapshotTask({ name }, { isRunning: false });
             }
         }

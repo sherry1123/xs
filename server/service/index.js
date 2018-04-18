@@ -508,6 +508,19 @@ const model = {
         }
         return result;
     },
+    async updateSnapshotTask(param, user, ip) {
+        let result = {};
+        try {
+            await snapshot.updateSnapshotTask(param);
+            result = handler.response(0, 'update snapshot task successfully');
+            await model.addAuditLog({ user, desc: 'update snapshot task successfully', ip });
+        } catch (error) {
+            result = handler.response(51, error, param);
+            await model.addAuditLog({ user, desc: `update snapshot task failed`, ip });
+            await model.addEventLog({ desc: `update snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
     async enableSnapshotTask(param, user, ip) {
         let result = {};
         try {
@@ -544,6 +557,19 @@ const model = {
             result = handler.response(54, error, param);
             await model.addAuditLog({ user, desc: `delete snapshot task failed`, ip });
             await model.addEventLog({ desc: `delete snapshot task failed. reason: ${error}` });
+        }
+        return result;
+    },
+    async deleteSnapshotTasks(param, user, ip) {
+        let result = {};
+        try {
+            await snapshot.deleteSnapshotTasks(param);
+            result = handler.response(0, 'delete snapshot tasks successfully');
+            await model.addAuditLog({ user, desc: 'delete snapshot tasks successfully', ip });
+        } catch (error) {
+            result = handler.response(54, error, param);
+            await model.addAuditLog({ user, desc: `delete snapshot tasks failed`, ip });
+            await model.addEventLog({ desc: `delete snapshot tasks failed. reason: ${error}` });
         }
         return result;
     },
