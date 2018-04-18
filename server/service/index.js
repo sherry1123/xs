@@ -383,18 +383,16 @@ const model = {
     async runHardwareTask() {
         let date = new Date();
         let api = config.api.agentd.hardware;
-        let url = api;
         try {
             let ipList = await database.getSetting({ key: 'nodelist' });
             let data = [];
             for (let ip of ipList) {
-                url = api.replace('localhost', ip);
-                let res = await request.get(url, {}, {}, true);
+                let res = await request.get(api.replace('localhost', ip), {}, {}, true);
                 data.push(res);
             }
             await database.addHardware({ date, ipList, data });
         } catch (error) {
-            handler.error(20, error, url);
+            handler.error(20, error, api);
         }
     },
     /**
