@@ -143,20 +143,7 @@ const model = {
     },
     async getStorageTarget(param) {
         let token = await model.getToken();
-        //return await request.get(config.api.orcafs.liststoragetargets, param, token, true);
-        return {
-            errorId: 0,
-            data: [
-                {
-                    targetId: 101,
-                    nodeId: 1,
-                    totalSpace: 53660876800,
-                    usedSpace: 26324500480,
-                    freeSpace: 27336376320,
-                    storagePath: '/Orcafs-storage'
-                }
-            ]
-        }
+        return await request.get(config.api.orcafs.liststoragetargets, param, token, true);
     }
 };
 module.exports = model;
