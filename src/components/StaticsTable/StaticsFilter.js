@@ -102,9 +102,9 @@ class StaticsFilter extends Component {
             >
                 <section className="fs-statics-filter-wrapper">
                     <p className="fs-statics-filter-title">
-                        {lang('已选 ', 'Selected ')}<span className="fs-static-filter-num">{selectedItems.length}</span>{lang(' 项', ' Item(s)')}
+                        {lang('已选 ', 'Selected ')}{selectedItems.length}{lang(' 项', ' Item(s)')}
                         <Popover placement="right" content={lang('过滤项允许选择1-10个', 'Allow 1 to 10 filter items to be selected')}>
-                            <Icon type="question-circle-o" className="fs-info-icon m-l cyan" />
+                            <Icon type="question-circle-o" className="fs-info-icon m-l" />
                         </Popover>
                     </p>
                     <div className="fs-statics-filter-item-box">

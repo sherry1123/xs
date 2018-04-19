@@ -255,7 +255,7 @@ class CreateSnapshotSchedule extends Component {
                             </Col>
                         </Row>
                     </Form.Item>
-                    <Form.Item {...formItemLayout} label={lang('循环删除', 'Circularly Delete')}>
+                    <Form.Item {...formItemLayout} label={lang('循环删除', 'Loop Delete')}>
                         <Switch
                             style={{marginLeft: 10}} size="small"
                             checked={this.state.scheduleData.deleteRound}

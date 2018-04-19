@@ -3,8 +3,8 @@ import routerPath from '../../views/routerPath';
 import {ckGet} from '../cookie';
 
 const initRequest = (url, options) => {
-    let isRollingBack = ckGet('rollbacking') === 'true';
-    if (!isRollingBack || url === '/api/syncsystemstatus'){
+    let isRollingBack = ckGet('rollbacking');
+    if (!(isRollingBack  === 'true') || url === '/api/syncsystemstatus'){
         return new Promise(async (resolve, reject) => {
             options.credentials = 'same-origin';
             options.headers = {'Content-Type': 'application/json; charset=utf-8'};

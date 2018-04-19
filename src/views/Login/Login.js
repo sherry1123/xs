@@ -27,14 +27,19 @@ class Login extends Component {
     }
 
     componentWillMount (){
-        let isInitialized = ckGet('init');
-        if (isInitialized === 'true'){
-            let isLoggedIn = ckGet('login');
-            if (!!isLoggedIn && (isLoggedIn !== 'false')){
-                this.props.history.replace(routerPath.Main + routerPath.MetadataNodes);
-            }
+        let isRollingBack = ckGet('rollbacking');
+        if (isRollingBack === 'true'){
+            this.props.history.replace(routerPath.RollingBack);
         } else {
-            this.props.history.replace(routerPath.Init);
+            let isInitialized = ckGet('init');
+            if (isInitialized === 'true'){
+                let isLoggedIn = ckGet('login');
+                if (!!isLoggedIn && (isLoggedIn !== 'false')){
+                    this.props.history.replace(routerPath.Main + routerPath.MetadataNodes);
+                }
+            } else {
+                this.props.history.replace(routerPath.Init);
+            }
         }
     }
 
@@ -113,7 +118,7 @@ class Login extends Component {
                                     validateStatus={this.state.usernameStatus}
                                     help={this.state.usernameHelp}
                                 >
-                                    <Input placeholder={lang('请输入用户名', 'please enter username')}
+                                    <Input placeholder={lang('用户名', 'Username')}
                                         prefix={<Icon type="user" style={{color: 'rgba(0, 0, 0, .7)'}} />}
                                         value={this.state.username}
                                         onChange={this.changeUsername.bind(this)}
@@ -124,7 +129,7 @@ class Login extends Component {
                                     validateStatus={this.state.passwordStatus}
                                     help={this.state.passwordHelp}
                                 >
-                                    <Input placeholder={lang('请输入密码', 'please enter password')}
+                                    <Input placeholder={lang('密码', 'Password')}
                                        type="password"
                                         prefix={<Icon type="lock" style={{color: 'rgba(0, 0, 0, .7)'}} />}
                                         value={this.state.password}

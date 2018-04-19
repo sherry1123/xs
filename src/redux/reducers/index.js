@@ -12,7 +12,7 @@ import shareReducer from './shareReducer';
 import fsOperationReducer from '../reducers/fsOperationReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
-State.language = lsGet('language') || '';
+State.language = lsGet('language') || 'chinese';
 const {VERSION, NODE_ENV} = process.env;
 State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 State.main.general.menuExpand = lsGet('menuExpand');
