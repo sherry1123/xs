@@ -39,7 +39,7 @@ router.all('/api/updatesnapshottask', controller['/api/updatesnapshottask']);
 router.all('/api/enablesnapshottask', controller['/api/enablesnapshottask']);
 router.all('/api/disablesnapshottask', controller['/api/disablesnapshottask']);
 router.all('/api/deletesnapshottask', controller['/api/deletesnapshottask']);
-router.all('/api/deletesnapshottask', controller['/api/deletesnapshottasks']);
+router.all('/api/deletesnapshottasks', controller['/api/deletesnapshottasks']);
 router.all('/api/getnasexport', controller['/api/getnasexport']);
 router.all('/api/createnasexport', controller['/api/createnasexport']);
 router.all('/api/updatenasexport', controller['/api/updatenasexport']);
