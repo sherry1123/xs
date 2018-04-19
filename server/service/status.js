@@ -15,15 +15,10 @@ const model = {
     },
     async isMaster() {
         let result = false;
-        let initStatus = init.getInitStatus();
-        if (!initStatus) {
-            result = true;
-        } else {
-            try {
-                result = await init.getMongoDBMasterOrNot();
-            } catch (error) {
-                handler.error(22, error);
-            }
+        try {
+            result = !init.getInitStatus() ? true : await init.getOrcaFSMasterOrNot() && await init.getMongoDBMasterOrNot();
+        } catch (error) {
+            handler.error(22, error);
         }
         return result;
     },

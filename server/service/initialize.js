@@ -30,7 +30,8 @@ const model = {
         return await model.getMongoDBProcess() ? await promise.runCommandInPromise(command) === 'true' : false;
     },
     async getOrcaFSMasterOrNot() {
-        //todo
+        let command = `ps aux|grep orcafs-mgmtd|grep grep -v|awk '{print $2}'`;
+        return Boolean(await promise.runCommandInPromise(command));
     },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
