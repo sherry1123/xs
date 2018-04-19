@@ -68,6 +68,9 @@ const model = {
     '/api/getstoragetarget': async ctx => {
         ctx.body = await service.getStorageTarget(ctx.param);
     },
+    '/api/getstoragethroughput': async ctx => {
+        ctx.body = await service.getStorageThroughput(ctx.param);
+    },
     '/api/getusermetastats': async ctx => {
         ctx.body = await service.getUserMetaStats(ctx.param);
     },
@@ -157,12 +160,6 @@ const model = {
     },
     '/api/setpattern': async ctx => {
         ctx.body = await service.setPattern(ctx.param, handler.user(ctx), handler.clientIP(ctx));
-    },
-    '/api/getstoragenodesthroughput': async ctx => {
-        ctx.body = await service.getStorageNodesThroughput(ctx.param);
-    },
-    '/api/getstoragenodethroughput': async ctx => {
-        ctx.body = await service.getStorageNodeThroughput(ctx.param);
     }
 };
 module.exports = model;

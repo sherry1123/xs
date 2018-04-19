@@ -29,6 +29,17 @@ const model = {
     },
     clientIP(context) {
         return context.get('x-real-ip');
+    },
+    toByte(value, unit) {
+        let unitList = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+        let byte = 0;
+        for (let i in unitList) {
+            if (unit === unitList[i]) {
+                byte = Math.floor(value * Math.pow(1024, i));
+                break;
+            }
+        }
+        return byte;
     }
 };
 module.exports = model;

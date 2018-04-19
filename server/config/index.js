@@ -29,22 +29,19 @@ exports.api = {
     },
     orcafs: {
         gettoken: 'http://localhost:9090/token/get',
-        createcluster: 'http://localhost:9090/cluster/create',
-        createstatus: 'http://localhost:9090/cluster/createstatus',
         listdisk: 'http://localhost:9090/disk/list/',
+        createstatus: 'http://localhost:9090/cluster/createstatus',
+        createcluster: 'http://localhost:9090/cluster/create',
         destroycluster: 'http://localhost:9090/cluster/destroy',
-        entryinfo: 'http://localhost:9090/cluster/getentryinfo',
-        getfiles: 'http://localhost:9090/cluster/getfiles',
-        setpattern: 'http://localhost:9090/cluster/setpattern',
-        getstats: 'http://localhost:9090/cluster/getstats',
         listmetanodes: 'http://localhost:9090/cluster/listmetanodes',
         liststoragenodes: 'http://localhost:9090/cluster/liststoragenodes',
         getstoragespace: 'http://localhost:9090/cluster/getstoragespace',
-        liststoragetargets: 'http://localhost:9090/cluster/liststoragetargets'
-    },
-    admon: {
-        storagenodesoverview: 'http://localhost:8000/XML_StoragenodesOverview',
-        storagenode: 'http://localhost:8000/XML_Storagenode'
+        liststoragetargets: 'http://localhost:9090/cluster/liststoragetargets',
+        getiostat: 'http://localhost:9090/cluster/getiostat',
+        getstats: 'http://localhost:9090/cluster/getstats',
+        entryinfo: 'http://localhost:9090/cluster/getentryinfo',
+        getfiles: 'http://localhost:9090/cluster/getfiles',
+        setpattern: 'http://localhost:9090/cluster/setpattern'
     }
 }
 exports.logs = {

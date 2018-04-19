@@ -21,6 +21,7 @@ router.all('/api/getmetanodestatus', controller['/api/getmetanodestatus']);
 router.all('/api/getstoragenodestatus', controller['/api/getstoragenodestatus']);
 router.all('/api/getstoragediskspace', controller['/api/getstoragediskspace']);
 router.all('/api/getstoragetarget', controller['/api/getstoragetarget']);
+router.all('/api/getstoragethroughput', controller['/api/getstoragethroughput']);
 router.all('/api/getusermetastats', controller['/api/getusermetastats']);
 router.all('/api/getuserstoragestats', controller['/api/getuserstoragestats']);
 router.all('/api/getclientmetastats', controller['/api/getclientmetastats']);
@@ -50,7 +51,5 @@ router.all('/api/getauditlog', controller['/api/getauditlog']);
 router.all('/api/getentryinfo', controller['/api/getentryinfo']);
 router.all('/api/getfiles', controller['/api/getfiles']);
 router.all('/api/setpattern', controller['/api/setpattern']);
-router.all('/api/getstoragenodesthroughput', controller['/api/getstoragenodesthroughput']);
-router.all('/api/getstoragenodethroughput', controller['/api/getstoragenodethroughput']);
 
 module.exports = router;

@@ -262,6 +262,20 @@ const model = {
         }
         return result;
     },
+    async getStorageThroughput(param) {
+        let result = {};
+        try {
+            let res = await afterMe.getStorageThroughput(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
+            } else {
+                result = handler.response(33, res.message, param);
+            }
+        } catch (error) {
+            result = handler.response(33, error, param);
+        }
+        return result;
+    },
     async getUserMetaStats(param) {
         let result = {};
         try {
@@ -641,28 +655,6 @@ const model = {
             result = handler.response(41, error, param);
             await log.audit({ user, desc: `set pattern failed`, ip });
             await log.event({ desc: `set pattern failed. reason: ${error}` });
-        }
-        return result;
-    },
-    async getStorageNodesThroughput(param) {
-        let result = {};
-        try {
-            let data = await afterMe.getStorageNodesOverview(param);
-            data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(31, error, param);
-        }
-        return result;
-    },
-    async getStorageNodeThroughput(param) {
-        let result = {};
-        try {
-            let data = await afterMe.getStorageNode(param);
-            data = { diskPerfRead: data.diskPerfRead, diskPerfWrite: data.diskPerfWrite };
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(33, error, param);
         }
         return result;
     }
