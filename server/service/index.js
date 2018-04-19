@@ -10,7 +10,6 @@ const logger = require('../module/logger');
 const handler = require('../module/handler');
 const model = {
     async checkClusterEnv(param) {
-        let { ipList } = param;
         let result = {};
         try {
             result = handler.response(0, 'check cluster enviroment');
