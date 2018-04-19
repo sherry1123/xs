@@ -58,7 +58,7 @@ const model = {
                             await init.saveInitInfo({ nodelist, initparam: param });
                             socket.postInitStatus({ current: 7, status: 0, total });
                             init.setInitStatus(true);
-                            logger.info('init successfully');
+                            logger.info('initialize the cluster successfully');
                             await init.restartServer(nodelist);
                         }
                     }
@@ -91,7 +91,7 @@ const model = {
                             nodelist = await database.getSetting({ key: 'nodelist' });
                             await init.antiInitMongoDB(nodelist);
                         }
-                        logger.info('antiinit successfully');
+                        logger.info('anti-initialize the cluster successfully');
                         await init.restartServer(nodelist);
                     }
                 }

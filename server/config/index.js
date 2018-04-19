@@ -81,6 +81,7 @@ exports.error = {
     12: 'gzip response body error',
     21: 'get the cluster initialization status error',
     22: 'get the node is the master node or not error',
+    23: 'connect to mongodb error',
     31: 'check the cluster initialization environment error',
     32: 'get disk list error',
     41: 'initialize the cluster error',

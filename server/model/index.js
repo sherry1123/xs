@@ -1,14 +1,12 @@
 const config = require('../config');
 const mongoose = require('mongoose');
-const logger = require('../module/logger');
+const handler = require('../module/handler');
 const database = config.database.name;
 (async () => {
-    if (config.env.name && config.env.init === 'true' && config.env.master === 'true') {
-        try {
-            await mongoose.connect(`mongodb://localhost/${database}`);
-        } catch (error) {
-            logger.error(`connect to mongodb error, message: ${error}`);
-        }
+    try {
+        config.env.name && config.env.init === 'true' && config.env.master === 'true' && await mongoose.connect(`mongodb://localhost/${database}`);
+    } catch (error) {
+        handler.error(23, error);
     }
 })();
 module.exports = mongoose;
