@@ -11,10 +11,10 @@ const model = {
         return value ? value === 'true' : undefined;
     },
     responseWithoutLog(code) {
-        return { code, msg: config.errors[code] };
+        return { code, msg: config.error[code] };
     },
     error(code, message, param = {}) {
-        logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
+        logger.error(`${config.error[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
     },
     response(code, result, param) {
         if (code) {
