@@ -7,6 +7,7 @@ module.exports = mongoose.model('snapshottask',
         autoDisableTime: Number,
         interval: Number,
         deleteRound: Boolean,
+        description: String,
         isRunning: Boolean
     })
 );

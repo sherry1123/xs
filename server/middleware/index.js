@@ -42,8 +42,7 @@ const model = {
 	filterRequest() {
 		return async (ctx, next) => {
 			let { api, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state, initApiList = ['checkclusterenv', 'init'], syncAPI = 'syncsystemstatus';
-			(api === syncAPI) || (!initStatus === initApiList.includes(api)) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(4) : handler.responseWithoutLog(5);
-			//(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(4) : !rollbackStatus ? handler.responseWithoutLog(5) : handler.responseWithoutLog(61);
+			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(4) : !rollbackStatus ? handler.responseWithoutLog(5) : handler.responseWithoutLog(0);
 		}
 	},
 	compressResponse() {

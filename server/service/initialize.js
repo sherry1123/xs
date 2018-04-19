@@ -4,7 +4,7 @@ const promise = require('../module/promise');
 const request = require('../module/request');
 const handler = require('../module/handler');
 const database = require('../service/database');
-const fileSystem = require('../service/filesystem');
+const afterMe = require('../service/afterMe');
 let init = false;
 const model = {
     getInitStatus() {
@@ -22,7 +22,7 @@ const model = {
         return await model.getMongoDBProcess() ? await promise.runCommandInPromise(command) === '1' : false;
     },
     async getOrcaFSStatus() {
-        let token = await fileSystem.getToken();
+        let token = await afterMe.getToken();
         let res = await request.get(config.api.orcafs.createstatus, {}, token, true);
         return !res.errorId && res.data.currentStep && res.data.currentStep === res.data.totalStep ? true : false;
     },
@@ -88,11 +88,11 @@ const model = {
         }
     },
     async initOrcaFS(param) {
-        let token = await fileSystem.getToken();
+        let token = await afterMe.getToken();
         return await request.post(config.api.orcafs.createcluster, param, token, true);
     },
     async getOrcaFSInitProgress() {
-        let token = await fileSystem.getToken();
+        let token = await afterMe.getToken();
         return await request.get(config.api.orcafs.createstatus, {}, token, true);
     },
     async updateNginxConfig(master) {
@@ -124,8 +124,15 @@ const model = {
         }
     },
     async antiInitOrcaFS() {
-        let token = await fileSystem.getToken();
+        let token = await afterMe.getToken();
         return await request.post(config.api.orcafs.destroycluster, {}, token, true);
+    },
+    async restartServer(nodelist) {
+        let command = 'service orcafs-gui restart';
+        nodelist = nodelist.reverse();
+        for (let i = 0; i < nodelist.length; i++) {
+            i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
+        }
     }
 };
 module.exports = model;

@@ -1,11 +1,11 @@
-const service = require('../service');
-const snapshot = require('../service/snapshot')
+const task = require('../service/task');
+const snapshot = require('../service/snapshot');
 const CronJob = require('cron').CronJob;
 
 new CronJob('*/15 * * * * *', async () => {
-    await service.runHardwareTask();
+    await task.getHardware();
 }, null, true);
 
 new CronJob('0 * * * * *', async () => {
-    !snapshot.getRollbackStatus() && await service.runSnapshotTask();
+    !snapshot.getRollbackStatus() && await task.createSnapshot();
 }, null, true);

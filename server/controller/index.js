@@ -92,6 +92,9 @@ const model = {
     '/api/createsnapshot': async ctx => {
         ctx.body = await service.createSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/updatesnapshot': async ctx => {
+        ctx.body = await service.updateSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/deletesnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to delete snapshot' };
         service.deleteSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
@@ -110,6 +113,9 @@ const model = {
     '/api/createsnapshottask': async ctx => {
         ctx.body = await service.createSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/updatesnapshottask': async ctx => {
+        ctx.body = await service.updateSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/enablesnapshottask': async ctx => {
         ctx.body = await service.enableSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
@@ -119,17 +125,20 @@ const model = {
     '/api/deletesnapshottask': async ctx => {
         ctx.body = await service.deleteSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/deletesnapshottasks': async ctx => {
+        ctx.body = await service.deleteSnapshotTasks(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/getnasexport': async ctx => {
         ctx.body = await service.getNasExport(ctx.param);
     },
     '/api/createnasexport': async ctx => {
         ctx.body = await service.createNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletenasexport': async ctx => {
-        ctx.body = await service.deleteNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
-    },
     '/api/updatenasexport': async ctx => {
         ctx.body = await service.updateNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/deletenasexport': async ctx => {
+        ctx.body = await service.deleteNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/geteventlog': async ctx => {
         ctx.body = await service.getEventLog(ctx.param);

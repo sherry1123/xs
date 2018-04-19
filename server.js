@@ -1,7 +1,6 @@
 const cluster = require('cluster');
 const config = require('./server/config');
-const service = require('./server/service');
-const logger = require('./server/module/logger');
+const status = require('./server/service/status');
 const init = require('./server/service/initialize');
 const snapshot = require('./server/service/snapshot');
 const workerNameList = config.process.name;
@@ -47,8 +46,8 @@ const workerMessageHandler = msg => {
 };
 (async () => {
 	if (cluster.isMaster) {
-		cluster.settings.initStatus = await service.getInitStatus();
-		cluster.settings.isMaster = await service.isMaster();
+		cluster.settings.initStatus = await status.getInitStatus();
+		cluster.settings.isMaster = await status.isMaster();
 		startNewWorker(1);
 	} else {
 		let { name, initStatus } = getWorkerFromProcess(cluster.worker);
