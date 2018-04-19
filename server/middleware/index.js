@@ -27,7 +27,7 @@ const model = {
 	checkKey() {
 		return async (ctx, next) => {
 			let { api, key } = ctx.state;
-			key && key === config.keys[api] ? await next() : ctx.body = handler.responseWithoutLog(3);
+			key && key === config.keys[api] ? await next() : ctx.body = handler.responseWithoutLog(11);
 		}
 	},
 	syncStatus() {
@@ -44,7 +44,7 @@ const model = {
 			let { api, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state;
 			let syncAPI = 'syncsystemstatus';
 			let initApiList = ['checkclusterenv', 'init'];
-			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(4) : !rollbackStatus ? handler.responseWithoutLog(5) : handler.responseWithoutLog(0);
+			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0);
 		}
 	},
 	compressResponse() {
@@ -57,7 +57,7 @@ const model = {
 					ctx.body = await promise.gzipDataInPromise(body);
 					ctx.set('Content-Encoding', 'gzip');
 				} catch (error) {
-					handler.error(64, error);
+					handler.error(12, error);
 					ctx.body = body;
 				}
 			}

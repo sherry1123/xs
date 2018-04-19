@@ -8,7 +8,7 @@ const model = {
         try {
             result = await init.getOrcaFSStatus();
         } catch (error) {
-            handler.error(1, error);
+            handler.error(21, error);
         }
         init.setInitStatus(result);
         return result;
@@ -22,7 +22,7 @@ const model = {
             try {
                 result = await init.getMongoDBMasterOrNot();
             } catch (error) {
-                handler.error(2, error);
+                handler.error(22, error);
             }
         }
         return result;
@@ -32,7 +32,7 @@ const model = {
         let receviceEventAPI = 'http://localhost/api/receiveevent';
         target = target.map(snapshot => ({name: snapshot, result: Math.random() > 0.5 ? true : false}));
         await promise.runTimeOutInPromise(10);
-        await request.post(receviceEventAPI, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 5 : 6, target, info }, {}, true);
+        await request.post(receviceEventAPI, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 3 : 4, target, info }, {}, true);
 
     }
 };

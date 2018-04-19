@@ -22,10 +22,10 @@ router.all('/api/getstoragenodestatus', controller['/api/getstoragenodestatus'])
 router.all('/api/getstoragediskspace', controller['/api/getstoragediskspace']);
 router.all('/api/getstoragetarget', controller['/api/getstoragetarget']);
 router.all('/api/getstoragethroughput', controller['/api/getstoragethroughput']);
-router.all('/api/getusermetastats', controller['/api/getusermetastats']);
-router.all('/api/getuserstoragestats', controller['/api/getuserstoragestats']);
 router.all('/api/getclientmetastats', controller['/api/getclientmetastats']);
 router.all('/api/getclientstoragestats', controller['/api/getclientstoragestats']);
+router.all('/api/getusermetastats', controller['/api/getusermetastats']);
+router.all('/api/getuserstoragestats', controller['/api/getuserstoragestats']);
 router.all('/api/getsnapshotsetting', controller['/api/getsnapshotsetting']);
 router.all('/api/updatesnapshotsetting', controller['/api/updatesnapshotsetting']);
 router.all('/api/getsnapshot', controller['/api/getsnapshot']);

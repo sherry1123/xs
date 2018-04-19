@@ -17,21 +17,21 @@ const model = {
             }
             await database.addHardware({ date, ipList, data });
         } catch (error) {
-            handler.error(20, error, api);
+            handler.error(72, error, api);
         }
     },
     async sendMail() {
         try {
             await email.sendMail();
         } catch (error) {
-            handler.error(22, error);
+            handler.error(62, error);
         }
     },
     async createSnapshot() {
         try {
             await snapshot.runSnapshotTask();
         } catch (error) {
-            handler.error(63, error);
+            handler.error(148, error);
         }
     }
 };

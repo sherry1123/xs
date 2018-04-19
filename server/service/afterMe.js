@@ -77,7 +77,7 @@ const model = {
         let token = await model.getToken();
         let res = await request.get(config.api.orcafs.entryinfo, param, token, true);
         if (!res.errorId) {
-            res.data.chunkSize = model.toByte(Number(res.data.chunkSize.replace(/[a-zA-Z]/, '')), res.data.chunkSize.replace(/\d+/, ''));
+            res.data.chunkSize = handler.toByte(Number(res.data.chunkSize.replace(/[a-zA-Z]/, '')), res.data.chunkSize.replace(/\d+/, ''));
             res.data.numTargets = Number(res.data.numTargets);
         }
         return res;

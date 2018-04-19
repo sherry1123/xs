@@ -7,7 +7,7 @@ const model = {
         try {
             await database.addEventLog({ time, node, desc, level, source, read });
         } catch (error) {
-            handler.error(15, error, param);
+            handler.error(162, error, param);
         }
     },
     async audit(param) {
@@ -15,7 +15,7 @@ const model = {
         try {
             await database.addAuditLog({ time, user, group, desc, level, ip });
         } catch (error) {
-            handler.error(18, error, param);
+            handler.error(165, error, param);
         }
     }
 };

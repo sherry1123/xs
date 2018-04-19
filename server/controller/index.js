@@ -71,17 +71,17 @@ const model = {
     '/api/getstoragethroughput': async ctx => {
         ctx.body = await service.getStorageThroughput(ctx.param);
     },
-    '/api/getusermetastats': async ctx => {
-        ctx.body = await service.getUserMetaStats(ctx.param);
-    },
-    '/api/getuserstoragestats': async ctx => {
-        ctx.body = await service.getUserStorageStats(ctx.param);
-    },
     '/api/getclientmetastats': async ctx => {
         ctx.body = await service.getClientMetaStats(ctx.param);
     },
     '/api/getclientstoragestats': async ctx => {
         ctx.body = await service.getClientStorageStats(ctx.param);
+    },
+    '/api/getusermetastats': async ctx => {
+        ctx.body = await service.getUserMetaStats(ctx.param);
+    },
+    '/api/getuserstoragestats': async ctx => {
+        ctx.body = await service.getUserStorageStats(ctx.param);
     },
     '/api/getsnapshotsetting': async ctx => {
         ctx.body = await service.getSnapshotSetting(ctx.param);
