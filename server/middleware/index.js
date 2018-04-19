@@ -41,7 +41,9 @@ const model = {
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let { api, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state, initApiList = ['checkclusterenv', 'init'], syncAPI = 'syncsystemstatus';
+			let { api, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let syncAPI = 'syncsystemstatus';
+			let initApiList = ['checkclusterenv', 'init'];
 			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(4) : !rollbackStatus ? handler.responseWithoutLog(5) : handler.responseWithoutLog(0);
 		}
 	},
