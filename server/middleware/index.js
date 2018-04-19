@@ -27,16 +27,16 @@ const model = {
 	checkKey() {
 		return async (ctx, next) => {
 			let { api, key } = ctx.state;
-			key && key === config.keys[api] ? await next() : ctx.body = handler.responseWithoutLog(11);
+			key && key === config.key[api] ? await next() : ctx.body = handler.responseWithoutLog(11);
 		}
 	},
 	syncStatus() {
 		return async (ctx, next) => {
 			await next();
 			let { cookie: { init: initCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state;
-			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookies);
-			(rollbackCookie !== rollbackStatus) && ctx.cookies.set('rollbacking', String(rollbackStatus), config.cookies);
-			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookies);
+			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookie);
+			(rollbackCookie !== rollbackStatus) && ctx.cookies.set('rollbacking', String(rollbackStatus), config.cookie);
+			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookie);
 		}
 	},
 	filterRequest() {

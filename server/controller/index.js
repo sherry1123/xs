@@ -29,14 +29,14 @@ const model = {
     '/api/login': async ctx => {
         ctx.body = await service.login(ctx.param, handler.clientIP(ctx));
         if (!ctx.body.code) {
-            ctx.cookies.set('login', 'true', config.cookies);
-            ctx.cookies.set('user', ctx.param.username, config.cookies);
+            ctx.cookies.set('login', 'true', config.cookie);
+            ctx.cookies.set('user', ctx.param.username, config.cookie);
         }
     },
     '/api/logout': async ctx => {
         ctx.body = await service.logout(ctx.param, handler.clientIP(ctx));
-        ctx.cookies.set('login', 'false', config.cookies);
-        ctx.cookies.set('user', '', config.cookies);
+        ctx.cookies.set('login', 'false', config.cookie);
+        ctx.cookies.set('user', '', config.cookie);
     },
     '/api/getuser': async ctx => {
         ctx.body = await service.getUser(ctx.param);

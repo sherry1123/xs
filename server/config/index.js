@@ -7,6 +7,10 @@ exports.env = {
     init: process.env.INIT_STATUS,
     master: process.env.IS_MASTER
 };
+exports.nginx = {
+    path: '/etc/nginx/nginx.conf',
+    proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
+};
 exports.database = {
     name: 'storage',
     bin: '/usr/bin',
@@ -14,14 +18,27 @@ exports.database = {
     logpath: '/var/log/mongodb/mongod.log',
     replicaSet: 'orcafs'
 };
-exports.nginx = {
-    path: '/etc/nginx/nginx.conf',
-    proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
+exports.log = {
+    path: '/var/log/orcafs-gui.log',
+    maxSize: 1024 * 1024 * 10,
+    backup: 3
+};
+exports.cookie = {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    overwrite: false,
+    httpOnly: false,
+    signed: false,
+    rolling: true
 };
 exports.snapshot = {
     total: 64,
     manual: 25,
     auto: 39
+};
+exports.setting = {
+    nodeList: 'nodelist',
+    initParam: 'initparam',
+    snapshotSetting: 'snapshotsetting'
 };
 exports.api = {
     agentd: {
@@ -43,25 +60,8 @@ exports.api = {
         getfiles: 'http://localhost:9090/cluster/getfiles',
         setpattern: 'http://localhost:9090/cluster/setpattern'
     }
-}
-exports.logs = {
-    path: '/var/log/orcafs-gui.log',
-    maxSize: 1024 * 1024 * 10,
-    backup: 3
 };
-exports.cookies = {
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    overwrite: false,
-    httpOnly: false,
-    signed: false,
-    rolling: true
-};
-exports.settings = {
-    nodeList: 'nodelist',
-    initParam: 'initparam',
-    snapshotSetting: 'snapshotsetting'
-};
-exports.keys = {
+exports.key = {
     testapi: 'c40b0c360f3d4959b53b103b25759542',
     getuser: '88a8ee2321ca3ef6bf45dfe625402fe7',
     adduser: 'a8d729744cce939323d37f1789be0d4f',
@@ -136,7 +136,7 @@ exports.error = {
     172: 'get files error',
     173: 'set pattern error'
 };
-exports.eventCode = {
+exports.event = {
     1: 'delete snapshot successfully',
     2: 'delete snapshot failed',
     3: 'delete snapshots successfully',

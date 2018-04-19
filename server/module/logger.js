@@ -6,9 +6,9 @@ log4js.configure({
 		console: { type: 'console' },
 		file: {
 			type: 'file',
-			filename: config.logs.path,
-			maxLogSize: config.logs.maxSize,
-			backups: config.logs.backup
+			filename: config.log.path,
+			maxLogSize: config.log.maxSize,
+			backups: config.log.backup
 		}
 	},
 	categories: {
