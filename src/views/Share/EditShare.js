@@ -59,13 +59,18 @@ class EditShare extends Component {
                    visible={this.state.visible}
                    footer={
                        <div>
-                           <Button type="primary" loading={this.state.formSubmitting}
+                           <Button
+                               size='small'
+                               onClick={this.hide.bind(this)}
+                           >
+                               {lang('取消', 'Cancel')}
+                           </Button>
+                           <Button
+                               type="primary"
+                               loading={this.state.formSubmitting}
                                size='small' onClick={this.editShare.bind(this)}
                            >
                                {lang('编辑', 'Edit')}
-                           </Button>
-                           <Button size='small' onClick={this.hide.bind(this)}>
-                               {lang('取消', 'Cancel')}
                            </Button>
                        </div>
                    }

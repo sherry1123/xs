@@ -117,14 +117,20 @@ class CreateSnapshot extends Component {
                 maskClosable={false}
                 footer={
                     <div>
-                        <Button type="primary" disabled={!this.state.formValid}
+                        <Button
+                            size='small'
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            type="primary"
+                            disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
-                            size='small' onClick={this.createSnapshot.bind(this)}
+                            size='small'
+                            onClick={this.createSnapshot.bind(this)}
                         >
                             {lang('创建', 'Create')}
-                        </Button>
-                        <Button size='small' onClick={this.hide.bind(this)}>
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }

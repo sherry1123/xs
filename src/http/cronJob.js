@@ -31,6 +31,7 @@ const fetchDataPer15s = () => {
     // snapshot
     if (routerHash.match(main + routerPath.Snapshot)){
         httpRequests.getSnapshotList();
+        httpRequests.getSnapshotSetting();
     }
 
     // snapshot schedule

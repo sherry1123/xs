@@ -126,7 +126,8 @@ export default {
             ],
             snapshotScheduleList: [
 
-            ]
+            ],
+            snapshotSetting: {total: 0, auto: 0, manual: 0}
         },
         // share
         share: {

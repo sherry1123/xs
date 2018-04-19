@@ -42,7 +42,7 @@ class CreateSnapshotSchedule extends Component {
             allowLength = allowLength || 3;
             if (numberStr.length > allowLength){
                 let scheduleData = Object.assign({}, this.state.scheduleData);
-                scheduleData[key] = parseInt(numberStr.slice(0, allowLength), 0);
+                scheduleData[key] = Number(numberStr.slice(0, allowLength));
                 let newState = update(this.state, {scheduleData: {$set: scheduleData}});
                 await this.setState(Object.assign(this.state, newState));
             }
@@ -183,18 +183,18 @@ class CreateSnapshotSchedule extends Component {
                 footer={
                     <div>
                         <Button
+                            size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
                             size="small" type="primary"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.createSnapshotSchedule.bind(this)}
                         >
                             {lang('创建', 'Create')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }

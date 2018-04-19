@@ -63,7 +63,7 @@ class EditSnapshot extends Component {
         };
 
         return (
-            <Modal title={lang('创建快照', 'Create Snapshot')}
+            <Modal title={lang('编辑快照', 'Edit Snapshot')}
                    width={400}
                    visible={this.state.visible}
                    closable={false}
@@ -71,17 +71,17 @@ class EditSnapshot extends Component {
                    footer={
                        <div>
                            <Button
-                               type="primary" disabled={!this.state.formValid}
-                               loading={this.state.formSubmitting}
-                               size='small' onClick={this.editSnapshot.bind(this)}
-                           >
-                               {lang('创建', 'Create')}
-                           </Button>
-                           <Button
                                size='small'
                                onClick={this.hide.bind(this)}
                            >
                                {lang('取消', 'Cancel')}
+                           </Button>
+                           <Button
+                               type="primary" disabled={!this.state.formValid}
+                               loading={this.state.formSubmitting}
+                               size='small' onClick={this.editSnapshot.bind(this)}
+                           >
+                               {lang('编辑', 'Edit')}
                            </Button>
                        </div>
                    }

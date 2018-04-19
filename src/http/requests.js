@@ -206,6 +206,19 @@ export default  {
         await fetchPost('/api/deletesnapshots', {names});
     },
 
+    async getSnapshotSetting (){
+        try {
+            let data = await fetchGet('/api/getsnapshotsetting');
+            store.dispatch(snapshotAction.setSnapshotSetting(data));
+        } catch (e){
+            errorHandler(e);
+        }
+    },
+
+    async updateSnapshotSetting (setting){
+        await fetchPost('/api/updatesnapshotsetting', setting);
+    },
+
     // snapshot schedule
     async getSnapshotScheduleList (){
         try {

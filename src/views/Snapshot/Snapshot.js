@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Modal, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
+import SetSnapshot from './SetSnapshot';
 import lang from "../../components/Language/lang";
 import {timeFormat} from '../../services';
 import httpRequests from '../../http/requests';
@@ -34,6 +35,7 @@ class Snapshot extends Component {
 
     componentDidMount (){
         httpRequests.getSnapshotList();
+        httpRequests.getSnapshotSetting();
     }
 
     async componentWillReceiveProps (nextProps){
@@ -59,6 +61,10 @@ class Snapshot extends Component {
 
     create (){
         this.createSnapshotWrapper.getWrappedInstance().show();
+    }
+
+    setting (){
+        this.setSnapshotWrapper.getWrappedInstance().show();
     }
 
     edit (snapshotData){
@@ -227,6 +233,12 @@ class Snapshot extends Component {
                                 {lang('创建', 'Create')}
                             </Button>
                             <Button
+                                className="fs-create-snapshot-button" size="small"
+                                onClick={this.setting.bind(this)}
+                            >
+                                {lang('设置', 'Setting')}
+                            </Button>
+                            <Button
                                 className="fs-batch-delete-snapshot-button" size="small"
                                 disabled={!this.state.batchDeleteSnapshotNames.length}
                                 onClick={this.batchDelete.bind(this)}
@@ -237,6 +249,7 @@ class Snapshot extends Component {
                         <Table {...tableProps} />
                         <CreateSnapshot ref={ref => this.createSnapshotWrapper = ref} />
                         <EditSnapshot ref={ref => this.editSnapshotWrapper = ref} />
+                        <SetSnapshot ref={ref => this.setSnapshotWrapper = ref} />
                     </section>
                 </section>
             </div>
@@ -245,8 +258,8 @@ class Snapshot extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList}}} = state;
-    return {language, snapshotList};
+    const {language, main: {snapshot: {snapshotList, settingData}}} = state;
+    return {language, snapshotList, settingData};
 };
 
 export default connect(mapStateToProps)(Snapshot);

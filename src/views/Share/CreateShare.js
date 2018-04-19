@@ -115,6 +115,12 @@ class CreateShare extends Component {
                     footer={
                         <div>
                             <Button
+                                size='small'
+                                onClick={this.hide.bind(this)}
+                            >
+                                {lang('取消', 'Cancel')}
+                            </Button>
+                            <Button
                                 type="primary"
                                 disabled={!this.state.formValid}
                                 loading={this.state.formSubmitting}
@@ -122,12 +128,6 @@ class CreateShare extends Component {
                                 onClick={this.createShare.bind(this)}
                             >
                                 {lang('创建', 'Create')}
-                            </Button>
-                            <Button
-                                size='small'
-                                onClick={this.hide.bind(this)}
-                            >
-                                {lang('取消', 'Cancel')}
                             </Button>
                         </div>
                     }
