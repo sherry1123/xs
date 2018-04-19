@@ -29,14 +29,14 @@ const model = {
     '/api/login': async ctx => {
         ctx.body = await service.login(ctx.param, handler.clientIP(ctx));
         if (!ctx.body.code) {
-            ctx.cookies.set('login', 'true', config.cookies);
-            ctx.cookies.set('user', ctx.param.username, config.cookies);
+            ctx.cookies.set('login', 'true', config.cookie);
+            ctx.cookies.set('user', ctx.param.username, config.cookie);
         }
     },
     '/api/logout': async ctx => {
         ctx.body = await service.logout(ctx.param, handler.clientIP(ctx));
-        ctx.cookies.set('login', 'false', config.cookies);
-        ctx.cookies.set('user', '', config.cookies);
+        ctx.cookies.set('login', 'false', config.cookie);
+        ctx.cookies.set('user', '', config.cookie);
     },
     '/api/getuser': async ctx => {
         ctx.body = await service.getUser(ctx.param);
@@ -68,17 +68,20 @@ const model = {
     '/api/getstoragetarget': async ctx => {
         ctx.body = await service.getStorageTarget(ctx.param);
     },
-    '/api/getusermetastats': async ctx => {
-        ctx.body = await service.getUserMetaStats(ctx.param);
-    },
-    '/api/getuserstoragestats': async ctx => {
-        ctx.body = await service.getUserStorageStats(ctx.param);
+    '/api/getstoragethroughput': async ctx => {
+        ctx.body = await service.getStorageThroughput(ctx.param);
     },
     '/api/getclientmetastats': async ctx => {
         ctx.body = await service.getClientMetaStats(ctx.param);
     },
     '/api/getclientstoragestats': async ctx => {
         ctx.body = await service.getClientStorageStats(ctx.param);
+    },
+    '/api/getusermetastats': async ctx => {
+        ctx.body = await service.getUserMetaStats(ctx.param);
+    },
+    '/api/getuserstoragestats': async ctx => {
+        ctx.body = await service.getUserStorageStats(ctx.param);
     },
     '/api/getsnapshotsetting': async ctx => {
         ctx.body = await service.getSnapshotSetting(ctx.param);
@@ -157,12 +160,6 @@ const model = {
     },
     '/api/setpattern': async ctx => {
         ctx.body = await service.setPattern(ctx.param, handler.user(ctx), handler.clientIP(ctx));
-    },
-    '/api/getstoragenodesthroughput': async ctx => {
-        ctx.body = await service.getStorageNodesThroughput(ctx.param);
-    },
-    '/api/getstoragenodethroughput': async ctx => {
-        ctx.body = await service.getStorageNodeThroughput(ctx.param);
     }
 };
 module.exports = model;

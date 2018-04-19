@@ -14,14 +14,27 @@ exports.database = {
     logpath: '/var/log/mongodb/mongod.log',
     replicaSet: 'orcafs'
 };
-exports.nginx = {
-    path: '/etc/nginx/nginx.conf',
-    proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
+exports.log = {
+    path: '/var/log/orcafs-gui.log',
+    maxSize: 1024 * 1024 * 10,
+    backup: 3
+};
+exports.cookie = {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    overwrite: false,
+    httpOnly: false,
+    signed: false,
+    rolling: true
 };
 exports.snapshot = {
     total: 64,
     manual: 25,
     auto: 39
+};
+exports.setting = {
+    nodeList: 'nodelist',
+    initParam: 'initparam',
+    snapshotSetting: 'snapshotsetting'
 };
 exports.api = {
     agentd: {
@@ -29,42 +42,22 @@ exports.api = {
     },
     orcafs: {
         gettoken: 'http://localhost:9090/token/get',
-        createcluster: 'http://localhost:9090/cluster/create',
-        createstatus: 'http://localhost:9090/cluster/createstatus',
         listdisk: 'http://localhost:9090/disk/list/',
+        createstatus: 'http://localhost:9090/cluster/createstatus',
+        createcluster: 'http://localhost:9090/cluster/create',
         destroycluster: 'http://localhost:9090/cluster/destroy',
-        entryinfo: 'http://localhost:9090/cluster/getentryinfo',
-        getfiles: 'http://localhost:9090/cluster/getfiles',
-        setpattern: 'http://localhost:9090/cluster/setpattern',
-        getstats: 'http://localhost:9090/cluster/getstats',
         listmetanodes: 'http://localhost:9090/cluster/listmetanodes',
         liststoragenodes: 'http://localhost:9090/cluster/liststoragenodes',
         getstoragespace: 'http://localhost:9090/cluster/getstoragespace',
-        liststoragetargets: 'http://localhost:9090/cluster/liststoragetargets'
-    },
-    admon: {
-        storagenodesoverview: 'http://localhost:8000/XML_StoragenodesOverview',
-        storagenode: 'http://localhost:8000/XML_Storagenode'
+        liststoragetargets: 'http://localhost:9090/cluster/liststoragetargets',
+        getiostat: 'http://localhost:9090/cluster/getiostat',
+        getstats: 'http://localhost:9090/cluster/getstats',
+        entryinfo: 'http://localhost:9090/cluster/getentryinfo',
+        getfiles: 'http://localhost:9090/cluster/getfiles',
+        setpattern: 'http://localhost:9090/cluster/setpattern'
     }
-}
-exports.logs = {
-    path: '/var/log/orcafs-gui.log',
-    maxSize: 1024 * 1024 * 10,
-    backup: 3
 };
-exports.cookies = {
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    overwrite: false,
-    httpOnly: false,
-    signed: false,
-    rolling: true
-};
-exports.settings = {
-    initSetting: 'initsetting',
-    uiSetting: 'uisetting',
-    emailSetting: 'emailsetting'
-};
-exports.keys = {
+exports.key = {
     testapi: 'c40b0c360f3d4959b53b103b25759542',
     getuser: '88a8ee2321ca3ef6bf45dfe625402fe7',
     adduser: 'a8d729744cce939323d37f1789be0d4f',
@@ -80,79 +73,71 @@ exports.keys = {
     init: 'e37f0136aa3ffaf149b351f6a4c948e9',
     antiinit: '186716b8d7c8ce050a0710ccf43c89c8'
 };
-exports.errors = {
+exports.error = {
     0: 'the cluster is rollbacking',
-    1: 'get the cluster initialization status error',
-    2: 'get the node is the master node or not error',
-    3: 'no key or wrong key',
-    4: 'the cluster is not initialized',
-    5: 'the cluster has been initialized',
-    6: 'check the cluster initialization environment error',
-    7: 'initialize the cluster error',
-    8: 'anti-initialize the cluster error',
-    9: 'login error',
-    10: 'get user error',
-    11: 'add user error',
-    12: 'update user error',
-    13: 'delete user error',
-    14: 'get event log error',
-    15: 'add event log error',
-    16: 'update event log error',
-    17: 'get audit log error',
-    18: 'add audit log error',
-    19: 'get hardware error',
-    20: 'run hardware task error',
-    21: 'test mail error',
-    22: 'send mail error',
-    23: 'get nodelist error',
-    24: 'get metadata nodes overview error',
-    25: 'get metadata node detail error',
-    26: 'get storage nodes overview error',
-    27: 'get storage node detail error',
-    28: 'get client stats error',
-    29: 'get user stats error',
-    30: 'get storage nodes status and disk summary error',
-    31: 'get storage nodes throughput error',
-    32: 'get storage node status and disk summary error',
-    33: 'get storage node throughput error',
-    34: 'get metadata nodes status error',
-    35: 'get metadata nodes request error',
-    36: 'get metadata node status error',
-    37: 'get known problems error',
-    38: 'get disk list error',
-    39: 'get entry info error',
-    40: 'get files error',
-    41: 'set pattern error',
-    42: 'get snapshot error',
-    43: 'create snapshot error',
-    44: 'delete snapshot error',
-    45: 'rollback snapshot error',
-    46: 'get user metadata stats error',
-    47: 'get user storage stats error',
-    48: 'get client metadata stats error',
-    49: 'get client storage stats error',
-    50: 'get snapshot task error',
-    51: 'create snapshot task error',
-    52: 'enable snapshot task error',
-    53: 'disable snapshot task error',
-    54: 'delete snapshot task error',
-    55: 'get snapshot setting error',
-    56: 'update snapshot setting error',
-    57: 'get nas export error',
-    58: 'create nas export error',
-    59: 'delete nas export error',
-    60: 'start delete snapshots error',
-    61: 'the cluster is rollbacking',
-    62: 'update nas export error',
-    63: 'run snapshot task error',
-    64: 'gzip response body error',
-    65: 'get storage nodes status error'
+    1: 'the cluster is not initialized',
+    2: 'the cluster has been initialized',
+    11: 'no key or wrong key',
+    12: 'gzip response body error',
+    21: 'get the cluster initialization status error',
+    22: 'get the node is the master node or not error',
+    23: 'connect to mongodb error',
+    31: 'check the cluster initialization environment error',
+    32: 'get disk list error',
+    41: 'initialize the cluster error',
+    42: 'anti-initialize the cluster error',
+    51: 'login error',
+    52: 'get user error',
+    53: 'add user error',
+    54: 'update user error',
+    55: 'delete user error',
+    61: 'test email error',
+    62: 'send email error',
+    71: 'get hardware error',
+    72: 'run hardware task error',
+    81: 'get metadata status error',
+    91: 'get storage status error',
+    92: 'get storage disk space error',
+    93: 'get storage target error',
+    94: 'get storage throughput error',
+    101: 'get client metadata stats error',
+    102: 'get client storage stats error',
+    111: 'get user metadata stats error',
+    112: 'get user storage stats error',
+    121: 'get snapshot setting error',
+    122: 'update snapshot setting error',
+    131: 'get snapshot error',
+    132: 'create snapshot error',
+    133: 'update snapshot error',
+    134: 'delete snapshot error',
+    135: 'delete snapshots error',
+    136: 'rollback snapshot error',
+    141: 'get snapshot task error',
+    142: 'create snapshot task error',
+    143: 'update snapshot task error',
+    144: 'enable snapshot task error',
+    145: 'disable snapshot task error',
+    146: 'delete snapshot task error',
+    147: 'delete snapshot tasks error',
+    148: 'run snapshot task error',
+    151: 'get nas export error',
+    152: 'create nas export error',
+    153: 'update nas export error',
+    154: 'delete nas export error',
+    161: 'get event log error',
+    162: 'add event log error',
+    163: 'update event log error',
+    164: 'get audit log error',
+    165: 'add audit log error',
+    171: 'get entry info error',
+    172: 'get files error',
+    173: 'set pattern error'
 };
-exports.eventCode = {
+exports.event = {
     1: 'delete snapshot successfully',
     2: 'delete snapshot failed',
-    3: 'rollback start',
-    4: 'rollback end',
-    5: 'delete snapshots successfully',
-    6: 'delete snapshots failed'
-}
+    3: 'delete snapshots successfully',
+    4: 'delete snapshots failed',
+    5: 'rollback snapshots start',
+    6: 'rollback snapshots end'
+};

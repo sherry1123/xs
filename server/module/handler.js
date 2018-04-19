@@ -11,10 +11,10 @@ const model = {
         return value ? value === 'true' : undefined;
     },
     responseWithoutLog(code) {
-        return { code, msg: config.errors[code] };
+        return { code, msg: config.error[code] };
     },
     error(code, message, param = {}) {
-        logger.error(`${config.errors[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
+        logger.error(`${config.error[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
     },
     response(code, result, param) {
         if (code) {
@@ -29,6 +29,17 @@ const model = {
     },
     clientIP(context) {
         return context.get('x-real-ip');
+    },
+    toByte(value, unit) {
+        let unitList = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+        let byte = 0;
+        for (let i in unitList) {
+            if (unit === unitList[i]) {
+                byte = Math.floor(value * Math.pow(1024, i));
+                break;
+            }
+        }
+        return byte;
     }
 };
 module.exports = model;
