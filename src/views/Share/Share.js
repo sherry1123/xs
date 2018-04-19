@@ -97,15 +97,12 @@ class Share extends Component {
                 {title: lang('操作', 'Operation'), width: 80,
                     render: (text, record, index) => (
                         <div>
-                            <a title={lang('编辑', 'Edit')}
-                               onClick={this.edit.bind(this, record)}
-                               style={{marginLeft: 10}}
-                            >
+                            <a title={lang('编辑', 'Edit')} onClick={this.edit.bind(this, record)}>
                                 <Icon style={{fontSize: 15}} type="edit" />
                             </a>
                             <a title={lang('删除', 'Delete')}
-                               onClick={this.delete.bind(this, record, index)}
-                               style={{marginLeft: 10}}
+                                onClick={this.delete.bind(this, record, index)}
+                                style={{marginLeft: 10}}
                             >
                                 <Icon style={{fontSize: 15}} type="delete" />
                             </a>

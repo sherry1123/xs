@@ -8,6 +8,9 @@ const routerPath = {
     // error page
     Error: '/error',
 
+    // rolling back
+    RollingBack: 'rolling-back',
+
     // initialized and logged in (normal state)
     Main: '/orca-fs',
 

@@ -23,7 +23,7 @@ class EditShare extends Component {
         this.setState({shareData});
     }
 
-    async createShare (){
+    async editShare (){
         let shareData = Object.assign({}, this.state.shareData);
         this.setState({formSubmitting: true});
         try {
@@ -42,7 +42,7 @@ class EditShare extends Component {
         this.setState({
             visible: true,
             formSubmitting: false,
-            shareData: shareData
+            shareData
         });
     }
 
@@ -52,7 +52,7 @@ class EditShare extends Component {
 
     render (){
         return (
-            <Modal title={lang('创建共享', 'Create Share')}
+            <Modal title={lang('编辑共享', 'Edit Share')}
                    width={320}
                    closable={false}
                    maskClosable={false}
@@ -60,9 +60,9 @@ class EditShare extends Component {
                    footer={
                        <div>
                            <Button type="primary" loading={this.state.formSubmitting}
-                               size='small' onClick={this.createShare.bind(this)}
+                               size='small' onClick={this.editShare.bind(this)}
                            >
-                               {lang('创建', 'Create')}
+                               {lang('编辑', 'Edit')}
                            </Button>
                            <Button size='small' onClick={this.hide.bind(this)}>
                                {lang('取消', 'Cancel')}

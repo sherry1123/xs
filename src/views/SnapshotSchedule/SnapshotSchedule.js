@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {Button, Icon, Input, message, Modal, Switch, Table} from "antd";
-import CreateSnapshotSchedule from './CreateSnapshotSchedule'
+import CreateSnapshotSchedule from './CreateSnapshotSchedule';
+import EditSnapshotSchedule from './EditSnapshotSchedule';
 import lang from "../../components/Language/lang";
 import {timeLeftFormat, timeFormat} from "../../services/index";
 import httpRequests from '../../http/requests';
@@ -47,6 +48,10 @@ class SnapshotSchedule extends Component {
 
     create (){
         this.createSnapshotScheduleWrapper.getWrappedInstance().show();
+    }
+
+    edit (scheduleData){
+        this.editSnapshotScheduleWrapper.getWrappedInstance().show(scheduleData);
     }
 
     async switch (snapshotSchedule, index, checked){
@@ -194,8 +199,15 @@ class SnapshotSchedule extends Component {
                         onChange={this.switch.bind(this, record, index)}
                     />
                     <a
+                        onClick={this.edit.bind(this, record)}
+                        title={lang('编辑', 'Edit')}
+                        style={{marginLeft: 10}}
+                    >
+                        <Icon style={{fontSize: 15}} type="edit" />
+                    </a>
+                    <a
                         onClick={this.delete.bind(this, record, index)}
-                        title={lang('删除', 'delete')}
+                        title={lang('删除', 'Delete')}
                         style={{marginLeft: 10}}
                     >
                         <Icon style={{fontSize: 15}} type="delete" />
@@ -237,6 +249,7 @@ class SnapshotSchedule extends Component {
                         </div>
                         <Table {...tableProps} />
                         <CreateSnapshotSchedule ref={ref => this.createSnapshotScheduleWrapper = ref} />
+                        <EditSnapshotSchedule ref={ref => this.editSnapshotScheduleWrapper = ref} />
                     </section>
                 </section>
 

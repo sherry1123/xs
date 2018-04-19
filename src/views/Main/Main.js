@@ -85,30 +85,14 @@ export default class Main extends Component {
                     <SideBar history={this.props.history} ref={ref => this.SideBar = ref} />
                     <main className='fs-content-wrapper'>
                         <Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />
-
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
-
                         <Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />
-
                         <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
-
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
-
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
-
                         <Route path={`${Main}${routerPath.Share}`} component={Share} />
-
-                        {/*
-                        <Route path={`${Main}${routerPath.ManagementKnownProblems}`} component={ManagementKnownProblems} />
-                        */}
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
-
-                        {/*
-                        <Route path={`${Main}${routerPath.FSOperationStripeSettings}`} component={FSOperationStripeSettings} />
-                        <Route path={`${Main}${routerPath.FSOperationFileBrowser}`} component={FSOperationFileBrowser} />
-                        */}
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
-
                         {/*
                         <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
                         */}

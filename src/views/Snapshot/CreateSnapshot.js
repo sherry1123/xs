@@ -87,7 +87,7 @@ class CreateSnapshot extends Component {
             visible: true,
             // reset form data and validations
             formSubmitting: false,
-            snapshotData: {name: ''},
+            snapshotData: {name: '', description: ''},
             validation: {name: {status: '', help: '', valid: false}}
         });
     }
@@ -144,15 +144,11 @@ class CreateSnapshot extends Component {
                             }}
                         />
                     </Form.Item>
-                    <Form.Item {...formItemLayout}
-                        label={lang('描述', 'Description')}
-                        validateStatus={this.state.validation.name.status}
-                        help={this.state.validation.name.help}
-                    >
+                    <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea size='small'
                             autosize={{minRows: 4, maxRows: 6}}
                             placeholder={lang('描述为可选项', 'description is optional')}
-                            value={this.state.snapshotData.name}
+                            value={this.state.snapshotData.description}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                             }}

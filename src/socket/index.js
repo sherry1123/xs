@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 import {notification} from 'antd';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
-import {lsSet, lsRemove, ckGet,} from '../services';
+import {lsSet, lsRemove, ckGet, ckRemove} from '../services';
 import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './conf';
 import httpRequest from '../http/requests';
 import lang from "../components/Language/lang";
@@ -27,19 +27,26 @@ if (isInitialized !== 'true'){
         let {language} = store.getState();
         notification[result ? 'success' : 'error']({
             message: socketEventChannel[channel]()[language] + lang('通知', 'Notification'),
-            description: socketEventCode[code]()[language](target)
+            description: socketEventCode[code]()[language](target, result)
         });
 
         // post handlers
         // request the appointed new data immediately by code
-        if (eventCodeForEventChannel.snapshot.includes(code)){
+        let {snapshot, snapshotRollBackStart, snapshotRollBackFinish} = eventCodeForEventChannel;
+        if (snapshot.includes(code)){
             // snapshot
             httpRequest.getSnapshotList();
         }
-        // snapshot(system) rolling back
-        if (code === 7){
+        // snapshot rolling back
+        if (snapshotRollBackStart === code){
             // reload page and go through the system status logic in App.js
-            window.location.reload();
+            // setTimeout(() => window.location.href = '/', 2500);
+            setTimeout(() => window.location.reload(), 2000);
+        }
+        if (snapshotRollBackFinish === code){
+            // setTimeout(() => window.location.href = '/', 2500);
+            setTimeout(() => window.location.reload(), 2000);
+            ckRemove('rollbacking');
         }
     });
 }

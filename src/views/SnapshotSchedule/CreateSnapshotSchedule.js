@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import update from "react-addons-update";
-import {Button, Checkbox, Col, Form, Input, message, Modal, Row, Select} from "antd";
+import {Button, Checkbox, Col, Form, Icon, Input, message, Modal, Row, Popover, Select, Switch} from "antd";
 import lang from "../../components/Language/lang";
 import {validateNotZeroInteger, validateFsName, timeUnitMilliSecond} from "../../services/index";
 import httpRequests from '../../http/requests';
@@ -255,13 +255,29 @@ class CreateSnapshotSchedule extends Component {
                             </Col>
                         </Row>
                     </Form.Item>
+                    <Form.Item {...formItemLayout} label={lang('自动删除', 'Auto Delete')}>
+                        <Switch
+                            style={{marginLeft: 10}} size="small"
+                            checked={this.state.scheduleData.deleteRound}
+                            onChange={checked => this.formValueChange.bind(this, 'deleteRound')(checked)}
+                        />
+                        <Popover
+                            placement="right"
+                            content={lang(
+                                '快照数量达到限制后自动删除创建时间最早的定时快照',
+                                'Delete the earliest timed snapshot automatically once their count reach the limitation.'
+                            )}
+                        >
+                            <Icon type="question-circle-o" className="fs-info-icon m-ll" />
+                        </Popover>
+                    </Form.Item>
                     <Form.Item {...formItemLayout}
                         label={lang('延时关闭', 'Delay Disable')}
                         validateStatus={this.state.validation.autoDisableTime.status}
                         help={this.state.validation.autoDisableTime.help}
                     >
                         <Input
-                            style={{width: 170}} type="text" size="small"
+                            style={{width: isChinese ? 170 : 140}} type="text" size="small"
                             disabled={!this.state.scheduleData.autoDisable}
                             addonAfter={lang('天后', 'Day(s) Later')}
                             value={this.state.scheduleData.autoDisableTimeNumber}
@@ -278,7 +294,11 @@ class CreateSnapshotSchedule extends Component {
                                 this.formValueChange.bind(this, 'autoDisable')(!checked);
                                 this.validateForm.bind(this)('autoDisableTime');
                             }}
-                        /> {lang('永不', 'Never')}
+                        />
+                        {lang(' 永不', '  Never')}
+                        <Popover content={lang('延时关闭时间从执行该计划时开始计算', 'Delay disable time is calculated since execute this schedule.')}>
+                            <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                        </Popover>
                     </Form.Item>
                     <Form.Item {...formItemLayout}
                         label={lang('描述', 'Description')}

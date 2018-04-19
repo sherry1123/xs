@@ -7,6 +7,8 @@ export const socketEventChannel = {
 
 export const eventCodeForEventChannel = {
     snapshot: [1, 2, 3, 4, 5, 6],
+    snapshotRollBackStart: 3,
+    snapshotRollBackFinish: 4,
 };
 
 export const socketEventCode = {
@@ -20,12 +22,12 @@ export const socketEventCode = {
         english: target => `Snapshot ${target} deleted failed！`
     }),
     3: () => ({
-        chinese: target => `快照 ${target} 回滚成功！`,
-        english: target => `Snapshot ${target} rollback successfully！`
+        chinese: target => `快照 ${target} 回滚开始！`,
+        english: target => `Start rolling back snapshot ${target}！`
     }),
     4: () => ({
-        chinese: target => `快照 ${target} 回滚失败！`,
-        english: target => `Snapshot ${target} rollback failed！`
+        chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
+        english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),
     5: () => ({
         chinese: target => `批量删除${target.total}个快照成功！`,

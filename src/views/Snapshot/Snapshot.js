@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Modal, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
+import EditSnapshot from './EditSnapshot';
 import lang from "../../components/Language/lang";
 import {timeFormat} from '../../services';
 import httpRequests from '../../http/requests';
@@ -60,6 +61,10 @@ class Snapshot extends Component {
         this.createSnapshotWrapper.getWrappedInstance().show();
     }
 
+    edit (snapshotData){
+        this.editSnapshotWrapper.getWrappedInstance().show(snapshotData);
+    }
+
     rollback (snapshot){
         Modal.confirm({
             title: lang('警告', 'Warning'),
@@ -69,13 +74,13 @@ class Snapshot extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照的创建时间是否是想要恢复到的时间点，并确保已无业务运行在系统上。`, `A suggestion: before executing this operation, ensure that the selected snapshot's create time is what you want the system to recover to, and ensure that there's no service is running on the system.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
-            okText: lang('删除', 'Delete'),
+            okText: lang('回滚', 'Rollback'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
                     await httpRequests.rollbackSnapshot(snapshot);
                     httpRequests.getSnapshotList();
-                    message.success(lang(`已开始回滚快照 ${snapshot.name}!`, `Start rolling back snapshot ${snapshot.name}!`));
+                    // message.success(lang(`已开始回滚快照 ${snapshot.name}!`, `Start rolling back snapshot ${snapshot.name}!`));
                 } catch ({msg}){
                     message.error(lang(`回滚快照 ${snapshot.name} 失败, 原因: `, `Rollback snapshot ${snapshot.name} failed, reason: `) + msg);
                 }
@@ -184,7 +189,10 @@ class Snapshot extends Component {
                     render: (text, record, index) => {
                         return (!record.rollbacking && !record.deleting) ?
                             <div>
-                                <a onClick={this.rollback.bind(this, record, index)} title={lang('回滚', 'Roll Back')}>
+                                <a title={lang('编辑', 'Edit')} onClick={this.edit.bind(this, record)}>
+                                    <Icon style={{fontSize: 15}} type="edit" />
+                                </a>
+                                <a onClick={this.rollback.bind(this, record, index)} title={lang('回滚', 'Roll Back')} style={{marginLeft: 10}}>
                                     <Icon style={{fontSize: 15}} type="rollback" />
                                 </a>
                                 <a onClick={this.delete.bind(this, record, index)} title={lang('删除', 'Delete')} style={{marginLeft: 10}}>
@@ -228,6 +236,7 @@ class Snapshot extends Component {
                         </div>
                         <Table {...tableProps} />
                         <CreateSnapshot ref={ref => this.createSnapshotWrapper = ref} />
+                        <EditSnapshot ref={ref => this.editSnapshotWrapper = ref} />
                     </section>
                 </section>
             </div>

@@ -44,7 +44,7 @@ export default  {
     async getDefaultUser (){
         try {
             let data = await fetchPost('/api/getuser');
-            store.dispatch(initializeAction.setDefaultUser(data));
+            !!data && store.dispatch(initializeAction.setDefaultUser(data));
         } catch (e){
             errorHandler(e);
         }
@@ -77,7 +77,7 @@ export default  {
     async getKnownProblems (){
         try {
             let data = await fetchGet('/api/getknownproblems');
-            store.dispatch(generalAction.setKnownProblems(data));
+            !!data && store.dispatch(generalAction.setKnownProblems(data));
         } catch (e){
             errorHandler(e);
         }
@@ -87,7 +87,7 @@ export default  {
     async getMetadataNodes (){
         try {
             let data = await fetchGet('/api/getmetanodestatus');
-            store.dispatch(metadataNodeAction.setMetadataNodes(data));
+            !!data && store.dispatch(metadataNodeAction.setMetadataNodes(data));
         } catch (e){
             errorHandler(e);
         }
@@ -96,7 +96,7 @@ export default  {
     async getMetadataNodesStatics (){
         try {
             let data = await fetchGet('/api/getusermetastats', {nodeId: 0});
-            store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
+            !!data && store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
         } catch (e){
             errorHandler(e);
         }
@@ -105,7 +105,7 @@ export default  {
     async getMetadataNodeDetailStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
         try {
             let data = await fetchGet('/api/getusermetastats', {nodeId});
-            store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
+            !!data && store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
         } catch (e){
             errorHandler(e);
         }
@@ -115,7 +115,7 @@ export default  {
     async getStorageNodes (){
         try {
             let data = await fetchGet('/api/getstoragenodestatus');
-            store.dispatch(storageNodeAction.setStorageNodes(data));
+            !!data && store.dispatch(storageNodeAction.setStorageNodes(data));
         } catch (e){
             errorHandler(e);
         }
@@ -124,7 +124,7 @@ export default  {
     async getStorageNodeDiskStatus (){
         try {
             let data = await fetchGet('/api/getstoragediskspace');
-            store.dispatch(storageNodeAction.setStorageNodeDiskStatus(data));
+            !!data && store.dispatch(storageNodeAction.setStorageNodeDiskStatus(data));
         } catch (e){
             errorHandler(e);
         }
@@ -133,7 +133,7 @@ export default  {
     async getStorageNodesThroughput (){
         try {
             let data = await fetchGet('/api/getstoragenodesthroughput');
-            store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
+            !!data && store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
         } catch (e){
             errorHandler(e);
         }
@@ -143,7 +143,7 @@ export default  {
         if (!!nodeId){
             try {
                 let data = await fetchGet('/api/getstoragetarget', {nodeId});
-                store.dispatch(storageNodeAction.setStorageNodeDetailTargets(data));
+                !!data && store.dispatch(storageNodeAction.setStorageNodeDetailTargets(data));
             } catch (e){
                 errorHandler(e);
             }
@@ -154,7 +154,7 @@ export default  {
         if (!!hostname){
             try {
                 let data = await fetchGet('/api/getstoragenodethroughput', {node: hostname, nodeNumID: nodeId});
-                store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
+                !!data && store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
             } catch (e){
                 errorHandler(e);
             }
@@ -165,7 +165,7 @@ export default  {
     async getEventLogs (){
         try {
             let data = await fetchGet('/api/geteventlog');
-            store.dispatch(managementAction.setSystemEventLogs(data));
+            !!data && store.dispatch(managementAction.setSystemEventLogs(data));
         } catch (e){
             errorHandler(e);
         }
@@ -174,7 +174,7 @@ export default  {
     async getAuditLogs (){
         try {
             let data = await fetchGet('/api/getauditlog');
-            store.dispatch(managementAction.setSystemAuditLogs(data));
+            !!data && store.dispatch(managementAction.setSystemAuditLogs(data));
         } catch (e){
             errorHandler(e);
         }
@@ -184,7 +184,7 @@ export default  {
     async getSnapshotList (){
         try {
             let data = await fetchGet('/api/getsnapshot');
-            store.dispatch(snapshotAction.setSnapshotList(data));
+            !!data && store.dispatch(snapshotAction.setSnapshotList(data));
         } catch (e){
             errorHandler(e);
         }
@@ -210,7 +210,7 @@ export default  {
     async getSnapshotScheduleList (){
         try {
             let data = await fetchGet('/api/getsnapshottask');
-            store.dispatch(snapshotAction.setSnapshotScheduleList(data));
+            !!data && store.dispatch(snapshotAction.setSnapshotScheduleList(data));
         } catch (e){
             errorHandler(e);
         }
@@ -228,19 +228,23 @@ export default  {
         await fetchPost('/api/disablesnapshottask', snapshotSchedule);
     },
 
+    async editSnapshotSchedule (snapshotSchedule){
+        await fetchPost('/api/editsnapshottask', snapshotSchedule);
+    },
+
     async deleteSnapshotSchedule (snapshotSchedule){
         await fetchPost('/api/deletesnapshottask', snapshotSchedule);
     },
 
     async deleteSnapshotSchedulesInBatch (names){
-        await fetchPost('/api/deletesnapshotschedules', {names});
+        await fetchPost('/api/deletesnapshottasks', {names});
     },
 
     // share
     async getShareList (){
         try {
             let data = await fetchGet('/api/getnasexport');
-            store.dispatch(shareAction.setShareList(data));
+            !!data && store.dispatch(shareAction.setShareList(data));
         } catch (e){
             errorHandler(e);
         }
@@ -262,7 +266,7 @@ export default  {
     async getEntryInfo (dir){
         try {
             let data = await fetchGet('/api/getentryinfo', {dir});
-            store.dispatch(fsOperationAction.setEntryInfo(data));
+            !!data && store.dispatch(fsOperationAction.setEntryInfo(data));
         } catch (e){
             errorHandler(e);
         }
@@ -270,7 +274,7 @@ export default  {
 
     async getFiles (dir){
         let data = await fetchGet('api/getfiles', {dir});
-        store.dispatch(fsOperationAction.setFiles(data));
+        !!data && store.dispatch(fsOperationAction.setFiles(data));
     },
 
     async saveEntryInfo (data){

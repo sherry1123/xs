@@ -235,7 +235,7 @@ class MetadataNodes extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {metadataNode: {overview: {nodeList, statics: overviewStatics}, detail: {statics: detailStatics}}}} = state;
+    const {language, main: {metadataNode: {overview: {nodeList = [], statics: overviewStatics}, detail: {statics: detailStatics}}}} = state;
     return {language, nodeList, overviewStatics, detailStatics};
 };
 
