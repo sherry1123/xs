@@ -36,16 +36,11 @@ const model = {
         let token = await model.getToken();
         let res = await request.get(config.api.orcafs.getiostat, param, token, true);
         if (!res.errorId) {
-            let readList = [];
-            let writeList = [];
-            let totalList = [];
-            for (let i of res.data) {
-                let { read, write, total, time } = i;
-                readList.push({ value: read, time });
-                writeList.push({ value: write, time });
-                totalList.push({ value: total, time })
-            }
-            res.data = { read: readList, write: writeList, total: totalList };
+            let read = res.data.map(i => (i.read));
+            let write = res.data.map(i => (i.write));
+            let total = res.data.map(i => (i.total));
+            let time = res.data.map(i => (i.time));
+            res.data = { read, write, total, time };
         }
         return res;
     },
