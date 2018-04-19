@@ -243,32 +243,32 @@ class SetSnapshot extends Component {
                         help={this.state.validation.auto.help}
                     >
                         <div className="fs-snapshot-setting-slider-wrapper">
-                        <span className="fs-snapshot-setting-count" style={{width: isChinese ? 70 : 75}}>
-                            {lang('定时', 'Timed')} <span>{this.state.settingData.auto}</span>
-                        </span>
-                            <Slider
-                                className="fs-snapshot-setting-slider"
-                                style={{width: isChinese ? 202 : 180}}
-                                disabled={this.state.settingData.total > this.state.totalLimitation}
-                                max={Number(this.state.settingData.total)}
-                                value={Number(this.state.settingData.auto)}
-                                tipFormatter={null}
-                                onChange={async value => {
-                                    await this.formValueChange.bind(this, 'auto')(value);
-                                    this.validateForm.bind(this, 'auto')();
-                                }}
-                            />
-                            <span className="fs-snapshot-setting-count" style={{width: isChinese ? 70 : 85}}>
-                            {lang('手动', 'Manual')} <span>{this.state.settingData.manual}</span>
-                        </span>
-                        </div>
-                        <div className="fs-snapshot-setting-reference">
-                            {lang(
-                                `*参考：已有定时快照 ${timedSnapshotNumber} 个，手动快照 ${manualSnapshotNumber} 个`,
-                                `*Reference: ${timedSnapshotNumber} timed and ${manualSnapshotNumber} manual snapshots exist`
-                            )}
+                            <span className="fs-snapshot-setting-count" style={{width: isChinese ? 70 : 75}}>
+                                {lang('定时', 'Timed')} <span>{this.state.settingData.auto}</span>
+                            </span>
+                                <Slider
+                                    className="fs-snapshot-setting-slider"
+                                    style={{width: isChinese ? 202 : 180}}
+                                    disabled={this.state.settingData.total > this.state.totalLimitation}
+                                    max={Number(this.state.settingData.total)}
+                                    value={Number(this.state.settingData.auto)}
+                                    tipFormatter={null}
+                                    onChange={async value => {
+                                        await this.formValueChange.bind(this, 'auto')(value);
+                                        this.validateForm.bind(this, 'auto')();
+                                    }}
+                                />
+                                <span className="fs-snapshot-setting-count" style={{width: isChinese ? 70 : 85}}>
+                                {lang('手动', 'Manual')} <span>{this.state.settingData.manual}</span>
+                            </span>
                         </div>
                     </Form.Item>
+                    <div className="fs-snapshot-setting-reference">
+                        {lang(
+                            `*参考：已有定时快照 ${timedSnapshotNumber} 个，手动快照 ${manualSnapshotNumber} 个`,
+                            `*Reference: ${timedSnapshotNumber} timed and ${manualSnapshotNumber} manual snapshots exist`
+                        )}
+                    </div>
                 </Form>
             </Modal>
         );
