@@ -81,9 +81,6 @@ class SetSnapshot extends Component {
     }
 
     async validateForm (key){
-        // reset current form field validation
-        // await this.validationUpdateState(key, {}, true);
-
         let {totalLimitation, totalSnapshotNumber, timedSnapshotNumber, manualSnapshotNumber, settingData: {total, auto, manual}} = this.state;
         if (key === 'total'){
             if (total > this.state.totalLimitation){
@@ -100,6 +97,7 @@ class SetSnapshot extends Component {
                 await this.validationUpdateState('total', {cn: '', en: ''}, true);
             }
         }
+
         if (key === 'auto'){
             if (auto < timedSnapshotNumber){
                 await this.validationUpdateState('auto', {
