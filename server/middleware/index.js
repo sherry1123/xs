@@ -50,7 +50,8 @@ const model = {
 	compressResponse() {
 		return async (ctx, next) => {
 			await next();
-			let body = ctx.body, acceptEncoding = ctx.state.encoding;
+			let body = ctx.body;
+			let acceptEncoding = ctx.state.encoding;
 			if (body && acceptEncoding && acceptEncoding.includes('gzip')) {
 				try {
 					ctx.body = await promise.gzipDataInPromise(body);
