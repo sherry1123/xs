@@ -215,7 +215,7 @@ class SetSnapshot extends Component {
                             }}
                         />
                         <Popover
-                            placement="top"
+                            placement="right"
                             content={lang(
                                 '快照总数量最大允许512个。为确保系统的最佳性能，推荐设置为1至64之间的值',
                                 'Total snapshot number limitation is 512, to ensure system\'s optimum performance, the number is recommended to set between 1 and 64'
@@ -229,10 +229,10 @@ class SetSnapshot extends Component {
                             {lang('数量配额', 'Number Quota')}
                         </span>
                         <Popover
-                            placement="top"
+                            placement="right"
                             content={lang(
-                                '推荐的定时快照数量和手动快照数量的比例为 6:4。各类型快照的数量不能设置来小于其当前已有数量',
-                                'The recommended ratio of timed snapshot number and manual snapshot number is 6:4. Number of snapshot of each type can\'t be set less than its current number'
+                                '推荐的定时快照数量和手动快照数量的比例为 6:4，请拖动滑块进行配置。各类型快照的数量不能被设置来小于其当前已有数量。',
+                                'The recommended ratio of timed snapshot number and manual snapshot number is 6:4, please drag slider to configure. Number of snapshot of each type can\'t be set less than its current number'
                             )}
                         >
                             <Icon type="question-circle-o" className="fs-info-icon m-l" />
