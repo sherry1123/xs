@@ -1,0 +1,40 @@
+.fs-snapshot-setting-form {
+    .fs-snapshot-setting-quota-label {
+        display: inline-block;
+        margin-top: 15px;
+        width: 74px;
+        text-align: right;
+        color: rgba(0, 0, 0, 0.85);
+        &:after {
+            content: ":";
+            margin: 0 8px 0 2px;
+            position: relative;
+            top: -0.5px;
+        }
+    }
+    .fs-snapshot-setting-slider-wrapper {
+        margin-top: 15px;
+        .fs-snapshot-setting-slider {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 10px 5px;
+            user-select: none;
+        }
+        .fs-snapshot-setting-count {
+            display: inline-block;
+            vertical-align: middle;
+            &:nth-child(3) {
+              padding-left: 3px;
+            }
+            span {
+                display: inline-block;
+                text-align: right;
+                width: 30px;
+            }
+        }
+    }
+    .fs-snapshot-setting-reference {
+        margin-top: 15px;
+        font-size: 12px;
+    }
+}

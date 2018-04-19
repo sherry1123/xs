@@ -136,7 +136,7 @@ class SnapshotSchedule extends Component {
                         await httpRequests.deleteSnapshotSchedulesInBatch(batchDeleteScheduleNames);
                         await this.setState({batchDeleteSnapshotNames: []});
                         httpRequests.getSnapshotScheduleList();
-                        message.success(lang('已开始批量删除定时快照计划！', 'Start deleting timed snapshot schedules in batch!'));
+                        message.success(lang('批量删除定时快照计划成功！', 'Delete timed snapshot schedules in batch successfully!'));
                     } catch ({msg}){
                         message.error(lang('批量删除定时快照计划失败，原因：', 'Delete timed snapshot schedules in batch failed, reason: ') + msg);
                     }
@@ -164,7 +164,7 @@ class SnapshotSchedule extends Component {
             locale: {
                 emptyText: lang('暂无定时快照', 'No Snapshot Schedule')
             },
-            rowKey: '_id',
+            rowKey: 'name',
             rowSelection: {
                 columnWidth: '2%',
                 selectedRowKeys: batchDeleteScheduleNames,

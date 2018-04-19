@@ -22,19 +22,19 @@ export const socketEventCode = {
         english: target => `Snapshot ${target} deleted failed！`
     }),
     3: () => ({
-        chinese: target => `快照 ${target} 回滚开始！`,
-        english: target => `Start rolling back snapshot ${target}！`
-    }),
-    4: () => ({
-        chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
-        english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
-    }),
-    5: () => ({
         chinese: target => `批量删除${target.total}个快照成功！`,
         english: target => `Batch delete ${target.total} snapshots complete!`
     }),
-    6: () => ({
+    4: () => ({
         chinese: target => `批量删除${target.total}个快照完成，删除成功${target.success}个，删除失败${target.failed}个！`,
         english: target => `Batch delete ${target.total} snapshots complete, ${target.success} successfully deleted, ${target.failed} failed!`
+    }),
+    5: () => ({
+        chinese: target => `快照 ${target} 回滚开始！`,
+        english: target => `Start rolling back snapshot ${target}！`
+    }),
+    6: () => ({
+        chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
+        english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),
 };
