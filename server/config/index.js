@@ -7,10 +7,6 @@ exports.env = {
     init: process.env.INIT_STATUS,
     master: process.env.IS_MASTER
 };
-exports.nginx = {
-    path: '/etc/nginx/nginx.conf',
-    proxy: "proxy_pass $master;\n            proxy_set_header Host $host;\n            proxy_set_header Connection '';\n            proxy_set_header X-Real-IP  $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
-};
 exports.database = {
     name: 'storage',
     bin: '/usr/bin',
