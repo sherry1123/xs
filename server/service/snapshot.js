@@ -57,8 +57,8 @@ const model = {
         return await database.getSnapshotTask(param);
     },
     async createSnapshotTask(param) {
-        let { name, createTime = new Date(), startTime = handler.startTime(), autoDisableTime = 0, interval, deleteRound = false, description, isRunning = false } = param;
-        await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime, interval, deleteRound, description, isRunning });
+        let { name, createTime = new Date(), startTime = handler.startTime(), autoDisable, autoDisableTime, interval, deleteRound = false, description, isRunning = false } = param;
+        await database.addSnapshotTask({ name, createTime, startTime, autoDisableTime: autoDisable ? autoDisableTime : 0, interval, deleteRound, description, isRunning });
     },
     async updateSnapshotTask(param) {
         let { name, description } = param;

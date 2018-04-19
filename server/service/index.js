@@ -1,15 +1,12 @@
 const log = require('./log');
 const email = require('./email');
 const status = require('./status');
-const config = require('../config');
 const init = require('./initialize');
 const afterMe = require('./afterMe');
 const database = require('./database');
 const snapshot = require('./snapshot');
 const socket = require('../module/socket');
 const logger = require('../module/logger');
-const promise = require('../module/promise');
-const request = require('../module/request');
 const handler = require('../module/handler');
 const model = {
     async checkClusterEnv(param) {
@@ -117,11 +114,7 @@ const model = {
             case 6:
                 let success = target.filter(snapshot => (snapshot.result)).length;
                 for (let snapshot of target) {
-                    if (snapshot.result) {
-                        await database.deleteSnapshot({ name: snapshot.name });
-                    } else {
-                        await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
-                    }
+                    snapshot.result ? await database.deleteSnapshot({ name: snapshot.name }) : await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
                 }
                 await log.audit({ user, desc: `delete snapshots failed`, ip });
                 await log.event({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
@@ -284,7 +277,6 @@ const model = {
         return result;
     },
     async getUserStorageStats(param) {
-        logger.info(param);
         let result = {};
         try {
             let res = await afterMe.getUserStorageStats(param);

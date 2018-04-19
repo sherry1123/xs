@@ -28,13 +28,11 @@ const model = {
         return result;
     },
     async sendEvent(param) {
-        let api = 'http://localhost/api/receiveevent';
         let { channel, target, info } = param;
-        for (let i in target) {
-            target[i] = { name: target[i], result: Math.random() > 0.5 ? true : false };
-        }
+        let receviceEventAPI = 'http://localhost/api/receiveevent';
+        target = target.map(snapshot => ({name: snapshot, result: Math.random() > 0.5 ? true : false}));
         await promise.runTimeOutInPromise(10);
-        await request.post(api, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 5 : 6, target, info }, {}, true);
+        await request.post(receviceEventAPI, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 5 : 6, target, info }, {}, true);
 
     }
 };

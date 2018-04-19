@@ -2,7 +2,6 @@ const config = require('../config');
 const mongoose = require('../model');
 const promise = require('../module/promise');
 const request = require('../module/request');
-const handler = require('../module/handler');
 const database = require('../service/database');
 const afterMe = require('../service/afterMe');
 let init = false;
