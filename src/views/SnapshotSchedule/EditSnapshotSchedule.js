@@ -97,6 +97,9 @@ class EditSnapshotSchedule extends Component {
                     <Form.Item {...formItemLayout} label={lang('间隔时间', 'Interval')}>
                         {this.state.scheduleData.interval / 3600} {lang('小时', 'Hour')}
                     </Form.Item>
+                    <Form.Item {...formItemLayout} label={lang('循环删除', 'Circularly Delete')}>
+                        {this.state.scheduleData.deleteRound ? lang('是', 'Yes') : lang('否', 'No')}
+                    </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('延时关闭', 'Delay Disable')}>
                         {this.state.autoDisableTime ? this.state.autoDisableTime / 86400 : lang('永不', 'Never')}
                     </Form.Item>
