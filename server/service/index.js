@@ -117,11 +117,7 @@ const model = {
             case 6:
                 let success = target.filter(snapshot => (snapshot.result)).length;
                 for (let snapshot of target) {
-                    if (snapshot.result) {
-                        await database.deleteSnapshot({ name: snapshot.name });
-                    } else {
-                        await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
-                    }
+                    snapshot.result ? await database.deleteSnapshot({ name: snapshot.name }) : await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
                 }
                 await log.audit({ user, desc: `delete snapshots failed`, ip });
                 await log.event({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
