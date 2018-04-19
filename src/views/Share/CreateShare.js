@@ -105,10 +105,22 @@ class CreateShare extends Component {
     }
 
     render () {
+        let isChinese = this.props.language === 'chinese';
+        let formItemLayout = {
+            labelCol: {
+                xs: {span: isChinese ? 4 : 6},
+                sm: {span: isChinese ? 4 : 6},
+            },
+            wrapperCol: {
+                xs: {span: isChinese ? 20 : 18},
+                sm: {span: isChinese ? 20 : 18},
+            }
+        };
+
         return (
             <Modal
                 title={lang('创建共享', 'Create Share')}
-                    width={320}
+                    width={400}
                     closable={false}
                     maskClosable={false}
                     visible={this.state.visible}
@@ -133,13 +145,13 @@ class CreateShare extends Component {
                     }
             >
                 <Form>
-                    <Form.Item
-                        label={lang('共享路径', 'Share Path')}
+                    <Form.Item {...formItemLayout}
+                        label={lang('路径', 'Path')}
                         validateStatus={this.state.validation.path.status}
                         help={this.state.validation.path.help}
                     >
                         <Input
-                            style={{width: 240}} size="small"
+                            style={{width: isChinese ? 280 : 260}} size="small"
                             placeholder={lang('请输入共享路径', 'please enter share path')}
                             value={this.state.shareData.path}
                             onChange={({target: {value}}) => {
@@ -148,13 +160,13 @@ class CreateShare extends Component {
                             }}
                         />
                     </Form.Item>
-                    <Form.Item
+                    <Form.Item {...formItemLayout}
                         label={lang('协议', 'Protocol')}
                         validateStatus={this.state.validation.protocol.status}
                         help={this.state.validation.protocol.help}
                     >
                         <Select
-                            style={{width: 240}} size="small"
+                            style={{width: isChinese ? 280 : 260}} size="small"
                             placeholder={lang('请选择协议', 'please select protocol')}
                             value={this.state.shareData.protocol}
                             onChange={value => {
@@ -166,9 +178,9 @@ class CreateShare extends Component {
                             <Select.Option value="cifs">CIFS (Windows/Mac)</Select.Option>
                         </Select>
                     </Form.Item>
-                    <Form.Item label={lang('描述', 'Description')}>
+                    <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea
-                            style={{width: 240}} size="small"
+                            style={{width: isChinese ? 280 : 260}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             placeholder={lang('描述为选填项', 'description is optional')}
                             value={this.state.shareData.description}

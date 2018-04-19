@@ -24,19 +24,9 @@ const storageNodeReducer = (state = State.main.storageNode, action) => {
         // set storage nodes overview throughput
         case storageNodeActionTypes.SET_STORAGE_NODE_OVERVIEW_THROUGHPUT:
         {
-            let {data: {diskPerfRead, diskPerfWrite}} = action;
+            let {data: {read, write, total, time}} = action;
             let {overview} = state;
-            let read = [], write = [], sum = [],time = [];
-            (diskPerfRead || []).forEach((readItem, i) => {
-                let readValue = readItem.value;
-                let writeValue = diskPerfWrite[i].value;
-                let sumValue = readValue + writeValue;
-                read.push(readValue);
-                write.push(writeValue);
-                sum.push(sumValue);
-                time.push(readItem.time);
-            });
-            let overviewThroughput = {read, write, sum, time};
+            let overviewThroughput = {read, write, total, time};
             overview = Object.assign({}, overview, {overviewThroughput});
             return Object.assign({}, state, {overview});
         }
@@ -53,19 +43,9 @@ const storageNodeReducer = (state = State.main.storageNode, action) => {
         // set storage nodes detail throughput
         case storageNodeActionTypes.SET_STORAGE_NODE_DETAIL_THROUGHPUT:
         {
-            let {data: {diskPerfRead, diskPerfWrite}} = action;
+            let {data: {read, write, total, time}} = action;
             let {detail} = state;
-            let read = [], write = [], sum = [],time = [];
-            (diskPerfRead || []).forEach((readItem, i) => {
-                let readValue = readItem.value;
-                let writeValue = diskPerfWrite[i].value;
-                let sumValue = readValue + writeValue;
-                read.push(readValue);
-                write.push(writeValue);
-                sum.push(sumValue);
-                time.push(readItem.time);
-            });
-            let detailThroughput = {read, write, sum, time};
+            let detailThroughput = {read, write, total, time};
             detail = Object.assign({}, detail, {detailThroughput});
             return Object.assign({}, state, {detail});
         }

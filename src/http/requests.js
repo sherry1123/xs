@@ -132,7 +132,7 @@ export default  {
 
     async getStorageNodesThroughput (){
         try {
-            let data = await fetchGet('/api/getstoragenodesthroughput');
+            let data = await fetchGet('/api/getstoragethroughput', {nodeId: 0});
             !!data && store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
         } catch (e){
             errorHandler(e);
@@ -150,10 +150,10 @@ export default  {
         }
     },
 
-    async getStorageNodeDetailThroughput ({hostname, nodeId} = (lsGet('currentStorageNode') || {})){
-        if (!!hostname){
+    async getStorageNodeDetailThroughput ({nodeId} = (lsGet('currentStorageNode') || {})){
+        if (!!nodeId){
             try {
-                let data = await fetchGet('/api/getstoragenodethroughput', {node: hostname, nodeNumID: nodeId});
+                let data = await fetchGet('/api/getstoragethroughput', {nodeId});
                 !!data && store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
             } catch (e){
                 errorHandler(e);

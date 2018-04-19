@@ -296,7 +296,10 @@ class CreateSnapshotSchedule extends Component {
                             }}
                         />
                         {lang(' 永不', '  Never')}
-                        <Popover content={lang('延时关闭时间从执行该计划时开始计算', 'Delay disable time is calculated since execute this schedule.')}>
+                        <Popover
+                            placement="right"
+                            content={lang('延时关闭时间从执行该计划时开始计算', 'Delay disable time is calculated since execute this schedule.')}
+                        >
                             <Icon type="question-circle-o" className="fs-info-icon m-l" />
                         </Popover>
                     </Form.Item>

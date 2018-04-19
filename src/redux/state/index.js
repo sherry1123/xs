@@ -77,7 +77,7 @@ export default {
                 overviewThroughput: {
                     read: [],
                     write: [],
-                    sum: [],
+                    total: [],
                     time: [] // for x-axis
                 },
             },
@@ -94,7 +94,7 @@ export default {
                 detailThroughput: {
                     read: [],
                     write: [],
-                    sum: [],
+                    total: [],
                     time: [] // for x-axis
                 },
             }
