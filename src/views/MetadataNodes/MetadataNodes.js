@@ -27,7 +27,6 @@ class MetadataNodes extends Component {
     componentDidMount (){
         httpRequests.getMetadataNodes();
         httpRequests.getMetadataNodesStatics();
-        // httpRequests.getMetadataNodeDetailSummary();
     }
 
     componentWillReceiveProps (nextProps){
@@ -154,18 +153,28 @@ class MetadataNodes extends Component {
                                 {this.state.currentMetadataNode.hostname} {lang('节点详情', 'Node Detail')}
                                 {
                                     !!this.props.nodeList.length && <div className={`fs-switch-node-wrapper ${this.state.expandSwitchNode ? '' : 'fold'}`}>
-                                        <ArrowButton switchDirection directionRange={['right', 'left']} style={{marginRight: 15}}
+                                        <ArrowButton
+                                            style={{marginRight: 15}}
+                                            switchDirection directionRange={['right', 'left']}
                                             title={this.state.expandSwitchNode ? '' : lang('切换节点', 'Switch Node')}
                                             onClick={this.changeExpandSwitchNode.bind(this)}
                                         />
-                                        <Select style={{width: 170}} size="small"
+                                        <Select
+                                            style={{width: 170}}
+                                            size="small"
                                             notFoundContent={lang('暂无节点', 'No Nodes')}
                                             value={this.state.currentMetadataNode.nodeId}
                                             onChange={this.switchNode.bind(this)}
                                         >
                                             {
                                                 this.props.nodeList.map(({hostname, nodeId, status}) =>
-                                                    <Select.Option key={hostname} value={nodeId} node={hostname} disabled={!status}>
+                                                    <Select.Option
+                                                        key={hostname}
+                                                        value={nodeId}
+                                                        node={hostname}
+                                                        disabled={!status}
+                                                        title={hostname}
+                                                    >
                                                         <Icon className="fs-option-node up" title={status ? lang('正常', 'Up') : lang('异常', 'Down')} type="database" />
                                                         {hostname}
                                                     </Select.Option>

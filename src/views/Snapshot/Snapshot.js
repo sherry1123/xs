@@ -219,7 +219,9 @@ class Snapshot extends Component {
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
                             <Input.Search
-                                className="fs-search-table-input" size="small"
+                                style={{width: 170}}
+                                className="fs-search-table-input"
+                                size="small"
                                 placeholder={lang('快照名称', 'snapshot name')}
                                 value={this.state.query}
                                 enterButton={true}

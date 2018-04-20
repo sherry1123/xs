@@ -123,7 +123,9 @@ class Share extends Component {
                 <section className="fs-page-item-wrapper">
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search style={{marginRight: 15, width: 150}} size="small"
+                            <Input.Search
+                                style={{width: 170}}
+                                size="small"
                                 placeholder={lang('共享路径', 'share path')}
                                 value={this.state.query}
                                 enterButton={true}

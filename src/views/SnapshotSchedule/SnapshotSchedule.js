@@ -225,7 +225,8 @@ class SnapshotSchedule extends Component {
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
                             <Input.Search
-                                style={{marginRight: 15, width: 150}} size="small"
+                                style={{marginRight: 15, width: 170}}
+                                size="small"
                                 placeholder={lang('计划名称', 'schedule name')}
                                 value={this.state.query}
                                 enterButton={true}
