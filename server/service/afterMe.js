@@ -18,15 +18,15 @@ const model = {
     },
     async getMetaNodeStatus(param) {
         let token = await model.getToken();
-        return await request.get(config.api.orcafs.listmetanodes, {}, token, true);
+        return await request.get(config.api.orcafs.listmetanodes, param, token, true);
     },
     async getStorageNodeStatus(param) {
         let token = await model.getToken();
-        return await request.get(config.api.orcafs.liststoragenodes, {}, token, true);
+        return await request.get(config.api.orcafs.liststoragenodes, param, token, true);
     },
     async getStorageDiskSpace(param) {
         let token = await model.getToken();
-        return await request.get(config.api.orcafs.getstoragespace, {}, token, true);
+        return await request.get(config.api.orcafs.getstoragespace, param, token, true);
     },
     async getStorageTarget(param) {
         let token = await model.getToken();
