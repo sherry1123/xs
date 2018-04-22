@@ -123,7 +123,7 @@ class FSOperation extends Component {
 
     render (){
         let {entryInfo} = this.state;
-        let {files} = this.props;
+        let {language, files} = this.props;
         files = [...files];
         if (this.directoryStack.length > 1){
             files.unshift({name: '..', isDir: true});
@@ -152,7 +152,7 @@ class FSOperation extends Component {
                             <span><Icon type="file" /> {text}</span>
                     )
                 },
-                {title: lang('入口 / 大小', 'Entries / Size'), width: 80, dataIndex: 'size',
+                {title: lang('入口 / 大小', 'Entry / Size'), width: 80, dataIndex: 'size',
                     render: (text, record) => (
                         record.isDir && record.hasOwnProperty('user') ?
                             text + lang(' 入口', ' Entries') :
@@ -190,6 +190,18 @@ class FSOperation extends Component {
                 }
             ],
         };
+        let isChinese = language === 'chinese';
+        let formItemLayout = {
+            labelCol: {
+                xs: {span: isChinese ? 6 : 8},
+                sm: {span: isChinese ? 6 : 8},
+            },
+            wrapperCol: {
+                xs: {span: isChinese ? 18 : 16},
+                sm: {span: isChinese ? 18 : 16},
+            }
+        };
+
         return (
             <section className="fs-page-content fs-operation-wrapper">
                 <section className="fs-page-big-title">
@@ -218,30 +230,41 @@ class FSOperation extends Component {
                         <h3 className="fs-page-title item">{lang('条带信息', 'Stripe Information')}</h3>
                         <section className="fs-page-item-content">
                             <Form className="fs-stripe-form">
-                                <Form.Item label={lang('路径', 'Path')}>
+                                <Form.Item {...formItemLayout} label={lang('路径', 'Path')}>
                                     <span>{entryInfo.dirPath}</span>
                                 </Form.Item>
-                                <Form.Item label={lang('默认目标数', 'Default Targets Number')}>
-                                    <Input placeholder={lang('请输入默认目标数', 'enter default target number')} style={{width: 150}} size="small"
-                                           value={entryInfo.numTargets}
-                                           onChange={({target: {value}}) => {
-                                               this.entryInfoFormChange.bind(this, 'numTargets', value)();
-                                           }}
+                                <Form.Item {...formItemLayout} label={lang('默认目标数', 'Default Targets')}>
+                                    <Input
+                                        style={{width: 140}} size="small"
+                                        placeholder={lang('请输入默认目标数', 'enter default targets number')}
+                                        value={entryInfo.numTargets}
+                                        onChange={({target: {value}}) => {
+                                            this.entryInfoFormChange.bind(this, 'numTargets', value)();
+                                        }}
                                     />
                                 </Form.Item>
-                                <Form.Item label={lang('块大小', 'Block Size')}>
-                                    <Input placeholder={lang('请输入块大小', 'enter block size')} style={{width: 150}} size="small"
-                                           value={entryInfo.chunkSize}
-                                           onChange={({target: {value}}) => {
-                                               this.entryInfoFormChange.bind(this, 'chunkSize', value)();
-                                           }}
+                                <Form.Item {...formItemLayout} label={lang('块大小', 'Block Size')}>
+                                    <Input
+                                        style={{width: 140}} size="small"
+                                        placeholder={lang('请输入块大小', 'enter block size')}
+                                        value={entryInfo.chunkSize}
+                                        onChange={({target: {value}}) => {
+                                            this.entryInfoFormChange.bind(this, 'chunkSize', value)();
+                                        }}
                                     /><span style={{marginLeft: 12}}>Byte</span>
-                                    <Popover content={lang('块大小不能小于65536Byte，并且必须是2的幂', 'Chunk size can not be less than 65536Byte, and must be power of 2')}>
+                                    <Popover
+                                        placement="left"
+                                        content={lang(
+                                            '块大小不能小于 65536 Byte，并且必须是2的幂',
+                                            'Chunk size can not be less than 65536 Byte, and must be power of 2'
+                                        )}
+                                    >
                                         <Icon type="question-circle-o" className="fs-info-icon m-l" />
                                     </Popover>
                                 </Form.Item>
-                                <Form.Item label={lang('条带模式', 'Stripe Mode')}>
-                                    <Select style={{width: 150}} size="small"
+                                <Form.Item {...formItemLayout} label={lang('条带模式', 'Stripe Mode')}>
+                                    <Select
+                                        style={{width: 140}} size="small"
                                         placeholder={lang('请选择条带模式', 'select stripe mode')}
                                         value={entryInfo.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
                                         onChange={value => {
@@ -253,7 +276,7 @@ class FSOperation extends Component {
                                     </Select>
                                 </Form.Item>
                                 {/*
-                                <Form.Item label={lang('元数据镜像', 'Metadata Image')} {...formItemLayout}>
+                                <Form.Item {...formItemLayout} label={lang('元数据镜像', 'Metadata Image')}>
                                     <Checkbox checked={stripe.isMetadataImage}
                                         onChange={({target: {checked}}) => {
                                             this.entryInfoFormChange.bind(this, 'isMetadataImage', checked)();
@@ -262,7 +285,8 @@ class FSOperation extends Component {
                                 </Form.Item>
                                 */}
                                 <Form.Item style={{marginTop: 20}} wrapperCol={{sm: {offset: 17}}}>
-                                    <Button icon="save" size="small"
+                                    <Button
+                                        icon="save" size="small"
                                         disabled={this.state.entryInfoReadonly}
                                         onClick={this.saveStripeConfig.bind(this)}
                                     >

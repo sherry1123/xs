@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {HashRouter, Switch, Route, Redirect} from 'react-router-dom';
 import {LocaleProvider} from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import asyncLoad from './asyncLoad';
 import lang from '../components/Language/lang';
 import {ckGet} from '../services';
@@ -43,7 +44,7 @@ export default class App extends Component {
     render (){
         return (
             <HashRouter>
-                <LocaleProvider locale={lang(enUS, {})}>
+                <LocaleProvider locale={lang(zhCN, enUS)}>
                     <Switch>
                         <Route path={routerPath.RollingBack} component={RollingBack} />
                         <Route path={routerPath.Init} component={Initialize} />
