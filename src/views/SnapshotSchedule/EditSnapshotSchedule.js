@@ -66,7 +66,7 @@ class EditSnapshotSchedule extends Component {
         };
 
         return (
-            <Modal title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
+            <Modal title={lang('编辑定时快照计划', 'Edit Timed Snapshot Schedule')}
                    width={400}
                    closable={false}
                    maskClosable={false}

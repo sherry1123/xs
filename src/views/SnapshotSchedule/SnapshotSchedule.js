@@ -126,7 +126,7 @@ class SnapshotSchedule extends Component {
                 content: <div style={{fontSize: 12}}>
                     <p>{lang(`您将要执行删除这 ${batchCount} 个定时快照计划的操作。`, `You are about to delete these ${batchCount} timed snapshot schedule(s).`)}</p>
                     <p>{lang(`该操作将会从系统中删除这些定时快照计划。`, `This operation will delete the schedule(s) from the system. `)}</p>
-                    <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即启用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
+                    <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即执行用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
                 </div>,
                 iconType: 'exclamation-circle-o',
                 okText: lang('删除', 'Delete'),

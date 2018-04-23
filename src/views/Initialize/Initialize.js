@@ -20,7 +20,7 @@ class Initialize extends Component {
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
-            currentStep: 0,
+            currentStep: 2,
             totalStep: 5,
             checking: false,
             // server IP input and corresponding verification result
@@ -43,6 +43,7 @@ class Initialize extends Component {
         if (isRollingBack === 'true'){
             this.props.history.replace(routerPath.RollingBack);
         } else {
+            /*
             let isInitialized = ckGet('init');
             let initStepLocal = lsGet('initStep');
             if (isInitialized === 'true'){
@@ -77,6 +78,7 @@ class Initialize extends Component {
                     });
                 }
             }
+            */
         }
     }
 

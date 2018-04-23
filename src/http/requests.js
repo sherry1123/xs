@@ -242,7 +242,7 @@ export default  {
     },
 
     async editSnapshotSchedule (snapshotSchedule){
-        await fetchPost('/api/editsnapshottask', snapshotSchedule);
+        await fetchPost('/api/updatesnapshottask', snapshotSchedule);
     },
 
     async deleteSnapshotSchedule (snapshotSchedule){

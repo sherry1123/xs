@@ -7,12 +7,15 @@ import lang from '../Language/lang';
 class FSTransfer extends Component {
     constructor (props){
         super(props);
-        let {language, className, notFoundContent = '', titles = ['', ''], dataSource = [], targetKeys = [], onChange, render, footer,} = this.props;
-        let selected = dataSource.filter(item => targetKeys.includes(item.diskname));
+        let {language, className, notFoundContent = '', titles = ['', ''], dataSource = [], targetItems = [], rowKey, onChange, render, footer,} = this.props;
+        if (!rowKey){
+            throw `FSTransfer component needs a prop 'rowKey' to define the uniqueness for inner items.`;
+        }
+        this.rowKey = rowKey;
         this.state = {
             source: dataSource,
             tempSelected: [],
-            selected,
+            selected: targetItems,
             tempSource: [],
             // from props
             language,
@@ -26,12 +29,17 @@ class FSTransfer extends Component {
         };
     }
 
-    async allSourceSelect ({target: {checked}}){
-        let source = [...this.state.source].map(item => {
-            // set all items checked
-            item.checked = checked;
-            return item;
+    componentWillReceiveProps (nextProps){
+        let {targetItems} = nextProps;
+        this.setState({
+            selected: targetItems
         });
+        console.info('received selected disks: ' + targetItems.map(item => item[this.rowKey]).toString());
+    }
+
+    async allSourceSelect ({target: {checked}}){
+        // set all items checked
+        let source = [...this.state.source].map(item => (item.checked = checked) && item);
         let tempSelected = checked ? [...source] : [];
         await this.setState({source, tempSelected});
     }
@@ -41,7 +49,7 @@ class FSTransfer extends Component {
         if (checked){
             tempSelected.push(item);
         } else {
-            tempSelected = tempSelected.filter(({diskname}) => !(diskname === item.diskname));
+            tempSelected = tempSelected.filter(({[this.rowKey]: rowKey}) => !(rowKey === item[this.rowKey]));
         }
         let source = [...this.state.source];
         // set one item checked
@@ -50,10 +58,7 @@ class FSTransfer extends Component {
     }
 
     allUnSelect ({target: {checked}}){
-        let selected = [...this.state.selected].map(item => {
-            item.checked = checked;
-            return item;
-        });
+        let selected = [...this.state.selected].map(item => (item.checked = checked) && item);
         let tempSource = checked ? [...selected] : [];
         this.setState({selected, tempSource});
     }
@@ -63,7 +68,7 @@ class FSTransfer extends Component {
         if (checked){
             tempSource.push(item);
         } else {
-            tempSource = tempSource.filter(({diskname}) => !(diskname === item.diskname));
+            tempSource = tempSource.filter(({[this.rowKey]: rowKey}) => !(rowKey === item[this.rowKey]));
         }
         let selected = [...this.state.selected];
         selected[i].checked = checked;
@@ -73,8 +78,8 @@ class FSTransfer extends Component {
     toRight (){
         let {source, tempSelected, selected} = this.state;
         tempSelected = [...tempSelected];
-        let tempSelectedNames = tempSelected.map(item => item.diskname);
-        source = [...source].filter(item => !tempSelectedNames.includes(item.diskname));
+        let tempSelectedNames = tempSelected.map(item => item[this.rowKey]);
+        source = [...source].filter(item => !tempSelectedNames.includes(item[this.rowKey]));
         selected = [...selected].concat(tempSelected).map(item => {
             // clear checked status
             item.checked = false;
@@ -87,8 +92,8 @@ class FSTransfer extends Component {
     toLeft (){
         let {source, selected, tempSource} = this.state;
         tempSource = [...tempSource];
-        let tempSourceNames = tempSource.map(item => item.diskname);
-        selected = [...selected].filter(item => !tempSourceNames.includes(item.diskname));
+        let tempSourceNames = tempSource.map(item => item[this.rowKey]);
+        selected = [...selected].filter(item => !tempSourceNames.includes(item[this.rowKey]));
         source = [...source].concat(tempSource).map(item => {
             item.checked = false;
             return item;
@@ -102,7 +107,7 @@ class FSTransfer extends Component {
         // call the function that pass in, and give all the items back which are in right box
         let {onChange} = this.props;
         !!onChange && onChange([...selected]);
-        console.info(selected);
+        // console.info(selected);
     }
 
     render (){
@@ -195,7 +200,7 @@ class FSTransfer extends Component {
                                     <div className="LazyLoad is-visible" key={i}>
                                         <li
                                             className="ant-transfer-list-content-item"
-                                            onClick={this.oneSourceSelect.bind(this, data, i, {target: {checked: !data.checked}})}
+                                            onClick={this.oneUnSelect.bind(this, data, i, {target: {checked: !data.checked}})}
                                         >
                                             <Checkbox
                                                 checked={!!data.checked}

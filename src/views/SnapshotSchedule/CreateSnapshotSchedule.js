@@ -124,7 +124,6 @@ class CreateSnapshotSchedule extends Component {
         schedule.interval = timeUnitMilliSecond[schedule.intervalUnit] * schedule.intervalNumber;
         schedule.autoDisableTime = timeUnitMilliSecond[schedule.autoDisableTimeUnit] * schedule.autoDisableTimeNumber;
         this.setState({formSubmitting: true});
-        console.info(schedule.autoDisableTimeUnit, schedule.autoDisableTimeNumber);
         try {
             await httpRequests.createSnapshotSchedule(schedule);
             httpRequests.getSnapshotScheduleList();

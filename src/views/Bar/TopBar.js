@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {/*Badge, Icon,*/ Popover/*, notification*/} from 'antd';
+import {/*Badge, Icon,*/ Popover, notification} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
 // import WarningPopover from './WarningPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
@@ -26,7 +26,6 @@ class TopBar extends Component {
         }
     }
 
-    /*
     componentWillReceiveProps (nextProps){
         let abnormalNodes = lsGet('abnormalNodes');
         let {metadataNodes, storageNodes} = nextProps;
@@ -60,7 +59,6 @@ class TopBar extends Component {
             }
         });
     }
-    */
 
     render (){
         return (

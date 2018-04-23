@@ -56,6 +56,18 @@ class RAIDConfiguration extends Component {
 
     switchNode (node, i){
         let nodeDisks = this.getNodeDisksByNodeIP(node.ip);
+        // if some disks on one node are used on metadata server, they can't be used on storage server, and vice versa,
+        // this is aimed at the situation that metadata and storage servers are create on one same node
+        let usedDisks = this.usedDiskNamesGroupByNodeIP[node.ip];
+        if (usedDisks){
+            let usedDiskNames = usedDisks.map(disk => disk.diskname);
+            // console.info(usedDiskNames);
+            if (!!usedDisks){
+                nodeDisks = nodeDisks.filter(disk => !usedDiskNames.includes(disk.diskname));
+            }
+        }
+        // console.info('remove used disks, left: ' + nodeDisks.map(disk => disk.diskname).toString());
+        // console.info('node raw selected: ' + node.arrayDisks.map(disk => disk.diskname).toString());
         if (!node.arrayDisks.length){
             // the selected node hasn't done RAID configuration yet
             this.setState({
@@ -68,10 +80,12 @@ class RAIDConfiguration extends Component {
         } else {
             // the selected node is configured
             let arrayDisks = node.arrayDisks;
+            // console.info('this node selected disks: ' + node.arrayDisks.map(disk => disk.diskname).toString());
             // show RAID configuration of this node
             let arrayDisksNames = arrayDisks.map(disk => disk.diskname);
             // remove the disks that are already in arrayDisks
             nodeDisks = nodeDisks.filter(disk => !arrayDisksNames.includes(disk.diskname));
+            // console.info('node raw allow selected: ' + nodeDisks.map(disk => disk.diskname).toString());
             let arrayCapacity = this.calculateArrayCapacity(arrayDisks);
             this.setState({
                 currentNode: Object.assign({i}, node),
@@ -127,7 +141,8 @@ class RAIDConfiguration extends Component {
             if (!currentNode.arrayDisks.length){
                 delete this.usedDiskNamesGroupByNodeIP[currentNode.ip];
             } else {
-                this.usedDiskNamesGroupByNodeIP[currentNode.ip] = currentNode.arrayDisks;
+                let existedUsedDisks = this.usedDiskNamesGroupByNodeIP[currentNode.ip] || [];
+                this.usedDiskNamesGroupByNodeIP[currentNode.ip] = existedUsedDisks.concat(currentNode.arrayDisks);
             }
         } else {
             // give some tips out according to current RAID level rule,
@@ -143,39 +158,26 @@ class RAIDConfiguration extends Component {
     }
 
     render (){
-        let nodeDisksForDisplay = this.state.nodeDisks;
-        if (this.state.currentNode.arrayDisks){
-            if (this.state.currentNode.arrayDisks.length){
-                // if some disks on one node are used on metadata server, they can't be used on storage server,
-                // this is aimed at the situation that metadata and storage servers are create on one same node
-                let usedDisks = this.usedDiskNamesGroupByNodeIP[this.state.currentNode.ip];
-                if (!!usedDisks){
-                    // nodeDisksForDisplay = this.state.nodeDisks.filter(tDisk => !usedDisks.includes(tDisk.diskname));
-                    nodeDisksForDisplay = this.state.nodeDisks.map(tDisk => {
-                        tDisk.disabled = usedDisks.includes(tDisk.diskname);
-                        return tDisk;
-                    });
-                }
-            }
-        }
-
-        // console.info(nodeDisksForDisplay);
+        // console.info('render selected disks: ' + this.state.arrayDisks.map(disk => disk.diskname).toString());
+        let {metadataNodes, storageNodes, currentNode, RAIDLevels, arrayLevel, arrayDisks, nodeDisks, arrayCapacity, enableApplyButton} = this.state;
 
         return (
             <section className="fs-raid-config-wrapper">
                 <div className="fs-raid-config-description">
-                    {lang(`请先选择节点，再选择RAID级别，然后将该节点中要做RAID的盘放入右侧阵列中，待所需盘都放置完毕后，点击应用按钮，该节点的RAID即配置完成。
+                    {lang(
+                        `请先选择节点，再选择RAID级别，然后将该节点中要做RAID的盘放入右侧阵列中，待所需盘都放置完毕后，点击应用按钮，该节点的RAID即配置完成。
                         一旦启用RAID配置，请以此方式依次配置完所有的元数据节点和存储节点。为了确保磁盘资源的合理利用和配置的便捷性，请在进行初始化之前规划好每个节点上的磁盘。`,
-                        '')
-                    }
+                        ``
+                    )}
                 </div>
                 <div className="fs-raid-config-operation-wrapper">
                     <div className="fs-raid-node-wrapper">
                         <div className="fs-raid-node-type-title">{lang('元数据服务器', 'Metadata Server')}</div>
                         <div className="fs-raid-node-group">
                             {
-                                this.state.metadataNodes.map((node, i) => <div className={`fs-raid-node-item ${this.state.currentNode.i === i && this.state.currentNode.type === 'metadata' ? 'active' : ''}`} key={i}
-                                                                               onClick={() => this.switchNode.bind(this, node, i)()}
+                                metadataNodes.map((node, i) => <div
+                                    className={`fs-raid-node-item ${currentNode.i === i && currentNode.type === 'metadata' ? 'active' : ''}`} key={i}
+                                     onClick={() => this.switchNode.bind(this, node, i)()}
                                 >
                                     {node.ip}
                                     {!!node.arrayDisks.length && <Icon type="check" title={lang('RAID已配置', 'RAID Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
@@ -185,8 +187,9 @@ class RAIDConfiguration extends Component {
                         <div className="fs-raid-node-type-title">{lang('存储服务器', 'Storage Server')}</div>
                         <div className="fs-raid-node-group">
                             {
-                                this.state.storageNodes.map((node, i) => <div className={`fs-raid-node-item ${this.state.currentNode.i === i && this.state.currentNode.type === 'storage' ? 'active' : ''}`} key={i}
-                                                                              onClick={() => this.switchNode.bind(this, node, i)()}
+                                storageNodes.map((node, i) => <div
+                                    className={`fs-raid-node-item ${currentNode.i === i && currentNode.type === 'storage' ? 'active' : ''}`} key={i}
+                                    onClick={() => this.switchNode.bind(this, node, i)()}
                                 >
                                     {node.ip}
                                     {!!node.arrayDisks.length && <Icon type="check" title={lang('RAID已配置', 'RAID Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
@@ -196,39 +199,44 @@ class RAIDConfiguration extends Component {
                     </div>
                     <div className="fs-raid-disk-wrapper">
                         {
-                            this.state.currentNode.hasOwnProperty('ip') &&
+                            currentNode.hasOwnProperty('ip') &&
                             (<div className="fs-raid-node-array-info">
                                 <div className="fs-raid-node-array-info-title">
-                                    <span style={{marginRight: 20}}>{lang('节点IP: ', 'Node IP: ')}{this.state.currentNode.ip}</span>
-                                    <span>{lang('类型：', 'Type: ')}{this.state.currentNode.type === 'metadata' ? lang('元数据服务器', 'Metadata Server') : lang('存储服务器', 'Storage Server')}</span>
+                                    <span style={{marginRight: 20}}>{lang('节点IP: ', 'Node IP: ')}{currentNode.ip}</span>
+                                    <span>{lang('类型：', 'Type: ')}{currentNode.type === 'metadata' ? lang('元数据服务器', 'Metadata Server') : lang('存储服务器', 'Storage Server')}</span>
                                 </div>
                                 <div className="fs-raid-node-array-info-content">
                                     RAID {lang('级别', 'Level')}：
                                     <Select
                                         size="small" style={{width: 100, marginRight: 20}}
                                         placeholder={lang('请选择', 'select')}
-                                        value={this.state.arrayLevel.name}
+                                        value={arrayLevel.name}
                                         onChange={this.switchRAIDLevel.bind(this)}
                                     >
                                         {
-                                            this.state.RAIDLevels.map((level, i) => <Select.Option key={i} value={level.name} level={level}>
+                                            RAIDLevels.map((level, i) => <Select.Option
+                                                key={i}
+                                                value={level.name}
+                                                level={level}
+                                            >
                                                 {level.name}
                                             </Select.Option>)
                                         }
                                     </Select>
-                                    <span style={{marginRight: 20}}>阵列磁盘数量：{this.state.arrayDisks.length}</span>
-                                    <span>阵列总容量：{formatStorageSize(this.state.arrayCapacity)}</span>
+                                    <span style={{marginRight: 20}}>阵列磁盘数量：{arrayDisks.length}</span>
+                                    <span>阵列总容量：{formatStorageSize(arrayCapacity)}</span>
                                 </div>
                             </div>)
                         }
                         {
-                            this.state.arrayLevel.hasOwnProperty('name') &&
+                            arrayLevel.hasOwnProperty('name') &&
                             <FSTransfer
                                 className="fs-raid-node-array-selector"
                                 notFoundContent=" "
                                 titles={[lang('当前可用磁盘', 'Available Disks'), lang('已加入阵列磁盘', 'Disks In Array')]}
-                                dataSource={nodeDisksForDisplay}
-                                targetKeys={this.state.arrayDisks.map(disk => disk.diskname)}
+                                dataSource={nodeDisks}
+                                targetItems={arrayDisks}
+                                rowKey="diskname"
                                 onChange={this.arrayDisksChange.bind(this)}
                                 render={({diskname, totalspace}) => ({
                                     label: (
@@ -244,7 +252,7 @@ class RAIDConfiguration extends Component {
                                     <Button
                                         size="small" icon="save" style={{margin: 5, float: 'right'}}
                                         title={lang('为该节点应用此RAID配置', 'Apply the RAID configuration for this node')}
-                                        disabled={!this.state.enableApplyButton}
+                                        disabled={!enableApplyButton}
                                         onClick={this.applyConfForNode.bind(this)}
                                     >
                                         {lang('应用', 'Apply')}
@@ -265,35 +273,3 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(RAIDConfiguration);
-
-/*
-<Transfer
-    className="fs-raid-node-array-selector"
-    notFoundContent=" "
-    titles={[lang('当前可用磁盘', 'Available Disks'), lang('已加入阵列磁盘', 'Disks In Array')]}
-    rowKey={record => record.diskname}
-    dataSource={nodeDisksForDisplay}
-    targetKeys={this.state.arrayDisks.map(disk => disk.diskname)}
-    onChange={this.arrayDisksChange.bind(this)}
-    render={({diskname, totalspace}) => ({
-        label: (
-            <span>
-                <Icon type="hdd" style={{marginLeft: 15,marginRight: 15}} />
-                <span style={{marginRight: 15}}>{diskname}</span>
-                {formatStorageSize(totalspace)}
-            </span>
-        ),
-        value: diskname})
-    }
-    footer={() => (
-        <Button
-            size="small" icon="save" style={{margin: 5, float: 'right'}}
-            title={lang('为该节点应用此RAID配置', 'Apply the RAID configuration for this node')}
-            disabled={!this.state.enableApplyButton}
-            onClick={this.applyConfForNode.bind(this)}
-        >
-            {lang('应用', 'Apply')}
-        </Button>)
-    }
-/>
- */

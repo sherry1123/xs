@@ -15,7 +15,12 @@ class ManagementSystemLog extends Component {
         let {eventLogs, auditLogs} = this.props;
         let eventLogProps = {
             dataSource: eventLogs,
-            pagination: true,
+            pagination: {
+                pageSize: 15,
+                showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
+                size: 'normal'
+            },
+            size: 'small',
             rowKey: '_id',
             className: 'fs-log-table-wrapper',
             locale: {
@@ -52,7 +57,12 @@ class ManagementSystemLog extends Component {
         };
         let auditLogProps = {
             dataSource: auditLogs,
-            pagination: true,
+            pagination: {
+                pageSize: 15,
+                showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
+                size: 'normal'
+            },
+            size: 'small',
             rowKey: '_id',
             className: 'fs-log-table-wrapper',
             locale: {
@@ -75,7 +85,7 @@ class ManagementSystemLog extends Component {
                 dataIndex: 'desc',
                 key: 'desc',
             }, {
-                title: lang('创建时间', 'Time'),
+                title: lang('时间', 'Time'),
                 dataIndex: 'time',
                 key: 'time',
                 render: text => timeFormat(text)
@@ -87,16 +97,18 @@ class ManagementSystemLog extends Component {
                 <section className="fs-page-big-title">
                     <h3 className="fs-page-title">{lang('系统日志', 'System Log')}</h3>
                 </section>
-                <div className="fs-page-item-wrapper">
-                    <Tabs className="fs-log-tab-wrapper" defaultActiveKey="event">
-                        <Tabs.TabPane tab={<span><Icon type="laptop" />{lang('事件日志','Event Log')}</span>} key="event">
-                            <Table {...eventLogProps} />
-                        </Tabs.TabPane>
-                        <Tabs.TabPane tab={<span><Icon type="user" />{lang('审计日志','Audit Log')}</span>} key="audit">
-                            <Table {...auditLogProps} />
-                        </Tabs.TabPane>
-                    </Tabs>
-                </div>
+                <section className="fs-page-item-wrapper">
+                    <section className="fs-page-item-content fs-log-tab-wrapper">
+                        <Tabs defaultActiveKey="event">
+                            <Tabs.TabPane tab={<span><Icon type="laptop" />{lang('事件日志','Event Log')}</span>} key="event">
+                                <Table {...eventLogProps} />
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab={<span><Icon type="user" />{lang('审计日志','Audit Log')}</span>} key="audit">
+                                <Table {...auditLogProps} />
+                            </Tabs.TabPane>
+                        </Tabs>
+                    </section>
+                </section>
             </section>
         );
     }
