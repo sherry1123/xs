@@ -12,14 +12,7 @@ const model = {
     },
     toByte(value, unit) {
         let unitList = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
-        let byte = 0;
-        for (let i in unitList) {
-            if (unit === unitList[i]) {
-                byte = Math.floor(value * Math.pow(1024, i));
-                break;
-            }
-        }
-        return byte;
+        return Math.floor(value * Math.pow(1024, unitList.indexOf(unit)));
     },
     cookie(value) {
         return value ? value === 'true' : undefined;
