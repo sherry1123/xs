@@ -1,9 +1,9 @@
 const config = require('../config');
-const mongoose = require('../model');
 const promise = require('../module/promise');
 const request = require('../module/request');
-const database = require('../service/database');
 const afterMe = require('../service/afterMe');
+const mongoose = require('../module/mongoose');
+const database = require('../service/database');
 let init = false;
 const model = {
     getInitStatus() {

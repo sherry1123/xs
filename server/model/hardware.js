@@ -1,4 +1,4 @@
-const mongoose = require('../model');
+const mongoose = require('../module/mongoose');
 module.exports = mongoose.model('hardware',
     new mongoose.Schema({
         date: Date,
