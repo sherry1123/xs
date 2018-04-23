@@ -1,6 +1,7 @@
 const request = require('request');
+const handler = require('./handler');
 const querystring = require('querystring');
-const initSearchUrl = (url, param) => (param ? url + '?' + querystring.stringify(param) : url);
+const initSearchUrl = (url, param) => (handler.emptyObject(param) ? url : url + '?' + querystring.stringify(param));
 exports.get = (url, param, token = {}, isJson) => {
     return new Promise((resolve, reject) => {
         request.get(initSearchUrl(url, param), { headers: token }, (error, response, body) => {

@@ -7,6 +7,9 @@ const model = {
     startTime() {
         return new Date(new Date(new Date().getTime() + 60000).toISOString().replace(/:\d+\.\d+/, ':00.000'));
     },
+    emptyObject(object) {
+        return Object.keys(object).length === 0;
+    },
     cookie(value) {
         return value ? value === 'true' : undefined;
     },
@@ -14,7 +17,7 @@ const model = {
         return { code, msg: config.error[code] };
     },
     error(code, message, param = {}) {
-        logger.error(`${config.error[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
+        logger.error(config.error[code] + ', message: ' + message + model.emptyObject(param) ? '' : ', param: ' + JSON.stringify(param));
     },
     response(code, result, param) {
         if (code) {
@@ -40,6 +43,6 @@ const model = {
             }
         }
         return byte;
-    }
+    },
 };
 module.exports = model;
