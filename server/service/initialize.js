@@ -95,13 +95,6 @@ const model = {
         let token = await afterMe.getToken();
         return await request.get(config.api.orcafs.createstatus, {}, token, true);
     },
-    async updateNginxConfig(master) {
-        let path = config.nginx.path;
-        await promise.chmodFileInPromise(path, 777);
-        let file = await promise.readFileInPromise(path);
-        let data = file.replace(/127\.0\.0\.1/g, `${master}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
-        await promise.writeFileInPromise(path, data);
-    },
     async saveInitInfo(param) {
         await promise.runCommandInPromise('sleep 20');
         await mongoose.connect(`mongodb://localhost/${config.database.name}`);
