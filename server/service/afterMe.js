@@ -10,6 +10,7 @@ const model = {
         let token = await model.getToken();
         let res = await request.get(config.api.orcafs.listdisk + param.ip, {}, token, true);
         if (!res.errorId) {
+            res.data = res.data ? res.data : [];
             for (let i in res.data) {
                 res.data[i].totalSpace = handler.toByte(Number(res.data[i].totalSpace.replace(/\SB/, '')), res.data[i].totalSpace.replace(/\S+\d/, '')[0]);
             }
