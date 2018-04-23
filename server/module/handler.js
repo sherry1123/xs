@@ -7,14 +7,24 @@ const model = {
     startTime() {
         return new Date(new Date(new Date().getTime() + 60000).toISOString().replace(/:\d+\.\d+/, ':00.000'));
     },
+    emptyObject(object) {
+        return Object.keys(object).length === 0;
+    },
+    toByte(value, unit) {
+        let unitList = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+        return Math.floor(value * Math.pow(1024, unitList.indexOf(unit)));
+    },
     cookie(value) {
         return value ? value === 'true' : undefined;
     },
-    responseWithoutLog(code) {
-        return { code, msg: config.error[code] };
+    user(context) {
+        return context.cookies.get('user');
+    },
+    clientIP(context) {
+        return context.get('x-real-ip');
     },
     error(code, message, param = {}) {
-        logger.error(`${config.error[code]}, message: ${message}, param: ${JSON.stringify(param)}`);
+        logger.error(config.error[code] + ', message: ' + message + model.emptyObject(param) ? '' : ', param: ' + JSON.stringify(param));
     },
     response(code, result, param) {
         if (code) {
@@ -24,22 +34,8 @@ const model = {
             return { code, data: result };
         }
     },
-    user(context) {
-        return context.cookies.get('user');
+    responseWithoutLog(code) {
+        return { code, msg: config.error[code] };
     },
-    clientIP(context) {
-        return context.get('x-real-ip');
-    },
-    toByte(value, unit) {
-        let unitList = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
-        let byte = 0;
-        for (let i in unitList) {
-            if (unit === unitList[i]) {
-                byte = Math.floor(value * Math.pow(1024, i));
-                break;
-            }
-        }
-        return byte;
-    }
 };
 module.exports = model;

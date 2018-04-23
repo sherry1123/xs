@@ -1,6 +1,6 @@
 const config = require('../config');
 const mongoose = require('mongoose');
-const handler = require('../module/handler');
+const handler = require('./handler');
 const database = config.database.name;
 (async () => {
     try {

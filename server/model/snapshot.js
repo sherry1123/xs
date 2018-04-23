@@ -1,4 +1,4 @@
-const mongoose = require('../model');
+const mongoose = require('../module/mongoose');
 module.exports = mongoose.model('snapshot',
     new mongoose.Schema({
         name: String,

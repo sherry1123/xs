@@ -1,9 +1,9 @@
 const config = require('../config');
-const mongoose = require('../model');
 const promise = require('../module/promise');
 const request = require('../module/request');
-const database = require('../service/database');
 const afterMe = require('../service/afterMe');
+const mongoose = require('../module/mongoose');
+const database = require('../service/database');
 let init = false;
 const model = {
     getInitStatus() {
@@ -94,13 +94,6 @@ const model = {
     async getOrcaFSInitProgress() {
         let token = await afterMe.getToken();
         return await request.get(config.api.orcafs.createstatus, {}, token, true);
-    },
-    async updateNginxConfig(master) {
-        let path = config.nginx.path;
-        await promise.chmodFileInPromise(path, 777);
-        let file = await promise.readFileInPromise(path);
-        let data = file.replace(/127\.0\.0\.1/g, `${master}`).replace(/try_files\s\$uri\s\/index\.html;/, config.nginx.proxy);
-        await promise.writeFileInPromise(path, data);
     },
     async saveInitInfo(param) {
         await promise.runCommandInPromise('sleep 20');
