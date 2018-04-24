@@ -18,8 +18,8 @@ const model = {
         ctx.body = { code: 0, data: 'start to initialize cluster' };
         service.initCluster(ctx.param);
     },
-    '/api/antiinit': ctx => {
-        ctx.body = { code: 0, data: 'start to anti-initialize cluster' };
+    '/api/deinit': ctx => {
+        ctx.body = { code: 0, data: 'start to de-initialize cluster' };
         service.antiInitCluster(1);
     },
     '/api/receiveevent': ctx => {

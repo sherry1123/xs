@@ -34,8 +34,9 @@ const model = {
             return { code, data: result };
         }
     },
-    responseWithoutLog(code) {
-        return { code, msg: config.error[code] };
+    responseWithoutLog(...args) {
+        let [code, index] = [...args];
+        return { code, msg: typeof index === 'undefined' ? config.error[code] : config.error[code][index]};
     },
 };
 module.exports = model;
