@@ -133,7 +133,7 @@ const model = {
         let result = {};
         try {
             let data = await database.login({ username, password });
-            if (data.username) {
+            if (data) {
                 await log.audit({ user: username, desc: 'login successfully', ip });
                 result = handler.response(0, data);
             } else {
