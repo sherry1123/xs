@@ -30,9 +30,9 @@ class TopBar extends Component {
         let abnormalNodes = lsGet('abnormalNodes');
         let {metadataNodes, storageNodes} = nextProps;
         let nodes = metadataNodes.concat(storageNodes);
-        nodes.forEach(node => {
-            console.info(node);
-            if (node.status){
+        nodes.forEach((node = {}) => {
+            // console.info(node);
+            if (node.hasOwnProperty('status')){
                 let removeNodes = [];
                 abnormalNodes.forEach(abnormalNode => {
                     if (node.hostname === abnormalNode){

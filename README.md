@@ -1,4 +1,4 @@
-# OrcaFS BBBig Frontend Project
+# OrcaFS UI BBBig Frontend Project
 
 ## Frontend
 

@@ -21,6 +21,13 @@ socket.on('init status', initStatus => {
     }
 });
 
+// de-initialization
+socket.on('', deInitStatus => {
+    console.info('init ws: ', deInitStatus);
+    // only enable when cookie init is true
+
+});
+
 // business operations after initialization and login
 socket.on('event status', ({channel, code, target, result}) => {
     console.info('event status: ', channel, code, target, result);

@@ -12,8 +12,8 @@ import httpRequests from "./http/requests";
 
 (async () => {
     const NODE_ENV = process.env.NODE_ENV;
-    // each time access the page should firstly fetch 'syncUpSystemStatus' api to sync up
-    // initialization and login status recorded in browser cookie with http server before
+    // each time when user accesses should firstly fetch 'syncUpSystemStatus' api to sync up
+    // rollback, initialization and login status recorded in browser cookie with http server before
     // react app created, it will help react components to do exact system status verifications.
     try {
         // await httpRequests.syncUpSystemStatus();
