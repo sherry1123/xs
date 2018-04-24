@@ -75,7 +75,7 @@ const model = {
     },
     async antiInitCluster(mode) {
         try {
-            socket.postEventStatus({channel: 'cluster', code: 1, target: 'cluster', result: true});
+            socket.postEventStatus({ channel: 'cluster', code: 1, target: 'cluster', result: true });
             mode === 1 && await init.antiInitOrcaFS() && init.setAntiInitStatus(true);
             let getAntiinitProgress = setInterval(async () => {
                 let progress = await init.getOrcaFSInitProgress();
@@ -84,7 +84,7 @@ const model = {
                     if (status) {
                         clearInterval(getAntiinitProgress);
                         init.setAntiInitStatus(false);
-                        socket.postEventStatus({channel: 'cluster', code: 2, target: 'cluster', result: false});
+                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false });
                         handler.error(42, errorMessage, mode);
                     } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
@@ -95,7 +95,7 @@ const model = {
                             await init.antiInitMongoDB(nodelist);
                         }
                         init.setAntiInitStatus(false);
-                        socket.postEventStatus({channel: 'cluster', code: 2, target: 'cluster', result: true});
+                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: true });
                         logger.info('de-initialize the cluster successfully');
                         await init.restartServer(nodelist);
                     }
@@ -103,7 +103,7 @@ const model = {
             }, 1000);
         } catch (error) {
             init.setAntiInitStatus(false);
-            socket.postEventStatus({channel: 'cluster', code: 2, target: 'cluster', result: false});
+            socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false });
             handler.error(42, error, mode);
         }
     },
@@ -126,6 +126,8 @@ const model = {
                 await log.event({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
                 socket.postEventStatus({ channel, code, target: { total: target.length, success, failed: target.length - success }, result: false });
                 break;
+            case 21:
+                socket.postEventStatus({ channel, code, target, result: false });
         }
     },
     async login(param, ip) {

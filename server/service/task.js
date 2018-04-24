@@ -1,9 +1,9 @@
 const email = require('./email');
 const config = require('../config');
 const database = require('./database');
+const snapshot = require('./snapshot');
 const handler = require('../module/handler');
 const request = require('../module/request');
-const snapshot = require('./snapshot');
 const model = {
     async getHardware() {
         let date = new Date();
@@ -32,6 +32,14 @@ const model = {
             await snapshot.runSnapshotTask();
         } catch (error) {
             handler.error(148, error);
+        }
+    },
+    async sendChangePasswordMessage() {
+        try {
+            let [{ password }] = await database.getUser({ username: 'admin' });
+            password === '123456' && await request.post(config.api.server.receiveevent, { channel: 'user', code: 21, target: { username: 'admin', password: '123456' }, info: {} }, {}, true);
+        } catch (error) {
+            handler.error(52, error);
         }
     }
 };
