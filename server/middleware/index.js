@@ -39,7 +39,7 @@ const model = {
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookie);
 			(antiInitCookie !== antiInitStatus) && ctx.cookies.set('deInit', String(antiInitStatus), config.cookie);
 			(rollbackCookie !== rollbackStatus) && ctx.cookies.set('rollbacking', String(rollbackStatus), config.cookie);
-			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookie);
+			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookie) && ctx.cookies.set('user', '', config.cookie);
 		}
 	},
 	filterRequest() {
