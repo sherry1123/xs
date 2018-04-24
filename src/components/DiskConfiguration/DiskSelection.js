@@ -1,44 +1,20 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {Button, Icon, message, Select/*, Transfer*/} from 'antd';
+import {Button, Icon} from 'antd';
 import FSTransfer from '../FSTransfer/FSTransfer';
 import lang from '../Language/lang';
-import {formatStorageSize} from '../../services';
+import {formatStorageSize} from '../../services/index';
 
-class RAIDConfiguration extends Component {
+class DiskConfiguration extends Component {
     constructor (props){
         super(props);
         let {metadataServerIPs, storageServerIPs} = props;
-        this.usedDiskNamesGroupByNodeIP = {}; // for filter out used-disks on single node
-        this.RAIDLevelTips = {
-            'RAID 0': 'xxx',
-            'RAID 1': 'xxx',
-            'RAID 5': 'xxx',
-            'RAID 6': 'xxx',
-            'RAID 10': 'xx'
-        };
+        this.usedDiskNamesGroupByNodeIP = {}; // for filter out used disks on single node
         this.state = {
             metadataNodes: this.convertNodes('metadata', metadataServerIPs),
             storageNodes: this.convertNodes('storage', storageServerIPs),
             currentNode: {},
-            nodeDisks: [
-                {diskname: "/dev/nvme2n1", totalspace: 429604103782, key: '/dev/nvme2n1'},
-                {diskname: "/dev/nvme5n1", totalspace: 429604103782, key: '/dev/nvme5n1'},
-                {diskname: "/dev/nvme4n1", totalspace: 429604103782, key: '/dev/nvme4n1'},
-                {diskname: "/dev/nvme1n1", totalspace: 429604103782, key: '/dev/nvme1n1'},
-                {diskname: "/dev/nvme0n1", totalspace: 429604103782, key: '/dev/nvme0n1'},
-                {diskname: "/dev/nvme3n1", totalspace: 429604103782, key: '/dev/nvme3n1'}
-            ],
-            arrayDisks: [],
-            RAIDLevels: [
-                {name: 'RAID 0', min: 2, max: '', rule: ''},
-                {name: 'RAID 1', min: 2, max: 2, rule: ''},
-                {name: 'RAID 5', min: 3, max: '', rule: ''},
-                {name: 'RAID 6', min: 4, max: '', rule: ''},
-                {name: 'RAID 10', min: 4, max: '', rule: 'even'}
-            ],
-            arrayLevel: {},
-            arrayCapacity: 0,
+            selectedDisks: [],
             enableApplyButton: true,
         }
     }
@@ -51,7 +27,7 @@ class RAIDConfiguration extends Component {
     }
 
     convertNodes (type, nodes){
-        return nodes.map(node => ({type, ip: node, arrayDisks: [], arrayLevel: {}}));
+        return nodes.map(node => ({type, ip: node, selectedDisks: [], arrayLevel: {}}));
     }
 
     switchNode (node, i){
@@ -67,32 +43,27 @@ class RAIDConfiguration extends Component {
             }
         }
         // console.info('remove used disks, left: ' + nodeDisks.map(disk => disk.diskname).toString());
-        // console.info('node raw selected: ' + node.arrayDisks.map(disk => disk.diskname).toString());
-        if (!node.arrayDisks.length){
+        // console.info('node raw selected: ' + node.selectedDisks.map(disk => disk.diskname).toString());
+        if (!node.selectedDisks.length){
             // the selected node hasn't done RAID configuration yet
             this.setState({
                 currentNode: Object.assign({i}, node), // i is a helpful key for mutating the item in metadataNodes or storageNodes arrays quickly
                 nodeDisks,
-                arrayDisks: [],
-                arrayLevel: {},
-                arrayCapacity: 0
+                selectedDisks: []
             });
         } else {
             // the selected node is configured
-            let arrayDisks = node.arrayDisks;
-            // console.info('this node selected disks: ' + node.arrayDisks.map(disk => disk.diskname).toString());
-            // show RAID configuration of this node
-            let arrayDisksNames = arrayDisks.map(disk => disk.diskname);
-            // remove the disks that are already in arrayDisks
-            nodeDisks = nodeDisks.filter(disk => !arrayDisksNames.includes(disk.diskname));
+            let selectedDisks = node.selectedDisks;
+            // console.info('this node selected disks: ' + node.selectedDisks.map(disk => disk.diskname).toString());
+            // show disk selection of this node
+            let selectedDisksNames = selectedDisks.map(disk => disk.diskname);
+            // remove the disks that are already in selectedDisks
+            nodeDisks = nodeDisks.filter(disk => !selectedDisksNames.includes(disk.diskname));
             // console.info('node raw allow selected: ' + nodeDisks.map(disk => disk.diskname).toString());
-            let arrayCapacity = this.calculateArrayCapacity(arrayDisks);
             this.setState({
                 currentNode: Object.assign({i}, node),
                 nodeDisks,
-                arrayDisks,
-                arrayLevel: node.arrayLevel,
-                arrayCapacity
+                selectedDisks,
             });
         }
     }
@@ -109,46 +80,21 @@ class RAIDConfiguration extends Component {
         ];
     }
 
-    switchRAIDLevel (value, option){
-        this.setState({arrayLevel: Object.assign({}, option.props.level)});
-    }
-
-    async arrayDisksChange (nextTargetItems/*, direction, moveItems*/){
-        let arrayCapacity = this.calculateArrayCapacity(nextTargetItems);
-        await this.setState({arrayDisks: nextTargetItems, arrayCapacity});
-    }
-
-    calculateArrayCapacity (disks){
-        let arrayCapacity = 0;
-        disks.forEach(disk => arrayCapacity += disk.totalspace);
-        return arrayCapacity;
-    }
-
-    checkRAID (){
-        // check whether selected arrayDisks match current RAID level rule or not
-
-        return true;
+    selectedDisksChange (nextTargetItems/*, direction, moveItems*/){
+        this.setState({selectedDisks: nextTargetItems});
     }
 
     applyConfForNode (){
-        if (this.checkRAID()){
-            let currentNode = this.state.currentNode;
-            currentNode.arrayDisks = [...this.state.arrayDisks];
-            currentNode.arrayLevel = Object.assign({}, this.state.arrayLevel);
-            let nodes = Object.assign(this.state[currentNode.type + 'Nodes']);
-            nodes[currentNode.i] = currentNode;
-            this.setState({[currentNode.type + 'Nodes']: nodes});
-            if (!currentNode.arrayDisks.length){
-                delete this.usedDiskNamesGroupByNodeIP[currentNode.ip];
-            } else {
-                let existedUsedDisks = this.usedDiskNamesGroupByNodeIP[currentNode.ip] || [];
-                this.usedDiskNamesGroupByNodeIP[currentNode.ip] = existedUsedDisks.concat(currentNode.arrayDisks);
-            }
+        let currentNode = this.state.currentNode;
+        currentNode.selectedDisks = [...this.state.selectedDisks];
+        let nodes = Object.assign(this.state[currentNode.type + 'Nodes']);
+        nodes[currentNode.i] = currentNode;
+        this.setState({[currentNode.type + 'Nodes']: nodes});
+        if (!currentNode.selectedDisks.length){
+            delete this.usedDiskNamesGroupByNodeIP[currentNode.ip];
         } else {
-            // give some tips out according to current RAID level rule,
-            // and let user to correct selected arrayDisks
-            let level = this.state.arrayLevel.name;
-            message.error(this.RAIDLevelTips[level]);
+            let existedUsedDisks = this.usedDiskNamesGroupByNodeIP[currentNode.ip] || [];
+            this.usedDiskNamesGroupByNodeIP[currentNode.ip] = existedUsedDisks.concat(currentNode.selectedDisks);
         }
     }
 
@@ -158,15 +104,13 @@ class RAIDConfiguration extends Component {
     }
 
     render (){
-        // console.info('render selected disks: ' + this.state.arrayDisks.map(disk => disk.diskname).toString());
-        let {metadataNodes, storageNodes, currentNode, RAIDLevels, arrayLevel, arrayDisks, nodeDisks, arrayCapacity, enableApplyButton} = this.state;
-
+        let {metadataNodes, storageNodes, currentNode, selectedDisks, nodeDisks, enableApplyButton} = this.state;
         return (
             <section className="fs-raid-config-wrapper">
                 <div className="fs-raid-config-description">
                     {lang(
-                        `请先选择节点，再选择RAID级别，然后将该节点中要做RAID的盘放入右侧阵列中，待所需盘都放置完毕后，点击应用按钮，该节点的RAID即配置完成。
-                        一旦启用RAID配置，请以此方式依次配置完所有的元数据节点和存储节点。为了确保磁盘资源的合理利用和配置的便捷性，请在进行初始化之前规划好每个节点上的磁盘。`,
+                        `如果您不选择开始RAID，那么请先选择节点，再为该节点选择一个并放入右侧框体中，待所需盘都放置完毕后，点击应用按钮，该节点的磁盘即配置完成。
+                        请以此方式依次配置完所有的元数据节点和存储节点。为了确保磁盘资源的合理利用和配置的便捷性，请在进行初始化之前规划好每个节点上的磁盘。`,
                         ``
                     )}
                 </div>
@@ -177,10 +121,10 @@ class RAIDConfiguration extends Component {
                             {
                                 metadataNodes.map((node, i) => <div
                                     className={`fs-raid-node-item ${currentNode.i === i && currentNode.type === 'metadata' ? 'active' : ''}`} key={i}
-                                     onClick={() => this.switchNode.bind(this, node, i)()}
+                                    onClick={() => this.switchNode.bind(this, node, i)()}
                                 >
                                     {node.ip}
-                                    {!!node.arrayDisks.length && <Icon type="check" title={lang('RAID已配置', 'RAID Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
+                                    {!!node.selectedDisks.length && <Icon type="check" title={lang('RAID已配置', 'RAID Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
                                 </div>)
                             }
                         </div>
@@ -192,7 +136,7 @@ class RAIDConfiguration extends Component {
                                     onClick={() => this.switchNode.bind(this, node, i)()}
                                 >
                                     {node.ip}
-                                    {!!node.arrayDisks.length && <Icon type="check" title={lang('RAID已配置', 'RAID Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
+                                    {!!node.selectedDisks.length && <Icon type="check" title={lang('磁盘已配置', 'Disk Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
                                 </div>)
                             }
                         </div>
@@ -205,39 +149,19 @@ class RAIDConfiguration extends Component {
                                     <span style={{marginRight: 20}}>{lang('节点IP: ', 'Node IP: ')}{currentNode.ip}</span>
                                     <span>{lang('类型：', 'Type: ')}{currentNode.type === 'metadata' ? lang('元数据服务器', 'Metadata Server') : lang('存储服务器', 'Storage Server')}</span>
                                 </div>
-                                <div className="fs-raid-node-array-info-content">
-                                    RAID {lang('级别', 'Level')}：
-                                    <Select
-                                        size="small" style={{width: 100, marginRight: 20}}
-                                        placeholder={lang('请选择', 'select')}
-                                        value={arrayLevel.name}
-                                        onChange={this.switchRAIDLevel.bind(this)}
-                                    >
-                                        {
-                                            RAIDLevels.map((level, i) => <Select.Option
-                                                key={i}
-                                                value={level.name}
-                                                level={level}
-                                            >
-                                                {level.name}
-                                            </Select.Option>)
-                                        }
-                                    </Select>
-                                    <span style={{marginRight: 20}}>阵列磁盘数量：{arrayDisks.length}</span>
-                                    <span>阵列总容量：{formatStorageSize(arrayCapacity)}</span>
-                                </div>
                             </div>)
                         }
                         {
-                            arrayLevel.hasOwnProperty('name') &&
+                            currentNode.hasOwnProperty('ip') &&
                             <FSTransfer
                                 className="fs-raid-node-array-selector"
                                 notFoundContent=" "
                                 titles={[lang('当前可用磁盘', 'Available Disks'), lang('已加入阵列磁盘', 'Disks In Array')]}
                                 dataSource={nodeDisks}
-                                targetItems={arrayDisks}
+                                targetItems={selectedDisks}
+                                targetItemOnlyOne={true}
                                 rowKey="diskname"
-                                onChange={this.arrayDisksChange.bind(this)}
+                                onChange={this.selectedDisksChange.bind(this)}
                                 render={({diskname, totalspace}) => ({
                                     label: (
                                         <span>
@@ -272,4 +196,5 @@ const mapStateToProps = state => {
     return {language, metadataServerIPs, storageServerIPs};
 };
 
-export default connect(mapStateToProps)(RAIDConfiguration);
+export default connect(mapStateToProps)(DiskConfiguration);
+

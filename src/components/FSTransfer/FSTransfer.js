@@ -7,11 +7,9 @@ import lang from '../Language/lang';
 class FSTransfer extends Component {
     constructor (props){
         super(props);
-        let {language, className, notFoundContent = '', titles = ['', ''], dataSource = [], targetItems = [], rowKey, onChange, render, footer,} = this.props;
-        if (!rowKey){
-            throw `FSTransfer component needs a prop 'rowKey' to define the uniqueness for inner items.`;
-        }
+        let {language, className, notFoundContent = '', titles = ['', ''], dataSource = [], targetItems = [], targetItemOnlyOne = false, rowKey, onChange, render, footer,} = this.props;
         this.rowKey = rowKey;
+        this.targetItemOnlyOne = targetItemOnlyOne;
         this.state = {
             source: dataSource,
             tempSelected: [],
@@ -31,10 +29,8 @@ class FSTransfer extends Component {
 
     componentWillReceiveProps (nextProps){
         let {targetItems} = nextProps;
-        this.setState({
-            selected: targetItems
-        });
-        console.info('received selected disks: ' + targetItems.map(item => item[this.rowKey]).toString());
+        this.setState({selected: targetItems});
+        // console.info('received selected disks: ' + targetItems.map(item => item[this.rowKey]).toString());
     }
 
     async allSourceSelect ({target: {checked}}){
@@ -46,14 +42,24 @@ class FSTransfer extends Component {
 
     oneSourceSelect (item, i, {target: {checked}}){
         let tempSelected = [...this.state.tempSelected];
-        if (checked){
-            tempSelected.push(item);
-        } else {
-            tempSelected = tempSelected.filter(({[this.rowKey]: rowKey}) => !(rowKey === item[this.rowKey]));
-        }
         let source = [...this.state.source];
-        // set one item checked
-        source[i].checked = checked;
+        if (this.targetItemOnlyOne){
+            if (checked){
+                tempSelected = [item];
+            } else {
+                tempSelected = [];
+            }
+            source.forEach(item => item.checked = false);
+            source[i].checked = checked;
+        } else {
+            if (checked){
+                tempSelected.push(item);
+            } else {
+                tempSelected = tempSelected.filter(({[this.rowKey]: rowKey}) => !(rowKey === item[this.rowKey]));
+            }
+            // set one item checked
+            source[i].checked = checked;
+        }
         this.setState({source, tempSelected});
     }
 
@@ -128,11 +134,14 @@ class FSTransfer extends Component {
             <div className={`ant-transfer ${className}`}>
                 <div className="ant-transfer-list ant-transfer-list-with-footer">
                     <div className="ant-transfer-list-header">
-                        <Checkbox
-                            indeterminate={!!tempSelected.length && (tempSelected.length < source.length)}
-                            checked={!!source.length && (tempSelected.length === source.length)}
-                            onChange={this.allSourceSelect.bind(this)}
-                        />
+                        {
+                            !this.targetItemOnlyOne &&
+                            <Checkbox
+                                indeterminate={!!tempSelected.length && (tempSelected.length < source.length)}
+                                checked={!!source.length && (tempSelected.length === source.length)}
+                                onChange={this.allSourceSelect.bind(this)}
+                            />
+                        }
                         <span>{tempSelected.length} {lang('项', 'Items')}</span>
                         <span className="ant-transfer-list-header-title">
                             {titles[0]}
@@ -182,11 +191,14 @@ class FSTransfer extends Component {
                 </div>
                 <div className="ant-transfer-list ant-transfer-list-with-footer">
                     <div className="ant-transfer-list-header">
-                        <Checkbox
-                            indeterminate={!!tempSource.length && (tempSource.length < selected.length)}
-                            checked={!!selected.length && (tempSource.length === selected.length)}
-                            onChange={this.allUnSelect.bind(this)}
-                        />
+                        {
+                            !this.targetItemOnlyOne &&
+                            <Checkbox
+                                indeterminate={!!tempSource.length && (tempSource.length < selected.length)}
+                                checked={!!selected.length && (tempSource.length === selected.length)}
+                                onChange={this.allUnSelect.bind(this)}
+                            />
+                        }
                         <span>{tempSource.length} {lang('项', 'Items')}</span>
                         <span className="ant-transfer-list-header-title">
                             {titles[1]}
@@ -219,8 +231,8 @@ class FSTransfer extends Component {
                         footer ?
                             <div className="ant-transfer-list-footer">
                                 {footer()}
-                            </div>
-                            : null
+                            </div> :
+                            null
                     }
                 </div>
             </div>
@@ -235,4 +247,9 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(FSTransfer);
 
-// onChange callback function: (nextTargetItems, direction, moveItems): void
+/*
+ * @props
+ * rowKey this is a necessary props to define the uniqueness for inner items
+ * onChange callback function: (nextTargetItems, direction, moveItems): void
+ *
+ */

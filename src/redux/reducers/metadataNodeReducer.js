@@ -1,7 +1,7 @@
 import State from '../state';
 import {metadataNodeActionTypes} from '../actions/metadataNodeAction';
 
-const metadataNodeReducer = (state = State.main.storageNode, action) => {
+const metadataNodeReducer = (state = State.main.metadataNode, action) => {
     switch (action.type){
         case metadataNodeActionTypes.SET_METADATA_NODES:
         {

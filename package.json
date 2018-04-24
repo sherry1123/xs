@@ -1,14 +1,15 @@
 {
   "name": "orcafs-gui",
   "version": "1.0.0",
-  "description": "gui for orcafs, developed by the web development team of orcadt.",
+  "description": "gui for orcafs, powered by the UI UD team of orcadt.",
   "contributors": [
     "Wei Cao <wei.cao@orcadt.com>",
     "Xiaoyu Liu <xiaoyu.liu@orcadt.com>",
     "Yang Xiang <yang.xiang@orcadt.com>",
-    "Pengcheng Li <pengcheng.li@orcadt.com>"
+    "Pengcheng Li <pengcheng.li@orcadt.com>",
+    "Hao Yang <hao.yang@orcadt.com>"
   ],
-  "author": "Orcadt",
+  "author": "Orcadt-UI",
   "private": true,
   "repository": {
     "type": "git",

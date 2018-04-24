@@ -5,7 +5,8 @@ import {Button, Divider, Form, Icon, Input, message, notification, Popover, Prog
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
-import RAIDConfiguration from '../../components/RAIDConfiguration/RAIDConfiguration';
+import RAIDConfiguration from '../../components/DiskConfiguration/RAIDConfiguration';
+import DiskSelection from '../../components/DiskConfiguration/DiskSelection';
 import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
 import {validateIpv4, KeyPressFilter, lsGet, lsSet, lsRemove, ckGet} from '../../services';
@@ -20,7 +21,7 @@ class Initialize extends Component {
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
-            currentStep: 2,
+            currentStep: 0,
             totalStep: 5,
             checking: false,
             // server IP input and corresponding verification result
@@ -43,7 +44,6 @@ class Initialize extends Component {
         if (isRollingBack === 'true'){
             this.props.history.replace(routerPath.RollingBack);
         } else {
-            /*
             let isInitialized = ckGet('init');
             let initStepLocal = lsGet('initStep');
             if (isInitialized === 'true'){
@@ -78,7 +78,6 @@ class Initialize extends Component {
                     });
                 }
             }
-            */
         }
     }
 
@@ -679,7 +678,7 @@ class Initialize extends Component {
                                         <Switch size="small" checked={this.props.enableRAID} onChange={this.setEnableRAID.bind(this)} />
                                     </div>
                                     {
-                                        this.props.enableRAID && <RAIDConfiguration />
+                                        this.props.enableRAID ? <RAIDConfiguration /> : <DiskSelection />
                                     }
                                 </section>
                             </QueueAnim>
