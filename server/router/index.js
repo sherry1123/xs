@@ -7,7 +7,7 @@ router.all('/api/syncsystemstatus', controller['/api/syncsystemstatus']);
 router.all('/api/checkclusterenv', controller['/api/checkclusterenv']);
 router.all('/api/getdisklist', controller['/api/getdisklist']);
 router.all('/api/init', controller['/api/init']);
-router.all('/api/antiinit', controller['/api/antiinit']);
+router.all('/api/deinit', controller['/api/deinit']);
 router.all('/api/receiveevent', controller['/api/receiveevent']);
 router.all('/api/login', controller['/api/login']);
 router.all('/api/logout', controller['/api/logout']);
