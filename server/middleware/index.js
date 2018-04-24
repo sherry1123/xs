@@ -12,12 +12,14 @@ const model = {
 				key: ctx.get('Api-Key'),
 				cookie: {
 					init: handler.cookie(ctx.cookies.get('init')),
+					deInit: handler.cookie(ctx.cookies.get('deInit')),
 					rollbacking: handler.cookie(ctx.cookies.get('rollbacking')),
 					login: handler.cookie(ctx.cookies.get('login'))
 				},
 				encoding: ctx.get('Accept-Encoding'),
 				status: {
 					init: init.getInitStatus(),
+					deInit: init.getAntiInitStatus(),
 					rollbacking: snapshot.getRollbackStatus()
 				}
 			};
@@ -33,18 +35,19 @@ const model = {
 	syncStatus() {
 		return async (ctx, next) => {
 			await next();
-			let { cookie: { init: initCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let { cookie: { init: initCookie, deInit: antiInitCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, deInit: antiInitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookie);
+			(antiInitCookie !== antiInitStatus) && ctx.cookies.set('deInit', String(antiInitStatus), config.cookie);
 			(rollbackCookie !== rollbackStatus) && ctx.cookies.set('rollbacking', String(rollbackStatus), config.cookie);
 			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookie);
 		}
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let { api, status: { init: initStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let { api, status: { init: initStatus, deInit: antiInitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			let syncAPI = 'syncsystemstatus';
 			let initApiList = ['checkclusterenv', 'getdisklist', 'init'];
-			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0);
+			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus && !antiInitStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !antiInitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
 		}
 	},
 	compressResponse() {

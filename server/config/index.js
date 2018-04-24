@@ -74,7 +74,7 @@ exports.key = {
     antiinit: '186716b8d7c8ce050a0710ccf43c89c8'
 };
 exports.error = {
-    0: 'the cluster is rollbacking',
+    0: ['the cluster is anti-initializing', 'the cluster is rollbacking'],
     1: 'the cluster is not initialized',
     2: 'the cluster has been initialized',
     11: 'no key or wrong key',
@@ -85,7 +85,7 @@ exports.error = {
     31: 'check the cluster initialization environment error',
     32: 'get disk list error',
     41: 'initialize the cluster error',
-    42: 'anti-initialize the cluster error',
+    42: 'de-initialize the cluster error',
     51: 'login error',
     52: 'get user error',
     53: 'add user error',
@@ -134,10 +134,12 @@ exports.error = {
     173: 'set pattern error'
 };
 exports.event = {
-    1: 'delete snapshot successfully',
-    2: 'delete snapshot failed',
-    3: 'delete snapshots successfully',
-    4: 'delete snapshots failed',
-    5: 'rollback snapshots start',
-    6: 'rollback snapshots end'
+    1: 'de-initialize cluster start',
+    2: 'de-initialize cluster end',
+    11: 'delete snapshot successfully',
+    12: 'delete snapshot failed',
+    13: 'delete snapshots successfully',
+    14: 'delete snapshots failed',
+    15: 'rollback snapshots start',
+    16: 'rollback snapshots end',
 };

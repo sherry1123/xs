@@ -5,12 +5,19 @@ const afterMe = require('../service/afterMe');
 const mongoose = require('../module/mongoose');
 const database = require('../service/database');
 let init = false;
+let antiInit = false;
 const model = {
     getInitStatus() {
         return init;
     },
     setInitStatus(status) {
         init = status;
+    },
+    getAntiInitStatus() {
+        return antiInit;
+    },
+    setAntiInitStatus(status) {
+        antiInit = status;
     },
     async getMongoDBProcess() {
         let command = `ps aux|grep ${config.database.bin}/mongod|grep grep -v|awk '{print $2}'`;

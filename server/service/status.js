@@ -27,7 +27,7 @@ const model = {
         let receviceEventAPI = 'http://localhost/api/receiveevent';
         target = target.map(snapshot => ({name: snapshot, result: Math.random() > 0.5 ? true : false}));
         await promise.runTimeOutInPromise(10);
-        await request.post(receviceEventAPI, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 3 : 4, target, info }, {}, true);
+        await request.post(receviceEventAPI, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 13 : 14, target, info }, {}, true);
 
     }
 };
