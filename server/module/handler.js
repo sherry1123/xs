@@ -24,12 +24,12 @@ const model = {
         return context.get('x-real-ip');
     },
     error(code, message, param = {}) {
-        logger.error(config.error[code] + ', message: ' + message + model.emptyObject(param) ? '' : ', param: ' + JSON.stringify(param));
+        logger.error(`${config.error[code]}, message: ${message.trim()}, param: ${JSON.stringify(param)}`);
     },
     response(code, result, param) {
         if (code) {
             model.error(code, result, param);
-            return { code, msg: result ? typeof result === 'object' ? result.message || '' : result : '' };
+            return { code, msg: result ? typeof result === 'object' ? result.message || '' : result.trim() : '' };
         } else {
             return { code, data: result };
         }
