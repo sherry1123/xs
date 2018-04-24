@@ -16,8 +16,13 @@ import httpRequests from "./http/requests";
     // rollback, initialization and login status recorded in browser cookie with http server before
     // react app created, it will help react components to do exact system status verifications.
     try {
-        // await httpRequests.syncUpSystemStatus();
+        await httpRequests.syncUpSystemStatus();
         NODE_ENV === 'development' && console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
+        // currently, there're four interceptions on system status check depend on cookie
+        // deInit
+        // rollbacking
+        // init
+        // login
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }

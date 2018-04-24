@@ -88,7 +88,7 @@ class TopBar extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {general: {user, knownProblems}, metadataNode: {overview: {nodeList: metadataNodes}}, storageNode: {overview: {status: storageNodes}}}} = state;
+    let {language, main: {general: {user, knownProblems}, metadataNode: {overview: {nodeList: metadataNodes}}, storageNode: {overview: {nodeList: storageNodes}}}} = state;
     return {language, user, knownProblems, metadataNodes, storageNodes};
 };
 

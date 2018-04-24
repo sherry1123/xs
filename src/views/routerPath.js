@@ -13,6 +13,9 @@ const routerPath = {
     // rolling back
     RollingBack: '/rolling-back',
 
+    // deInitializing
+    DeInitializing: '/de-initializing',
+
     // initialized and logged in (normal state)
     Main: '/orca-fs',
 

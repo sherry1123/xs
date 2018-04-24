@@ -1,6 +1,7 @@
 import {CronJob} from 'cron';
 import httpRequests from './requests';
 import routerPath from '../views/routerPath';
+import {ckGet} from '../services';
 
 // request every 15 seconds
 const fetchDataPer15s = () => {
@@ -51,9 +52,12 @@ const fetchDataPer15s = () => {
     }
 };
 
-new CronJob('*/15 * * * * *', async () => {
-    fetchDataPer15s();
-}, null, true);
+let isInitialized = ckGet('init');
+if (isInitialized === 'true'){
+    new CronJob('*/15 * * * * *', async () => {
+        fetchDataPer15s();
+    }, null, true);
 
-// request something when access app
-httpRequests.getFiles('/');
+    // request something when access app
+    httpRequests.getFiles('/');
+}

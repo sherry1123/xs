@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import generalAction from "../../redux/actions/generalAction";
 import {Button, Form, Icon, Input, message} from 'antd';
 import QueueAnim from 'rc-queue-anim';
+import ChangePassword from '../../components/ChangePassword/ChangePassword';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import {ckGet} from '../../services';
@@ -27,19 +28,32 @@ class Login extends Component {
     }
 
     componentWillMount (){
-        let isRollingBack = ckGet('rollbacking');
-        if (isRollingBack === 'true'){
-            this.props.history.replace(routerPath.RollingBack);
+        let isDeInit = ckGet('deInit');
+        if (isDeInit === 'true'){
+            this.props.history.replace(routerPath.DeInitializing);
         } else {
-            let isInitialized = ckGet('init');
-            if (isInitialized === 'true'){
-                let isLoggedIn = ckGet('login');
-                if (!!isLoggedIn && (isLoggedIn !== 'false')){
-                    this.props.history.replace(routerPath.Main + routerPath.MetadataNodes);
-                }
+            let isRollingBack = ckGet('rollbacking');
+            if (isRollingBack === 'true'){
+                this.props.history.replace(routerPath.RollingBack);
             } else {
-                this.props.history.replace(routerPath.Init);
+                let isInitialized = ckGet('init');
+                if (isInitialized === 'true'){
+                    let isLoggedIn = ckGet('login');
+                    if (!!isLoggedIn && (isLoggedIn !== 'false')){
+                        this.props.history.replace(routerPath.Main + routerPath.MetadataNodes);
+                    }
+                } else {
+                    this.props.history.replace(routerPath.Init);
+                }
             }
+        }
+    }
+
+    componentDidMount (){
+        console.info(this.props.history.location);
+        let {fromInit} = this.props.history.location.state || {};
+        if (fromInit){
+            this.changePasswordWrapper.getWrappedInstance().show({isAdmin: true});
         }
     }
 
@@ -149,6 +163,7 @@ class Login extends Component {
                         </section>
                     </section>
                 </QueueAnim>
+                <ChangePassword ref={ref => this.changePasswordWrapper = ref} />
                 <footer className="fs-login-copyright-wrapper">
                     ©2018 Orcadt {this.props.version}
                 </footer>

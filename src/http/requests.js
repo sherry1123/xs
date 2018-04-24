@@ -44,7 +44,7 @@ export default  {
     async getDefaultUser (){
         try {
             let data = await fetchPost('/api/getuser');
-            !!data && store.dispatch(initializeAction.setDefaultUser(data));
+            !!data && store.dispatch(initializeAction.setDefaultUser(data[0]));
         } catch (e){
             errorHandler(e);
         }
