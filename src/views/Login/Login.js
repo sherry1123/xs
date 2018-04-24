@@ -50,7 +50,7 @@ class Login extends Component {
     }
 
     componentDidMount (){
-        console.info(this.props.history.location);
+        // console.info(this.props.history.location);
         let {fromInit} = this.props.history.location.state || {};
         if (fromInit){
             this.changePasswordWrapper.getWrappedInstance().show({isAdmin: true});
@@ -106,7 +106,7 @@ class Login extends Component {
 
     render (){
         let loginErrorInfoMap = {
-            9: lang('用户名或密码错误', 'username or password error')
+            51: lang('用户名或密码错误', 'username or password error')
         };
         return (
             <section className="fs-login-wrapper">

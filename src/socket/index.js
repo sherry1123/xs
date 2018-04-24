@@ -2,14 +2,17 @@ import io from 'socket.io-client';
 import {notification} from 'antd';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
-import {lsSet, lsRemove, ckRemove} from '../services';
+import {lsGet, lsSet, lsRemove, ckRemove} from '../services';
 import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './conf';
 import httpRequests from '../http/requests';
 import lang from '../components/Language/lang';
 import routerPath from '../views/routerPath';
 
 let socket = io();
-let {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd} = eventCodeForEventChannel;
+let {
+    snapshot, snapshotRollBackStart, snapshotRollBackFinish,
+    deInitializationStart, deInitializationEnd,
+} = eventCodeForEventChannel;
 let waitForServerUpTimeThreshold = 1000 * 60 * 5;
 let requestServerUpInterval = 1000 * 2;
 
@@ -18,6 +21,12 @@ socket.on('init status', initStatus => {
     console.info('ws init: ', initStatus);
     store.dispatch(initializeAction.setInitStatus(initStatus));
     if (!initStatus.status){
+        if (!lsGet('initStep')){
+            // exception case: open an another browser, with no initStep in localStorage
+            lsSet('initStep', 3);
+            window.location.href = routerPath.Root;
+        }
+        // normal case
         lsSet('initStatus', initStatus);
     } else {
         lsRemove(['initStep', 'initStatus']);
@@ -28,39 +37,42 @@ socket.on('init status', initStatus => {
 socket.on('event status', ({channel, code, target, result}) => {
     console.info('ws event status: ', channel, code, target, result);
     let {language} = store.getState();
-    console.info(language);
-    notification[result ? 'success' : 'error']({
+    notification[result ? 'success' : 'warning']({
         message: socketEventChannel[channel]()[language] + lang('通知', 'Notification'),
         description: socketEventCode[code]()[language](target, result)
     });
 
-    // special codes handlers
+    /*
+     *   special codes handlers
+     */
+
+    // channel snapshot
     if (snapshot.includes(code)){
         // snapshot
         httpRequests.getSnapshotList();
     }
     // snapshot rolling back
-    if (snapshotRollBackStart === code){
+    if (snapshotRollBackStart.includes(code)){
         // reload page and go through the system status logic in App.js
         window.location.href = routerPath.Root;
     }
-    if (snapshotRollBackFinish === code){
+    if (snapshotRollBackFinish.includes(code)){
         window.location.href = routerPath.Root;
         ckRemove('rollbacking');
     }
 
-    // de-initialization
-    if (deInitializationStart === code){
-        window.location.href = '/#' + routerPath.DeInitializing;
+    // channel de-initialization
+    if (deInitializationStart.includes(code)){
+        window.location.href = routerPath.Root;
     }
-    if (deInitializationEnd === code){
+    if (deInitializationEnd.includes(code)){
         // wait for server restart, and create a interval timer to request server status,
         // once server is up, do page jumping operation
         let timer = setInterval(async () => {
             try {
                  await httpRequests.syncUpSystemStatus();
                  clearInterval(timer);
-                 window.location.href = '/#' + routerPath.Init;
+                 window.location.href = routerPath.Root;
             } catch (e){
                 console.info(`Connect to server failed, will try again ${requestServerUpInterval / 1000} seconds later ...`);
             }
@@ -72,8 +84,8 @@ socket.on('event status', ({channel, code, target, result}) => {
             let {language} = store.getState();
             notification.error({
                 description: language === 'chinese' ?
-                    'HTTP服务器启动失败，请联系运维人员介入处理！' :
-                    'HTTP server startup failure, please contact operation and maintenance personnel to intervene!',
+                    '未能连接到HTTP服务器，请联系运维人员介入处理！' :
+                    'Connect to HTTP server failed, please contact operation and maintenance personnel to intervene!',
             });
         }, waitForServerUpTimeThreshold);
     }
