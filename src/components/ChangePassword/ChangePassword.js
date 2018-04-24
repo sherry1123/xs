@@ -13,6 +13,7 @@ class ChangePassword  extends Component {
             formValid: false,
             formSubmitting: false,
             isAdmin: false,
+            adminDefaultPassword: '123456',
             formData: {
                 password: '',
                 rePassword: ''
@@ -32,7 +33,7 @@ class ChangePassword  extends Component {
     async validateForm (key){
         let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
         await this.setState({validation});
-        let {password, rePassword} = this.state.formData;
+        let {adminDefaultPassword, formData: {password, rePassword}} = this.state;
         if (key === 'password'){
             if (!password){
                 await this.validationUpdateState('password', {
@@ -43,6 +44,11 @@ class ChangePassword  extends Component {
                 await this.validationUpdateState('password', {
                     cn: '请输入6至21位数字',
                     en: 'please enter 6 to 21 digits'
+                }, false);
+            } else if (password === adminDefaultPassword){
+                await this.validationUpdateState('password', {
+                    cn: '密码不能和默认密码相同',
+                    en: 'password can\'t be the same with default password'
                 }, false);
             } else {
                 if (password !== rePassword){
@@ -141,12 +147,15 @@ class ChangePassword  extends Component {
                 visible={this.state.visible}
                 footer={
                     <div>
-                        <Button
-                            size='small'
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
-                        </Button>
+                        {
+                            !isAdmin &&
+                            <Button
+                                size='small'
+                                onClick={this.hide.bind(this)}
+                            >
+                                {lang('取消', 'Cancel')}
+                            </Button>
+                        }
                         <Button
                             type="primary" size='small'
                             disabled={!this.state.formValid}

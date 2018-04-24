@@ -8,19 +8,26 @@ export const socketEventChannel = {
         chinese: '集群操作',
         english: 'Cluster Operation'
     }),
+
+    user: () => ({
+        chinese: '用户警告',
+        english: 'User Warning'
+    }),
 };
 
 export const eventCodeForEventChannel = {
-    deInitializationStart: 1,
-    deInitializationEnd: 2,
+    deInitializationStart: [1],
+    deInitializationEnd: [2],
 
     snapshot: [11, 12, 13, 14, 15, 16],
-    snapshotRollBackStart: 15,
-    snapshotRollBackFinish: 16,
+    snapshotRollBackStart: [15],
+    snapshotRollBackFinish: [16],
+
+    user: [21],
 };
 
 export const socketEventCode = {
-    // code 1-10 for system de-initialization
+    // code 1-10 for system de-initialization channel
     1: ()=> ({
         chinese: () => `系统开始反初始化！`,
         english: () => `System starts de-initializing！`
@@ -55,4 +62,12 @@ export const socketEventCode = {
         chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
         english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),
+
+
+    // code 21-30 for user channel
+    21: () => ({
+        chinese: (target) => `为了系统安全，管理员用户 ${target.username} 的默认初始密码需要修改！`,
+        english: (target) => `The default password of administrators user ${target.username} needs to be changed to ensure the security of system.`
+    }),
+
 };

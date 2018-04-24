@@ -19,10 +19,10 @@ import httpRequests from "./http/requests";
         await httpRequests.syncUpSystemStatus();
         NODE_ENV === 'development' && console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
         // currently, there're four interceptions on system status check depend on cookie
-        // deInit
-        // rollbacking
-        // init
-        // login
+        // 1. deInit
+        // 2. rollbacking
+        // 3. init
+        // 4. login
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }

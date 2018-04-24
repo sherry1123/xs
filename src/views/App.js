@@ -5,7 +5,7 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import asyncLoad from './asyncLoad';
 import lang from '../components/Language/lang';
-import {ckGet} from '../services';
+import {ckGet, lsRemove} from '../services';
 import routerPath from './routerPath';
 
 const Initialize = asyncLoad(() => import('./Initialize/Initialize'));
@@ -29,6 +29,7 @@ export default class App extends Component {
                 defaultPath = `${routerPath.RollingBack}`;
             } else {
                 if (isInitialized === 'true'){
+                    lsRemove(['initStep', 'initStatus', 'initInfoList']);
                     let isLoggedIn = ckGet('login');
                     if (!isLoggedIn){
                         defaultPath = routerPath.Login;
