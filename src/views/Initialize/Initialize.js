@@ -40,42 +40,47 @@ class Initialize extends Component {
     }
 
     componentWillMount (){
-        let isRollingBack = ckGet('rollbacking');
-        if (isRollingBack === 'true'){
-            this.props.history.replace(routerPath.RollingBack);
+        let isDeInit = ckGet('deInit');
+        if (isDeInit === 'true'){
+            this.props.history.replace(routerPath.DeInitializing);
         } else {
-            let isInitialized = ckGet('init');
-            let initStepLocal = lsGet('initStep');
-            if (isInitialized === 'true'){
-                if (!initStepLocal){
-                    let isLoggedIn = ckGet('login');
-                    let path = '';
-                    if (!isLoggedIn || (isLoggedIn === 'false')){
-                        path = routerPath.Login;
-                    } else {
-                        path = routerPath.Main + routerPath.StorageNodes;
-                    }
-                    this.props.history.replace(path);
-                } else {
-                    // isInitialized is true and there's a key 'initStep' in localStorage,
-                    // it means initialization was finished and there was an abnormal exit or refresh
-                    // action happened on browser before, should jump to the last step
-                    this.setState({currentStep: Number(initStepLocal) || this.state.totalStep});
-
-                    // console.info('find initStep in localStorage, value is ' + initStepLocal);
-                }
+            let isRollingBack = ckGet('rollbacking');
+            if (isRollingBack === 'true'){
+                this.props.history.replace(routerPath.RollingBack);
             } else {
-                // for this case: isInitialized is false and there's a key 'initStep' in localStorage,
-                // it means initialization wasn't finished, so need to jump to the step recorded in localStorage
-                if (!!initStepLocal && initStepLocal > 2){
-                    // get some state from localStorage then render them on view
-                    let [{current = 0, total = 8}, initInfoList = []] = lsGet(['initStatus', 'initInfoList']);
-                    let initProgress = (current / total).toFixed(2) * 100;
-                    this.setState({
-                        currentStep: Number(initStepLocal) || 3,
-                        initProgress,
-                        initInfoList
-                    });
+                let isInitialized = ckGet('init');
+                let initStepLocal = lsGet('initStep');
+                if (isInitialized === 'true'){
+                    if (!initStepLocal){
+                        let isLoggedIn = ckGet('login');
+                        let path = '';
+                        if (!isLoggedIn || (isLoggedIn === 'false')){
+                            path = routerPath.Login;
+                        } else {
+                            path = routerPath.Main + routerPath.StorageNodes;
+                        }
+                        this.props.history.replace(path);
+                    } else {
+                        // isInitialized is true and there's a key 'initStep' in localStorage,
+                        // it means initialization was finished and there was an abnormal exit or refresh
+                        // action happened on browser before, should jump to the last step
+                        this.setState({currentStep: Number(initStepLocal) || this.state.totalStep});
+
+                        // console.info('find initStep in localStorage, value is ' + initStepLocal);
+                    }
+                } else {
+                    // for this case: isInitialized is false and there's a key 'initStep' in localStorage,
+                    // it means initialization wasn't finished, so need to jump to the step recorded in localStorage
+                    if (!!initStepLocal && initStepLocal > 2){
+                        // get some state from localStorage then render them on view
+                        let [{current = 0, total = 8}, initInfoList = []] = lsGet(['initStatus', 'initInfoList']);
+                        let initProgress = (current / total).toFixed(2) * 100;
+                        this.setState({
+                            currentStep: Number(initStepLocal) || 3,
+                            initProgress,
+                            initInfoList
+                        });
+                    }
                 }
             }
         }
@@ -100,8 +105,17 @@ class Initialize extends Component {
                             initProgress: 100,
                             initInfoList
                         });
-                        httpRequests.getDefaultUser();
-                        setTimeout(() => this.setState({currentStep: 4}), 1500);
+                        // wait for server restart
+                        let timer = setInterval(async () => {
+                            try {
+                                await httpRequests.syncUpSystemStatus();
+                                clearInterval(timer);
+                                await httpRequests.getDefaultUser();
+                                this.setState({currentStep: 4});
+                            } catch (e){
+                                console.info(`Connect to server failed, will try again 1 seconds later ...`);
+                            }
+                        }, 1000);
                     }
                 } else {
                     // initialization progress increase
@@ -362,7 +376,12 @@ class Initialize extends Component {
         // fetch API to create user and set password
 
         lsRemove(['initStep', 'initStatus', 'initInfoList']);
-        this.props.history.push(routerPath.Login);
+        this.props.history.push({
+            pathname: routerPath.Login,
+            state: {
+                fromInit: true
+            }
+        });
     }
 
     render (){

@@ -39,18 +39,23 @@ const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
 export default class Main extends Component {
     componentWillMount (){
-        let isRollingBack = ckGet('rollbacking');
-        let isInitialized = ckGet('init');
-        if (isRollingBack === 'true'){
-            this.props.history.replace(routerPath.RollingBack);
+        let isDeInit = ckGet('deInit');
+        if (isDeInit === 'true'){
+            this.props.history.replace(routerPath.DeInitializing);
         } else {
-            if (isInitialized === 'true'){
-                let isLoggedIn = ckGet('login');
-                if (!isLoggedIn || (isLoggedIn === 'false')){
-                    this.props.history.replace(routerPath.Login);
-                }
+            let isRollingBack = ckGet('rollbacking');
+            if (isRollingBack === 'true'){
+                this.props.history.replace(routerPath.RollingBack);
             } else {
-                this.props.history.replace(routerPath.Init);
+                let isInitialized = ckGet('init');
+                if (isInitialized === 'true'){
+                    let isLoggedIn = ckGet('login');
+                    if (!isLoggedIn || (isLoggedIn === 'false')){
+                        this.props.history.replace(routerPath.Login);
+                    }
+                } else {
+                    this.props.history.replace(routerPath.Init);
+                }
             }
         }
     }

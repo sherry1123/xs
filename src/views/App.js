@@ -12,32 +12,38 @@ const Initialize = asyncLoad(() => import('./Initialize/Initialize'));
 const Login = asyncLoad(() => import('./Login/Login'));
 const Main = asyncLoad(() => import('./Main/Main'));
 const RollingBack = asyncLoad(() => import('./RollingBack/RollingBack'));
+const DeInitializing = asyncLoad(() => import('./DeInitializing/DeInitializing'));
 const Error = asyncLoad(() => import('./Error/Error'));
 
 export default class App extends Component {
     constructor (props){
         super(props);
-        let isRollingBack = ckGet('rollbacking');
-        let isInitialized = ckGet('init');
         let defaultPath = '';
-        if (isRollingBack  === 'true'){
-            defaultPath = `${routerPath.RollingBack}`;
+        let isDeInit = ckGet('deInit');
+        if (isDeInit === 'true'){
+            defaultPath = `${routerPath.DeInitializing}`;
         } else {
-            if (isInitialized === 'true'){
-                let isLoggedIn = ckGet('login');
-                if (!isLoggedIn){
-                    defaultPath = routerPath.Login;
-                } else {
-                    defaultPath = `${routerPath.Main}${routerPath.MetadataNodes}`;
-                }
+            let isRollingBack = ckGet('rollbacking');
+            let isInitialized = ckGet('init');
+            if (isRollingBack  === 'true'){
+                defaultPath = `${routerPath.RollingBack}`;
             } else {
-                defaultPath = routerPath.Init;
+                if (isInitialized === 'true'){
+                    let isLoggedIn = ckGet('login');
+                    if (!isLoggedIn){
+                        defaultPath = routerPath.Login;
+                    } else {
+                        defaultPath = `${routerPath.Main}${routerPath.MetadataNodes}`;
+                    }
+                } else {
+                    defaultPath = routerPath.Init;
+                }
             }
         }
 
+
         this.state = {
-            defaultPath,
-            isRollingBack
+            defaultPath
         };
     }
 
@@ -46,6 +52,7 @@ export default class App extends Component {
             <HashRouter>
                 <LocaleProvider locale={lang(zhCN, enUS)}>
                     <Switch>
+                        <Route path={routerPath.DeInitializing} component={DeInitializing} />
                         <Route path={routerPath.RollingBack} component={RollingBack} />
                         <Route path={routerPath.Init} component={Initialize} />
                         <Route path={routerPath.Login} component={Login} />

@@ -1,39 +1,57 @@
 export const socketEventChannel = {
     snapshot: () => ({
         chinese: '快照操作',
-        english: 'Snapshot Operation '
+        english: 'Snapshot Operation'
+    }),
+
+    cluster: () => ({
+        chinese: '集群操作',
+        english: 'Cluster Operation'
     }),
 };
 
 export const eventCodeForEventChannel = {
-    snapshot: [1, 2, 3, 4, 5, 6],
-    snapshotRollBackStart: 3,
-    snapshotRollBackFinish: 4,
+    deInitializationStart: 1,
+    deInitializationEnd: 2,
+
+    snapshot: [11, 12, 13, 14, 15, 16],
+    snapshotRollBackStart: 15,
+    snapshotRollBackFinish: 16,
 };
 
 export const socketEventCode = {
+    // code 1-10 for system de-initialization
+    1: ()=> ({
+        chinese: () => `系统开始反初始化！`,
+        english: () => `System starts de-initializing！`
+    }),
+    2: ()=> ({
+        chinese: (target, result) => `系统反初始化${result ? '成功' : '失败'}！`,
+        english: (target, result) => `System de-initialization ${result ? 'successfully' : 'failed'}!`
+    }),
+
     // code 1-20 for snapshot channel
-    1: () => ({
+    11: () => ({
         chinese: target => `快照 ${target} 删除成功！`,
         english: target => `Snapshot ${target} deleted successfully！`
     }),
-    2: () => ({
+    12: () => ({
         chinese: target => `快照 ${target} 删除失败！`,
         english: target => `Snapshot ${target} deleted failed！`
     }),
-    3: () => ({
+    13: () => ({
         chinese: target => `批量删除${target.total}个快照成功！`,
         english: target => `Batch delete ${target.total} snapshots complete!`
     }),
-    4: () => ({
+    14: () => ({
         chinese: target => `批量删除${target.total}个快照完成，删除成功${target.success}个，删除失败${target.failed}个！`,
         english: target => `Batch delete ${target.total} snapshots complete, ${target.success} successfully deleted, ${target.failed} failed!`
     }),
-    5: () => ({
+    15: () => ({
         chinese: target => `快照 ${target} 回滚开始！`,
         english: target => `Start rolling back snapshot ${target}！`
     }),
-    6: () => ({
+    16: () => ({
         chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
         english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),

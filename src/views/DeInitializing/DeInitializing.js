@@ -5,25 +5,25 @@ import lang from "../../components/Language/lang";
 import {ckGet} from '../../services';
 import routerPath from '../routerPath';
 
-// The staying page during the rolling back
+// The staying page during the deInitializing
 
-class RollingBack extends PureComponent {
+class DeInitializing extends PureComponent {
     componentWillMount (){
-        let isRollingBack = ckGet('rollbacking');
-        if (isRollingBack !== 'true'){
+        let isDeInit = ckGet('deInit');
+        if (isDeInit !== 'true'){
             this.props.history.replace(routerPath.Root);
         }
     }
 
     render (){
-        // 这里需要一个回滚中的背景图
+        // 这里需要一个反初始化中的背景图
         return (
             <div className="fs-rolling-back-wrapper">
                 <section className="fs-rolling-back-content">
                     <div className="fs-rolling-back-img" />
                     <p>
                         <Icon type="setting" spin style={{marginRight: 24, fontSize: 24}} />
-                        {lang('快照正在回滚中，请稍后 ...', 'Snapshot is rolling back, please wait ...')}
+                        {lang('系统正在反初始化中，请稍后 ...', 'System is de-initializing, please wait ...')}
                     </p>
                 </section>
             </div>
@@ -36,4 +36,4 @@ const mapStateToProps = state => {
     return {language};
 };
 
-export default connect(mapStateToProps)(RollingBack);
+export default connect(mapStateToProps)(DeInitializing);
