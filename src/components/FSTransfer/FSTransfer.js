@@ -8,6 +8,9 @@ class FSTransfer extends Component {
     constructor (props){
         super(props);
         let {language, className, notFoundContent = '', titles = ['', ''], dataSource = [], targetItems = [], targetItemOnlyOne = false, rowKey, onChange, render, footer,} = this.props;
+        if (!rowKey){
+            throw new TypeError('props rowKey is demanded and should be a string');
+        }
         this.rowKey = rowKey;
         this.targetItemOnlyOne = targetItemOnlyOne;
         this.state = {
@@ -35,7 +38,10 @@ class FSTransfer extends Component {
 
     async allSourceSelect ({target: {checked}}){
         // set all items checked
-        let source = [...this.state.source].map(item => (item.checked = checked) && item);
+        let source = [...this.state.source].map(item => {
+            item.checked = checked;
+            return item;
+        });
         let tempSelected = checked ? [...source] : [];
         await this.setState({source, tempSelected});
     }
@@ -64,7 +70,10 @@ class FSTransfer extends Component {
     }
 
     allUnSelect ({target: {checked}}){
-        let selected = [...this.state.selected].map(item => (item.checked = checked) && item);
+        let selected = [...this.state.selected].map(item => {
+            item.checked = checked;
+            return item;
+        });
         let tempSource = checked ? [...selected] : [];
         this.setState({selected, tempSource});
     }

@@ -41,14 +41,14 @@ class Initialize extends Component {
 
     componentWillMount (){
         let isDeInit = ckGet('deInit');
-        if (isDeInit === 'true'){
+        let isInitialized = ckGet('init');
+        if (isDeInit === 'true' && isInitialized === 'true'){
             this.props.history.replace(routerPath.DeInitializing);
         } else {
             let isRollingBack = ckGet('rollbacking');
             if (isRollingBack === 'true'){
                 this.props.history.replace(routerPath.RollingBack);
             } else {
-                let isInitialized = ckGet('init');
                 let initStepLocal = lsGet('initStep');
                 if (isInitialized === 'true'){
                     if (!initStepLocal){

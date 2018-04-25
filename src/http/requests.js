@@ -1,4 +1,5 @@
-import {fetchGet, fetchPost, fetchMock, lsGet} from '../services';
+import {fetchGet, fetchPost, fetchMock} from './fetch';
+import {lsGet} from '../services';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
 import generalAction from '../redux/actions/generalAction';

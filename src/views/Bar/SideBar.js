@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import {Menu, Icon} from 'antd';
 import generalAction from '../../redux/actions/generalAction';
 import {lsSet} from '../../services';
@@ -7,15 +8,11 @@ import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
 
 class SideBar extends Component {
-    constructor (props){
-        super(props);
+    componentWillMount (){
         let {pathname} = this.props.history.location;
         let key = pathname.replace(routerPath.Main, '');
         this.props.changeActivePage(key);
         this.getSubMenuByPath(key);
-        this.state = {
-            direction: 'down'
-        };
     }
 
     componentDidMount (){
@@ -34,10 +31,6 @@ class SideBar extends Component {
         let menuExpand = !this.props.menuExpand;
         this.props.changeMenuExpand(menuExpand);
         lsSet('menuExpand', menuExpand);
-    }
-
-    switchScrollDirection (direction){
-        this.setState({direction});
     }
 
     forwardPage ({key}){
@@ -64,7 +57,7 @@ class SideBar extends Component {
 
     render (){
         return (
-            <aside className={`fs-sidebar-wrapper ${this.state.direction}  ${this.props.menuExpand ? '' : 'hide'}`}>
+            <aside className={`fs-sidebar-wrapper ${this.props.menuExpand ? '' : 'hide'}`}>
                 <div className={`fs-visible-operation-wrapper`}>
                     <Icon className="fs-visible-operation-button"
                         type={`${this.props.menuExpand ? 'menu-fold' : 'menu-unfold'}`}
@@ -164,4 +157,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SideBar);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SideBar));

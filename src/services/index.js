@@ -1,6 +1,3 @@
-// fetch
-export {fetchGet, fetchPost, fetchMock} from './fetch';
-
 // localStorage operations
 export {lsGet, lsSet, lsRemove} from './localStorage';
 
