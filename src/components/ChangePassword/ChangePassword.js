@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import httpRequests from '../../http/requests';
 import lang from "../Language/lang";
-import {validatePassword} from "../../services/index";
+import {validatePassword} from "../../services";
 
 class ChangePassword  extends Component {
     constructor (props){
@@ -126,8 +126,8 @@ class ChangePassword  extends Component {
     }
 
     logout (){
-        // there's no need to forward to Login manually since we will verify
-        // the status in cookie when each fetch request get the response
+        // it doesn't demand that jump to Login page manually, since each HTTP fetch will verify the system status
+        // from cookie after itself gets the response from server, if need, will do the jumping operation automatically.
         httpRequests.logout(this.props.user);
     }
 
@@ -149,10 +149,7 @@ class ChangePassword  extends Component {
                     <div>
                         {
                             !isAdmin &&
-                            <Button
-                                size='small'
-                                onClick={this.hide.bind(this)}
-                            >
+                            <Button size='small' onClick={this.hide.bind(this)}>
                                 {lang('取消', 'Cancel')}
                             </Button>
                         }
@@ -169,34 +166,36 @@ class ChangePassword  extends Component {
             >
                 <Form>
                     <Form.Item label={lang('用户名', 'Username')}>
-                        <Input style={{width: 270}} size='small' disabled readOnly
-                               value={username}
+                        <Input style={{width: 270}} size='small' disabled readOnly value={username} />
+                    </Form.Item>
+                    <Form.Item
+                        label={lang('新密码', 'New Password')}
+                        validateStatus={this.state.validation.password.status}
+                        help={this.state.validation.password.help}
+                    >
+                        <Input
+                            style={{width: 270}} size='small'
+                            placeholder={lang('请输入新密码', 'please enter new password')}
+                            value={this.state.formData.password}
+                            onChange={({target: {value}}) => {
+                                this.formValueChange.bind(this, 'password')(value);
+                                this.validateForm.bind(this)('password');
+                            }}
                         />
                     </Form.Item>
-                    <Form.Item label={lang('新密码', 'New Password')}
-                               validateStatus={this.state.validation.password.status}
-                               help={this.state.validation.password.help}
+                    <Form.Item
+                        label={lang('确认新密吗', 'Confirm New Password')}
+                        validateStatus={this.state.validation.rePassword.status}
+                        help={this.state.validation.rePassword.help}
                     >
-                        <Input style={{width: 270}} size='small'
-                               placeholder={lang('请输入新密码', 'please enter new password')}
-                               value={this.state.formData.password}
-                               onChange={({target: {value}}) => {
-                                   this.formValueChange.bind(this, 'password')(value);
-                                   this.validateForm.bind(this)('password');
-                               }}
-                        />
-                    </Form.Item>
-                    <Form.Item label={lang('确认新密吗', 'Confirm New Password')}
-                               validateStatus={this.state.validation.rePassword.status}
-                               help={this.state.validation.rePassword.help}
-                    >
-                        <Input style={{width: 270}} size='small'
-                               placeholder={lang('请再次输入新密码', 'please enter new password again')}
-                               value={this.state.formData.rePassword}
-                               onChange={({target: {value}}) => {
-                                   this.formValueChange.bind(this, 'rePassword')(value);
-                                   this.validateForm.bind(this)('rePassword');
-                               }}
+                        <Input
+                            style={{width: 270}} size='small'
+                            placeholder={lang('请再次输入新密码', 'please enter new password again')}
+                            value={this.state.formData.rePassword}
+                            onChange={({target: {value}}) => {
+                                this.formValueChange.bind(this, 'rePassword')(value);
+                                this.validateForm.bind(this)('rePassword');
+                            }}
                         />
                     </Form.Item>
                 </Form>

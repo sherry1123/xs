@@ -15,35 +15,31 @@ import httpRequests from "./http/requests";
     // each time when user accesses should firstly fetch 'syncUpSystemStatus' api to sync up
     // rollback, initialization and login status recorded in browser cookie with http server before
     // react app created, it will help react components to do exact system status verifications.
+    // currently, there're four interceptions on system status check from cookie, ranking by weight:
+    // 1. deInit
+    // 2. rollbacking
+    // 3. init
+    // 4. login
     try {
         await httpRequests.syncUpSystemStatus();
         NODE_ENV === 'development' && console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
-        // currently, there're four interceptions on system status check depend on cookie
-        // 1. deInit
-        // 2. rollbacking
-        // 3. init
-        // 4. login
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }
 
     // create react app
-    const render = Component => {
-        ReactDOM.render(
-            <AppContainer>
-                <Provider store={store}>
-                    <Component />
-                </Provider>
-            </AppContainer>,
-            document.getElementById('root'),
-        )
-    };
+    const render = Component => ReactDOM.render(
+        <AppContainer>
+            <Provider store={store}>
+                <Component />
+            </Provider>
+        </AppContainer>,
+        document.getElementById('root'),
+    );
 
     render(App);
 
-    if (module.hot){
-        module.hot.accept('./views/App', () => render(App));
-    }
+    module.hot && module.hot.accept('./views/App', () => render(App));
 
     if (NODE_ENV === 'production'){
         let language = lsGet('language');
