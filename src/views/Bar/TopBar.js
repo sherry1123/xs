@@ -44,15 +44,16 @@ class TopBar extends Component {
         let abnormalNodes = lsGet('abnormalNodes');
         let {metadataNodes, storageNodes} = nextProps;
         let nodes = metadataNodes.concat(storageNodes);
-        nodes.forEach((node = {}) => {
-            // console.info(node);
+        // because metadata and storage servers can run on one same node, so their 'hostname' may be the same,
+        // for this case, it demands one other key 'type' to collaborate with 'hostname' to distinguish different server nodes precisely.
+        nodes.forEach(node => {
             if (node.status){
                 let removeNodes = [];
                 abnormalNodes.forEach(abnormalNode => {
-                    if (node.hostname === abnormalNode){
+                    if (`${node.type}-${node.hostname}` === abnormalNode){
                         notification.open({
                             message: lang('节点恢复', 'Node Recovery'),
-                            description: lang(`${node.hostname} 节点状态已恢复正常。`, `The status of node ${node.hostname} has recovered to normal.`)
+                            description: lang(`${node.type === 'metadata' ? '元数据' : '存储节点' } ${node.hostname} 状态已恢复正常。`, `The status of ${node.type} node ${node.hostname} has recovered to normal.`)
                         });
                         removeNodes.push(abnormalNode);
                     }
@@ -62,12 +63,12 @@ class TopBar extends Component {
                     lsSet('abnormalNodes', abnormalNodes);
                 }
             } else {
-                if (!abnormalNodes.includes(node.hostname)){
+                if (!abnormalNodes.includes(`${node.type}-${node.hostname}`)){
                     notification.open({
                         message: lang('节点异常', 'Node Abnormally'),
-                        description: lang(`${node.hostname} 节点现处于异常状态，请检查。`, `The node ${node.hostname} is abnormal now, please have a check.`)
+                        description: lang(`${node.type === 'metadata' ? '元数据' : '存储节点' } ${node.hostname} 现处于异常状态，请检查。`, `The ${node.type} node ${node.hostname} is abnormal now, please have a check.`)
                     });
-                    abnormalNodes.push(node.hostname);
+                    abnormalNodes.push(`${node.type}-${node.hostname}`);
                     lsSet('abnormalNodes', abnormalNodes);
                 }
             }

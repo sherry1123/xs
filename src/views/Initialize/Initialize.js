@@ -65,7 +65,6 @@ class Initialize extends Component {
                         // it means initialization was finished and there was an abnormal exit or refresh
                         // action happened on browser before, should jump to the last step
                         this.setState({currentStep: Number(initStepLocal) || this.state.totalStep});
-
                         // console.info('find initStep in localStorage, value is ' + initStepLocal);
                     }
                 } else {
@@ -113,7 +112,7 @@ class Initialize extends Component {
                                 await httpRequests.getDefaultUser();
                                 this.setState({currentStep: 4});
                             } catch (e){
-                                console.info(`Connect to server failed, will try again 1 seconds later ...`);
+                                console.info(`Waiting for server restart, will try again 1s later ...`);
                             }
                         }, 1000);
                     }
@@ -143,6 +142,8 @@ class Initialize extends Component {
                     initStatusNum: -1,
                     initInfoList
                 });
+                // clear the records in localStorage
+                lsRemove(['initStep', 'initStatus', 'initInfoList']);
             }
         }
     }

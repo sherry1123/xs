@@ -74,7 +74,7 @@ socket.on('event status', ({channel, code, target, result}) => {
                  clearInterval(timer);
                  window.location.href = routerPath.Root;
             } catch (e){
-                console.info(`Connect to server failed, will try again ${requestServerUpInterval / 1000} seconds later ...`);
+                console.info(`Waiting for server restart, will try again ${requestServerUpInterval / 1000}s later ...`);
             }
         }, requestServerUpInterval);
 

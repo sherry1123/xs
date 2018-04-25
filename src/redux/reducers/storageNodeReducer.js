@@ -8,6 +8,7 @@ const storageNodeReducer = (state = State.main.storageNode, action) => {
         {
             let {overview} = state;
             let {data: nodeList} = action;
+            nodeList.forEach(node => node.type = 'storage');
             overview = Object.assign({}, overview, {nodeList});
             return Object.assign({}, state, {overview});
         }
