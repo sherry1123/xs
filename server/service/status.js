@@ -1,3 +1,4 @@
+const config = require('../config');
 const init = require('./initialize');
 const handler = require('../module/handler');
 const promise = require('../module/promise');
@@ -24,10 +25,9 @@ const model = {
     },
     async sendEvent(param) {
         let { channel, target, info } = param;
-        let receviceEventAPI = 'http://localhost/api/receiveevent';
         target = target.map(snapshot => ({name: snapshot, result: Math.random() > 0.5 ? true : false}));
         await promise.runTimeOutInPromise(10);
-        await request.post(receviceEventAPI, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 13 : 14, target, info }, {}, true);
+        await request.post(config.api.server.receiveevent, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 13 : 14, target, info }, {}, true);
 
     }
 };

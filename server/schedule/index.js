@@ -9,3 +9,7 @@ new CronJob('*/15 * * * * *', async () => {
 new CronJob('0 * * * * *', async () => {
     !snapshot.getRollbackStatus() && await task.createSnapshot();
 }, null, true);
+
+new CronJob('0 */5 * * * *', async () => {
+    await task.sendChangePasswordMessage();
+}, null, true);

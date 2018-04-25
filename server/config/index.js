@@ -40,6 +40,9 @@ exports.api = {
     agentd: {
         hardware: 'http://localhost:3457/hardware/getall'
     },
+    server: {
+        receiveevent: 'http://localhost/api/receiveevent'
+    },
     orcafs: {
         gettoken: 'http://localhost:9090/token/get',
         listdisk: 'http://localhost:9090/disk/list/',
@@ -142,4 +145,5 @@ exports.event = {
     14: 'delete snapshots failed',
     15: 'rollback snapshots start',
     16: 'rollback snapshots end',
+    21: 'change admin password',
 };
