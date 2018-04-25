@@ -12,8 +12,7 @@ const model = {
             let ipList = await database.getSetting({ key: 'nodelist' });
             let data = [];
             for (let ip of ipList) {
-                let res = await request.get(api.replace('localhost', ip), {}, {}, true);
-                data.push(!res.code ? res.data : {});
+                data.push(await request.get(api.replace('localhost', ip), {}, {}, true));
             }
             await database.addHardware({ date, ipList, data });
         } catch (error) {

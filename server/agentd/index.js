@@ -1,11 +1,15 @@
 const os = require('os');
 const Koa = require('koa');
+const cron = require('cron');
 const Router = require('koa-router');
-const promise = require('../module/promise');
+const child = require('child_process');
 const app = new Koa();
 const router = new Router();
 //hardware
 let CPU = {};
+let MEMORY = {};
+let IOPS = {};
+//service
 const getCPUUsage = () => {
     let cpus = os.cpus();
     let core = cpus.length;
@@ -20,36 +24,34 @@ const getCPUUsage = () => {
             used += current.includes(i) ? times[i] : 0;
         }
     });
-    usage = Math.round((Object.keys(CPU).length === 0 ? used / total : (used - CPU.used) / (total - CPU.total)) * 10000) / 100;
+    usage = Math.round((Object.keys(CPU).length ? (used - CPU.used) / (total - CPU.total) : used / total) * 10000) / 100;
     CPU = { core, total, used, usage };
-    return CPU;
 };
 const getMemoryUsage = () => {
     let total = os.totalmem();
     let free = os.freemem();
     let usage = Math.round((1 - free / total) * 10000) / 100;
-    return { total, free, usage };
+    MEMORY = { total, free, usage };
 };
-const getIOPSUsage = async () => {
-    let cmd = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
-    return { used: Number(await promise.runCommandInPromise(cmd)) };
+const getIOPSUsage = () => {
+    let command = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
+    child.exec(command, (error, stdout) => {
+        IOPS = { used: error ? 0 : Number(String(stdout).trim()) };
+    });
 };
-//service
-const getHardware = async () => {
-    let result = {};
-    try {
-        let cpu = getCPUUsage();
-        let memory = getMemoryUsage();
-        let iops = await getIOPSUsage();
-        result = { code: 0, data: { cpu, memory, iops } };
-    } catch (error) {
-        result = { code: 1, msg: error.message ? error.message : error };
-    }
-    return result;
-};
+//hardware
+getCPUUsage();
+getMemoryUsage();
+getIOPSUsage();
+//schedule
+new cron.CronJob('*/15 * * * * *', () => {
+    getCPUUsage();
+    getMemoryUsage();
+    getIOPSUsage();
+}, null, true);
 //controller
-const getAll = async ctx => {
-    ctx.body = await getHardware();
+const getAll = ctx => {
+    ctx.body = { cpu: CPU, memory: MEMORY, iops: IOPS };
 };
 //router
 router.all('/hardware/getall', getAll);
