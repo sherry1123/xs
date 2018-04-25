@@ -44,7 +44,7 @@ const model = {
                         let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
                         if (status) {
                             clearInterval(getInitProgress);
-                            socket.postInitStatus({ current: currentStep, status, total });
+                            socket.postInitStatus({ current: currentStep, status: -1, total });
                             handler.error(41, errorMessage, param);
                         } else if (currentStep !== totalStep) {
                             socket.postInitStatus({ current: currentStep, status, total });
