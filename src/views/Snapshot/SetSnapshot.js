@@ -162,12 +162,12 @@ class SetSnapshot extends Component {
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 5 : 8},
-                sm: {span: isChinese ? 5 : 8},
+                xs: {span: isChinese ? 5 : 7},
+                sm: {span: isChinese ? 5 : 7},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 19 : 16},
-                sm: {span: isChinese ? 19 : 16},
+                xs: {span: isChinese ? 19 : 17},
+                sm: {span: isChinese ? 19 : 17},
             }
         };
 
@@ -205,7 +205,7 @@ class SetSnapshot extends Component {
                         help={this.state.validation.total.help}
                     >
                         <Input
-                            size='small' style={{width: 220}}
+                            size='small' style={{width: 200}}
                             placeholder={lang('快照总数量', 'Snapshot Total Number')}
                             value={this.state.settingData.total}
                             onChange={async ({target: {value}}) => {
@@ -225,14 +225,14 @@ class SetSnapshot extends Component {
                         </Popover>
                     </Form.Item>
                     <div>
-                        <span className="fs-snapshot-setting-quota-label">
+                        <span className="fs-snapshot-setting-quota-label" style={{width: isChinese ? 74 : 103}}>
                             {lang('数量配额', 'Number Quota')}
                         </span>
                         <Popover
                             placement="right"
                             content={lang(
-                                '推荐的定时快照数量和手动快照数量的比例为 6:4，请拖动滑块进行配置。各类型快照的数量不能被设置来小于其当前已有数量。',
-                                'The recommended ratio of timed snapshot number and manual snapshot number is 6:4, please drag slider to configure. Number of snapshot of each type can\'t be set less than its current number'
+                                '推荐的定时快照数量和手动快照数量的比例为 6:4，请下面的拖动滑块来调整配额。各类型快照的数量不能被设置来小于其当前已有数量。',
+                                'The recommended timed snapshot number and manual snapshot number ratio is 6:4, please drag the slider below to adjust the quota. Number of snapshot of each type can\'t be set less than its current number'
                             )}
                         >
                             <Icon type="question-circle-o" className="fs-info-icon m-l" />
@@ -243,22 +243,22 @@ class SetSnapshot extends Component {
                         help={this.state.validation.auto.help}
                     >
                         <div className="fs-snapshot-setting-slider-wrapper">
-                            <span className="fs-snapshot-setting-count" style={{width: isChinese ? 70 : 75}}>
+                            <span className="fs-snapshot-setting-count" style={{width: isChinese ? 60 : 65}}>
                                 {lang('定时', 'Timed')} <span>{this.state.settingData.auto}</span>
                             </span>
-                                <Slider
-                                    className="fs-snapshot-setting-slider"
-                                    style={{width: isChinese ? 202 : 180}}
-                                    disabled={this.state.settingData.total > this.state.totalLimitation}
-                                    max={Number(this.state.settingData.total)}
-                                    value={Number(this.state.settingData.auto)}
-                                    tipFormatter={null}
-                                    onChange={async value => {
-                                        await this.formValueChange.bind(this, 'auto')(value);
-                                        this.validateForm.bind(this, 'auto')();
-                                    }}
-                                />
-                                <span className="fs-snapshot-setting-count" style={{width: isChinese ? 70 : 85}}>
+                            <Slider
+                                className="fs-snapshot-setting-slider"
+                                style={{width: isChinese ? 212 : 190}}
+                                disabled={this.state.settingData.total > this.state.totalLimitation}
+                                max={Number(this.state.settingData.total)}
+                                value={Number(this.state.settingData.auto)}
+                                tipFormatter={null}
+                                onChange={async value => {
+                                    await this.formValueChange.bind(this, 'auto')(value);
+                                    this.validateForm.bind(this, 'auto')();
+                                }}
+                            />
+                            <span className="fs-snapshot-setting-count" style={{width: isChinese ? 60 : 75}}>
                                 {lang('手动', 'Manual')} <span>{this.state.settingData.manual}</span>
                             </span>
                         </div>
