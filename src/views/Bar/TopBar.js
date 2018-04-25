@@ -76,7 +76,7 @@ class TopBar extends Component {
                     */}
                     <span className="fs-login-user-wrapper">
                         {lang('您好, ', 'Hi, ')}
-                        <Popover placement="bottom" content={<UserSettingPopover history={this.props.history} />} trigger="click">
+                        <Popover placement="bottom" content={<UserSettingPopover />} trigger="click">
                             <span className="fs-login-user">{this.props.user.username}</span>
                         </Popover>
                     </span>

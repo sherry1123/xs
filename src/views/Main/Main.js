@@ -76,7 +76,7 @@ export default class Main extends Component {
             if (direction !== prevDirection){
                 prevDirection = direction;
                 this.TopBar.getWrappedInstance().switchScrollDirection(direction);
-                this.SideBar.getWrappedInstance().switchScrollDirection(direction);
+                // this.SideBar.getWrappedInstance().switchScrollDirection(direction);
             }
         };
         window.addEventListener('scroll', this.scrollHandler, {passive: true});
@@ -90,9 +90,9 @@ export default class Main extends Component {
         const Main = routerPath.Main;
         return (
             <div className="fs-main-wrapper">
-                <TopBar history={this.props.history} ref={ref => this.TopBar = ref} />
+                <TopBar ref={ref => this.TopBar = ref} />
                 <div className="fs-body-wrapper">
-                    <SideBar history={this.props.history} ref={ref => this.SideBar = ref} />
+                    <SideBar />
                     <main className='fs-content-wrapper'>
                         <Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />

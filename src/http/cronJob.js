@@ -3,7 +3,6 @@ import httpRequests from './requests';
 import routerPath from '../views/routerPath';
 import {ckGet} from '../services';
 
-// request every 15 seconds
 const fetchDataPer15s = () => {
     let routerHash = window.location.hash;
     const main = routerPath.Main;
@@ -52,12 +51,18 @@ const fetchDataPer15s = () => {
     }
 };
 
+// get current system and login status
 let isInitialized = ckGet('init');
+let isLogin = ckGet('login');
+
 if (isInitialized === 'true'){
+    // request every 15 seconds
     new CronJob('*/15 * * * * *', async () => {
         fetchDataPer15s();
     }, null, true);
 
-    // request something when access app
-    httpRequests.getFiles('/');
+    // request immediately
+    if (isLogin){
+        httpRequests.getFiles('/');
+    }
 }

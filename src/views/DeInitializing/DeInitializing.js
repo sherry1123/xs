@@ -10,7 +10,8 @@ import routerPath from '../routerPath';
 class DeInitializing extends PureComponent {
     componentWillMount (){
         let isDeInit = ckGet('deInit');
-        if (isDeInit !== 'true'){
+        let isInitialized = ckGet('init');
+        if (isDeInit !== 'true' || isInitialized !== 'true'){
             this.props.history.replace(routerPath.Root);
         }
     }

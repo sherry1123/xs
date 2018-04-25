@@ -63,7 +63,6 @@ export const socketEventCode = {
         english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),
 
-
     // code 21-30 for user channel
     21: () => ({
         chinese: (target) => `为了系统安全，管理员用户 ${target.username} 的默认初始密码需要修改！`,

@@ -8,6 +8,9 @@ class FSTransfer extends Component {
     constructor (props){
         super(props);
         let {language, className, notFoundContent = '', titles = ['', ''], dataSource = [], targetItems = [], targetItemOnlyOne = false, rowKey, onChange, render, footer,} = this.props;
+        if (!rowKey){
+            throw new TypeError('props rowKey is demanded and should be a string');
+        }
         this.rowKey = rowKey;
         this.targetItemOnlyOne = targetItemOnlyOne;
         this.state = {
