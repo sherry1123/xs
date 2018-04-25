@@ -54,5 +54,6 @@ const getAll = async ctx => {
 //router
 router.all('/hardware/getall', getAll);
 //app
-app.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes());
+app.use(router.allowedMethods());
 app.listen(3457);
