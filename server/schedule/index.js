@@ -1,15 +1,17 @@
 const task = require('../service/task');
+const init = require('../service/initialize');
 const snapshot = require('../service/snapshot');
 const CronJob = require('cron').CronJob;
+const doOrNotDo = () => (!init.getAntiInitStatus() && !snapshot.getRollbackStatus());
 
 new CronJob('*/15 * * * * *', async () => {
-    await task.getHardware();
+    doOrNotDo() && await task.getHardware();
 }, null, true);
 
 new CronJob('0 * * * * *', async () => {
-    !snapshot.getRollbackStatus() && await task.createSnapshot();
+    doOrNotDo() && await task.createSnapshot();
 }, null, true);
 
 new CronJob('0 */5 * * * *', async () => {
-    await task.sendChangePasswordMessage();
+    doOrNotDo() && await task.sendChangePasswordMessage();
 }, null, true);

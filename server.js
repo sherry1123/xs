@@ -42,6 +42,12 @@ const workerMessageHandler = msg => {
 		case 'rollback end':
 			snapshot.setRollbackStatus(false);
 			break;
+		case 'de-initialize start':
+			init.setAntiInitStatus(true);
+			break;
+		case 'de-initialize end':
+			init.setAntiInitStatus(false);
+			break;
 	}
 };
 (async () => {
