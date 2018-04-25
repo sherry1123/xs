@@ -1,10 +1,9 @@
 const os = require('os');
 const Koa = require('koa');
 const Router = require('koa-router');
+const promise = require('../module/promise');
 const app = new Koa();
 const router = new Router();
-const CronJob = require('cron').CronJob;
-const promise = require('../module/promise');
 //hardware
 let CPU = {};
 const getCPUUsage = () => {
