@@ -12,5 +12,6 @@ app.use(middleware.initRequest());
 app.use(middleware.syncStatus());
 app.use(middleware.filterRequest());
 app.use(middleware.compressResponse());
-app.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes());
+app.use(router.allowedMethods());
 app.listen(3456);

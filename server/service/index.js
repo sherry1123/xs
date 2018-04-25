@@ -44,7 +44,7 @@ const model = {
                         let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
                         if (status) {
                             clearInterval(getInitProgress);
-                            socket.postInitStatus({ current: currentStep, status, total });
+                            socket.postInitStatus({ current: currentStep, status: -1, total });
                             handler.error(41, errorMessage, param);
                         } else if (currentStep !== totalStep) {
                             socket.postInitStatus({ current: currentStep, status, total });
@@ -75,15 +75,16 @@ const model = {
     },
     async antiInitCluster(mode) {
         try {
+            process.send('de-initialize start');
             socket.postEventStatus({ channel: 'cluster', code: 1, target: 'cluster', result: true });
-            mode === 1 && await init.antiInitOrcaFS() && init.setAntiInitStatus(true);
+            mode === 1 && await init.antiInitOrcaFS();
             let getAntiinitProgress = setInterval(async () => {
                 let progress = await init.getOrcaFSInitProgress();
                 if (!progress.errorId) {
                     let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
                     if (status) {
                         clearInterval(getAntiinitProgress);
-                        init.setAntiInitStatus(false);
+                        process.send('de-initialize end');
                         socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false });
                         handler.error(42, errorMessage, mode);
                     } else if (!currentStep && describle.includes('finish')) {
@@ -94,7 +95,7 @@ const model = {
                             nodelist = await database.getSetting({ key: 'nodelist' });
                             await init.antiInitMongoDB(nodelist);
                         }
-                        init.setAntiInitStatus(false);
+                        process.send('de-initialize end');
                         socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: true });
                         logger.info('de-initialize the cluster successfully');
                         await init.restartServer(nodelist);
@@ -102,7 +103,7 @@ const model = {
                 }
             }, 1000);
         } catch (error) {
-            init.setAntiInitStatus(false);
+            process.send('de-initialize end');
             socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false });
             handler.error(42, error, mode);
         }
