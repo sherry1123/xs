@@ -13,7 +13,7 @@ const model = {
             let data = [];
             for (let ip of ipList) {
                 let res = await request.get(api.replace('localhost', ip), {}, {}, true);
-                data.push(res);
+                data.push(!res.code ? res.data : {});
             }
             await database.addHardware({ date, ipList, data });
         } catch (error) {
