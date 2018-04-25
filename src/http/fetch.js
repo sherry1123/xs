@@ -1,10 +1,16 @@
 import {stringify} from 'querystring';
-import routerPath from '../../views/routerPath';
-import {ckGet} from '../cookie';
+import routerPath from '../views/routerPath';
+import {ckGet} from '../services/cookie/index';
+
+// this url is always allowed to access
+const alwaysAllowURL = '/api/syncsystemstatus';
 
 const initRequest = (url, options) => {
+    let isDeInit = ckGet('deInit');
     let isRollingBack = ckGet('rollbacking');
-    if (!(isRollingBack  === 'true') || url === '/api/syncsystemstatus'){
+    // if system is de-initializing or rolling back, all HTTP requests shouldn't be sent,
+    // only except the alwaysAllowURL, it can go through properly.
+    if ((isDeInit !== 'true' && isRollingBack  !== 'true') || url === alwaysAllowURL){
         return new Promise(async (resolve, reject) => {
             options.credentials = 'same-origin';
             options.headers = {'Content-Type': 'application/json; charset=utf-8'};

@@ -38,7 +38,10 @@ class FSTransfer extends Component {
 
     async allSourceSelect ({target: {checked}}){
         // set all items checked
-        let source = [...this.state.source].map(item => (item.checked = checked) && item);
+        let source = [...this.state.source].map(item => {
+            item.checked = checked;
+            return item;
+        });
         let tempSelected = checked ? [...source] : [];
         await this.setState({source, tempSelected});
     }
@@ -67,7 +70,10 @@ class FSTransfer extends Component {
     }
 
     allUnSelect ({target: {checked}}){
-        let selected = [...this.state.selected].map(item => (item.checked = checked) && item);
+        let selected = [...this.state.selected].map(item => {
+            item.checked = checked;
+            return item;
+        });
         let tempSource = checked ? [...selected] : [];
         this.setState({selected, tempSource});
     }

@@ -24,6 +24,20 @@ class TopBar extends Component {
         if (!abnormalNodes){
             lsSet('abnormalNodes', []);
         }
+
+        // bind browser switch from online/offline status event
+        window.addEventListener('offline', () => {
+            notification.warning({
+                message: lang('网络异常', 'Network Abnormally'),
+                description: lang(`浏览器处于离线状态，强检查网络连接！`, `Browser is offline, please check network connection!`)
+            });
+        });
+        window.addEventListener('online', () => {
+            notification.success({
+                message: lang('网络恢复', 'Network Recovery'),
+                description: lang(`浏览器处于在线状态，网络已恢复正常！`, `Browser is online, network has recovered to normal status!`)
+            });
+        });
     }
 
     componentWillReceiveProps (nextProps){
@@ -32,12 +46,12 @@ class TopBar extends Component {
         let nodes = metadataNodes.concat(storageNodes);
         nodes.forEach((node = {}) => {
             // console.info(node);
-            if (node.hasOwnProperty('status')){
+            if (node.status){
                 let removeNodes = [];
                 abnormalNodes.forEach(abnormalNode => {
                     if (node.hostname === abnormalNode){
                         notification.open({
-                            message: lang('提示', 'Tooltip'),
+                            message: lang('节点恢复', 'Node Recovery'),
                             description: lang(`${node.hostname} 节点状态已恢复正常。`, `The status of node ${node.hostname} has recovered to normal.`)
                         });
                         removeNodes.push(abnormalNode);
@@ -50,7 +64,7 @@ class TopBar extends Component {
             } else {
                 if (!abnormalNodes.includes(node.hostname)){
                     notification.open({
-                        message: lang('节点异常', 'Some node is abnormal'),
+                        message: lang('节点异常', 'Node Abnormally'),
                         description: lang(`${node.hostname} 节点现处于异常状态，请检查。`, `The node ${node.hostname} is abnormal now, please have a check.`)
                     });
                     abnormalNodes.push(node.hostname);
