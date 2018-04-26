@@ -15,6 +15,11 @@ if (!NODE_ENV) {
 }
 
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
+
+// Files on the left have more priority than files on the right:
+// npm start: .env.development.local, .env.development, .env.local, .env
+// npm run build: .env.production.local, .env.production, .env.local, .env
+// npm test: .env.test.local, .env.test, .env (note .env.local is missing)
 var dotenvFiles = [
     `${paths.dotenv}.${NODE_ENV}.local`,
     `${paths.dotenv}.${NODE_ENV}`,
@@ -29,6 +34,8 @@ var dotenvFiles = [
 // if this file is missing. dotenv will never modify any environment variables
 // that have already been set.
 // https://github.com/motdotla/dotenv
+// config will read your .env file, parse the contents, assign it to process.env,
+// and return an Object with a parsed key containing the loaded content or an error key if it failed.
 dotenvFiles.forEach(dotenvFile => {
     if (fs.existsSync(dotenvFile)) {
         require('dotenv').config({

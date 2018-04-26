@@ -28,18 +28,22 @@ import httpRequests from "./http/requests";
     }
 
     // create react app
-    const render = Component => ReactDOM.render(
-        <AppContainer>
-            <Provider store={store}>
-                <Component />
-            </Provider>
-        </AppContainer>,
-        document.getElementById('root'),
-    );
+    const render = Component => {
+        ReactDOM.render(
+            <AppContainer>
+                <Provider store={store}>
+                    <Component />
+                </Provider>
+            </AppContainer>,
+            document.getElementById('root'),
+        );
+    };
 
     render(App);
 
-    module.hot && module.hot.accept('./views/App', () => render(App));
+    if (module.hot){
+        module.hot.accept('./views/App', () => render(App));
+    }
 
     if (NODE_ENV === 'production'){
         let language = lsGet('language');

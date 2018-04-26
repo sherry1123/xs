@@ -150,7 +150,7 @@ class ChangePassword  extends Component {
                         {
                             !isAdmin &&
                             <Button size='small' onClick={this.hide.bind(this)}>
-                                {lang('取消', 'Cancel')}
+                                {lang('取消1', 'Cancel')}
                             </Button>
                         }
                         <Button
