@@ -153,7 +153,7 @@ class ChangePassword  extends Component {
             <Modal
                 title={title}
                 width={400}
-                closable={!isAdmin}
+                closable={false}
                 maskClosable={false}
                 visible={this.state.visible}
                 footer={
