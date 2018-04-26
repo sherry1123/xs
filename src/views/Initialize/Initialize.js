@@ -21,7 +21,7 @@ class Initialize extends Component {
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
-            currentStep: 0,
+            currentStep: 2,
             totalStep: 5,
             checking: false,
             // server IP input and corresponding verification result

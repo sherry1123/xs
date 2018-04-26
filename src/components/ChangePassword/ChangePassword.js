@@ -138,6 +138,17 @@ class ChangePassword  extends Component {
             lang('修改密码', 'Change Password');
         let username = isAdmin ? 'admin' : this.props.user.username;
 
+        let isChinese = this.props.language === 'chinese';
+        let formItemLayout = {
+            labelCol: {
+                xs: {span: isChinese ? 6 : 8},
+                sm: {span: isChinese ? 6 : 8},
+            },
+            wrapperCol: {
+                xs: {span: isChinese ? 18 : 16},
+                sm: {span: isChinese ? 18 : 16},
+            }
+        };
         return (
             <Modal
                 title={title}
@@ -150,7 +161,7 @@ class ChangePassword  extends Component {
                         {
                             !isAdmin &&
                             <Button size='small' onClick={this.hide.bind(this)}>
-                                {lang('取消1', 'Cancel')}
+                                {lang('取消', 'Cancel')}
                             </Button>
                         }
                         <Button
@@ -165,16 +176,17 @@ class ChangePassword  extends Component {
                 }
             >
                 <Form>
-                    <Form.Item label={lang('用户名', 'Username')}>
-                        <Input style={{width: 270}} size='small' disabled readOnly value={username} />
+                    <Form.Item {...formItemLayout} label={lang('用户名', 'Username')}>
+                        <Input style={{width: 230}} size='small' disabled readOnly value={username} />
                     </Form.Item>
                     <Form.Item
-                        label={lang('新密码', 'New Password')}
+                        {...formItemLayout}
+                       label={lang('新密码', 'New Password')}
                         validateStatus={this.state.validation.password.status}
                         help={this.state.validation.password.help}
                     >
                         <Input
-                            style={{width: 270}} size='small'
+                            style={{width: 230}} size='small'
                             placeholder={lang('请输入新密码', 'please enter new password')}
                             value={this.state.formData.password}
                             onChange={({target: {value}}) => {
@@ -184,12 +196,13 @@ class ChangePassword  extends Component {
                         />
                     </Form.Item>
                     <Form.Item
-                        label={lang('确认新密吗', 'Confirm New Password')}
+                        {...formItemLayout}
+                        label={lang('确认新密吗', 'Confirm Password')}
                         validateStatus={this.state.validation.rePassword.status}
                         help={this.state.validation.rePassword.help}
                     >
                         <Input
-                            style={{width: 270}} size='small'
+                            style={{width: 230}} size='small'
                             placeholder={lang('请再次输入新密码', 'please enter new password again')}
                             value={this.state.formData.rePassword}
                             onChange={({target: {value}}) => {
