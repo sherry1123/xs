@@ -5,12 +5,8 @@ const Router = require('koa-router');
 const child = require('child_process');
 const app = new Koa();
 const router = new Router();
-//hardware
-let CPU = {};
-let MEMORY = {};
-let IOPS = {};
 //service
-const getCPUUsage = () => {
+const getCpuUsage = prev => {
     let cpus = os.cpus();
     let core = cpus.length;
     let total = 0;
@@ -24,34 +20,33 @@ const getCPUUsage = () => {
             used += current.includes(i) ? times[i] : 0;
         }
     });
-    usage = Math.round((Object.keys(CPU).length ? (used - CPU.used) / (total - CPU.total) : used / total) * 10000) / 100;
-    CPU = { core, total, used, usage };
+    usage = Math.round((prev ? (used - prev.used) / (total - prev.total) : used / total) * 10000) / 100;
+    return { core, total, used, usage };
 };
 const getMemoryUsage = () => {
     let total = os.totalmem();
     let free = os.freemem();
     let usage = Math.round((1 - free / total) * 10000) / 100;
-    MEMORY = { total, free, usage };
+    return { total, free, usage };
 };
-const getIOPSUsage = () => {
+const getIopsUsage = () => {
     let command = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
-    child.exec(command, (error, stdout) => {
-        IOPS = { used: error ? 0 : Number(String(stdout).trim()) };
-    });
+    let used = Number(String(child.execSync(command)).trim());
+    return { used };
 };
 //hardware
-getCPUUsage();
-getMemoryUsage();
-getIOPSUsage();
+let cpu = getCpuUsage();
+let memory = getMemoryUsage();
+let iops = getIopsUsage();
 //schedule
 new cron.CronJob('*/15 * * * * *', () => {
-    getCPUUsage();
-    getMemoryUsage();
-    getIOPSUsage();
+    cpu = getCpuUsage(cpu);
+    memory = getMemoryUsage();
+    iops = getIopsUsage();
 }, null, true);
 //controller
 const getAll = ctx => {
-    ctx.body = { cpu: CPU, memory: MEMORY, iops: IOPS };
+    ctx.body = { cpu, memory, iops };
 };
 //router
 router.all('/hardware/getall', getAll);
