@@ -37,7 +37,6 @@ class Login extends Component {
             if (isRollingBack === 'true'){
                 this.props.history.replace(routerPath.RollingBack);
             } else {
-                let isInitialized = ckGet('init');
                 if (isInitialized === 'true'){
                     let isLoggedIn = ckGet('login');
                     if (!!isLoggedIn && (isLoggedIn !== 'false')){
