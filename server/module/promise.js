@@ -1,6 +1,5 @@
 const fs = require('fs');
 const zlib = require('zlib');
-const xml2js = require('xml2js');
 const child = require('child_process');
 exports.runCommandInPromise = command => {
     return new Promise((resolve, reject) => {
@@ -64,13 +63,6 @@ exports.copyFileFromRemoteNodeInPromise = (ip, src, dest) => {
 exports.gzipDataInPromise = (data, option = {}) => {
     return new Promise((resolve, reject) => {
         zlib.gzip(JSON.stringify(data), option, (error, result) => {
-            error ? reject(error) : resolve(result);
-        });
-    });
-};
-exports.xmlToJsonInPromise = (xml, options = {}) => {
-    return new Promise((resolve, reject) => {
-        xml2js.parseString(xml, options, (error, result) => {
             error ? reject(error) : resolve(result);
         });
     });
