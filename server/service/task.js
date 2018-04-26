@@ -10,13 +10,10 @@ const model = {
         let api = config.api.agentd.hardware;
         try {
             let ipList = await database.getSetting({ key: 'nodelist' });
-            let data = [];
-            for (let ip of ipList) {
-                data.push(await request.get(api.replace('localhost', ip), {}, {}, true));
-            }
+            let data = await Promise.all(ipList.map(async ip => (await request.get(api.replace('localhost', ip), {}, {}, true))));
             await database.addHardware({ date, ipList, data });
         } catch (error) {
-            handler.error(72, error, api);
+            handler.error(72, error);
         }
     },
     async sendMail() {
