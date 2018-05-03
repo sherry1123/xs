@@ -1,5 +1,5 @@
 // localStorage operations
-export {lsGet, lsSet, lsRemove} from './localStorage';
+export {lsGet, lsSet, lsRemove, lsClearAll} from './localStorage';
 
 // cookie operations
 export {ckGet, ckSet, ckRemove} from './cookie';

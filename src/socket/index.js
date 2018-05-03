@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 import {notification} from 'antd';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
-import {lsGet, lsSet, lsRemove, ckRemove} from '../services';
+import {lsGet, lsSet, lsRemove, lsClearAll, ckRemove} from '../services';
 import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './conf';
 import httpRequests from '../http/requests';
 import lang from '../components/Language/lang';
@@ -46,7 +46,7 @@ socket.on('event status', ({channel, code, target, result}) => {
      *   special codes handlers
      */
 
-    // channel snapshot
+    // snapshot
     if (snapshot.includes(code)){
         // snapshot
         httpRequests.getSnapshotList();
@@ -70,9 +70,11 @@ socket.on('event status', ({channel, code, target, result}) => {
         // once server is up, do page jumping operation
         let timer = setInterval(async () => {
             try {
-                 await httpRequests.syncUpSystemStatus();
-                 clearInterval(timer);
-                 window.location.href = routerPath.Root;
+                await httpRequests.syncUpSystemStatus();
+                clearInterval(timer);
+                // clear all the records in localStorage
+                lsClearAll();
+                window.location.href = routerPath.Root;
             } catch (e){
                 console.info(`Waiting for server restart, will try again ${requestServerUpInterval / 1000}s later ...`);
             }

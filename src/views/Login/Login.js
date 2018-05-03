@@ -28,13 +28,14 @@ class Login extends Component {
     }
 
     componentWillMount (){
+        // see router interceptor rule in routerPath.js
         let isDeInit = ckGet('deInit');
         let isInitialized = ckGet('init');
         if (isDeInit === 'true' && isInitialized === 'true'){
             this.props.history.replace(routerPath.DeInitializing);
         } else {
             let isRollingBack = ckGet('rollbacking');
-            if (isRollingBack === 'true'){
+            if (isRollingBack === 'true' && isInitialized === 'true'){
                 this.props.history.replace(routerPath.RollingBack);
             } else {
                 if (isInitialized === 'true'){

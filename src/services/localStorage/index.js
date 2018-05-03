@@ -31,4 +31,8 @@ export const lsRemove = (keys) => {
     }
 };
 
+export const lsClearAll = () => {
+    localStorage.clear();
+};
+
 // this tool is based on localStorage API, supports single or batch set/get/remove operations on one key

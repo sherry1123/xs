@@ -25,7 +25,7 @@ export default class App extends Component {
             defaultPath = `${routerPath.DeInitializing}`;
         } else {
             let isRollingBack = ckGet('rollbacking');
-            if (isRollingBack  === 'true'){
+            if (isRollingBack  === 'true' && isInitialized === 'true'){
                 defaultPath = `${routerPath.RollingBack}`;
             } else {
                 if (isInitialized === 'true'){

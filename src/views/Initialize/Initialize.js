@@ -21,7 +21,7 @@ class Initialize extends Component {
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
-            currentStep: 2,
+            currentStep: 0,
             totalStep: 5,
             checking: false,
             // server IP input and corresponding verification result
@@ -40,6 +40,7 @@ class Initialize extends Component {
     }
 
     componentWillMount (){
+        // see router interceptor rule in routerPath.js
         let isDeInit = ckGet('deInit');
         let isInitialized = ckGet('init');
         if (isDeInit === 'true' && isInitialized === 'true'){
@@ -50,7 +51,7 @@ class Initialize extends Component {
                 this.props.history.replace(routerPath.RollingBack);
             } else {
                 let initStepLocal = lsGet('initStep');
-                if (isInitialized === 'true'){
+                if (isInitialized === 'true' && isInitialized === 'true'){
                     if (!initStepLocal){
                         let isLoggedIn = ckGet('login');
                         let path = '';
@@ -62,8 +63,8 @@ class Initialize extends Component {
                         this.props.history.replace(path);
                     } else {
                         // isInitialized is true and there's a key 'initStep' in localStorage,
-                        // it means initialization was finished and there was an abnormal exit or refresh
-                        // action happened on browser before, should jump to the last step
+                        // it means initialization was finished but there was an abnormal exit or refresh
+                        // action happened on browser before, should jump to the last initialization step
                         this.setState({currentStep: Number(initStepLocal) || this.state.totalStep});
                         // console.info('find initStep in localStorage, value is ' + initStepLocal);
                     }
