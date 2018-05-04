@@ -55,6 +55,7 @@ export default  {
         try {
             await this.checkStoreIsReady();
             return await fetchMock(IPs);
+            // return await fetchPost('/api/checkclusterenv', IPs);
         } catch (e){
             errorHandler(e);
         }

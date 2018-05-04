@@ -26,17 +26,23 @@ class TopBar extends Component {
         }
 
         // bind browser switch from online/offline status event
-        window.addEventListener('offline', () => {
-            notification.warning({
-                message: lang('网络异常', 'Network Abnormally'),
-                description: lang(`浏览器处于离线状态，强检查网络连接！`, `Browser is offline, please check network connection!`)
-            });
+        window.removeEventListener('offline', this.offline);
+        window.addEventListener('offline', this.offline);
+        window.removeEventListener('online', this.online);
+        window.addEventListener('online', this.online);
+    }
+
+    offline (){
+        notification.warning({
+            message: lang('网络异常', 'Network Abnormally'),
+            description: lang(`浏览器处于离线状态，强检查网络连接！`, `Browser is offline, please check network connection!`)
         });
-        window.addEventListener('online', () => {
-            notification.success({
-                message: lang('网络恢复', 'Network Recovery'),
-                description: lang(`浏览器处于在线状态，网络已恢复正常！`, `Browser is online, network has recovered to normal status!`)
-            });
+    }
+
+    online (){
+        notification.success({
+            message: lang('网络恢复', 'Network Recovery'),
+            description: lang(`浏览器处于在线状态，网络已恢复正常！`, `Browser is online, network has recovered to normal status!`)
         });
     }
 
