@@ -305,7 +305,7 @@ class Initialize extends Component {
                 await this.setState({checking: true});
 
                 // validate basic pattern of all IPs
-                await Promise.all(this.categoryArr.map(async (category) => {
+                await Promise.all(this.categoryArr.map(async category => {
                     let ips = this.props[category];
                     let len = ips.length;
                     for (let i = 0; i < len; i ++){

@@ -10,8 +10,12 @@ import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
 import fsOperationAction from '../redux/actions/fsOperationAction';
 
-const errorHandler = e => {
-    console.info('http request error: ' + (e.msg || 'no clear error message'));
+const requestMiddleWare = fn => {
+    try {
+        return fn();
+    } catch (e){
+        console.info('http request error: ' + (e.msg || 'no clear error message'));
+    }
 };
 
 export default  {
@@ -33,30 +37,19 @@ export default  {
     },
 
     // initialize
-    async startInitialization (config){
-        try {
-            // await fetchPost('/api/testapi', config);
-            await fetchPost('/api/init', config);
-        } catch (e){
-            errorHandler(e);
-        }
+    startInitialization (config){
+        requestMiddleWare(async () => await fetchPost('/api/init', config));
     },
 
-    async getDefaultUser (){
-        try {
+    getDefaultUser (){
+        requestMiddleWare(async () => {
             let data = await fetchPost('/api/getuser');
             !!data && store.dispatch(initializeAction.setDefaultUser(data[0]));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async checkIPs (IPs){
-        try {
-            return await fetchPost('/api/checkclusterenv', IPs);
-        } catch (e){
-            errorHandler(e);
-        }
+    checkIPs (IPs){
+        return requestMiddleWare(async () => await fetchPost('/api/checkclusterenv', IPs));
     },
 
     // user - login, logout, update
@@ -74,120 +67,96 @@ export default  {
 
     // main
     // known problems
-    async getKnownProblems (){
-        try {
+    getKnownProblems (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getknownproblems');
             !!data && store.dispatch(generalAction.setKnownProblems(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     // metadata node
-    async getMetadataNodes (){
-        try {
+    getMetadataNodes (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getmetanodestatus');
             !!data && store.dispatch(metadataNodeAction.setMetadataNodes(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async getMetadataNodesStatics (){
-        try {
+    getMetadataNodesStatics (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getusermetastats', {nodeId: 0});
             !!data && store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async getMetadataNodeDetailStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
-        try {
+    getMetadataNodeDetailStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getusermetastats', {nodeId});
             !!data && store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     // storage node
-    async getStorageNodes (){
-        try {
+    getStorageNodes (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getstoragenodestatus');
             !!data && store.dispatch(storageNodeAction.setStorageNodes(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async getStorageNodeDiskStatus (){
-        try {
+    getStorageNodeDiskStatus (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getstoragediskspace');
             !!data && store.dispatch(storageNodeAction.setStorageNodeDiskStatus(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async getStorageNodesThroughput (){
-        try {
+    getStorageNodesThroughput (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getstoragethroughput', {nodeId: 0});
             !!data && store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async getStorageNodeTargets ({nodeId} = (lsGet('currentStorageNode') || {})){
+    getStorageNodeTargets ({nodeId} = (lsGet('currentStorageNode') || {})){
         if (!!nodeId){
-            try {
+            requestMiddleWare(async () => {
                 let data = await fetchGet('/api/getstoragetarget', {nodeId});
                 !!data && store.dispatch(storageNodeAction.setStorageNodeDetailTargets(data));
-            } catch (e){
-                errorHandler(e);
-            }
+            });
         }
     },
 
-    async getStorageNodeDetailThroughput ({nodeId} = (lsGet('currentStorageNode') || {})){
+    getStorageNodeDetailThroughput ({nodeId} = (lsGet('currentStorageNode') || {})){
         if (!!nodeId){
-            try {
+            requestMiddleWare(async () => {
                 let data = await fetchGet('/api/getstoragethroughput', {nodeId});
                 !!data && store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
-            } catch (e){
-                errorHandler(e);
-            }
+            });
         }
     },
 
     // management
-    async getEventLogs (){
-        try {
+    getEventLogs (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/geteventlog');
             !!data && store.dispatch(managementAction.setSystemEventLogs(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
-    async getAuditLogs (){
-        try {
+    getAuditLogs (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getauditlog');
             !!data && store.dispatch(managementAction.setSystemAuditLogs(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     // snapshot
-    async getSnapshotList (){
-        try {
+    getSnapshotList (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getsnapshot');
             !!data && store.dispatch(snapshotAction.setSnapshotList(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     async createSnapshot (snapshot){
@@ -206,13 +175,11 @@ export default  {
         await fetchPost('/api/deletesnapshots', {names});
     },
 
-    async getSnapshotSetting (){
-        try {
+    getSnapshotSetting (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getsnapshotsetting');
             store.dispatch(snapshotAction.setSnapshotSetting(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     async updateSnapshotSetting (setting){
@@ -220,13 +187,11 @@ export default  {
     },
 
     // snapshot schedule
-    async getSnapshotScheduleList (){
-        try {
+    getSnapshotScheduleList (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getsnapshottask');
             !!data && store.dispatch(snapshotAction.setSnapshotScheduleList(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     async createSnapshotSchedule (snapshotSchedule){
@@ -254,13 +219,11 @@ export default  {
     },
 
     // share
-    async getShareList (){
-        try {
+    getShareList (){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getnasexport');
             !!data && store.dispatch(shareAction.setShareList(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     async createShare (nasExport){
@@ -276,13 +239,11 @@ export default  {
     },
 
     // fs operation
-    async getEntryInfo (dir){
-        try {
+    getEntryInfo (dir){
+        requestMiddleWare(async () => {
             let data = await fetchGet('/api/getentryinfo', {dir});
             !!data && store.dispatch(fsOperationAction.setEntryInfo(data));
-        } catch (e){
-            errorHandler(e);
-        }
+        });
     },
 
     async getFiles (dir){

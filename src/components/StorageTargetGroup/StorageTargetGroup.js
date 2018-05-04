@@ -14,7 +14,7 @@ class StorageTargetGroup extends Component {
                 {
                     !!storageTargets.length ? storageTargets.map(target => {
                         let {targetId, storagePath, totalSpace, usedSpace, freeSpace} = target;
-                        let usedRate = (usedSpace / totalSpace * 100).toFixed(2);
+                        let usedRate = (usedSpace / totalSpace * 100 || 0).toFixed(2);
                         return (
                             <Popover key={targetId}
                                 content={
