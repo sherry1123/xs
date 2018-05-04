@@ -40,6 +40,13 @@ const model = {
         let command = `ps aux|grep orcafs-mgmtd|grep grep -v|awk '{print $2}'`;
         return Boolean(await promise.runCommandInPromise(command));
     },
+    async checkClusterEnv(param) {
+        let { metadataServerIPs, storageServerIPs } = param;
+        metadataServerIPs = await Promise.all(metadataServerIPs.map(async metadata => (Object.values(await request.get(config.api.orcafs.gettoken.replace('localhost', metadata), {}, {}, true, { tokenId: '' }))[0] ? { status: '', help: '' } : { status: 'error', help: 1 })));
+        storageServerIPs = await Promise.all(storageServerIPs.map(async storage => (Object.values(await request.get(config.api.orcafs.gettoken.replace('localhost', storage), {}, {}, true, { tokenId: '' }))[0] ? { status: '', help: '' } : { status: 'error', help: 1 })));
+        let result = !Boolean(metadataServerIPs.concat(storageServerIPs).filter(ip => (ip.status)).length);
+        return { metadataServerIPs, storageServerIPs, result };
+    },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
         let mongodbParam = {};

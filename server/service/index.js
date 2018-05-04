@@ -12,7 +12,8 @@ const model = {
     async checkClusterEnv(param) {
         let result = {};
         try {
-            result = handler.response(0, 'check cluster enviroment');
+            let data = await init.checkClusterEnv(param);
+            result = handler.response(0, data);
         } catch (error) {
             result = handler.response(6, error, param);
         }
