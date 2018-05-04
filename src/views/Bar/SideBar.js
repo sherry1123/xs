@@ -77,18 +77,22 @@ class SideBar extends Component {
                         <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>
                     */}
+                    {/*
                     <Menu.Item key={routerPath.MetadataNodes}>
                         <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
                     </Menu.Item>
+                    */}
                     <Menu.Item key={routerPath.StorageNodes}>
                         <Icon type="database" />{lang('存储节点', 'Storage Nodes')}
                     </Menu.Item>
+                    {/*
                     <Menu.Item key={routerPath.ClientStatistics}>
                         <Icon type="line-chart" />{lang('客户端统计', 'Client Statistics')}
                     </Menu.Item>
                     <Menu.Item key={routerPath.UserStatistics}>
                         <Icon type="bar-chart" />{lang('用户统计', 'User Statistics')}
                     </Menu.Item>
+                    */}
                     <Menu.Item key={routerPath.Snapshot}>
                         <Icon type="camera-o" />{lang('快照', 'Snapshot')}
                     </Menu.Item>
