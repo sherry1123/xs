@@ -18,6 +18,9 @@ class Initialize extends Component {
         super(props);
         this.keyPressFilter = new KeyPressFilter();
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, floatIPs, hbIPs} = props;
+        this.CheckIPResultCodeMap = {
+            1: lang('该IP无法使用，请更换！', 'This IP can\'t be used, please change it.')
+        };
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
@@ -310,7 +313,7 @@ class Initialize extends Component {
                     }
                 }));
 
-                // validate HA if enabled
+                // validate HA related IPs if it enabled
                 if (this.isNoError() && this.props.enableHA){
                     await this.validateIPForHA();
                     await this.validateNetworkSegmentForMgmtAndHAIPs();
@@ -318,13 +321,23 @@ class Initialize extends Component {
 
                 // validate IP availability from HTTP server
                 if (this.isNoError()){
-                    let checkResult = await httpRequests.checkIPs();
-                    // 这里需要把后端检测的结果对应放到每个input下面
-
-                    if (checkResult){
+                    // no local pattern error for all IPs
+                    let {metadataServerIPs, storageServerIPs} = this.props;
+                    let {result, metadataServerIPsError, storageServerIPsError} = await httpRequests.checkIPs({metadataServerIPs, storageServerIPs});
+                    if (result){
+                        // IP availability check successfully
                         this.setState({currentStep: next});
                     } else {
-                        // check IPs availabilities form server
+                        // IP availability check failed
+                        // change help code to exact error description
+                        metadataServerIPsError.forEach(error => !!error.status && (error.help = this.CheckIPResultCodeMap[error.help]));
+                        storageServerIPsError.forEach(error => !!error.status && (error.help = this.CheckIPResultCodeMap[error.help]));
+                        // show the error of each check failed IP
+                        this.setState({
+                            metadataServerIPsError,
+                            storageServerIPsError
+                        });
+                        // give out tips
                         message.error(lang('经检测有IP不能正常使用，请更换', 'Some IPs seem can not be used properly through the validations，please replace them'));
                     }
                 } else {
