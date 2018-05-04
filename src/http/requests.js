@@ -1,4 +1,4 @@
-import {fetchGet, fetchPost, fetchMock} from './fetch';
+import {fetchGet, fetchPost} from './fetch';
 import {lsGet} from '../services';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
@@ -53,9 +53,7 @@ export default  {
 
     async checkIPs (IPs){
         try {
-            await this.checkStoreIsReady();
-            return await fetchMock(IPs);
-            // return await fetchPost('/api/checkclusterenv', IPs);
+            return await fetchPost('/api/checkclusterenv', IPs);
         } catch (e){
             errorHandler(e);
         }
