@@ -96,7 +96,7 @@ class Login extends Component {
                 let user = await httpRequests.login({username, password});
                 this.props.setUser(user);
                 await this.setState({loginErrorCode: '', doingLogin: false});
-                this.props.history.push(routerPath.Main + routerPath.MetadataNodes);
+                this.props.history.push(routerPath.Main + routerPath.StorageNodes);
             } catch ({code}){
                 this.setState({loginErrorCode: code, doingLogin: false});
             }

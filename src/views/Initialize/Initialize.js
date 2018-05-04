@@ -316,9 +316,11 @@ class Initialize extends Component {
                     await this.validateNetworkSegmentForMgmtAndHAIPs();
                 }
 
-                // the final validation
+                // validate IP availability from HTTP server
                 if (this.isNoError()){
                     let checkResult = await httpRequests.checkIPs();
+                    // 这里需要把后端检测的结果对应放到每个input下面
+
                     if (checkResult){
                         this.setState({currentStep: next});
                     } else {
