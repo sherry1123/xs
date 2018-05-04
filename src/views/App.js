@@ -34,7 +34,7 @@ export default class App extends Component {
                     if (!isLoggedIn){
                         defaultPath = routerPath.Login;
                     } else {
-                        defaultPath = `${routerPath.Main}${routerPath.MetadataNodes}`;
+                        defaultPath = `${routerPath.Main}${routerPath.StorageNodes}`;
                     }
                 } else {
                     defaultPath = routerPath.Init;

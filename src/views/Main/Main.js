@@ -10,16 +10,16 @@ import SideBar from '../Bar/SideBar';
 import FooterBar from '../Bar/FooterBar';
 
 // metadata nodes
-const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
+// const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
 
 // storage nodes
 const StorageNodes = asyncLoad(() => import('../StorageNodes/StorageNodes'));
 
 // client statistics metadata
-const ClientStatistics = asyncLoad(() => import('../ClientStatistics/ClientStatistics'));
+// const ClientStatistics = asyncLoad(() => import('../ClientStatistics/ClientStatistics'));
 
 // user statistics metadata
-const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'));
+// const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'));
 
 // snapshot
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
@@ -95,18 +95,16 @@ export default class Main extends Component {
                 <div className="fs-body-wrapper">
                     <SideBar />
                     <main className='fs-content-wrapper'>
-                        <Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />
+                        {/*<Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />*/}
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
-                        <Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />
-                        <Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />
+                        {/*<Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />*/}
+                        {/*<Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />*/}
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
                         <Route path={`${Main}${routerPath.Share}`} component={Share} />
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
-                        {/*
-                        <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
-                        */}
+                        {/*<Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />*/}
                     </main>
                 </div>
                 <FooterBar />
