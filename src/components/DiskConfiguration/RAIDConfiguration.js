@@ -38,6 +38,8 @@ class RAIDConfiguration extends Component {
                 {name: 'RAID 10', min: 4, max: '', rule: 'even'}
             ],
             arrayLevel: {},
+            stripeSize: ['2KB', '4KB', '8KB', '16KB', '32KB', '64KB', '128KB', '256KB'],
+            arrayStripeSize: '8KB',  // default to 8KB
             arrayCapacity: 0,
             enableApplyButton: true,
         }
@@ -66,8 +68,6 @@ class RAIDConfiguration extends Component {
                 nodeDisks = nodeDisks.filter(disk => !usedDiskNames.includes(disk.diskname));
             }
         }
-        // console.info('remove used disks, left: ' + nodeDisks.map(disk => disk.diskname).toString());
-        // console.info('node raw selected: ' + node.selectedDisks.map(disk => disk.diskname).toString());
         if (!node.selectedDisks.length){
             // the selected node hasn't done RAID configuration yet
             this.setState({
@@ -75,6 +75,7 @@ class RAIDConfiguration extends Component {
                 nodeDisks,
                 selectedDisks: [],
                 arrayLevel: {},
+                arrayStripeSize: '8KB',
                 arrayCapacity: 0
             });
         } else {
@@ -92,6 +93,7 @@ class RAIDConfiguration extends Component {
                 nodeDisks,
                 selectedDisks,
                 arrayLevel: node.arrayLevel,
+                arrayStripeSize: node.stripeSize,
                 arrayCapacity
             });
         }
@@ -111,6 +113,11 @@ class RAIDConfiguration extends Component {
 
     switchRAIDLevel (value, option){
         this.setState({arrayLevel: Object.assign({}, option.props.level)});
+    }
+
+    switchStripeSize (value, option){
+        console.info(option.props.size);
+        this.setState({arrayStripeSize: option.props.size});
     }
 
     selectedDisksChange (nextTargetItems/*, direction, moveItems*/){
@@ -135,6 +142,7 @@ class RAIDConfiguration extends Component {
             let currentNode = this.state.currentNode;
             currentNode.selectedDisks = [...this.state.selectedDisks];
             currentNode.arrayLevel = Object.assign({}, this.state.arrayLevel);
+            currentNode.stripeSize = this.state.stripeSize;
             let nodes = Object.assign(this.state[currentNode.type + 'Nodes']);
             nodes[currentNode.i] = currentNode;
             this.setState({[currentNode.type + 'Nodes']: nodes});
@@ -159,7 +167,7 @@ class RAIDConfiguration extends Component {
 
     render (){
         // console.info('render selected disks: ' + this.state.selectedDisks.map(disk => disk.diskname).toString());
-        let {metadataNodes, storageNodes, currentNode, RAIDLevels, arrayLevel, selectedDisks, nodeDisks, arrayCapacity, enableApplyButton} = this.state;
+        let {metadataNodes, storageNodes, currentNode, RAIDLevels, arrayLevel, stripeSize, arrayStripeSize, selectedDisks, nodeDisks, arrayCapacity, enableApplyButton} = this.state;
 
         return (
             <section className="fs-raid-config-wrapper">
@@ -177,7 +185,7 @@ class RAIDConfiguration extends Component {
                             {
                                 metadataNodes.map((node, i) => <div
                                     className={`fs-raid-node-item ${currentNode.i === i && currentNode.type === 'metadata' ? 'active' : ''}`} key={i}
-                                     onClick={() => this.switchNode.bind(this, node, i)()}
+                                    onClick={() => this.switchNode.bind(this, node, i)()}
                                 >
                                     {node.ip}
                                     {!!node.selectedDisks.length && <Icon type="check" title={lang('RAID已配置', 'RAID Configured')} style={{marginLeft: 10, color: '#00cc00'}} />}
@@ -224,7 +232,24 @@ class RAIDConfiguration extends Component {
                                         }
                                     </Select>
                                     <span style={{marginRight: 20}}>阵列磁盘数量：{selectedDisks.length}</span>
-                                    <span>阵列总容量：{formatStorageSize(arrayCapacity)}</span>
+                                    <span style={{marginRight: 20}}>阵列总容量：{formatStorageSize(arrayCapacity)}</span>
+                                    <span>条带大小：</span>
+                                    <Select
+                                        size="small" style={{width: 100, marginRight: 20}}
+                                        placeholder={lang('请选择', 'select')}
+                                        value={arrayStripeSize}
+                                        onChange={this.switchStripeSize.bind(this)}
+                                    >
+                                        {
+                                            stripeSize.map((size, i) => <Select.Option
+                                                key={i}
+                                                value={size}
+                                                size={size}
+                                            >
+                                                {size}
+                                            </Select.Option>)
+                                        }
+                                    </Select>
                                 </div>
                             </div>)
                         }

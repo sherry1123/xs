@@ -13,7 +13,7 @@ export default {
         floatIPs: ['192.168.100.140'],
         hbIPs: ['192.168.101.98','192.168.101.99'],
         // step 3 RAID configuration
-        enableRAID: false,
+        enableRAID: true,
         RAIDConfig: {},
         // start initialization
         initStatus: {current: 0, total: 0, status: 0},
