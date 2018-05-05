@@ -11,6 +11,9 @@ const model = {
     '/api/checkclusterenv': async ctx => {
         ctx.body = await service.checkClusterEnv(ctx.param);
     },
+    '/api/getraidrecommendedconfiguration': async ctx => {
+        ctx.body = await service.getRaidRecommendedConfiguration(ctx.param);
+    },
     '/api/getdisklist': async ctx => {
         ctx.body = await service.getDiskList(ctx.param);
     },

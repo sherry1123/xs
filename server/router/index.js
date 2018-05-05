@@ -5,6 +5,7 @@ const controller = require('../controller');
 router.all('/api/testapi', controller['/api/testapi']);
 router.all('/api/syncsystemstatus', controller['/api/syncsystemstatus']);
 router.all('/api/checkclusterenv', controller['/api/checkclusterenv']);
+router.all('/api/getraidrecommendedconfiguration', controller['/api/getraidrecommendedconfiguration']);
 router.all('/api/getdisklist', controller['/api/getdisklist']);
 router.all('/api/init', controller['/api/init']);
 router.all('/api/deinit', controller['/api/deinit']);

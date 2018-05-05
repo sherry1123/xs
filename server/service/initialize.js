@@ -47,6 +47,30 @@ const model = {
         let result = !Boolean(metadataServerIPsError.concat(storageServerIPsError).filter(ip => (ip.status)).length);
         return { metadataServerIPsError, storageServerIPsError, result };
     },
+    async getRaidRecommendedConfiguration(param) {
+        let { metadataServerIPs, storageServerIPs } = param;
+        let ipList = Array.from(new Set(metadataServerIPs.concat(storageServerIPs)));
+        let diskGroup = await Promise.all(ipList.map(async ip => ({ ip, diskList: Object.assign(await afterMe.getDiskList({ ip })).data })));
+        let metadataList = {};
+        let storageList = {};
+        diskGroup.forEach(item => {
+            let { ip, diskList } = item;
+            diskList = diskList.map(disk => ({ diskName: disk.diskName, diskType: disk.diskName.includes('nvme') ? 'ssd' : 'hdd' }));
+            let ssdList = diskList.filter(disk => (disk.diskType === 'ssd'));
+            let hddList = diskList.filter(disk => (disk.diskType === 'hdd'));
+            if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
+                if (ssdList.length) {
+                    metadataList[ip] = [{ raidLevel: 1, diskList: ssdList.slice(0, 2).map(ssd => (ssd.diskName)), diskType: 'ssd' }];
+                    storageList[ip] = [{ raidLevel: 1, diskList: ssdList.slice(2, 4).map(ssd => (ssd.diskName)), diskType: 'ssd' }];
+                }
+            } else if (metadataServerIPs.includes(ip)) {
+
+            } else if (storageServerIPs.includes(ip)) {
+
+            }
+        });
+        return { metadataServerIPs: metadataList, storageServerIPs: storageList };
+    },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
         let mongodbParam = {};
