@@ -124,7 +124,7 @@ class FSOperation extends Component {
     render (){
         let {entryInfo} = this.state;
         let {language, files} = this.props;
-        files = [...files];
+        files = files.filter(file => file.isDir);
         if (this.directoryStack.length > 1){
             files.unshift({name: '..', isDir: true});
         }
