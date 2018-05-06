@@ -73,7 +73,8 @@ class CreateSnapshot extends Component {
         this.setState({formSubmitting: true});
         try {
             await httpRequests.createSnapshot(snapshotData);
-            httpRequests.getSnapshotList();
+            // move this operation to socket, and listen the snapshot start creating event
+            // httpRequests.getSnapshotList();
             await this.hide();
             message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
         } catch ({msg}){

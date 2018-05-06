@@ -34,13 +34,15 @@ socket.on('init status', initStatus => {
 });
 
 // business operations after initialization and login
-socket.on('event status', ({channel, code, target, result}) => {
-    console.info('ws event status: ', channel, code, target, result);
+socket.on('event status', ({channel, code, target, result, notify}) => {
+    console.info('ws event status: ', channel, code, target, result, notify);
     let {language} = store.getState();
-    notification[result ? 'success' : 'warning']({
-        message: socketEventChannel[channel]()[language] + lang('通知', 'Notification'),
-        description: socketEventCode[code]()[language](target, result)
-    });
+    if (notify){
+        notification[result ? 'success' : 'warning']({
+            message: socketEventChannel[channel]()[language] + lang('通知', 'Notification'),
+            description: socketEventCode[code]()[language](target, result)
+        });
+    }
 
     /*
      *   special codes handlers
