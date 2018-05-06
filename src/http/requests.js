@@ -172,7 +172,7 @@ export default  {
     },
 
     async deleteSnapshotsInBatch (names){
-        await fetchPost('/api/deletesnapshots', {names});
+        await fetchPost('/api/batchdeletesnapshot', {names});
     },
 
     getSnapshotSetting (){
@@ -189,33 +189,33 @@ export default  {
     // snapshot schedule
     getSnapshotScheduleList (){
         requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getsnapshottask');
+            let data = await fetchGet('/api/getsnapshotschedule');
             !!data && store.dispatch(snapshotAction.setSnapshotScheduleList(data));
         });
     },
 
     async createSnapshotSchedule (snapshotSchedule){
-        await fetchPost('/api/createsnapshottask', snapshotSchedule);
+        await fetchPost('/api/createsnapshotschedule', snapshotSchedule);
     },
 
     async enableSnapshotSchedule (snapshotSchedule){
-        await fetchPost('/api/enablesnapshottask', snapshotSchedule);
+        await fetchPost('/api/enablesnapshotschedule', snapshotSchedule);
     },
 
     async disableSnapshotSchedule (snapshotSchedule){
-        await fetchPost('/api/disablesnapshottask', snapshotSchedule);
+        await fetchPost('/api/disablesnapshotschedule', snapshotSchedule);
     },
 
     async editSnapshotSchedule (snapshotSchedule){
-        await fetchPost('/api/updatesnapshottask', snapshotSchedule);
+        await fetchPost('/api/updatesnapshotschedule', snapshotSchedule);
     },
 
     async deleteSnapshotSchedule (snapshotSchedule){
-        await fetchPost('/api/deletesnapshottask', snapshotSchedule);
+        await fetchPost('/api/deletesnapshotschedule', snapshotSchedule);
     },
 
     async deleteSnapshotSchedulesInBatch (names){
-        await fetchPost('/api/deletesnapshottasks', {names});
+        await fetchPost('/api/batchdeletesnapshotschedule', {names});
     },
 
     // share

@@ -158,6 +158,7 @@ class Snapshot extends Component {
 
     render (){
         let {batchDeleteSnapshotNames, snapshotList} = this.state;
+        let snapshotHandling = snapshotList.some(snapshot => snapshot.creating || snapshot.deleting || snapshot.rollbacking);
         let tableProps = {
             size: 'small',
             dataSource: snapshotList,
@@ -189,23 +190,40 @@ class Snapshot extends Component {
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
-                    render: text => timeFormat(text)
+                    render: (text, record) => record.creating ? '--' : timeFormat(text)
                 },
                 {title: lang('操作', 'Operations'), width: 80,
                     render: (text, record, index) => {
-                        return (!record.rollbacking && !record.deleting) ?
+                        return (!record.creating && !record.deleting && !record.rollbacking) ?
                             <div>
-                                <a title={lang('编辑', 'Edit')} onClick={this.edit.bind(this, record)}>
+                                <a
+                                    disabled={snapshotHandling}
+                                    title={lang('编辑', 'Edit')}
+                                    onClick={this.edit.bind(this, record)}
+                                >
                                     <Icon style={{fontSize: 15}} type="edit" />
                                 </a>
-                                <a onClick={this.rollback.bind(this, record, index)} title={lang('回滚', 'Roll Back')} style={{marginLeft: 10}}>
+                                <a
+                                    disabled={snapshotHandling}
+                                    onClick={this.rollback.bind(this, record, index)}
+                                    title={lang('回滚', 'Roll Back')} style={{marginLeft: 10}}
+                                >
                                     <Icon style={{fontSize: 15}} type="rollback" />
                                 </a>
-                                <a onClick={this.delete.bind(this, record, index)} title={lang('删除', 'Delete')} style={{marginLeft: 10}}>
+                                <a
+                                    disabled={snapshotHandling}
+                                    onClick={this.delete.bind(this, record, index)}
+                                    title={lang('删除', 'Delete')} style={{marginLeft: 10}}
+                                >
                                     <Icon style={{fontSize: 15}} type="delete" />
                                 </a>
                             </div> :
-                            <a disabled>{record.rollbacking ? lang('回滚中', 'Rolling Back') : lang('删除中', 'Deleting')}</a>;
+                            <a disabled>
+                                {
+                                    record.creating ? lang('创建中', 'Creating') :
+                                        record.deleting ? lang('删除中', 'Deleting') : lang('回滚中', 'Rolling Back')
+                                }
+                            </a>;
                     }
                 }
             ],
@@ -219,6 +237,7 @@ class Snapshot extends Component {
                     <section className="fs-page-item-content fs-snapshot-list-wrapper">
                         <div className="fs-snapshot-operation-wrapper">
                             <Input.Search
+                                disabled={snapshotHandling}
                                 style={{width: 170}}
                                 className="fs-search-table-input"
                                 size="small"
@@ -229,12 +248,14 @@ class Snapshot extends Component {
                                 onSearch={this.searchInTable.bind(this)}
                             />
                             <Button
+                                disabled={snapshotHandling}
                                 className="fs-create-snapshot-button" size="small"
                                 onClick={this.create.bind(this)}
                             >
                                 {lang('创建', 'Create')}
                             </Button>
                             <Button
+                                disabled={snapshotHandling}
                                 className="fs-create-snapshot-button" size="small"
                                 onClick={this.setting.bind(this)}
                             >
@@ -242,7 +263,7 @@ class Snapshot extends Component {
                             </Button>
                             <Button
                                 className="fs-batch-delete-snapshot-button" size="small"
-                                disabled={!this.state.batchDeleteSnapshotNames.length}
+                                disabled={!this.state.batchDeleteSnapshotNames.length || snapshotHandling}
                                 onClick={this.batchDelete.bind(this)}
                             >
                                 {lang('批量删除', 'Delete In Batch')}

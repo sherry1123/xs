@@ -39,26 +39,30 @@ export const socketEventCode = {
 
     // code 1-20 for snapshot channel
     11: () => ({
+        chinese: target => `快照 ${target} 开始创建！`,
+        english: target => `Snapshot ${target} started creating！`
+    }),
+    12: () => ({
         chinese: target => `快照 ${target} 删除成功！`,
         english: target => `Snapshot ${target} deleted successfully！`
     }),
-    12: () => ({
+    13: () => ({
         chinese: target => `快照 ${target} 删除失败！`,
         english: target => `Snapshot ${target} deleted failed！`
     }),
-    13: () => ({
+    14: () => ({
         chinese: target => `批量删除${target.total}个快照成功！`,
         english: target => `Batch delete ${target.total} snapshots complete!`
     }),
-    14: () => ({
-        chinese: target => `批量删除${target.total}个快照完成，删除成功${target.success}个，删除失败${target.failed}个！`,
-        english: target => `Batch delete ${target.total} snapshots complete, ${target.success} successfully deleted, ${target.failed} failed!`
-    }),
     15: () => ({
+        chinese: (target, result) => `批量删除${target.total}个快照${result ? '成功' : '失败'}！`,
+        english: (target, result) => `Batch delete ${target.total} snapshots ${result ? 'successfully' : 'failed'}！`
+    }),
+    16: () => ({
         chinese: target => `快照 ${target} 回滚开始！`,
         english: target => `Start rolling back snapshot ${target}！`
     }),
-    16: () => ({
+    17: () => ({
         chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
         english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),
