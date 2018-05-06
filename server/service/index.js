@@ -15,7 +15,17 @@ const model = {
             let data = await init.checkClusterEnv(param);
             result = handler.response(0, data);
         } catch (error) {
-            result = handler.response(6, error, param);
+            result = handler.response(31, error, param);
+        }
+        return result;
+    },
+    async getRaidRecommendedConfiguration(param) {
+        let result = {};
+        try {
+            let data = await init.getRaidRecommendedConfiguration(param);
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(32, error, param);
         }
         return result;
     },
@@ -26,10 +36,10 @@ const model = {
             if (!res.errorId) {
                 result = handler.response(0, res.data);
             } else {
-                result = handler.response(31, res.message, param);
+                result = handler.response(33, res.message, param);
             }
         } catch (error) {
-            result = handler.response(31, error, param);
+            result = handler.response(33, error, param);
         }
         return result;
     },
