@@ -20,8 +20,8 @@ export const eventCodeForEventChannel = {
     deInitializationEnd: [2],
 
     snapshot: [11, 12, 13, 14, 15, 16],
-    snapshotRollBackStart: [15],
-    snapshotRollBackFinish: [16],
+    snapshotRollBackStart: [16],
+    snapshotRollBackFinish: [17],
 
     user: [21],
 };
