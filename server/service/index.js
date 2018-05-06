@@ -560,7 +560,7 @@ const model = {
         protocol = protocol.toUpperCase();
         let result = {};
         try {
-            await database.createNasExport({ path, protocol, description });
+            await database.addNasExport({ path, protocol, description });
             result = handler.response(0, 'create nas export successfully');
             await log.audit({ user, desc: 'create nas export successfully', ip });
         } catch (error) {

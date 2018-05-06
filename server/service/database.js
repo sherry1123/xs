@@ -1,5 +1,6 @@
 const dao = require('../module/dao');
 const user = require('../model/user');
+const event = require('../model/event');
 const setting = require('../model/setting');
 const eventLog = require('../model/eventLog');
 const auditLog = require('../model/auditLog');
@@ -86,7 +87,7 @@ const model = {
     async getNasExport(param) {
         return await dao.findAll(nasExport, param);
     },
-    async createNasExport(param) {
+    async addNasExport(param) {
         return await dao.createOne(nasExport, param);
     },
     async updateNasExport(query, param) {
@@ -94,6 +95,15 @@ const model = {
     },
     async deleteNasExport(param) {
         return await dao.deleteOne(nasExport, param);
+    },
+    async getEvent(param) {
+        return await dao.findOne(event, param);
+    },
+    async addEvent(param) {
+        return await dao.createOne(event, param);
+    },
+    async deleteEvent(param) {
+        return await dao.deleteOne(event, param);
     }
 };
 module.exports = model;
