@@ -4,6 +4,7 @@ module.exports = mongoose.model('snapshot',
         name: String,
         description: String,
         isAuto: Boolean,
+        creating: Boolean,
         deleting: Boolean,
         rollbacking: Boolean,
         createTime: Date

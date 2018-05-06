@@ -1,5 +1,5 @@
 const mongoose = require('../module/mongoose');
-module.exports = mongoose.model('snapshottask',
+module.exports = mongoose.model('snapshotschedule',
     new mongoose.Schema({
         name: String,
         createTime: Date,

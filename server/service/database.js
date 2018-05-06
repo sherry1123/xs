@@ -1,13 +1,12 @@
 const dao = require('../module/dao');
 const user = require('../model/user');
-const event = require('../model/event');
 const setting = require('../model/setting');
 const eventLog = require('../model/eventLog');
 const auditLog = require('../model/auditLog');
 const hardware = require('../model/hardware');
 const snapshot = require('../model/snapshot');
 const nasExport = require('../model/nasExport');
-const snapshotTask = require('../model/snapshotTask');
+const snapshotSchedule = require('../model/snapshotSchedule');
 const model = {
     async login(param) {
         return await dao.findOne(user, param);
@@ -72,17 +71,17 @@ const model = {
     async deleteSnapshot(param) {
         return await dao.deleteOne(snapshot, param);
     },
-    async getSnapshotTask(param) {
-        return await dao.findAll(snapshotTask, param);
+    async getSnapshotSchedule(param) {
+        return await dao.findAll(snapshotSchedule, param);
     },
-    async addSnapshotTask(param) {
-        return await dao.createOne(snapshotTask, param);
+    async addSnapshotSchedule(param) {
+        return await dao.createOne(snapshotSchedule, param);
     },
-    async updateSnapshotTask(query, param) {
-        return await dao.updateOne(snapshotTask, query, param);
+    async updateSnapshotSchedule(query, param) {
+        return await dao.updateOne(snapshotSchedule, query, param);
     },
-    async deleteSnapshotTask(param) {
-        return await dao.deleteOne(snapshotTask, param);
+    async deleteSnapshotSchedule(param) {
+        return await dao.deleteOne(snapshotSchedule, param);
     },
     async getNasExport(param) {
         return await dao.findAll(nasExport, param);
@@ -95,15 +94,6 @@ const model = {
     },
     async deleteNasExport(param) {
         return await dao.deleteOne(nasExport, param);
-    },
-    async getEvent(param) {
-        return await dao.findOne(event, param);
-    },
-    async addEvent(param) {
-        return await dao.createOne(event, param);
-    },
-    async deleteEvent(param) {
-        return await dao.deleteOne(event, param);
     }
 };
 module.exports = model;

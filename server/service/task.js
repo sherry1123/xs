@@ -25,7 +25,7 @@ const model = {
     },
     async createSnapshot() {
         try {
-            await snapshot.runSnapshotTask();
+            await snapshot.runSnapshotSchedule();
         } catch (error) {
             handler.error(148, error);
         }
@@ -33,7 +33,7 @@ const model = {
     async sendChangePasswordMessage() {
         try {
             let [{ password }] = await database.getUser({ username: 'admin' });
-            password === '123456' && await request.post(config.api.server.receiveevent, { channel: 'user', code: 21, target: { username: 'admin', password: '123456' }, info: {} }, {}, true);
+            password === '123456' && await request.post(config.api.server.receiveevent, { channel: 'user', code: 21, target: { username: 'admin', password: '123456' }, notify: true }, {}, true);
         } catch (error) {
             handler.error(52, error);
         }

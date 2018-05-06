@@ -22,13 +22,6 @@ const model = {
             handler.error(22, error);
         }
         return result;
-    },
-    async sendEvent(param) {
-        let { channel, target, info } = param;
-        target = target.map(snapshot => ({ name: snapshot, result: Math.random() > 0.5 ? true : false }));
-        await promise.runTimeOutInPromise(10);
-        await request.post(config.api.server.receiveevent, { channel, code: target.filter(snapshot => (snapshot.result)).length === target.length ? 13 : 14, target, info }, {}, true);
-
     }
 };
 module.exports = model;

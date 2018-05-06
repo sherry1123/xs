@@ -140,11 +140,12 @@ exports.error = {
 exports.event = {
     1: 'de-initialize cluster start',
     2: 'de-initialize cluster end',
-    11: 'delete snapshot successfully',
-    12: 'delete snapshot failed',
-    13: 'delete snapshots successfully',
-    14: 'delete snapshots failed',
-    15: 'rollback snapshots start',
-    16: 'rollback snapshots end',
+    11: 'create snapshot start',
+    12: 'delete snapshot successfully',
+    13: 'delete snapshot failed',
+    14: 'batch delete snapshot successfully',
+    15: 'batch delete snapshot failed',
+    16: 'rollback snapshot start',
+    17: 'rollback snapshot end',
     21: 'change admin password',
 };

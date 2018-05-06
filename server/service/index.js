@@ -87,7 +87,7 @@ const model = {
     async antiInitCluster(mode) {
         try {
             process.send('de-initialize start');
-            socket.postEventStatus({ channel: 'cluster', code: 1, target: 'cluster', result: true });
+            socket.postEventStatus({ channel: 'cluster', code: 1, target: 'cluster', result: true, notify: true });
             mode === 1 && await init.antiInitOrcaFS();
             let getAntiinitProgress = setInterval(async () => {
                 let progress = await init.getOrcaFSInitProgress();
@@ -96,7 +96,7 @@ const model = {
                     if (status) {
                         clearInterval(getAntiinitProgress);
                         process.send('de-initialize end');
-                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false });
+                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false, notify: true });
                         handler.error(42, errorMessage, mode);
                     } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
@@ -107,7 +107,7 @@ const model = {
                             await init.antiInitMongoDB(nodelist);
                         }
                         process.send('de-initialize end');
-                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: true });
+                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: true, notify: true });
                         logger.info('de-initialize the cluster successfully');
                         await init.restartServer(nodelist);
                     }
@@ -115,32 +115,13 @@ const model = {
             }, 1000);
         } catch (error) {
             process.send('de-initialize end');
-            socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false });
+            socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false, notify: true });
             handler.error(42, error, mode);
         }
     },
     async receiveEvent(param) {
-        let { channel, code, target, info: { user, ip } } = param;
-        switch (code) {
-            case 13:
-                for (let snapshot of target) {
-                    await database.deleteSnapshot({ name: snapshot.name });
-                }
-                await log.audit({ user, desc: 'delete snapshots successfully', ip });
-                socket.postEventStatus({ channel, code, target: { total: target.length, success: target.length, failed: 0 }, result: true });
-                break;
-            case 14:
-                let success = target.filter(snapshot => (snapshot.result)).length;
-                for (let snapshot of target) {
-                    snapshot.result ? await database.deleteSnapshot({ name: snapshot.name }) : await database.updateSnapshot({ name: snapshot.name }, { deleting: false });
-                }
-                await log.audit({ user, desc: `delete snapshots failed`, ip });
-                await log.event({ desc: `delete snapshots failed. total: ${target.length}, success: ${success}, failed: ${target.length - success}`, level: 2, source: 'orcafs' });
-                socket.postEventStatus({ channel, code, target: { total: target.length, success, failed: target.length - success }, result: false });
-                break;
-            case 21:
-                socket.postEventStatus({ channel, code, target, result: false });
-        }
+        let { channel, code, target, result = false, notify } = param;
+        socket.postEventStatus({ channel, code, target, result, notify });
     },
     async login(param, ip) {
         let { username, password } = param;
@@ -422,55 +403,56 @@ const model = {
         try {
             await snapshot.deleteSnapshot(param);
             await log.audit({ user, desc: 'delete snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 11, target: param.name, result: true });
+            socket.postEventStatus({ channel: 'snapshot', code: 12, target: param.name, result: true, notify: true });
         } catch (error) {
             handler.error(134, error, param);
             await log.audit({ user, desc: `delete snapshot failed`, ip });
             await log.event({ desc: `delete snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 12, target: param.name, result: false });
+            socket.postEventStatus({ channel: 'snapshot', code: 13, target: param.name, result: false, notify: true });
         }
     },
-    async deleteSnapshots(param, user, ip) {
+    async batchDeleteSnapshot(param, user, ip) {
         try {
-            await snapshot.deleteSnapshots(param);
-            status.sendEvent({ channel: 'snapshot', target: param.names, info: { user, ip } });
-            await log.audit({ user, desc: 'start to delete snapshots successfully', ip });
+            await snapshot.batchDeleteSnapshot(param);
+            await log.audit({ user, desc: 'delete snapshots successfully', ip });
+            socket.postEventStatus({ channel: 'snapshot', code: 14, target: { total: param.names.length }, result: true, notify: true });
         } catch (error) {
             handler.error(135, error, param);
-            await log.audit({ user, desc: `start to delete snapshots failed`, ip });
-            await log.event({ desc: `start to delete snapshots failed. reason: ${error}` });
+            await log.audit({ user, desc: `start to batch delete snapshot failed`, ip });
+            await log.event({ desc: `start to batch delete snapshot failed. reason: ${error}` });
+            socket.postEventStatus({ channel: 'snapshot', code: 15, target: { total: param.names.length }, result: false, notify: true });
         }
     },
     async rollbackSnapshot(param, user, ip) {
         try {
             process.send('rollback start');
-            socket.postEventStatus({ channel: 'snapshot', code: 15, target: param.name, result: true });
+            socket.postEventStatus({ channel: 'snapshot', code: 16, target: param.name, result: true, notify: true });
             await snapshot.rollbackSnapshot(param);
             process.send('rollback end');
             await log.audit({ user, desc: 'rollback snapshot successfully', ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 16, target: param.name, result: true });
+            socket.postEventStatus({ channel: 'snapshot', code: 17, target: param.name, result: true, notify: true });
         } catch (error) {
             snapshot.setRollbackStatus(false);
             handler.error(136, error, param);
             await log.audit({ user, desc: `rollback snapshot failed`, ip });
             await log.event({ desc: `rollback snapshot failed. reason: ${error}` });
-            socket.postEventStatus({ channel: 'snapshot', code: 16, target: param.name, result: false });
+            socket.postEventStatus({ channel: 'snapshot', code: 17, target: param.name, result: false, notify: true });
         }
     },
-    async getSnapshotTask(param) {
+    async getSnapshotSchedule(param) {
         let result = {};
         try {
-            let data = await snapshot.getSnapshotTask(param);
+            let data = await snapshot.getSnapshotSchedule(param);
             result = handler.response(0, data.reverse());
         } catch (error) {
             result = handler.response(141, error, param);
         }
         return result;
     },
-    async createSnapshotTask(param, user, ip) {
+    async createSnapshotSchedule(param, user, ip) {
         let result = {};
         try {
-            await snapshot.createSnapshotTask(param);
+            await snapshot.createSnapshotSchedule(param);
             result = handler.response(0, 'create snapshot task successfully');
             await log.audit({ user, desc: 'create snapshot task successfully', ip });
         } catch (error) {
@@ -480,10 +462,10 @@ const model = {
         }
         return result;
     },
-    async updateSnapshotTask(param, user, ip) {
+    async updateSnapshotSchedule(param, user, ip) {
         let result = {};
         try {
-            await snapshot.updateSnapshotTask(param);
+            await snapshot.updateSnapshotSchedule(param);
             result = handler.response(0, 'update snapshot task successfully');
             await log.audit({ user, desc: 'update snapshot task successfully', ip });
         } catch (error) {
@@ -493,10 +475,10 @@ const model = {
         }
         return result;
     },
-    async enableSnapshotTask(param, user, ip) {
+    async enableSnapshotSchedule(param, user, ip) {
         let result = {};
         try {
-            await snapshot.enableSnapshotTask(param);
+            await snapshot.enableSnapshotSchedule(param);
             result = handler.response(0, 'enable snapshot task successfully');
             await log.audit({ user, desc: 'enable snapshot task successfully', ip });
         } catch (error) {
@@ -506,10 +488,10 @@ const model = {
         }
         return result;
     },
-    async disableSnapshotTask(param, user, ip) {
+    async disableSnapshotSchedule(param, user, ip) {
         let result = {};
         try {
-            await snapshot.disableSnapshotTask(param);
+            await snapshot.disableSnapshotSchedule(param);
             result = handler.response(0, 'disable snapshot task successfully');
             await log.audit({ user, desc: 'disable snapshot task successfully', ip });
         } catch (error) {
@@ -519,10 +501,10 @@ const model = {
         }
         return result;
     },
-    async deleteSnapshotTask(param, user, ip) {
+    async deleteSnapshotSchedule(param, user, ip) {
         let result = {};
         try {
-            await snapshot.deleteSnapshotTask(param);
+            await snapshot.deleteSnapshotSchedule(param);
             result = handler.response(0, 'delete snapshot task successfully');
             await log.audit({ user, desc: 'delete snapshot task successfully', ip });
         } catch (error) {
@@ -532,16 +514,16 @@ const model = {
         }
         return result;
     },
-    async deleteSnapshotTasks(param, user, ip) {
+    async batchDeleteSnapshotSchedule(param, user, ip) {
         let result = {};
         try {
-            await snapshot.deleteSnapshotTasks(param);
-            result = handler.response(0, 'delete snapshot tasks successfully');
-            await log.audit({ user, desc: 'delete snapshot tasks successfully', ip });
+            await snapshot.batchDeleteSnapshotSchedule(param);
+            result = handler.response(0, 'batch delete snapshot task successfully');
+            await log.audit({ user, desc: 'batch delete snapshot task successfully', ip });
         } catch (error) {
             result = handler.response(147, error, param);
-            await log.audit({ user, desc: `delete snapshot tasks failed`, ip });
-            await log.event({ desc: `delete snapshot tasks failed. reason: ${error}` });
+            await log.audit({ user, desc: `batch delete snapshot task failed`, ip });
+            await log.event({ desc: `batch delete snapshot task failed. reason: ${error}` });
         }
         return result;
     },
