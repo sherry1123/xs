@@ -401,11 +401,11 @@ const model = {
     async batchDeleteSnapshot(param, user, ip) {
         try {
             await snapshot.batchDeleteSnapshot(param);
-            await log.audit({ user, desc: `batch delete ${param.names.length} snapshots '${param.names.length > 5 ? String(param.names.slice(0, 5)) + '...' : String(param.names)}' successfully`, ip });
+            await log.audit({ user, desc: `batch delete ${param.names.length} snapshots '${String(handler.bypass(param.names))}' successfully`, ip });
             socket.postEventStatus({ channel: 'snapshot', code: 15, target: { total: param.names.length }, result: true, notify: true });
         } catch (error) {
             handler.error(135, error, param);
-            await log.audit({ user, desc: `batch delete ${param.names.length} snapshots '${param.names.length > 5 ? String(param.names.slice(0, 5)) + '...' : String(param.names)}' failed`, ip });
+            await log.audit({ user, desc: `batch delete ${param.names.length} snapshots '${String(handler.bypass(param.names))}' failed`, ip });
             socket.postEventStatus({ channel: 'snapshot', code: 16, target: { total: param.names.length }, result: false, notify: true });
         }
     },
@@ -499,10 +499,10 @@ const model = {
         try {
             await snapshot.batchDeleteSnapshotSchedule(param);
             result = handler.response(0, 'batch delete snapshot schedule successfully');
-            await log.audit({ user, desc: `batch delete ${param.names.length} snapshot schedules '${param.names.length > 5 ? String(param.names.slice(0, 5)) + '...' : String(param.names)}' successfully`, ip });
+            await log.audit({ user, desc: `batch delete ${param.names.length} snapshot schedules '${String(handler.bypass(param.names))}' successfully`, ip });
         } catch (error) {
             result = handler.response(147, error, param);
-            await log.audit({ user, desc: `batch delete ${param.names.length} snapshot schedules '${param.names.length > 5 ? String(param.names.slice(0, 5)) + '...' : String(param.names)}' failed`, ip });
+            await log.audit({ user, desc: `batch delete ${param.names.length} snapshot schedules '${String(handler.bypass(param.names))}' failed`, ip });
         }
         return result;
     },

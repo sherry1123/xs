@@ -40,6 +40,13 @@ const model = {
     },
     i18n(text) {
         return text.split(' ').map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : String(Number(word)) === word ? word + '个' : word)).join('');
+    },
+    bypass(array) {
+        if (array.length > 5) {
+            array = array.slice(0, 5);
+            array.push('...');
+        }
+        return array;
     }
 };
 module.exports = model;
