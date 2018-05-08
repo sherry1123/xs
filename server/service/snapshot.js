@@ -38,6 +38,7 @@ const model = {
             socket.postEventStatus({ channel: 'snapshot', code: 12, target: name, result: true, notify: true });
             return true;
         } else {
+            socket.postEventStatus({ channel: 'snapshot', code: 12, target: name, result: false, notify: true });
             return false;
         }
     },

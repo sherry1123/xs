@@ -351,10 +351,10 @@ const model = {
         try {
             await snapshot.updateSnapshotSetting(param);
             result = handler.response(0, 'update snapshot setting successfully');
-            await log.audit({ user, desc: `update snapshot <${param.name}> setting successfully`, ip });
+            await log.audit({ user, desc: `update snapshot setting successfully`, ip });
         } catch (error) {
             result = handler.response(122, error, param);
-            await log.audit({ user, desc: `update snapshot <${param.name}> setting failed`, ip });
+            await log.audit({ user, desc: `update snapshot setting failed`, ip });
         }
         return result;
     },
