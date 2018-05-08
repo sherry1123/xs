@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, message, Modal, Tree} from 'antd';
+import {Button, Icon, message, Modal, Spin, Tree} from 'antd';
 import lang from "../Language/lang";
 import httpRequests from "../../http/requests";
 
@@ -16,13 +16,13 @@ class CatalogTree extends Component {
 
     selectNode (selectedKeys){
         // console.info(a);
-        console.info(selectedKeys);
         this.setState({selectedCatalog: selectedKeys});
     }
 
     outputCatalog (){
-        let {getCatalog} = this.props;
-        getCatalog && getCatalog(this.state.selectedCatalog[0]);
+        let {onSelect} = this.props;
+        onSelect && onSelect(this.state.selectedCatalog[0]);
+        this.setState({visible: false});
     }
 
     renderTreeNodes (nodes){
@@ -31,14 +31,14 @@ class CatalogTree extends Component {
                 <Tree.TreeNode
                     {...node}
                     dataRef={node}
-                    icon={({children}) => <Icon type={children ? 'folder-open' : 'folder'} style={{color: '#ffbf24'}} />}
+                    icon={({expanded}) => <Icon type={expanded ? 'folder-open' : 'folder'} style={{color: '#ffbf24'}} />}
                 >
                     {this.renderTreeNodes(node.children)}
                 </Tree.TreeNode> :
                 <Tree.TreeNode
                     {...node}
                     dataRef={node}
-                    icon={({children}) => <Icon type={children ? 'folder-open' : 'folder'} style={{color: '#ffbf24'}} />}
+                    icon={({expanded}) => <Icon type={expanded ? 'folder-open' : 'folder'} style={{color: '#ffbf24'}} />}
                 />;
         });
     }
@@ -82,9 +82,7 @@ class CatalogTree extends Component {
     convertNode (node){
         node.key = node.path;
         node.title = node.name;
-        if (node.size < 1){
-            node.isLeaf = true;
-        }
+        node.isLeaf = node.size < 1;
     }
 
     hide (){
@@ -95,7 +93,7 @@ class CatalogTree extends Component {
         let {treeNodes, selectedCatalog} = this.state;
         return (
             <Modal
-                title={lang('选择导出的目录', 'Select Catalog To Export')}
+                title={lang('选择目录', 'Select Catalog')}
                 width={400}
                 visible={this.state.visible}
                 closable={false}
@@ -119,18 +117,23 @@ class CatalogTree extends Component {
                     </div>
                 }
             >
-                <div>
-                    {lang('已选路径：', 'Selected Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
-                </div>
-                <Tree
-                    showIcon
-                    multiple={false}
-                    defaultExpandedKeys={['/']}
-                    loadData={this.loadNode.bind(this)}
-                    onSelect={this.selectNode.bind(this)}
+                <Spin
+                    indicator={<Icon type="loading" style={{fontSize: 18}} spin />}
+                    spinning={!treeNodes.length}
                 >
-                    {this.renderTreeNodes(treeNodes)}
-                </Tree>
+                    <div style={{marginBottom: 10, fontSize: 12}}>
+                        {lang('已选路径：', 'Selected Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
+                    </div>
+                    <Tree
+                        showIcon
+                        multiple={false}
+                        defaultExpandedKeys={['/']}
+                        loadData={this.loadNode.bind(this)}
+                        onSelect={this.selectNode.bind(this)}
+                    >
+                        {this.renderTreeNodes(treeNodes)}
+                    </Tree>
+                </Spin>
             </Modal>
         );
     }

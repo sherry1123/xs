@@ -22,7 +22,7 @@ class RollingBack extends PureComponent {
                 <section className="fs-rolling-back-content">
                     <div className="fs-rolling-back-img" />
                     <p>
-                        <Icon type="setting" spin style={{marginRight: 24, fontSize: 24}} />
+                        <Icon type="setting" spin style={{marginRight: 24, fontSize: 24, color: '#188fff'}} />
                         {lang('快照正在回滚中，请稍后 ...', 'Snapshot is rolling back, please wait ...')}
                     </p>
                 </section>

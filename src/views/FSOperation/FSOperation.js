@@ -121,6 +121,10 @@ class FSOperation extends Component {
         }
     }
 
+    getPath (path){
+        console.info(path);
+    }
+
     render (){
         let {entryInfo, files} = this.state;
         files = files.filter(file => file.isDir);
@@ -291,7 +295,7 @@ class FSOperation extends Component {
                         </section>
                     </section>
                 </div>
-                <CatalogTree ref={ref => this.CatalogTree = ref} />
+                <CatalogTree ref={ref => this.CatalogTree = ref} onSelect={this.getPath.bind(this)} />
             </section>
         );
     }
