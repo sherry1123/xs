@@ -370,11 +370,8 @@ const model = {
     },
     async createSnapshot(param, user, ip) {
         try {
-            if (await snapshot.createSnapshot(param)) {
-                await log.audit({ user, desc: `create snapshot <${param.name}> successfully`, ip });
-            } else {
-                await log.audit({ user, desc: `create snapshot <${param.name}> failed`, ip });
-            }
+            let result = await snapshot.createSnapshot(param);
+            await log.audit({ user, desc: `create snapshot <${param.name}> ${result ? 'successfully' : 'failed'}`, ip });
         } catch (error) {
             await log.audit({ user, desc: `create snapshot <${param.name}> failed`, ip });
         }
