@@ -35,6 +35,7 @@ const model = {
             socket.postEventStatus({ channel: 'snapshot', code: 11, target: name, result: true, notify: false });
             await promise.runTimeOutInPromise(10);
             await database.updateSnapshot({ name }, { creating: false });
+            socket.postEventStatus({ channel: 'snapshot', code: 12, target: name, result: true, notify: true });
             return true;
         } else {
             return false;

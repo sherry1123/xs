@@ -38,5 +38,8 @@ const model = {
         let [code, index] = [...args];
         return { code, msg: typeof index === 'undefined' ? config.error[code] : config.error[code][index]};
     },
+    i18n(text) {
+        return text.split(' ').map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : word)).join('');
+    }
 };
 module.exports = model;
