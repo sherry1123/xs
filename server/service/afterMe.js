@@ -85,17 +85,12 @@ const model = {
             if (res.data) {
                 for (let i of Object.keys(res.data)) {
                     res.data[i].size = Number(res.data[i].size);
+                    res.data[i].path = `${param.dir === '/' ? '' : param.dir}/${res.data[i].name}`;
                 }
             } else {
                 res.data = [];
             }
-            let dirList = [], fileList = [];
-            for (let i in res.data) {
-                res.data[i].isDir ? dirList.push(res.data[i]) : fileList.push(res.data[i]);
-            }
-            dirList = dirList.sort((prev, next) => (prev.name > next.name));
-            fileList = fileList.sort((prev, next) => (prev.name > next.name));
-            res.data = dirList.concat(fileList);
+            res.data = res.data.sort((prev, next) => (prev.name > next.name));
         }
         return res;
     },
