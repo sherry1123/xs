@@ -96,7 +96,8 @@ const model = {
         ctx.body = await service.getSnapshot(ctx.param);
     },
     '/api/createsnapshot': async ctx => {
-        ctx.body = await service.createSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+        ctx.body = { code: 0, data: 'start to create snapshot' };
+        service.createSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/updatesnapshot': async ctx => {
         ctx.body = await service.updateSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
@@ -105,34 +106,34 @@ const model = {
         ctx.body = { code: 0, data: 'start to delete snapshot' };
         service.deleteSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletesnapshots': ctx => {
-        ctx.body = { code: 0, data: 'start to delete snapshots' };
-        service.deleteSnapshots(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/batchdeletesnapshot': ctx => {
+        ctx.body = { code: 0, data: 'start to batch delete snapshot' };
+        service.batchDeleteSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/rollbacksnapshot': ctx => {
         ctx.body = { code: 0, data: 'start to rollback snapshot' };
         service.rollbackSnapshot(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getsnapshottask': async ctx => {
-        ctx.body = await service.getSnapshotTask(ctx.param);
+    '/api/getsnapshotschedule': async ctx => {
+        ctx.body = await service.getSnapshotSchedule(ctx.param);
     },
-    '/api/createsnapshottask': async ctx => {
-        ctx.body = await service.createSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/createsnapshotschedule': async ctx => {
+        ctx.body = await service.createSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/updatesnapshottask': async ctx => {
-        ctx.body = await service.updateSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/updatesnapshotschedule': async ctx => {
+        ctx.body = await service.updateSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/enablesnapshottask': async ctx => {
-        ctx.body = await service.enableSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/enablesnapshotschedule': async ctx => {
+        ctx.body = await service.enableSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/disablesnapshottask': async ctx => {
-        ctx.body = await service.disableSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/disablesnapshotschedule': async ctx => {
+        ctx.body = await service.disableSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletesnapshottask': async ctx => {
-        ctx.body = await service.deleteSnapshotTask(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/deletesnapshotschedule': async ctx => {
+        ctx.body = await service.deleteSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletesnapshottasks': async ctx => {
-        ctx.body = await service.deleteSnapshotTasks(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/batchdeletesnapshotschedule': async ctx => {
+        ctx.body = await service.batchDeleteSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/getnasexport': async ctx => {
         ctx.body = await service.getNasExport(ctx.param);

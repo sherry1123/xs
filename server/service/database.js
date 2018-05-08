@@ -6,7 +6,7 @@ const auditLog = require('../model/auditLog');
 const hardware = require('../model/hardware');
 const snapshot = require('../model/snapshot');
 const nasExport = require('../model/nasExport');
-const snapshotTask = require('../model/snapshotTask');
+const snapshotSchedule = require('../model/snapshotSchedule');
 const model = {
     async login(param) {
         return await dao.findOne(user, param);
@@ -71,22 +71,22 @@ const model = {
     async deleteSnapshot(param) {
         return await dao.deleteOne(snapshot, param);
     },
-    async getSnapshotTask(param) {
-        return await dao.findAll(snapshotTask, param);
+    async getSnapshotSchedule(param) {
+        return await dao.findAll(snapshotSchedule, param);
     },
-    async addSnapshotTask(param) {
-        return await dao.createOne(snapshotTask, param);
+    async addSnapshotSchedule(param) {
+        return await dao.createOne(snapshotSchedule, param);
     },
-    async updateSnapshotTask(query, param) {
-        return await dao.updateOne(snapshotTask, query, param);
+    async updateSnapshotSchedule(query, param) {
+        return await dao.updateOne(snapshotSchedule, query, param);
     },
-    async deleteSnapshotTask(param) {
-        return await dao.deleteOne(snapshotTask, param);
+    async deleteSnapshotSchedule(param) {
+        return await dao.deleteOne(snapshotSchedule, param);
     },
     async getNasExport(param) {
         return await dao.findAll(nasExport, param);
     },
-    async createNasExport(param) {
+    async addNasExport(param) {
         return await dao.createOne(nasExport, param);
     },
     async updateNasExport(query, param) {
