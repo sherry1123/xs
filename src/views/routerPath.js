@@ -20,17 +20,17 @@ const routerPath = {
     Main: '/orca-fs',
 
 
-    // below paths are Main's children route, soo they have a common prefix '/storm-fs',
+    // below paths are Main's children route, so they have a common prefix '/storm-fs',
     // the corresponding views of these paths will render after Main's rendering is completed
     Dashboard: '/dashboard',
 
-    MetadataNodes: '/metadata-nodes',
+    // MetadataNodes: '/metadata-nodes',
 
     StorageNodes: '/storage-nodes',
 
-    ClientStatistics: '/client-statistics',
+    // ClientStatistics: '/client-statistics',
 
-    UserStatistics: '/user-statistics',
+    // UserStatistics: '/user-statistics',
 
     Snapshot: '/snapshot',
     SnapshotSchedule: '/snapshot-schedule',
@@ -46,10 +46,10 @@ export default routerPath;
 
 export const pathToMenu = {
     Dashboard: [routerPath.Dashboard],
-    MetadataNodes: [routerPath.MetadataNodes],
+    // MetadataNodes: [routerPath.MetadataNodes],
     StorageNodes: [routerPath.StorageNodes],
-    ClientStatistics: [routerPath.ClientStatistics],
-    UserStatistics: [routerPath.UserStatistics],
+    // ClientStatistics: [routerPath.ClientStatistics],
+    // UserStatistics: [routerPath.UserStatistics],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
     Share: [routerPath.Share],
     Management: [routerPath.ManagementSystemLog],
@@ -63,4 +63,4 @@ export const pathToMenu = {
 // 4. If system is already initialized adn user is logged in, only pages under Main are allowed to access.
 // 5. If system is not initialized, only Initialize page is allowed to access.
 
-// All these states mentioned above are synchronized up with HTTP server before react app created in index.js.
+// All these states mentioned above are synchronized up with HTTP server before react app is created in index.js.

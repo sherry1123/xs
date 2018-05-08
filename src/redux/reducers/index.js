@@ -9,7 +9,6 @@ import storageNodeReducer from '../reducers/storageNodeReducer';
 import managementReducer from '../reducers/managementReducer';
 import snapshotReducer from '../reducers/snapshotReducer';
 import shareReducer from './shareReducer';
-import fsOperationReducer from '../reducers/fsOperationReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
@@ -57,10 +56,6 @@ export default combineReducers({
 
                 case 'share':
                     state[key] = shareReducer(main[key], action);
-                    break;
-
-                case 'fsOperation':
-                    state[key] = fsOperationReducer(main[key], action);
                     break;
 
                 default:

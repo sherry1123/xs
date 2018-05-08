@@ -12,7 +12,7 @@ class ManagementSystemLog extends Component {
     }
 
     render (){
-        let {eventLogs, auditLogs} = this.props;
+        let {language, eventLogs, auditLogs} = this.props;
         let eventLogProps = {
             dataSource: eventLogs,
             pagination: {
@@ -41,6 +41,7 @@ class ManagementSystemLog extends Component {
                 title: lang('事件描述', 'Description'),
                 dataIndex: 'desc',
                 key: 'desc',
+                render: text => text[language]
             }, {
                 title: lang('等级', 'Level'),
                 dataIndex: 'level',
@@ -76,6 +77,7 @@ class ManagementSystemLog extends Component {
                 title: lang('用户类型', 'User Type'),
                 dataIndex: 'group',
                 key: 'group',
+                render: text => text[language]
             }, {
                 title: lang('用户登录地址', 'User Login IP'),
                 dataIndex: 'ip',
@@ -84,6 +86,7 @@ class ManagementSystemLog extends Component {
                 title: lang('事件描述', 'Event Description'),
                 dataIndex: 'desc',
                 key: 'desc',
+                render: text => text[language]
             }, {
                 title: lang('时间', 'Time'),
                 dataIndex: 'time',

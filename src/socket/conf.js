@@ -20,8 +20,8 @@ export const eventCodeForEventChannel = {
     deInitializationEnd: [2],
 
     snapshot: [11, 12, 13, 14, 15, 16],
-    snapshotRollBackStart: [16],
-    snapshotRollBackFinish: [17],
+    snapshotRollBackStart: [17],
+    snapshotRollBackFinish: [18],
 
     user: [21],
 };
@@ -37,32 +37,36 @@ export const socketEventCode = {
         english: (target, result) => `System de-initialization ${result ? 'successfully' : 'failed'}!`
     }),
 
-    // code 1-20 for snapshot channel
+    // code 11-20 for snapshot channel
     11: () => ({
         chinese: target => `快照 ${target} 开始创建！`,
         english: target => `Snapshot ${target} started creating！`
     }),
     12: () => ({
+        chinese: (target, result) => `快照 ${target} 创建${result ? '成功' : '失败'}！`,
+        english: (target, result) => `Snapshot ${target} created ${result ? 'successfully' : 'failed'}！`
+    }),
+    13: () => ({
         chinese: target => `快照 ${target} 删除成功！`,
         english: target => `Snapshot ${target} deleted successfully！`
     }),
-    13: () => ({
+    14: () => ({
         chinese: target => `快照 ${target} 删除失败！`,
         english: target => `Snapshot ${target} deleted failed！`
     }),
-    14: () => ({
+    15: () => ({
         chinese: target => `批量删除${target.total}个快照成功！`,
         english: target => `Batch delete ${target.total} snapshots complete!`
     }),
-    15: () => ({
+    16: () => ({
         chinese: (target, result) => `批量删除${target.total}个快照${result ? '成功' : '失败'}！`,
         english: (target, result) => `Batch delete ${target.total} snapshots ${result ? 'successfully' : 'failed'}！`
     }),
-    16: () => ({
+    17: () => ({
         chinese: target => `快照 ${target} 回滚开始！`,
         english: target => `Start rolling back snapshot ${target}！`
     }),
-    17: () => ({
+    18: () => ({
         chinese: (target, result) => `快照 ${target} 回滚${result ? '成功' : '失败'}！`,
         english: (target, result) => `Roll back snapshot ${target} ${result ? 'successfully' : 'failed'}！`
     }),

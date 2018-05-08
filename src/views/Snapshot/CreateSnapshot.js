@@ -76,7 +76,7 @@ class CreateSnapshot extends Component {
             // move this operation to socket, and listen the snapshot start creating event
             // httpRequests.getSnapshotList();
             await this.hide();
-            message.success(lang('快照创建成功!', 'Snapshot created successfully!'));
+            message.success(lang(`开始创建快照${snapshotData.name}!`, `Start creating snapshot${snapshotData.name}!`));
         } catch ({msg}){
             message.error(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
         }
@@ -93,7 +93,7 @@ class CreateSnapshot extends Component {
         });
     }
 
-    async hide (){
+    hide (){
         this.setState({visible: false});
     }
 
@@ -111,7 +111,8 @@ class CreateSnapshot extends Component {
         };
 
         return (
-            <Modal title={lang('创建快照', 'Create Snapshot')}
+            <Modal
+                title={lang('创建快照', 'Create Snapshot')}
                 width={400}
                 visible={this.state.visible}
                 closable={false}

@@ -65,7 +65,8 @@ class SideBar extends Component {
                         onClick={this.changeMenuExpand.bind(this)}
                     />
                 </div>
-                <Menu inlineIndent={16}
+                <Menu
+                    inlineIndent={16}
                     selectedKeys={[this.props.activePage]}
                     openKeys={this.props.activeMenu}
                     mode="inline"

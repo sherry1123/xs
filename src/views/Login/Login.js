@@ -41,7 +41,7 @@ class Login extends Component {
                 if (isInitialized === 'true'){
                     let isLoggedIn = ckGet('login');
                     if (!!isLoggedIn && (isLoggedIn !== 'false')){
-                        this.props.history.replace(routerPath.Main + routerPath.MetadataNodes);
+                        this.props.history.replace(routerPath.Main + routerPath.StorageNodes);
                     }
                 } else {
                     this.props.history.replace(routerPath.Init);

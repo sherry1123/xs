@@ -138,25 +138,5 @@ export default {
                 */
             ]
         },
-        // file system operation
-        // stripe
-        fsOperation: {
-            entryInfo: {
-                dirPath: '/',
-                numTargets: 0,
-                chunkSize: 0,
-                buddyMirror: 1,
-                // isMetadataImage: true,
-            },
-            // file list
-            files: [
-                /*
-                {isDir: true,name: 'opt',size: 2,permissions: 'drwxr-xr-x',user: 'admin1',group: 'root',lastStatusTime: '2018-01-26T03:40:28.921Z',lastModifyTime: '2018-01-26T02:40:28.921Z',lastAccessTime: '2018-01-26T04:02:28.921Z'},
-                {isDir: true,name: 'opt1',size: 0,permissions: 'drwxr-xr-x',user: 'admin2',group: 'root',lastStatusTime: '2018-01-26T03:40:28.921Z',lastModifyTime: '2018-01-26T02:33:28.921Z',lastAccessTime: '2018-01-26T04:33:28.921Z'},
-                {isDir: true,name: 'opt2',size: 0,permissions: 'drwxr-xr-x',user: 'admin1',group: 'root',lastStatusTime: '2018-01-26T03:40:28.921Z',lastModifyTime: '2018-01-26T02:40:28.921Z',lastAccessTime: '2018-01-26T04:02:28.921Z'},
-                {isDir: false,name: 'abc',size: '4.00 Byte',permissions: 'drwxr-xr-x',user: 'admin1',group: 'root',lastStatusTime: '2018-01-26T03:40:28.921Z',lastModifyTime: '2018-01-26T02:40:28.921Z',lastAccessTime: '2018-01-26T04:02:28.921Z'},
-                */
-            ],
-        }
     }
 }

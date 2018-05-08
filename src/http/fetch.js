@@ -52,4 +52,4 @@ export const fetchGet = (url, param) => (initRequest(initSearchUrl(url, param), 
 
 export const fetchPost = (url, param) => (initRequest(url, {method: 'POST', body: JSON.stringify(param)}));
 
-export const fetchMock = () => new Promise(resolve => setTimeout(resolve(true), 1500));
+export const fetchMock = (data) => new Promise(resolve => setTimeout(() => resolve(data || true), 1500));

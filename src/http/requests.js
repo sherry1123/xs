@@ -8,13 +8,13 @@ import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
 import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
-import fsOperationAction from '../redux/actions/fsOperationAction';
 
 const requestMiddleWare = fn => {
     try {
         return fn();
     } catch (e){
-        console.info('http request error: ' + (e.msg || 'no clear error message'));
+        let {language} = store.getState();
+        console.info('http request error: ' + (e.msg || language === 'chinese' ? '无明确错误信息' : 'no clear error message'));
     }
 };
 
@@ -240,15 +240,11 @@ export default  {
 
     // fs operation
     getEntryInfo (dir){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getentryinfo', {dir});
-            !!data && store.dispatch(fsOperationAction.setEntryInfo(data));
-        });
+        return requestMiddleWare(async () => await fetchGet('/api/getentryinfo', {dir}));
     },
 
     async getFiles (dir){
-        let data = await fetchGet('api/getfiles', {dir});
-        !!data && store.dispatch(fsOperationAction.setFiles(data));
+        return await fetchGet('api/getfiles', {dir});
     },
 
     async saveEntryInfo (data){

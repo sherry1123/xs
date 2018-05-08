@@ -2,12 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, /*Checkbox,*/ Form, Icon, Input, message, Select, Table, Popover} from 'antd';
 import lang from '../../components/Language/lang';
-import {formatStorageSize} from '../../services';
 import httpRequests from '../../http/requests';
-
-// according to previous file system operation page's design, directory browser or stripe setting
-// is independent components for each other, so introduce 'fsOperation' state in redux to provide state
-// record for page jumping, but now they're in a same component, maybe this state management design should be changed.
+import CatalogTree from '../../components/CatalogTree/CatalogTree';
 
 class FSOperation extends Component {
     constructor (props){
@@ -26,6 +22,7 @@ class FSOperation extends Component {
         this.directoryStack = [];
         this.state = {
             dirPath: entryInfo.dirPath,
+            files: [],
             entryInfo,
             entryInfoReadonly: false // files only allow read, directories allow read and set
         };
@@ -39,28 +36,28 @@ class FSOperation extends Component {
         this.queryDirPath(defaultDirPath);
     }
 
-    componentWillReceiveProps (nextProps){
-        let {entryInfo} = nextProps;
-        this.setState({entryInfo});
-    }
-
-    async getFilesByPath (dirPath){
+    async getFilesByPath (dirPath, needBackIfError){
         this.queryDirLock = true;
         try {
-            await httpRequests.getFiles(dirPath);
-            await this.setState({dirPath});
+            let files = await httpRequests.getFiles(dirPath);
+            await this.setState({files, dirPath});
         } catch (e){
-            // should use code to distinguish it's network error or actually no such directory
+            // if query path error, need to remove previous one in directoryStack
+            needBackIfError && this.directoryStack.shift();
+            // should use code to distinguish it's network error or actually no such catalog
             message.warning(lang('该路径不存在', 'This path is not existed'));
         }
         this.queryDirLock = false;
     }
 
-    queryDirPath (dirPath = this.state.dirPath){
+    async queryDirPath (dirPath = this.state.dirPath){
+        this.CatalogTree.getWrappedInstance().show();
+
         // query files
         this.getFilesByPath(dirPath);
         // query entry info
-        httpRequests.getEntryInfo(dirPath);
+        let entryInfo = await httpRequests.getEntryInfo(dirPath);
+        this.setState({entryInfo});
         // console.info(dirPath);
     }
 
@@ -71,29 +68,32 @@ class FSOperation extends Component {
         return dirPath;
     }
 
-    returnUpperDirectory (){
+    async returnUpperDirectory (){
         if (!this.queryDirLock){
             this.directoryStack.shift();
             let lastDirPath = this.backTrackDirectoryStack(); // state => render
             this.getFilesByPath(lastDirPath); // props => render
-            httpRequests.getEntryInfo(lastDirPath);
+            let entryInfo = await httpRequests.getEntryInfo(lastDirPath);
+            this.setState({entryInfo});
         }
     }
 
-    enterDirectory (dirPath){
+    async enterDirectory (dirPath){
         if (!this.queryDirLock){
             this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
             let nextDirPath = this.backTrackDirectoryStack();
-            this.getFilesByPath(nextDirPath);
-            httpRequests.getEntryInfo(nextDirPath);
+            this.getFilesByPath(nextDirPath, true);
+            let entryInfo = await httpRequests.getEntryInfo(nextDirPath);
+            this.setState({entryInfo});
         }
     }
 
-    getEntryInfo (dirPath, entryInfoReadonly){
+    async getEntryInfo (dirPath, entryInfoReadonly){
         this.setState({entryInfoReadonly});
         let currentDirPath = this.backTrackDirectoryStack();
         currentDirPath = currentDirPath + (this.directoryStack.length > 1 ? '/' : '') + dirPath;
-        httpRequests.getEntryInfo(currentDirPath);
+        let entryInfo = await httpRequests.getEntryInfo(currentDirPath);
+        this.setState({entryInfo});
     }
 
     entryInfoFormChange (key, value){
@@ -122,9 +122,9 @@ class FSOperation extends Component {
     }
 
     render (){
-        let {entryInfo} = this.state;
-        let {language, files} = this.props;
+        let {entryInfo, files} = this.state;
         files = files.filter(file => file.isDir);
+        let {language} = this.props;
         if (this.directoryStack.length > 1){
             files.unshift({name: '..', isDir: true});
         }
@@ -152,13 +152,7 @@ class FSOperation extends Component {
                             <span><Icon type="file" /> {text}</span>
                     )
                 },
-                {title: lang('入口 / 大小', 'Entry / Size'), width: 80, dataIndex: 'size',
-                    render: (text, record) => (
-                        record.isDir && record.hasOwnProperty('user') ?
-                            text + lang(' 入口', ' Entries') :
-                            formatStorageSize(text)
-                    )
-                },
+                {title: lang('目录数量', 'Catalog Number'), width: 80, dataIndex: 'size', render: text => text},
                 {title: lang('用户', 'User'), width: 100, dataIndex: 'user'},
                 {title: lang('组', 'Group'), width: 100, dataIndex: 'group'},
                 {title: lang('权限', 'Permission'), width: 100, dataIndex: 'permissions'},
@@ -297,14 +291,15 @@ class FSOperation extends Component {
                         </section>
                     </section>
                 </div>
+                <CatalogTree ref={ref => this.CatalogTree = ref} />
             </section>
         );
     }
 }
 
 const mapStateToProps = state => {
-    const {language, main: {fsOperation: {entryInfo, files}}} = state;
-    return {language, entryInfo, files};
+    const {language} = state;
+    return {language};
 };
 
 export default connect(mapStateToProps)(FSOperation);
