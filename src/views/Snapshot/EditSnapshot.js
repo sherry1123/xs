@@ -9,7 +9,6 @@ class EditSnapshot extends Component {
         super(props);
         this.state = {
             visible: false,
-            formValid: false,
             formSubmitting: false,
             snapshotData: {
                 name: '',
@@ -63,28 +62,29 @@ class EditSnapshot extends Component {
         };
 
         return (
-            <Modal title={lang('编辑快照', 'Edit Snapshot')}
-                   width={400}
-                   visible={this.state.visible}
-                   closable={false}
-                   maskClosable={false}
-                   footer={
-                       <div>
-                           <Button
-                               size='small'
-                               onClick={this.hide.bind(this)}
-                           >
-                               {lang('取消', 'Cancel')}
-                           </Button>
-                           <Button
-                               type="primary" disabled={!this.state.formValid}
-                               loading={this.state.formSubmitting}
-                               size='small' onClick={this.editSnapshot.bind(this)}
-                           >
-                               {lang('编辑', 'Edit')}
-                           </Button>
-                       </div>
-                   }
+            <Modal
+                title={lang('编辑快照', 'Edit Snapshot')}
+                width={400}
+                visible={this.state.visible}
+                closable={false}
+                maskClosable={false}
+                footer={
+                    <div>
+                        <Button
+                            size='small'
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            type="primary"
+                            loading={this.state.formSubmitting}
+                            size='small' onClick={this.editSnapshot.bind(this)}
+                        >
+                            {lang('编辑', 'Edit')}
+                        </Button>
+                    </div>
+                }
             >
                 <Form>
                     <Form.Item {...formItemLayout} label={lang('名称', 'Name')}>
