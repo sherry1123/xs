@@ -36,10 +36,10 @@ const model = {
     },
     responseWithoutLog(...args) {
         let [code, index] = [...args];
-        return { code, msg: typeof index === 'undefined' ? config.error[code] : config.error[code][index]};
+        return { code, msg: typeof index === 'undefined' ? config.error[code] : config.error[code][index] };
     },
     i18n(text) {
-        return text.split(' ').map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : word)).join('');
+        return text.split(' ').map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : String(Number(word)) === word ? word + '个' : word)).join('');
     }
 };
 module.exports = model;
