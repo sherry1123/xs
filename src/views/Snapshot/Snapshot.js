@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, Input, message, Modal, Table} from 'antd';
+import {Button, Input, message, Modal, Popover, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
 import SetSnapshot from './SetSnapshot';
@@ -60,7 +60,17 @@ class Snapshot extends Component {
     }
 
     create (){
-        this.createSnapshotWrapper.getWrappedInstance().show();
+        let {snapshotList, snapshotSetting: {manual}} = this.props;
+        let manualSnapshotNumber = 0;
+        snapshotList.forEach(({isAuto}) => !isAuto && (manualSnapshotNumber ++));
+        if (manualSnapshotNumber >= manual){
+            message.warning(lang(
+                `手动快照数量已达到限制数量${manual}个，请在创建之前先删除一些！`,
+                `Manual snapshot number has reached the maximum ${manual}, please firstly delete some before creating!`
+            ));
+        } else {
+            this.createSnapshotWrapper.getWrappedInstance().show();
+        }
     }
 
     setting (){
@@ -157,6 +167,8 @@ class Snapshot extends Component {
     }
 
     render (){
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
+        let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
         let {batchDeleteSnapshotNames, snapshotList} = this.state;
         let snapshotHandling = snapshotList.some(snapshot => snapshot.creating || snapshot.deleting || snapshot.rollbacking);
         let tableProps = {
@@ -196,27 +208,30 @@ class Snapshot extends Component {
                     render: (text, record, index) => {
                         return (!record.creating && !record.deleting && !record.rollbacking) ?
                             <div>
-                                <a
-                                    disabled={snapshotHandling}
-                                    title={lang('编辑', 'Edit')}
-                                    onClick={this.edit.bind(this, record)}
-                                >
-                                    <Icon style={{fontSize: 15}} type="edit" />
-                                </a>
-                                <a
-                                    disabled={snapshotHandling}
-                                    onClick={this.rollback.bind(this, record, index)}
-                                    title={lang('回滚', 'Roll Back')} style={{marginLeft: 10}}
-                                >
-                                    <Icon style={{fontSize: 15}} type="rollback" />
-                                </a>
-                                <a
-                                    disabled={snapshotHandling}
-                                    onClick={this.delete.bind(this, record, index)}
-                                    title={lang('删除', 'Delete')} style={{marginLeft: 10}}
-                                >
-                                    <Icon style={{fontSize: 15}} type="delete" />
-                                </a>
+                                <Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+                                    <Button
+                                        {...buttonConf}
+                                        disabled={snapshotHandling}
+                                        onClick={this.edit.bind(this, record)}
+                                        icon="edit"
+                                    />
+                                </Popover>
+                                <Popover {...buttonPopoverConf} content={lang('回滚', 'Roll Back')}>
+                                    <Button
+                                        {...buttonConf}
+                                        disabled={snapshotHandling}
+                                        onClick={this.rollback.bind(this, record, index)}
+                                        icon="rollback"
+                                    />
+                                </Popover>
+                                <Popover {...buttonPopoverConf} content={lang('删除', 'Delete')}>
+                                    <Button
+                                        {...buttonConf}
+                                        disabled={snapshotHandling}
+                                        onClick={this.delete.bind(this, record, index)}
+                                        icon="delete"
+                                    />
+                                </Popover>
                             </div> :
                             <a disabled>
                                 {
@@ -281,8 +296,8 @@ class Snapshot extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList, settingData}}} = state;
-    return {language, snapshotList, settingData};
+    const {language, main: {snapshot: {snapshotList, snapshotSetting}}} = state;
+    return {language, snapshotList, snapshotSetting};
 };
 
 export default connect(mapStateToProps)(Snapshot);

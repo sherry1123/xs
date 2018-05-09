@@ -76,9 +76,9 @@ class CreateSnapshot extends Component {
             // move this operation to socket, and listen the snapshot start creating event
             // httpRequests.getSnapshotList();
             await this.hide();
-            message.success(lang(`开始创建快照${snapshotData.name}!`, `Start creating snapshot${snapshotData.name}!`));
+            message.success(lang(`开始创建快照 ${snapshotData.name}!`, `Start creating snapshot ${snapshotData.name}!`));
         } catch ({msg}){
-            message.error(lang('快照创建失败, 原因: ', 'Snapshot created failed, reason: ') + msg);
+            message.error(lang(`快照 ${snapshotData.name} 创建失败, 原因: `, `Create snapshot ${snapshotData.name} failed, reason: `) + msg);
         }
         this.setState({formSubmitting: false});
     }

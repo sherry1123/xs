@@ -173,7 +173,8 @@ class CreateSnapshotSchedule extends Component {
         };
 
         return (
-            <Modal title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
+            <Modal
+                title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
                 width={400}
                 closable={false}
                 maskClosable={false}
@@ -276,7 +277,9 @@ class CreateSnapshotSchedule extends Component {
                         help={this.state.validation.autoDisableTime.help}
                     >
                         <Input
-                            style={{width: isChinese ? 170 : 140}} type="text" size="small"
+                            style={{width: isChinese ? 140 : 140}}
+                            type="text"
+                            size="small"
                             disabled={!this.state.scheduleData.autoDisable}
                             addonAfter={lang('天后', 'Day(s) Later')}
                             value={this.state.scheduleData.autoDisableTimeNumber}

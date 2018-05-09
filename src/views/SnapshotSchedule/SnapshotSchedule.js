@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Button, Icon, Input, message, Modal, Switch, Table} from "antd";
+import {Button, Input, message, Modal, Popover, Switch, Table} from "antd";
 import CreateSnapshotSchedule from './CreateSnapshotSchedule';
 import EditSnapshotSchedule from './EditSnapshotSchedule';
 import lang from "../../components/Language/lang";
@@ -149,6 +149,8 @@ class SnapshotSchedule extends Component {
     }
 
     render (){
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
+        let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
         let {batchDeleteScheduleNames, snapshotScheduleList} = this.state;
         let tableProps = {
             dataSource: snapshotScheduleList,
@@ -193,25 +195,25 @@ class SnapshotSchedule extends Component {
                 title: lang('操作', 'Operations'), width: 120,
                 render: (text, record, index) => <div>
                     <Switch
-                        size="small" style={{marginTop: -6}}
+                        size="small" style={{marginTop: -2, marginRight: 5}}
                         title={record.isRunning ? lang('关闭', 'Disable') : lang('执行', 'Execute')}
                         checked={record.isRunning}
                         onChange={this.switch.bind(this, record, index)}
                     />
-                    <a
-                        onClick={this.edit.bind(this, record)}
-                        title={lang('编辑', 'Edit')}
-                        style={{marginLeft: 10}}
-                    >
-                        <Icon style={{fontSize: 15}} type="edit" />
-                    </a>
-                    <a
-                        onClick={this.delete.bind(this, record, index)}
-                        title={lang('删除', 'Delete')}
-                        style={{marginLeft: 10}}
-                    >
-                        <Icon style={{fontSize: 15}} type="delete" />
-                    </a>
+                    <Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+                        <Button
+                            {...buttonConf}
+                            icon="edit"
+                            onClick={this.edit.bind(this, record)}
+                        />
+                    </Popover>
+                    <Popover {...buttonPopoverConf} content={lang('删除', 'Delete')}>
+                        <Button
+                            {...buttonConf}
+                            icon="delete"
+                            onClick={this.delete.bind(this, record, index)}
+                        />
+                    </Popover>
                 </div>
 
             }],
