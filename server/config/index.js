@@ -32,9 +32,9 @@ exports.snapshot = {
     auto: 39
 };
 exports.setting = {
-    nodeList: 'nodelist',
-    initParam: 'initparam',
-    snapshotSetting: 'snapshotsetting'
+    nodeList: 'NODE-LIST',
+    initParam: 'INITIALIZE-PARAMETER',
+    snapshotSetting: 'SNAPSHOT-SETTING'
 };
 exports.api = {
     agentd: {

@@ -1,6 +1,7 @@
 const log = require('./log');
 const email = require('./email');
 const status = require('./status');
+const config = require('../config');
 const init = require('./initialize');
 const afterMe = require('./afterMe');
 const database = require('./database');
@@ -46,7 +47,7 @@ const model = {
     async initCluster(param) {
         let current = 0, total = 8;
         try {
-            let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
+            let { mongodbParam, orcafsParam, nodeList } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
             if (!res.errorId) {
                 let getInitProgress = setInterval(async () => {
@@ -66,12 +67,12 @@ const model = {
                             await init.initMongoDB(mongodbParam);
                             current = 6;
                             socket.postInitStatus(current, 0, total);
-                            await init.saveInitInfo({ nodelist, initparam: param });
+                            await init.saveInitInfo({ nodeList, initParam: param });
                             current = 7;
                             init.setInitStatus(true);
                             socket.postInitStatus(current, 0, total);
                             logger.info('initialize the cluster successfully');
-                            await init.restartServer(nodelist);
+                            await init.restartServer(nodeList);
                         }
                     }
                 }, 1000);
@@ -102,15 +103,15 @@ const model = {
                     } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
                         let mongodbStatus = await init.getMongoDBStatus();
-                        let nodelist = ['127.0.0.1'];
+                        let nodeList = ['127.0.0.1'];
                         if (mongodbStatus) {
-                            nodelist = await database.getSetting({ key: 'nodelist' });
-                            await init.antiInitMongoDB(nodelist);
+                            nodeList = await database.getSetting({ key: config.setting.nodeList });
+                            await init.antiInitMongoDB(nodeList);
                         }
                         process.send('de-initialize end');
                         socket.postEventStatus('cluster', 2, 'cluster', true, true);
                         logger.info('de-initialize the cluster successfully');
-                        await init.restartServer(nodelist);
+                        await init.restartServer(nodeList);
                     }
                 }
             }, 1000);

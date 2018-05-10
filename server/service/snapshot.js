@@ -13,7 +13,7 @@ const model = {
         rollbacking = status;
     },
     async getSnapshotSetting(param) {
-        return await database.getSetting({ key: 'snapshotsetting' })
+        return await database.getSetting({ key: config.setting.snapshotSetting })
     },
     async updateSnapshotSetting(param) {
         let { total, manual, auto } = param;
@@ -104,7 +104,7 @@ const model = {
             let { name, startTime, autoDisableTime, interval, deleteRound } = isRunningSchedule[0];
             let timeGapInSecond = (currentTime - startTime) / 1000;
             if (timeGapInSecond >= interval && !(timeGapInSecond % interval) && (!autoDisableTime || timeGapInSecond <= autoDisableTime)) {
-                let snapshotSetting = await database.getSetting({ key: 'snapshotsetting' });
+                let snapshotSetting = await database.getSetting({ key: config.setting.snapshotSetting });
                 let limit = Number(snapshotSetting.auto);
                 let autoSnapshotList = await database.getSnapshot({ isAuto: true });
                 let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');

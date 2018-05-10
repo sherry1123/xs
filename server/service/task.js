@@ -9,7 +9,7 @@ const model = {
         let date = new Date();
         let api = config.api.agentd.hardware;
         try {
-            let ipList = await database.getSetting({ key: 'nodelist' });
+            let ipList = await database.getSetting({ key: config.setting.nodeList });
             let data = await Promise.all(ipList.map(async ip => (await request.get(api.replace('localhost', ip), {}, {}, true))));
             await database.addHardware({ date, ipList, data });
         } catch (error) {

@@ -75,7 +75,7 @@ const model = {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
         let mongodbParam = {};
         let orcafsParam = [];
-        let nodelist = Array.from(new Set(mgmt.concat(meta, storage)));
+        let nodeList = Array.from(new Set(mgmt.concat(meta, storage)));
         if (HA) {
             mongodbParam = { primary: mgmt[0], secondary: mgmt[1], arbiter: meta[0], replicaSet: true };
         } else {
@@ -99,7 +99,7 @@ const model = {
                 }
             ]
         }
-        return { mongodbParam, orcafsParam, nodelist };
+        return { mongodbParam, orcafsParam, nodeList };
     },
     async initMongoDB(param) {
         let { primary, secondary, arbiter, replicaSet } = param;
@@ -137,10 +137,10 @@ const model = {
         await promise.runCommandInPromise('sleep 20');
         await mongoose.connect(`mongodb://localhost/${config.database.name}`);
         for (let i of Object.keys(param)) {
-            await database.addSetting({ key: i, value: param[i] });
+            await database.addSetting({ key: config.setting[i], value: param[i] });
         }
         await database.addUser({ username: 'admin', password: '123456' });
-        await database.addSetting({ key: 'snapshotsetting', value: config.snapshot });
+        await database.addSetting({ key: config.setting.snapshotSetting, value: config.snapshot });
     },
     async antiInitMongoDB(ipList) {
         let command = `killall mongod; sleep 5; rm -rf ${config.database.dbpath}/*`;
@@ -158,11 +158,11 @@ const model = {
         let token = await afterMe.getToken();
         return await request.post(config.api.orcafs.destroycluster, {}, token, true);
     },
-    async restartServer(nodelist) {
+    async restartServer(nodeList) {
         let command = 'service orcafs-gui restart';
-        nodelist = nodelist.reverse();
-        for (let i = 0; i < nodelist.length; i++) {
-            i === nodelist.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodelist[i], command);
+        nodeList = nodeList.reverse();
+        for (let i = 0; i < nodeList.length; i++) {
+            i === nodeList.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodeList[i], command);
         }
     }
 };
