@@ -32,13 +32,13 @@ const model = {
         let count = await database.getSnapshotCount({ isAuto: false });
         if (count < limit) {
             await database.addSnapshot({ name, description, isAuto, creating, deleting, rollbacking, createTime });
-            socket.postEventStatus({ channel: 'snapshot', code: 11, target: name, result: true, notify: false });
+            socket.postEventStatus('snapshot', 11, name, true, false);
             await promise.runTimeOutInPromise(10);
             await database.updateSnapshot({ name }, { creating: false });
-            socket.postEventStatus({ channel: 'snapshot', code: 12, target: name, result: true, notify: true });
+            socket.postEventStatus('snapshot', 12, name, true, true);
             return true;
         } else {
-            socket.postEventStatus({ channel: 'snapshot', code: 12, target: name, result: false, notify: true });
+            socket.postEventStatus('snapshot', 12, name, false, true);
             return false;
         }
     },

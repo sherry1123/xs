@@ -1,9 +1,9 @@
 const IO = require('koa-socket');
 const io = new IO();
 exports.io = io;
-exports.postInitStatus = status => {
-    io.broadcast('init status', status);
+exports.postInitStatus = (current, status, total) => {
+    io.broadcast('init status', { current, status, total });
 };
-exports.postEventStatus = status => {
-    io.broadcast('event status', status);
+exports.postEventStatus = (channel, code, target, result, notify) => {
+    io.broadcast('event status', { channel, code, target, result, notify });
 };
