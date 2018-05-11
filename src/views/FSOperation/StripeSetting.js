@@ -15,13 +15,6 @@ class StripeSetting extends Component {
         };
     }
 
-    async getEntryInfo (dirPath){
-        let currentDirPath = this.backTrackDirectoryStack();
-        currentDirPath = currentDirPath + (this.directoryStack.length > 1 ? '/' : '') + dirPath;
-        let entryInfo = await httpRequests.getEntryInfo(currentDirPath);
-        this.setState({entryInfo});
-    }
-
     entryInfoFormChange (key, value){
         let entryInfo = Object.assign({}, this.state.entryInfo);
         if (key === 'stripeMode'){
@@ -58,7 +51,7 @@ class StripeSetting extends Component {
                 dirPath: path,
             }
         });
-        let entryInfo = await this.getEntryInfo(path);
+        let entryInfo = await httpRequests.getEntryInfo(path);
         this.setState({entryInfo});
     }
 
@@ -177,4 +170,12 @@ const mapStateToProps = state => {
     return {language};
 };
 
-export default connect(mapStateToProps)(StripeSetting);
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+    return Object.assign({}, stateProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(StripeSetting);

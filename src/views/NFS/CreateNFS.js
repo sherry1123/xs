@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Button, Form, Icon, Input, Modal, Table} from "antd";
+import {Button, Form, Icon, Input, Modal, Popover, Table} from "antd";
 import CatalogTree from '../../components/CatalogTree/CatalogTree';
 import CreateClient from './CreateClient';
 import lang from "../../components/Language/lang";
@@ -47,13 +47,10 @@ class CreateNFS extends Component {
     }
 
     async validateForm (key){
-        let {path} = this.state;
+        let {path} = this.state.shareData;
         if (key === 'path'){
             if (!path){
-                this.validationUpdateState('path', {
-                    cn: '请选择要做共享的路径',
-                    en: 'Please select the share path'
-                }, false);
+                this.validationUpdateState('path', {cn: '请选择需要做NFS共享的目录路径', en: 'Please select the share catalog path'}, false);
             } else {
                 this.validationUpdateState('path', {cn: '', en: ''}, true);
             }
@@ -83,8 +80,17 @@ class CreateNFS extends Component {
     }
 
     addClient (clientList){
-        let shareData = Object.assign(this.state.shareData);
+        let shareData = Object.assign({}, this.state.shareData);
         shareData.clientList = shareData.clientList.concat(clientList);
+        this.setState({shareData});
+        this.validateForm('path');
+    }
+
+    removeClient (index){
+        let shareData = Object.assign({}, this.state.shareData);
+        let {clientList} = shareData;
+        clientList.splice(index, 1);
+        shareData.clientList = clientList;
         this.setState({shareData});
     }
 
@@ -115,6 +121,8 @@ class CreateNFS extends Component {
     }
 
     render (){
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0, placement: 'right'};
+        let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
@@ -143,6 +151,16 @@ class CreateNFS extends Component {
                 {title: lang('类型', 'Type'), width: 100, dataIndex: 'type',},
                 {title: lang('权限', 'Permission'), width: 100, dataIndex: 'permission',
                     render: text => this.state.permissionMap[text]
+                },
+                {width: 40,
+                    render: (text, record, index) => <Popover {...buttonPopoverConf} content={lang('移除', 'Rmove')}>
+                        <Button
+                            {...buttonConf}
+                            onClick={this.removeClient.bind(this, index)}
+                            icon="delete"
+                        />
+                    </Popover>
+
                 }
             ],
         };
@@ -158,6 +176,7 @@ class CreateNFS extends Component {
                     <div>
                         <Button
                             size="small"
+                            disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.create.bind(this)}
                         >
@@ -175,18 +194,18 @@ class CreateNFS extends Component {
                 <Form>
                     <Form.Item
                         {...formItemLayout}
-                        label={lang('路径', 'Path')}
+                        label={lang('共享路径', 'Share Path')}
                         validateStatus={this.state.validation.path.status}
                         help={this.state.validation.path.help}
                     >
                         <Input
                             style={{width: isChinese ? 280 : 260}} size="small"
                             readOnly
-                            placeholder={lang('请输入共享路径', 'please enter share path')}
+                            placeholder={lang('请选择要共享的目录路径', 'Please select the share catalog path')}
                             value={this.state.shareData.path}
                             addonAfter={
                                 <Icon
-                                    type="ellipsis"
+                                    type="folder-open"
                                     style={{cursor: 'pointer'}}
                                     onClick={this.showCatalogTree.bind(this)}
                                 />
@@ -198,7 +217,7 @@ class CreateNFS extends Component {
                             style={{width: isChinese ? 280 : 260}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             maxLength={255}
-                            placeholder={lang('描述为选填项，长度0-255位', 'description is optional, length is 0-255')}
+                            placeholder={lang('描述为选填项，长度0-255位', 'Description is optional, length is 0-255')}
                             value={this.state.shareData.description}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
@@ -212,6 +231,15 @@ class CreateNFS extends Component {
                         >
                             {lang('客户端', 'Client')} <Icon type={this.state.showClient ? 'up' : 'down'} />
                         </span>
+                        <Popover
+                            {...buttonPopoverConf}
+                            content={lang(
+                                '此处客户端为非必需项，可在创建该NFS共享成功后再为其添加客户端',
+                                'Clients here is not necessary, can create the clients for NFS after itself is created'
+                            )}
+                        >
+                            <Icon type="question-circle-o" className="fs-info-icon m-ll" />
+                        </Popover>
                         {
                             this.state.showClient && <span
                                 style={{float: 'right', fontSize: 12, color: '#1890ff', cursor: 'pointer', userSelect: 'none'}}

@@ -42,13 +42,13 @@ class CreateClient extends Component {
     }
 
     async validateForm (key){
+        await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {clientList, clientData: {ips}} = this.state;
         if (key === 'ips'){
             // validate essentials:
             // 1.validate the enter of every hostname、IP or segment is match with IPV4 or hostname pattern
             // 2.validate if one of the enter of every hostname、IP or segment is already existed in this NFS share
-            await this.validationUpdateState('ips', {cn: '', en: ''}, true);
-            if (!ips){
+            if (!this.state.clientData.ips){
                 this.validationUpdateState('ips', {cn: '请输入主机名或IP', en: 'please enter hostname or IP'}, false);
             }
             ips = ips.split(';').filter(ip => !!ip.trim());

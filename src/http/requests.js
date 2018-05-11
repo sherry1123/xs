@@ -246,8 +246,17 @@ export default  {
         });
     },
 
+    async deleteNFSShare (shareData){
+        await fetchMock(shareData);
+    },
+
     async getClientList (){
-        return requestMiddleWare(async () => await fetchMock([{name: 'client-1', type: 'host', permission: 'readonly'}]));
+        return requestMiddleWare(async () => await fetchMock([
+            {ip: '192.168.1.2', type: 'host', permission: 'read-only'},
+            {ip: '192.168.1.3', type: 'host', permission: 'read-only'},
+            {ip: '192.168.2.0/24', type: 'host', permission: 'read-only'},
+            {ip: 'wangxujie', type: 'host', permission: 'read-only'},
+        ]));
     },
 
     async getCIFSList (){

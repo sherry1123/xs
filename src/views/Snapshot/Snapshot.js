@@ -162,7 +162,7 @@ class Snapshot extends Component {
         let {batchDeleteNames, snapshotList} = this.state;
         let snapshotHandling = snapshotList.some(snapshot => snapshot.creating || snapshot.deleting || snapshot.rollbacking);
         let tableProps = {
-            size: 'small',
+            size: 'normal',
             dataSource: snapshotList,
             pagination: {
                 pageSize: 15,

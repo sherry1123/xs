@@ -21,7 +21,7 @@ class UserSettingPopover extends Component {
         return (
             <div style={{padding: '5px 0'}}>
                 <Button size="small" icon="lock" onClick={this.show.bind(this)}>
-                    {lang('修改密码', 'Change Password')}
+                    {lang('修改密码', 'Password')}
                 </Button>
                 <br/>
                 <Button size="small" icon="logout" onClick={this.logout.bind(this)} style={{marginTop: 10}}>

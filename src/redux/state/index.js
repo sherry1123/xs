@@ -140,8 +140,8 @@ export default {
                 {path: '/a/a2', description: 'xxxxx'},
             ],
             CIFSList: [
-                {path: '/b/b1', description: 'yyyyy'},
-                {path: '/b/b2', description: 'xxxxx'},
+                {name: 'cifs_share_01', path: '/b/b1', description: 'yyyyy'},
+                {name: 'cifs_share_02', path: '/b/b2', description: 'xxxxx'},
             ],
         },
         // authenticated local user and group for CIFS share

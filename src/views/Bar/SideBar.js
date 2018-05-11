@@ -101,7 +101,7 @@ class SideBar extends Component {
                         <Icon type="schedule" />{lang('定时快照', 'Timed Snapshot')}
                     </Menu.Item>
                     <Menu.SubMenu
-                        key="share"
+                        key="Share"
                         title={
                             <span>
                                 <Icon type="share-alt" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />

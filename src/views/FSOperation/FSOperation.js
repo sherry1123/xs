@@ -96,8 +96,9 @@ class FSOperation extends Component {
         }
     }
 
-    stripeSetting (){
-        this.stripeSettingWrapper.getWrappedInstance().show();
+    stripeSetting ({path}){
+
+        this.stripeSettingWrapper.getWrappedInstance().show(path);
     }
 
     render (){
@@ -154,14 +155,14 @@ class FSOperation extends Component {
                                 <Button
                                     {...buttonConf}
                                     icon="setting"
-                                    onClick={this.stripeSetting.bind(this)}
+                                    onClick={this.stripeSetting.bind(this, record)}
                                 />
                             </Popover> :
                             <Popover {...buttonPopoverConf} content={lang('返回上层目录', 'Return Upper Directory')}>
                                 <Button
                                     {...buttonConf}
                                     icon="rollback"
-                                    onClick={() => {this.returnUpperDirectory.bind(this)()}}
+                                    onClick={this.returnUpperDirectory.bind(this)}
                                 />
                             </Popover>
                     )

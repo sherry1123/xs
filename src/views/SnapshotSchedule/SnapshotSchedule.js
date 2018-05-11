@@ -155,7 +155,7 @@ class SnapshotSchedule extends Component {
         let {batchDeleteScheduleNames, snapshotScheduleList} = this.state;
         let tableProps = {
             dataSource: snapshotScheduleList,
-            size: 'small',
+            size: 'normal',
             pagination: {
                 pageSize: 15,
                 showTotal: (total, range) => lang(
