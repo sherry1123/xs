@@ -1,6 +1,7 @@
 const log = require('./log');
 const email = require('./email');
 const status = require('./status');
+const config = require('../config');
 const init = require('./initialize');
 const afterMe = require('./afterMe');
 const database = require('./database');
@@ -46,48 +47,52 @@ const model = {
     async initCluster(param) {
         let current = 0, total = 8;
         try {
-            let { mongodbParam, orcafsParam, nodelist } = init.handleInitParam(param);
+            let { mongodbParam, orcafsParam, nodeList } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
             if (!res.errorId) {
                 let getInitProgress = setInterval(async () => {
-                    let progress = await init.getOrcaFSInitProgress();
-                    if (!progress.errorId) {
-                        let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
+                    let { errorId, data: { currentStep, describle, errorMessage, status, totalStep } } = await init.getOrcaFSInitProgress();
+                    if (!errorId) {
                         if (status) {
                             clearInterval(getInitProgress);
-                            socket.postInitStatus({ current: currentStep, status: -1, total });
+                            socket.postInitStatus(currentStep, -1, total);
                             handler.error(41, errorMessage, param);
                         } else if (currentStep !== totalStep) {
-                            socket.postInitStatus({ current: currentStep, status, total });
+                            socket.postInitStatus(currentStep, status, total);
                         } else if (describle.includes('finish')) {
                             clearInterval(getInitProgress);
                             current = 5;
-                            socket.postInitStatus({ current, status: 0, total });
+                            socket.postInitStatus(current, 0, total);
                             await init.initMongoDB(mongodbParam);
                             current = 6;
-                            socket.postInitStatus({ current, status: 0, total });
-                            await init.saveInitInfo({ nodelist, initparam: param });
-                            socket.postInitStatus({ current: 7, status: 0, total });
+                            socket.postInitStatus(current, 0, total);
+                            await init.saveInitInfo({ nodeList, initParam: param });
+                            current = 7;
                             init.setInitStatus(true);
+                            socket.postInitStatus(current, 0, total);
                             logger.info('initialize the cluster successfully');
-                            await init.restartServer(nodelist);
+                            await init.restartServer(nodeList);
                         }
+                    } else {
+                        clearInterval(getInitProgress);
+                        socket.postInitStatus(currentStep, -1, total);
+                        handler.error(41, errorMessage, param);
                     }
                 }, 1000);
-            } else {
+            } else if (res.errorId !== 111) {
                 handler.error(41, res.message, param);
-                socket.postInitStatus({ current, status: -1, total });
+                socket.postInitStatus(current, -1, total);
             }
         } catch (error) {
             handler.error(41, error, param);
             await model.antiInitCluster(2);
-            socket.postInitStatus({ current, status: -1, total });
+            socket.postInitStatus(current, -1, total);
         }
     },
     async antiInitCluster(mode) {
         try {
             process.send('de-initialize start');
-            socket.postEventStatus({ channel: 'cluster', code: 1, target: 'cluster', result: true, notify: true });
+            socket.postEventStatus('cluster', 1, 'cluster', true, true);
             mode === 1 && await init.antiInitOrcaFS();
             let getAntiinitProgress = setInterval(async () => {
                 let progress = await init.getOrcaFSInitProgress();
@@ -96,32 +101,32 @@ const model = {
                     if (status) {
                         clearInterval(getAntiinitProgress);
                         process.send('de-initialize end');
-                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false, notify: true });
+                        socket.postEventStatus('cluster', 2, 'cluster', false, true);
                         handler.error(42, errorMessage, mode);
                     } else if (!currentStep && describle.includes('finish')) {
                         clearInterval(getAntiinitProgress);
                         let mongodbStatus = await init.getMongoDBStatus();
-                        let nodelist = ['127.0.0.1'];
+                        let nodeList = ['127.0.0.1'];
                         if (mongodbStatus) {
-                            nodelist = await database.getSetting({ key: 'nodelist' });
-                            await init.antiInitMongoDB(nodelist);
+                            nodeList = await database.getSetting({ key: config.setting.nodeList });
+                            await init.antiInitMongoDB(nodeList);
                         }
                         process.send('de-initialize end');
-                        socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: true, notify: true });
+                        socket.postEventStatus('cluster', 2, 'cluster', true, true);
                         logger.info('de-initialize the cluster successfully');
-                        await init.restartServer(nodelist);
+                        await init.restartServer(nodeList);
                     }
                 }
             }, 1000);
         } catch (error) {
             process.send('de-initialize end');
-            socket.postEventStatus({ channel: 'cluster', code: 2, target: 'cluster', result: false, notify: true });
+            socket.postEventStatus('cluster', 2, 'cluster', false, true);
             handler.error(42, error, mode);
         }
     },
     async receiveEvent(param) {
         let { channel, code, target, result = false, notify } = param;
-        socket.postEventStatus({ channel, code, target, result, notify });
+        socket.postEventStatus(channel, code, target, result, notify);
     },
     async login(param, ip) {
         let { username, password } = param;
@@ -391,37 +396,37 @@ const model = {
         try {
             await snapshot.deleteSnapshot(param);
             await log.audit({ user, desc: `delete snapshot '${param.name}' successfully`, ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 13, target: param.name, result: true, notify: true });
+            socket.postEventStatus('snapshot', 13, param.name, true, true);
         } catch (error) {
             handler.error(134, error, param);
             await log.audit({ user, desc: `delete snapshot '${param.name}' failed`, ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 14, target: param.name, result: false, notify: true });
+            socket.postEventStatus('snapshot', 14, param.name, false, true);
         }
     },
     async batchDeleteSnapshot(param, user, ip) {
         try {
             await snapshot.batchDeleteSnapshot(param);
             await log.audit({ user, desc: `batch delete ${param.names.length} snapshots '${String(handler.bypass(param.names))}' successfully`, ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 15, target: { total: param.names.length }, result: true, notify: true });
+            socket.postEventStatus('snapshot', 15, { total: param.names.length }, true, true);
         } catch (error) {
             handler.error(135, error, param);
             await log.audit({ user, desc: `batch delete ${param.names.length} snapshots '${String(handler.bypass(param.names))}' failed`, ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 16, target: { total: param.names.length }, result: false, notify: true });
+            socket.postEventStatus('snapshot', 16, { total: param.names.length }, false, true);
         }
     },
     async rollbackSnapshot(param, user, ip) {
         try {
             process.send('rollback start');
-            socket.postEventStatus({ channel: 'snapshot', code: 17, target: param.name, result: true, notify: true });
+            socket.postEventStatus('snapshot', 17, param.name, true, true);
             await snapshot.rollbackSnapshot(param);
             process.send('rollback end');
             await log.audit({ user, desc: `rollback snapshot '${param.name}' successfully`, ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 18, target: param.name, result: true, notify: true });
+            socket.postEventStatus('snapshot', 18, param.name, true, true);
         } catch (error) {
             snapshot.setRollbackStatus(false);
             handler.error(136, error, param);
             await log.audit({ user, desc: `rollback snapshot '${param.name}' failed`, ip });
-            socket.postEventStatus({ channel: 'snapshot', code: 18, target: param.name, result: false, notify: true });
+            socket.postEventStatus('snapshot', 18, param.name, false, true);
         }
     },
     async getSnapshotSchedule(param) {
