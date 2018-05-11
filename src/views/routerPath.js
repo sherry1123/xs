@@ -35,7 +35,8 @@ const routerPath = {
     Snapshot: '/snapshot',
     SnapshotSchedule: '/snapshot-schedule',
 
-    Share: '/share',
+    NFS: '/nfs',
+    CIFS: '/cifs',
 
     ManagementSystemLog: '/management-system-log',
 
@@ -51,7 +52,7 @@ export const pathToMenu = {
     // ClientStatistics: [routerPath.ClientStatistics],
     // UserStatistics: [routerPath.UserStatistics],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
-    Share: [routerPath.Share],
+    Share: [routerPath.NFS, routerPath.CIFS],
     Management: [routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperation],
 };

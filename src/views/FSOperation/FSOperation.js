@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, /*Checkbox,*/ Form, Icon, Input, message, Select, Table, Popover} from 'antd';
+import {Button, Icon, Input, message, Table, Popover} from 'antd';
+import StripeSetting from './StripeSetting';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 
@@ -26,8 +27,10 @@ class FSOperation extends Component {
     }
 
     async getFilesByPath (dirPath, needBackIfError){
+        console.info(1);
         this.queryDirLock = true;
         try {
+            console.info(2);
             let files = await httpRequests.getFiles(dirPath);
             await this.setState({files, dirPath});
         } catch (e){
@@ -42,9 +45,6 @@ class FSOperation extends Component {
     async queryDirPath (dirPath = this.state.dirPath){
         // query files
         this.getFilesByPath(dirPath);
-        // query entry info
-        let entryInfo = await httpRequests.getEntryInfo(dirPath);
-        this.setState({entryInfo});
         // console.info(dirPath);
     }
 
@@ -60,8 +60,6 @@ class FSOperation extends Component {
             this.directoryStack.shift();
             let lastDirPath = this.backTrackDirectoryStack(); // state => render
             this.getFilesByPath(lastDirPath); // props => render
-            let entryInfo = await httpRequests.getEntryInfo(lastDirPath);
-            this.setState({entryInfo});
         }
     }
 
@@ -70,17 +68,7 @@ class FSOperation extends Component {
             this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
             let nextDirPath = this.backTrackDirectoryStack();
             this.getFilesByPath(nextDirPath, true);
-            let entryInfo = await httpRequests.getEntryInfo(nextDirPath);
-            this.setState({entryInfo});
         }
-    }
-
-    async getEntryInfo (dirPath, entryInfoReadonly){
-        this.setState({entryInfoReadonly});
-        let currentDirPath = this.backTrackDirectoryStack();
-        currentDirPath = currentDirPath + (this.directoryStack.length > 1 ? '/' : '') + dirPath;
-        let entryInfo = await httpRequests.getEntryInfo(currentDirPath);
-        this.setState({entryInfo});
     }
 
     entryInfoFormChange (key, value){
@@ -106,6 +94,10 @@ class FSOperation extends Component {
         } catch ({msg}){
             message.error(lang('条带设置保存失败，原因：', 'Stripe setting saving failed, reason: ') + msg);
         }
+    }
+
+    stripeSetting (){
+        this.stripeSettingWrapper.getWrappedInstance().show();
     }
 
     render (){
@@ -162,7 +154,7 @@ class FSOperation extends Component {
                                 <Button
                                     {...buttonConf}
                                     icon="setting"
-                                    onClick={() => {this.getEntryInfo.bind(this, record.name, false)()}}
+                                    onClick={this.stripeSetting.bind(this)}
                                 />
                             </Popover> :
                             <Popover {...buttonPopoverConf} content={lang('返回上层目录', 'Return Upper Directory')}>
@@ -195,6 +187,7 @@ class FSOperation extends Component {
                             onSearch={() => {this.queryDirPath.bind(this)()}}
                         />
                         <Table {...tableProps} />
+                        <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
                     </section>
                 </section>
             </section>

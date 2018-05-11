@@ -121,9 +121,11 @@ class CatalogTree extends Component {
                     indicator={<Icon type="loading" style={{fontSize: 18}} spin />}
                     spinning={!treeNodes.length}
                 >
-                    <div style={{marginBottom: 10, fontSize: 12}}>
-                        {lang('已选路径：', 'Selected Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
-                    </div>
+                    {
+                        !!treeNodes.length && <div style={{marginBottom: 10, fontSize: 12}}>
+                            {lang('已选路径：', 'Selected Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
+                        </div>
+                    }
                     <Tree
                         showIcon
                         multiple={false}

@@ -120,29 +120,29 @@ class CreateShare extends Component {
         return (
             <Modal
                 title={lang('创建共享', 'Create Share')}
-                    width={400}
-                    closable={false}
-                    maskClosable={false}
-                    visible={this.state.visible}
-                    footer={
-                        <div>
-                            <Button
-                                size='small'
-                                onClick={this.hide.bind(this)}
-                            >
-                                {lang('取消', 'Cancel')}
-                            </Button>
-                            <Button
-                                type="primary"
-                                disabled={!this.state.formValid}
-                                loading={this.state.formSubmitting}
-                                size='small'
-                                onClick={this.createShare.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                        </div>
-                    }
+                width={400}
+                closable={false}
+                maskClosable={false}
+                visible={this.state.visible}
+                footer={
+                    <div>
+                        <Button
+                            size='small'
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            type="primary"
+                            disabled={!this.state.formValid}
+                            loading={this.state.formSubmitting}
+                            size='small'
+                            onClick={this.createShare.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                    </div>
+                }
             >
                 <Form>
                     <Form.Item {...formItemLayout}

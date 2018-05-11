@@ -39,9 +39,14 @@ const fetchDataPer15s = () => {
         httpRequests.getSnapshotScheduleList();
     }
 
-    // share
-    if (routerHash.match(main + routerPath.Share)){
-        httpRequests.getShareList();
+    // NFS share
+    if (routerHash.match(main + routerPath.NFS)){
+        httpRequests.getNFSList();
+    }
+
+    // CIFS share
+    if (routerHash.match(main + routerPath.CIFS)){
+        httpRequests.getCIFSList();
     }
 
     // management - system log

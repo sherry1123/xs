@@ -38,9 +38,10 @@ class SnapshotSchedule extends Component {
 
     async searchInTable (query, dataRefresh){
         if (query || dataRefresh){
-            let snapshotScheduleList = Object.assign([], this.state.snapshotScheduleListBackup);
-            let newSnapshotScheduleList = snapshotScheduleList.filter(({name = ''}) => name.match(query));
-            await this.setState({query, snapshotScheduleList: newSnapshotScheduleList});
+            await this.setState({
+                query,
+                snapshotScheduleList: [...this.state.snapshotScheduleListBackup].filter(({name = ''}) => name.match(query))
+            });
         } else {
             this.setState({snapshotScheduleList: this.state.snapshotScheduleListBackup});
         }
