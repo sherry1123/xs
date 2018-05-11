@@ -17,7 +17,7 @@ export {timeLeftFormat, timeFormat} from './format/time';
 export {someUpperCase} from './format/toUpperCase';
 
 // validation
-export {validateIpv4, validateFsName, validateEmail, validatePassword, validateNotZeroInteger, validatePositiveInteger} from './validation';
+export {validateIpv4, validateIpv4Segment, validateFsName, validateEmail, validatePassword, validateNotZeroInteger, validatePositiveInteger} from './validation';
 
 // key press filter
 export {KeyPressFilter} from './keyPressFilter';

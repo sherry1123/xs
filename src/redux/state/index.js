@@ -23,7 +23,7 @@ export default {
 
     // login
     login: {
-
+        // ?
     },
 
     // logged
@@ -127,16 +127,31 @@ export default {
             snapshotScheduleList: [
 
             ],
-            snapshotSetting: {total: 0, auto: 0, manual: 0}
+            snapshotSetting: {
+                total: 0,
+                auto: 0,
+                manual: 0,
+            }
         },
-        // share
+        // NFS and CIFS share
         share: {
-            shareList: [
-                /*
-                {protocol: 'NFS', path: '/test/a', description: 'xxxx'},
-                {protocol: 'CIFS', path: '/test', description: 'xxxx'},
-                */
-            ]
+            NFSList: [
+                {path: '/a/a1', description: 'yyyyy'},
+                {path: '/a/a2', description: 'xxxxx'},
+            ],
+            CIFSList: [
+                {path: '/b/b1', description: 'yyyyy'},
+                {path: '/b/b2', description: 'xxxxx'},
+            ],
+        },
+        // authenticated local user and group for CIFS share
+        localUser: {
+            localUserList: [
+
+            ],
+            localGroupList: [
+
+            ],
         },
     }
 }

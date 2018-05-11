@@ -7,8 +7,8 @@ import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './c
 import httpRequests from '../http/requests';
 import lang from '../components/Language/lang';
 import routerPath from '../views/routerPath';
-
 let socket = io();
+
 let {
     snapshot, snapshotRollBackStart, snapshotRollBackFinish,
     deInitializationStart, deInitializationEnd,

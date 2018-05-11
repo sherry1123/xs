@@ -1,4 +1,4 @@
-import {fetchGet, fetchPost} from './fetch';
+import {fetchGet, fetchPost, fetchMock} from './fetch';
 import {lsGet} from '../services';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
@@ -236,6 +236,25 @@ export default  {
 
     async deleteShare (nasExport){
         await fetchPost('/api/deletenasexport', nasExport);
+    },
+
+    // NFS share
+    async getNFSList (){
+        requestMiddleWare(async () => {
+            let data = await fetchMock([{path: '/a/a1', description: 'yyyyy'}, {path: '/a/a2', description: 'xxxxx'},]);
+            !!data && store.dispatch(shareAction.setNFSList(data));
+        });
+    },
+
+    async getClientList (){
+        return requestMiddleWare(async () => await fetchMock([{name: 'client-1', type: 'host', permission: 'readonly'}]));
+    },
+
+    async getCIFSList (){
+        requestMiddleWare(async () => {
+            let data = await fetchMock([{path: '/b/b3', description: 'yyyyy'}, {path: '/b/b4', description: 'xxxxx'},]);
+            !!data && store.dispatch(shareAction.setCIFSList(data));
+        });
     },
 
     // fs operation

@@ -173,8 +173,7 @@ class CreateSnapshotSchedule extends Component {
         };
 
         return (
-            <Modal
-                title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
+            <Modal title={lang('创建定时快照计划', 'Create Timed Snapshot Schedule')}
                 width={400}
                 closable={false}
                 maskClosable={false}
@@ -200,7 +199,8 @@ class CreateSnapshotSchedule extends Component {
                 }
             >
                 <Form>
-                    <Form.Item {...formItemLayout}
+                    <Form.Item
+                        {...formItemLayout}
                         label={lang('名称', 'Name')}
                         validateStatus={this.state.validation.name.status}
                         help={this.state.validation.name.help}
@@ -214,7 +214,8 @@ class CreateSnapshotSchedule extends Component {
                             }}
                         />
                     </Form.Item>
-                    <Form.Item {...formItemLayout}
+                    <Form.Item
+                        {...formItemLayout}
                         label={lang('间隔时间', 'Interval')}
                         validateStatus={this.state.validation.interval.status}
                         help={this.state.validation.interval.help}
@@ -271,15 +272,14 @@ class CreateSnapshotSchedule extends Component {
                             <Icon type="question-circle-o" className="fs-info-icon m-ll" />
                         </Popover>
                     </Form.Item>
-                    <Form.Item {...formItemLayout}
+                    <Form.Item
+                        {...formItemLayout}
                         label={lang('延时关闭', 'Delay Disable')}
                         validateStatus={this.state.validation.autoDisableTime.status}
                         help={this.state.validation.autoDisableTime.help}
                     >
                         <Input
-                            style={{width: isChinese ? 140 : 140}}
-                            type="text"
-                            size="small"
+                            style={{width: isChinese ? 170 : 140}} type="text" size="small"
                             disabled={!this.state.scheduleData.autoDisable}
                             addonAfter={lang('天后', 'Day(s) Later')}
                             value={this.state.scheduleData.autoDisableTimeNumber}
@@ -305,14 +305,13 @@ class CreateSnapshotSchedule extends Component {
                             <Icon type="question-circle-o" className="fs-info-icon m-l" />
                         </Popover>
                     </Form.Item>
-                    <Form.Item {...formItemLayout}
-                        label={lang('描述', 'Description')}
-                    >
+                    <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea
                             size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             placeholder={lang('描述为选填项', 'description is optional')}
                             value={this.state.scheduleData.description}
+                            maxLength={255}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                                 this.validateForm.bind(this)('description');

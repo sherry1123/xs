@@ -152,7 +152,13 @@ class Login extends Component {
                                         onPressEnter={this.doLogin.bind(this)}
                                     />
                                 </Form.Item>
-                                <Button className="fs-login-btn" type="primary" loading={this.state.doingLogin} onClick={this.doLogin.bind(this)}>
+                                <Button
+                                    className="fs-login-btn"
+                                    type="primary"
+                                    icon="login"
+                                    loading={this.state.doingLogin}
+                                    onClick={this.doLogin.bind(this)}
+                                >
                                     {this.state.doingLogin ? lang('登录中...', 'Logging in...') : lang('登录', 'Login')}
                                 </Button>
                                 {

@@ -100,9 +100,22 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.SnapshotSchedule}>
                         <Icon type="schedule" />{lang('定时快照', 'Timed Snapshot')}
                     </Menu.Item>
-                    <Menu.Item key={routerPath.Share}>
-                        <Icon type="share-alt" />{lang('共享', 'Share')}
-                    </Menu.Item>
+                    <Menu.SubMenu
+                        key="share"
+                        title={
+                            <span>
+                                <Icon type="share-alt" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
+                                <span>{lang('共享', 'Share')}</span>
+                            </span>
+                        }
+                    >
+                        <Menu.Item key={routerPath.CIFS}>
+                            <Icon type="share-alt" />{lang('CIFS共享', 'CIFS Share')}
+                        </Menu.Item>
+                        <Menu.Item key={routerPath.NFS}>
+                            <Icon type="share-alt" />{lang('NFS共享', 'NFS Share')}
+                        </Menu.Item>
+                    </Menu.SubMenu>
                     {/*<Menu.SubMenu key="Management"
                         title={
                             <span>

@@ -26,7 +26,8 @@ const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
 const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
 
 // Share
-const Share = asyncLoad(() => import('../Share/Share'));
+const NFS = asyncLoad(() => import('../NFS/NFS'));
+const CIFS = asyncLoad(() => import('../CIFS/CIFS'));
 
 // management
 const ManagementSystemLog = asyncLoad(() => import('../Management/ManagementSystemLog'));
@@ -101,7 +102,8 @@ export default class Main extends Component {
                         {/*<Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />*/}
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
-                        <Route path={`${Main}${routerPath.Share}`} component={Share} />
+                        <Route path={`${Main}${routerPath.NFS}`} component={NFS} />
+                        <Route path={`${Main}${routerPath.CIFS}`} component={CIFS} />
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
                         {/*<Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />*/}
