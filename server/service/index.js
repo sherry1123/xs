@@ -51,9 +51,8 @@ const model = {
             let res = await init.initOrcaFS(orcafsParam);
             if (!res.errorId) {
                 let getInitProgress = setInterval(async () => {
-                    let progress = await init.getOrcaFSInitProgress();
-                    if (!progress.errorId) {
-                        let { currentStep, describle, errorMessage, status, totalStep } = progress.data;
+                    let { errorId, data: { currentStep, describle, errorMessage, status, totalStep } } = await init.getOrcaFSInitProgress();
+                    if (!errorId) {
                         if (status) {
                             clearInterval(getInitProgress);
                             socket.postInitStatus(currentStep, -1, total);
@@ -74,9 +73,13 @@ const model = {
                             logger.info('initialize the cluster successfully');
                             await init.restartServer(nodeList);
                         }
+                    } else {
+                        clearInterval(getInitProgress);
+                        socket.postInitStatus(currentStep, -1, total);
+                        handler.error(41, errorMessage, param);
                     }
                 }, 1000);
-            } else {
+            } else if (res.errorId !== 111) {
                 handler.error(41, res.message, param);
                 socket.postInitStatus(current, -1, total);
             }
