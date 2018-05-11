@@ -56,7 +56,7 @@ exports.api = {
         getiostat: 'http://localhost:9090/cluster/getiostat',
         getstats: 'http://localhost:9090/cluster/getstats',
         entryinfo: 'http://localhost:9090/cluster/getentryinfo',
-        getfiles: 'http://localhost:9090/cluster/getfiles',
+        getfiles: 'http://localhost:9090/cluster/getdirs',
         setpattern: 'http://localhost:9090/cluster/setpattern'
     }
 };
