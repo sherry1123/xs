@@ -56,7 +56,7 @@ exports.api = {
         getiostat: 'http://localhost:9090/cluster/getiostat',
         getstats: 'http://localhost:9090/cluster/getstats',
         entryinfo: 'http://localhost:9090/cluster/getentryinfo',
-        getfiles: 'http://localhost:9090/cluster/getdirs',
+        getfiles: 'http://localhost:9090/cluster/getfiles',
         setpattern: 'http://localhost:9090/cluster/setpattern'
     }
 };
@@ -172,6 +172,7 @@ exports.i18n = {
     share: '共享',
     client: '客户端',
     local: '本地',
+    auth: '认证',
     group: '组',
     event: '事件',
     log: '日志',

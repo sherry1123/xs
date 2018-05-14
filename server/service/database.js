@@ -7,8 +7,8 @@ const hardware = require('../model/hardware');
 const snapshot = require('../model/snapshot');
 const nfsShare = require('../model/nfsShare');
 const cifsShare = require('../model/cifsShare');
-const localUser = require('../model/localUser');
-const localUserGroup = require('../model/localUserGroup');
+const localAuthUser = require('../model/localAuthUser');
+const localAuthUserGroup = require('../model/localAuthUserGroup');
 const snapshotSchedule = require('../model/snapshotSchedule');
 const model = {
     async login(param) {
@@ -160,29 +160,29 @@ const model = {
         clientList = clientList.filter(client => (client.ip === ip ? false : true));
         return await dao.updateOne(nfsShare, { path }, { clientList });
     },
-    async getLocalUserGroup(param) {
-        return await dao.findAll(localUserGroup, param);
+    async getLocalAuthUserGroup(param) {
+        return await dao.findAll(localAuthUserGroup, param);
     },
-    async addLocalUserGroup(param) {
-        return await dao.createOne(localUserGroup, param);
+    async addLocalAuthUserGroup(param) {
+        return await dao.createOne(localAuthUserGroup, param);
     },
-    async updateLocalUserGroup(query, param) {
-        return await dao.updateOne(localUserGroup, query, param);
+    async updateLocalAuthUserGroup(query, param) {
+        return await dao.updateOne(localAuthUserGroup, query, param);
     },
-    async deleteLocalUserGroup(param) {
-        return await dao.deleteOne(localUserGroup, param);
+    async deleteLocalAuthUserGroup(param) {
+        return await dao.deleteOne(localAuthUserGroup, param);
     },
-    async getLocalUser(param) {
-        return await dao.findAll(localUser, param);
+    async getLocalAuthUser(param) {
+        return await dao.findAll(localAuthUser, param);
     },
-    async addLocalUser(param) {
-        return await dao.createOne(localUser, param);
+    async addLocalAuthUser(param) {
+        return await dao.createOne(localAuthUser, param);
     },
-    async updateLocalUser(query, param) {
-        return await dao.updateOne(localUser, query, param);
+    async updateLocalAuthUser(query, param) {
+        return await dao.updateOne(localAuthUser, query, param);
     },
-    async deleteLocalUser(param) {
-        return await dao.deleteOne(localUser, param);
+    async deleteLocalAuthUser(param) {
+        return await dao.deleteOne(localAuthUser, param);
     }
 };
 module.exports = model;

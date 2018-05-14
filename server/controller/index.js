@@ -183,29 +183,29 @@ const model = {
     '/api/deleteclientinnfsshare': async ctx => {
         ctx.body = await service.deleteClientInNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getlocalusergroup': async ctx => {
-        ctx.body = await service.getLocalUserGroup(ctx.param);
+    '/api/getlocalauthusergroup': async ctx => {
+        ctx.body = await service.getLocalAuthUserGroup(ctx.param);
     },
-    '/api/createlocalusergroup': async ctx => {
-        ctx.body = await service.createLocalUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/createlocalauthusergroup': async ctx => {
+        ctx.body = await service.createLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/updatelocalusergroup': async ctx => {
-        ctx.body = await service.updateLocalUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/updatelocalauthusergroup': async ctx => {
+        ctx.body = await service.updateLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletelocalusergroup': async ctx => {
-        ctx.body = await service.deleteLocalUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/deletelocalauthusergroup': async ctx => {
+        ctx.body = await service.deleteLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getlocaluser': async ctx => {
-        ctx.body = await service.getLocalUser(ctx.param);
+    '/api/getlocalauthuser': async ctx => {
+        ctx.body = await service.getLocalAuthUser(ctx.param);
     },
-    '/api/createlocaluser': async ctx => {
-        ctx.body = await service.createLocalUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/createlocalauthuser': async ctx => {
+        ctx.body = await service.createLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/updatelocaluser': async ctx => {
-        ctx.body = await service.updateLocalUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/updatelocalauthuser': async ctx => {
+        ctx.body = await service.updateLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletelocaluser': async ctx => {
-        ctx.body = await service.deleteLocalUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/deletelocalauthuser': async ctx => {
+        ctx.body = await service.deleteLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/geteventlog': async ctx => {
         ctx.body = await service.getEventLog(ctx.param);

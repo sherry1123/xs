@@ -707,101 +707,101 @@ const model = {
         }
         return result;
     },
-    async getLocalUserGroup(param) {
+    async getLocalAuthUserGroup(param) {
         let result = {};
         try {
-            let data = await database.getLocalUserGroup(param);
+            let data = await database.getLocalAuthUserGroup(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(52, error, param);
         }
         return result;
     },
-    async createLocalUserGroup(param, user, ip) {
+    async createLocalAuthUserGroup(param, user, ip) {
         let { name, description } = param;
         let result = {};
         try {
-            await database.addLocalUserGroup({ name, description });
-            result = handler.response(0, 'create local user group successfully');
-            await log.audit({ user, desc: `create local user group '${name}' successfully`, ip });
+            await database.addLocalAuthUserGroup({ name, description });
+            result = handler.response(0, 'create local auth user group successfully');
+            await log.audit({ user, desc: `create local auth user group '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(53, error, param);
-            await log.audit({ user, desc: `create local user group '${name}' failed`, ip });
+            await log.audit({ user, desc: `create local auth user group '${name}' failed`, ip });
         }
         return result;
     },
-    async updateLocalUserGroup(param, user, ip) {
+    async updateLocalAuthUserGroup(param, user, ip) {
         let { name, description } = param;
         let result = {};
         try {
-            await database.updateLocalUserGroup({ name }, { description });
-            result = handler.response(0, 'update local user group successfully');
-            await log.audit({ user, desc: `update local user group '${name}' successfully`, ip });
+            await database.updateLocalAuthUserGroup({ name }, { description });
+            result = handler.response(0, 'update local auth user group successfully');
+            await log.audit({ user, desc: `update local auth user group '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(54, error, param);
-            await log.audit({ user, desc: `update local user group '${name}' failed`, ip });
+            await log.audit({ user, desc: `update local auth user group '${name}' failed`, ip });
         }
         return result;
     },
-    async deleteLocalUserGroup(param, user, ip) {
+    async deleteLocalAuthUserGroup(param, user, ip) {
         let { name } = param;
         let result = {};
         try {
-            await database.deleteLocalUserGroup({ name });
-            result = handler.response(0, 'delete local user group successfully');
-            await log.audit({ user, desc: `delete local user group '${name}' successfully`, ip });
+            await database.deleteLocalAuthUserGroup({ name });
+            result = handler.response(0, 'delete local auth user group successfully');
+            await log.audit({ user, desc: `delete local auth user group '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(55, error, param);
-            await log.audit({ user, desc: `delete local user group '${name}' failed`, ip });
+            await log.audit({ user, desc: `delete local auth user group '${name}' failed`, ip });
         }
         return result;
     },
-    async getLocalUser(param) {
+    async getLocalAuthUser(param) {
         let result = {};
         try {
-            let data = await database.getLocalUser(param);
+            let data = await database.getLocalAuthUser(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(52, error, param);
         }
         return result;
     },
-    async createLocalUser(param, user, ip) {
+    async createLocalAuthUser(param, user, ip) {
         let { name, password, primaryGroup, secondaryGroup, description } = param;
         let result = {};
         try {
-            await database.addLocalUser({ name, password, primaryGroup, secondaryGroup, description });
-            result = handler.response(0, 'create local user successfully');
-            await log.audit({ user, desc: `create local user '${name}' successfully`, ip });
+            await database.addLocalAuthUser({ name, password, primaryGroup, secondaryGroup, description });
+            result = handler.response(0, 'create local auth user successfully');
+            await log.audit({ user, desc: `create local auth user '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(53, error, param);
-            await log.audit({ user, desc: `create local user '${name}' failed`, ip });
+            await log.audit({ user, desc: `create local auth user '${name}' failed`, ip });
         }
         return result;
     },
-    async updateLocalUser(param, user, ip) {
+    async updateLocalAuthUser(param, user, ip) {
         let { name, password, primaryGroup, secondaryGroup, description } = param;
         let result = {};
         try {
-            await database.updateLocalUser({ name }, { password, primaryGroup, secondaryGroup, description });
+            await database.updateLocalAuthUser({ name }, { password, primaryGroup, secondaryGroup, description });
             result = handler.response(0, 'update user successfully');
-            await log.audit({ user, desc: `update local user '${name}' successfully`, ip });
+            await log.audit({ user, desc: `update local auth user '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(54, error, param);
-            await log.audit({ user, desc: `update local user '${name}' successfully`, ip });
+            await log.audit({ user, desc: `update local auth user '${name}' successfully`, ip });
         }
         return result;
     },
-    async deleteLocalUser(param, user, ip) {
+    async deleteLocalAuthUser(param, user, ip) {
         let { name } = param;
         let result = {};
         try {
-            await database.deleteLocalUser({ name });
+            await database.deleteLocalAuthUser({ name });
             result = handler.response(0, 'delete user successfully');
-            await log.audit({ user, desc: `delete local user '${name}' successfully`, ip });
+            await log.audit({ user, desc: `delete local auth user '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(55, error, param);
-            await log.audit({ user, desc: `delete local user '${name}' successfully`, ip });
+            await log.audit({ user, desc: `delete local auth user '${name}' successfully`, ip });
         }
         return result;
     },
