@@ -1,8 +1,7 @@
 const mongoose = require('../module/mongoose');
-module.exports = mongoose.model('nasexport',
+module.exports = mongoose.model('localusergroup',
     new mongoose.Schema({
-        path: String,
-        protocol: String,
+        name: String,
         description: String
     })
 );
