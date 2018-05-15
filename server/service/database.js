@@ -52,7 +52,7 @@ const model = {
         return await dao.createOne(setting, param);
     },
     async getSetting(param) {
-        let data = await dao.findOne(setting, param, { _id: 0, __v: 0 });
+        let data = await dao.findOne(setting, param);
         return JSON.parse(data.value);
     },
     async updateSetting(query, param) {
