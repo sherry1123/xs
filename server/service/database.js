@@ -111,7 +111,7 @@ const model = {
         }
         return await dao.updateOne(cifsShare, { name: shareName }, { userList });
     },
-    async updateUserInCIFSShare(query, param) {
+    async updateUserInCIFSShare(param) {
         let { name, type, permissionLevel, shareName } = param;
         let userList = await model.getUserInCIFSShare({ name: shareName });
         userList = userList.map(user => (user.name === name ? { name, type, permissionLevel } : user));
