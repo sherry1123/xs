@@ -87,7 +87,7 @@ const model = {
         return await dao.deleteOne(snapshotSchedule, param);
     },
     async getCIFSShare(param) {
-        return await dao.findAll(cifsShare, param);
+        return await dao.findAll(cifsShare, param, { userList: 0 });
     },
     async addCIFSShare(param) {
         return await dao.createOne(cifsShare, param);
@@ -124,7 +124,7 @@ const model = {
         return await dao.updateOne(cifsShare, { name: shareName }, { userList });
     },
     async getNFSShare(param) {
-        return await dao.findAll(nfsShare, param);
+        return await dao.findAll(nfsShare, param, { clientList: 0 });
     },
     async addNFSShare(param) {
         return await dao.createOne(nfsShare, param);
