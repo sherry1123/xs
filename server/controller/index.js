@@ -147,6 +147,9 @@ const model = {
     '/api/deletecifsshare': async ctx => {
         ctx.body = await service.deleteCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/batchdeletecifsshare': async ctx => {
+        ctx.body = await service.batchDeleteCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/getuserincifsshare': async ctx => {
         ctx.body = await service.getUserInCIFSShare(ctx.param);
     },
@@ -170,6 +173,9 @@ const model = {
     },
     '/api/deletenfsshare': async ctx => {
         ctx.body = await service.deleteNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/batchdeletenfsshare': async ctx => {
+        ctx.body = await service.batchDeleteNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/getclientinnfsshare': async ctx => {
         ctx.body = await service.getClientInNFSShare(ctx.param);
@@ -206,6 +212,9 @@ const model = {
     },
     '/api/deletelocalauthuser': async ctx => {
         ctx.body = await service.deleteLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/batchdeletelocalauthuser': async ctx => {
+        ctx.body = await service.batchDeleteLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/geteventlog': async ctx => {
         ctx.body = await service.getEventLog(ctx.param);

@@ -560,6 +560,21 @@ const model = {
         }
         return result;
     },
+    async batchDeleteCIFSShare(param, user, ip) {
+        let { names } = param;
+        let result = {};
+        try {
+            for (let name of names) {
+                await database.deleteCIFSShare({ name });
+            }
+            result = handler.response(0, 'batch delete CIFS share successfully');
+            await log.audit({ user, desc: `batch delete ${names.length} CIFS shares '${String(handler.bypass(names))}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(154, error, param);
+            await log.audit({ user, desc: `batch delete ${names.length} CIFS shares '${String(handler.bypass(names))}' failed`, ip });
+        }
+        return result;
+    },
     async getUserInCIFSShare(param) {
         let result = {};
         try {
@@ -655,6 +670,21 @@ const model = {
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `delete NFS share '${path}' failed`, ip });
+        }
+        return result;
+    },
+    async batchDeleteNFSShare(param, user, ip) {
+        let { paths } = param;
+        let result = {};
+        try {
+            for (let path of paths) {
+                await database.deleteNFSShare({ path });
+            }
+            result = handler.response(0, 'batch delete NFS share successfully');
+            await log.audit({ user, desc: `batch delete ${paths.length} NFS shares '${String(handler.bypass(paths))}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(154, error, param);
+            await log.audit({ user, desc: `batch delete ${paths.length} NFS shares '${String(handler.bypass(paths))}' failed`, ip });
         }
         return result;
     },
@@ -784,11 +814,11 @@ const model = {
         let result = {};
         try {
             await database.updateLocalAuthUser({ name }, { password, primaryGroup, secondaryGroup, description });
-            result = handler.response(0, 'update user successfully');
+            result = handler.response(0, 'update local auth user successfully');
             await log.audit({ user, desc: `update local auth user '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(54, error, param);
-            await log.audit({ user, desc: `update local auth user '${name}' successfully`, ip });
+            await log.audit({ user, desc: `update local auth user '${name}' failed`, ip });
         }
         return result;
     },
@@ -797,11 +827,26 @@ const model = {
         let result = {};
         try {
             await database.deleteLocalAuthUser({ name });
-            result = handler.response(0, 'delete user successfully');
+            result = handler.response(0, 'delete local auth user successfully');
             await log.audit({ user, desc: `delete local auth user '${name}' successfully`, ip });
         } catch (error) {
             result = handler.response(55, error, param);
-            await log.audit({ user, desc: `delete local auth user '${name}' successfully`, ip });
+            await log.audit({ user, desc: `delete local auth user '${name}' failed`, ip });
+        }
+        return result;
+    },
+    async batchDeleteLocalAuthUser(param, user, ip) {
+        let { names } = param;
+        let result = {};
+        try {
+            for (let name of names) {
+                await database.deleteLocalAuthUser({ name });
+            }
+            result = handler.response(0, 'batch delete local auth user successfully');
+            await log.audit({ user, desc: `batch delete ${names.length} local auth users '${String(handler.bypass(names))}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(55, error, param);
+            await log.audit({ user, desc: `batch delete ${names.length} local auth users '${String(handler.bypass(names))}' failed`, ip });
         }
         return result;
     },
