@@ -180,10 +180,10 @@ exports.i18n = {
     client: '客户端',
     clients: '客户端',
     local: '本地',
-    auth: '认证',
+    authentication: '认证',
     group: '组',
     event: '事件',
     log: '日志',
-    set: '设置',
+    directory: '目录',
     pattern: '条带'
 };
