@@ -846,10 +846,10 @@ const model = {
         return result;
     },
     async updateLocalAuthUser(param, user, ip) {
-        let { name, password, primaryGroup, secondaryGroup, description } = param;
+        let { name, changePassword, password, primaryGroup, description } = param;
         let result = {};
         try {
-            await database.updateLocalAuthUser({ name }, { password, primaryGroup, secondaryGroup, description });
+            changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description }) ;
             result = handler.response(0, 'update local auth user successfully');
             await log.audit({ user, desc: `update local auth user '${name}' successfully`, ip });
         } catch (error) {
