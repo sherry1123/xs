@@ -590,11 +590,11 @@ const model = {
         let result = {};
         try {
             await database.addUserInCIFSShare(param);
-            result = handler.response(0, 'create CIFS share user successfully');
-            await log.audit({ user, desc: `create CIFS share user '${String(handler.bypass(names))}@${shareName}' successfully`, ip });
+            result = handler.response(0, 'add CIFS share user successfully');
+            await log.audit({ user, desc: `add ${names.length} users '${String(handler.bypass(names))}' to CIFS share '${shareName}' successfully`, ip });
         } catch (error) {
             result = handler.response(152, error, param);
-            await log.audit({ user, desc: `create CIFS share user '${String(handler.bypass(names))}@${shareName}' failed`, ip });
+            await log.audit({ user, desc: `add ${names.length} users '${String(handler.bypass(names))}' to CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },
@@ -604,10 +604,10 @@ const model = {
         try {
             await database.updateUserInCIFSShare(param);
             result = handler.response(0, 'update CIFS share user successfully');
-            await log.audit({ user, desc: `update CIFS share user '${name}@${shareName}' successfully`, ip });
+            await log.audit({ user, desc: `update user '${name}' in CIFS share '${shareName}' successfully`, ip });
         } catch (error) {
             result = handler.response(153, error, param);
-            await log.audit({ user, desc: `update CIFS share user '${name}@${shareName}' failed`, ip });
+            await log.audit({ user, desc: `update user '${name}' in CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },
@@ -616,11 +616,11 @@ const model = {
         let result = {};
         try {
             await database.deleteUserInCIFSShare(param);
-            result = handler.response(0, 'delete CIFS share user successfully');
-            await log.audit({ user, desc: `delete CIFS share user '${name}@${shareName}' successfully`, ip });
+            result = handler.response(0, 'remove CIFS share user successfully');
+            await log.audit({ user, desc: `remove user '${name}' from CIFS share '${shareName}' successfully`, ip });
         } catch (error) {
             result = handler.response(154, error, param);
-            await log.audit({ user, desc: `delete CIFS share user '${name}@${shareName}' failed`, ip });
+            await log.audit({ user, desc: `remove user '${name}' from CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },
@@ -703,11 +703,11 @@ const model = {
         let result = {};
         try {
             let data = database.addClientInNFSShare(param);
-            result = handler.response(0, 'create NFS share client successfully');
-            await log.audit({ user, desc: `create NFS share client '${String(handler.bypass(ips.split(';')))}@${path}' successfully`, ip });
+            result = handler.response(0, 'add NFS share client successfully');
+            await log.audit({ user, desc: `add ${ips.split(';').length} clients '${String(handler.bypass(ips.split(';')))}' to NFS share '${path}' successfully`, ip });
         } catch (error) {
             result = handler.response(152, error, param);
-            await log.audit({ user, desc: `create NFS share client '${String(handler.bypass(ips.split(';')))}@${path}' failed`, ip });
+            await log.audit({ user, desc: `add ${ips.split(';').length} clients '${String(handler.bypass(ips.split(';')))}' to NFS share '${path}' failed`, ip });
         }
         return result;
     },
@@ -717,10 +717,10 @@ const model = {
         try {
             await database.updateClientInNFSShare(param);
             result = handler.response(0, 'update NFS share client successfully');
-            await log.audit({ user, desc: `update NFS share client'${param.ip}@${path}' successfully`, ip });
+            await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' successfully`, ip });
         } catch (error) {
             result = handler.response(153, error, param);
-            await log.audit({ user, desc: `update NFS share client '${param.ip}@${path}' failed`, ip });
+            await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' failed`, ip });
         }
         return result;
     },
@@ -729,11 +729,11 @@ const model = {
         let result = {};
         try {
             await database.deleteClientInNFSShare(param);
-            result = handler.response(0, 'delete NFS share client successfully');
-            await log.audit({ user, desc: `delete NFS share client '${param.ip}@${path}' successfully`, ip });
+            result = handler.response(0, 'remove NFS share client successfully');
+            await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' successfully`, ip });
         } catch (error) {
             result = handler.response(154, error, param);
-            await log.audit({ user, desc: `delete NFS share client '${param.ip}@${path}' failed`, ip });
+            await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' failed`, ip });
         }
         return result;
     },

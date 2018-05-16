@@ -40,8 +40,9 @@ const model = {
     },
     i18n(text) {
         let wordList = text.split(' ');
-        wordList = wordList.includes('to') ? wordList.splice(wordList.indexOf('to'), wordList.length - wordList.indexOf('to') - 1).concat(wordList) : wordList;
-        wordList = wordList.includes('from') ? wordList.splice(wordList.indexOf('from'), wordList.length - wordList.indexOf('from') - 1).concat(wordList) : wordList;
+        wordList = wordList.includes('to') ? wordList.splice(wordList.indexOf('to'), wordList.length - wordList.indexOf('to') - 1).concat(['中'], wordList) : wordList;
+        wordList = wordList.includes('in') ? wordList.splice(wordList.indexOf('in'), wordList.length - wordList.indexOf('in') - 1).concat(['中'], wordList) : wordList;
+        wordList = wordList.includes('from') ? wordList.splice(wordList.indexOf('from'), wordList.length - wordList.indexOf('from') - 1).concat(['中'], wordList) : wordList;
         return wordList.map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : String(Number(word)) === word ? word + '个' : word)).join('');
     },
     bypass(array) {
