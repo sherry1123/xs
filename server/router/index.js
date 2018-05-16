@@ -64,6 +64,9 @@ router.all('/api/getlocalauthusergroup', controller['/api/getlocalauthusergroup'
 router.all('/api/createlocalauthusergroup', controller['/api/createlocalauthusergroup']);
 router.all('/api/updatelocalauthusergroup', controller['/api/updatelocalauthusergroup']);
 router.all('/api/deletelocalauthusergroup', controller['/api/deletelocalauthusergroup']);
+router.all('/api/getlocalauthuserfromgroup', controller['/api/getlocalauthuserfromgroup']);
+router.all('/api/addlocalauthusertogroup', controller['/api/addlocalauthusertogroup']);
+router.all('/api/removelocalauthuserfromgroup', controller['/api/removelocalauthuserfromgroup']);
 router.all('/api/getlocalauthuser', controller['/api/getlocalauthuser']);
 router.all('/api/createlocalauthuser', controller['/api/createlocalauthuser']);
 router.all('/api/updatelocalauthuser', controller['/api/updatelocalauthuser']);

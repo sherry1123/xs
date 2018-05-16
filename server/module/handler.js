@@ -39,7 +39,10 @@ const model = {
         return { code, msg: typeof index === 'undefined' ? config.error[code] : config.error[code][index] };
     },
     i18n(text) {
-        return text.split(' ').map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : String(Number(word)) === word ? word + '个' : word)).join('');
+        let wordList = text.split(' ');
+        wordList = wordList.includes('to') ? wordList.splice(wordList.indexOf('to'), wordList.length - wordList.indexOf('to') - 1).concat(wordList) : wordList;
+        wordList = wordList.includes('from') ? wordList.splice(wordList.indexOf('from'), wordList.length - wordList.indexOf('from') - 1).concat(wordList) : wordList;
+        return wordList.map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : String(Number(word)) === word ? word + '个' : word)).join('');
     },
     bypass(array) {
         if (array.length > 5) {

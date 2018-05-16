@@ -786,6 +786,42 @@ const model = {
         }
         return result;
     },
+    async getLocalAuthUserFromGroup(param) {
+        let result = {};
+        try {
+            let data = await database.getLocalAuthUserFromGroup(param);
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(52, error, param);
+        }
+        return result;
+    },
+    async addLocalAuthUserToGroup(param, user, ip) {
+        let { names, groupName } = param;
+        let result = {};
+        try {
+            await database.addLocalAuthUserToGroup(param);
+            result = handler.response(0, 'add local auth user to user group successfully');
+            await log.audit({ user, desc: `add ${names.length} local auth users '${String(handler.bypass(names))}' to local auth user group '${groupName}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(53, error, param);
+            await log.audit({ user, desc: `add ${names.length} local auth users '${String(handler.bypass(names))}' to local auth user group '${groupName}' failed`, ip });
+        }
+        return result;
+    },
+    async removeLocalAuthUserFromGroup(param, user, ip) {
+        let { name, groupName } = param;
+        let result = {};
+        try {
+            await database.removeLocalAuthUserFromGroup(param);
+            result = handler.response(0, 'remove local auth user from user group successfully');
+            await log.audit({ user, desc: `remove local auth user '${name}' from local auth user group '${groupName}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(55, error, param);
+            await log.audit({ user, desc: `remove local auth user '${name}' from local auth user group '${groupName}'failed`, ip });
+        }
+        return result;
+    },
     async getLocalAuthUser(param) {
         let result = {};
         try {
@@ -797,7 +833,7 @@ const model = {
         return result;
     },
     async createLocalAuthUser(param, user, ip) {
-        let { name, password, primaryGroup, secondaryGroup, description } = param;
+        let { name, password, primaryGroup, secondaryGroup = [], description } = param;
         let result = {};
         try {
             await database.addLocalAuthUser({ name, password, primaryGroup, secondaryGroup, description });

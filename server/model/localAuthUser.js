@@ -4,7 +4,7 @@ module.exports = mongoose.model('localauthuser',
         name: String,
         password: String,
         primaryGroup: String,
-        secondaryGroup: String,
+        secondaryGroup: Array,
         description: String
     })
 );

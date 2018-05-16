@@ -201,6 +201,15 @@ const model = {
     '/api/deletelocalauthusergroup': async ctx => {
         ctx.body = await service.deleteLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/getlocalauthuserfromgroup': async ctx => {
+        ctx.body = await service.getLocalAuthUserFromGroup(ctx.param);
+    },
+    '/api/addlocalauthusertogroup': async ctx => {
+        ctx.body = await service.addLocalAuthUserToGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/removelocalauthuserfromgroup': async ctx => {
+        ctx.body = await service.removeLocalAuthUserFromGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/getlocalauthuser': async ctx => {
         ctx.body = await service.getLocalAuthUser(ctx.param);
     },

@@ -172,6 +172,28 @@ const model = {
     async deleteLocalAuthUserGroup(param) {
         return await dao.deleteOne(localAuthUserGroup, param);
     },
+    async getLocalAuthUserFromGroup(param) {
+        let { groupName } = param;
+        let localAuthUserList = await dao.findAll(localAuthUser, {});
+        let userInPrimaryGroup = localAuthUserList.filter(user => (user.primaryGroup === groupName));
+        let userInSecondaryGroup = localAuthUserList.filter(user => (user.secondaryGroup.includes(groupName)));
+        let userInGroup = userInPrimaryGroup.concat(userInSecondaryGroup);
+        return userInGroup;
+    },
+    async addLocalAuthUserToGroup(param) {
+        let { names, groupName } = param;
+        for (let name of names) {
+            let { secondaryGroup } = await dao.findOne(localAuthUser, { name });
+            secondaryGroup = secondaryGroup.concat(groupName);
+            await dao.updateOne(localAuthUser, { name }, { secondaryGroup });
+        }
+    },
+    async removeLocalAuthUserFromGroup(param) {
+        let { name, groupName } = param;
+        let { secondaryGroup } = await dao.findOne(localAuthUser, { name });
+        secondaryGroup = secondaryGroup.filter(group => (group !== groupName));
+        return await dao.updateOne(localAuthUser, { name }, { secondaryGroup });
+    },
     async getLocalAuthUser(param) {
         return await dao.findAll(localAuthUser, param);
     },
