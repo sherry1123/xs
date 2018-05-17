@@ -1,20 +1,22 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Button, Form, Icon, Input, Radio, Select, Modal} from "antd";
+import {Button, Form, Icon, Input, Radio, Select, message, Modal} from "antd";
 import lang from "../../components/Language/lang";
 import {validateIpv4, validateIpv4Segment} from '../../services';
+import httpRequests from "../../http/requests";
 
-class CreateClient extends Component {
+class CreateClientToNFS extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
-            notCreate: false,
-            clientList: [],
+            notDirectlyCreate: false,
+            clientListOfNFS: [],
             formValid: false,
             formSubmitting: false,
             showAdvanced: false,
             clientData: {
+                path: '',
                 type: 'host',
                 ips: '',
                 permission: 'read-only',
@@ -43,11 +45,12 @@ class CreateClient extends Component {
 
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
-        let {clientList, clientData: {ips}} = this.state;
+        let {clientListOfNFS, clientData: {ips}} = this.state;
         if (key === 'ips'){
             // validate essentials:
-            // 1.validate the enter of every hostname、IP or segment is match with IPV4 or hostname pattern
-            // 2.validate if one of the enter of every hostname、IP or segment is already existed in this NFS share
+            // 1.ips split value is duplicated
+            // 2.validate the enter of every hostname、IP or segment is match with IPV4 or hostname pattern
+            // 3.validate if one of the enter of every hostname、IP or segment is already existed in this NFS share
             if (!this.state.clientData.ips){
                 this.validationUpdateState('ips', {cn: '请输入主机名或IP', en: 'please enter hostname or IP'}, false);
             }
@@ -70,9 +73,14 @@ class CreateClient extends Component {
             if (isIPPatternError){
                 this.validationUpdateState('ips', {cn: '主机名或IP输入有误', en: 'hostname or IP enter error'}, false);
             }
-            console.info('ip pattern error', isIPPatternError);
-            let isIPDuplicated = clientList.some(client => ips.includes(client.ip));
-            console.info('ip duplicated', isIPDuplicated);
+            // console.info('ip pattern error', isIPPatternError);
+            let isIpsDuplicated = Array.from(new Set(ips)).length !== ips.length;
+            if (isIpsDuplicated){
+                this.validationUpdateState('ips', {cn: '主机名或IP输入有重复', en: 'hostname or IP enter duplicated'}, false);
+            }
+            // console.info('ip enter duplicated', isIpsDuplicated);
+            let isIPDuplicated = clientListOfNFS.some(client => ips.includes(client.ip));
+            // console.info('ip duplicated', isIPDuplicated);
             if (isIPDuplicated){
                 this.validationUpdateState('ips', {cn: '主机名或IP已存在', en: 'hostname or IP already existed'}, false);
             }
@@ -92,19 +100,28 @@ class CreateClient extends Component {
         this.setState({clientData});
     }
 
-    create (){
-        let {notCreate, clientData} = this.state;
-        if (notCreate){
+    async create (){
+        let {notDirectlyCreate, clientData} = this.state;
+        if (notDirectlyCreate){
             // 如果是创建NFS的时候进行添加客户端，那么根据输入hostname、IP或网段的数量，返回同等数量的客户端信息
             let {ips} = clientData;
             ips = ips.split(';').filter(ip => !!ip.trim());
             let clientList = ips.map(ip => Object.assign({}, clientData, {ip}));
             this.props.onAdd && this.props.onAdd(clientList);
-            this.setState({visible: false});
-            console.info(clientList);
+            this.hide();
+            // console.info(clientList);
         } else {
             // 调用创建客户端接口直接创建客户端
-
+            this.setState({formSubmitting: true});
+            try {
+                await httpRequests.createClient(clientData);
+                httpRequests.getClientListByNFSSharePath(clientData.path);
+                await this.hide();
+                message.success(lang(`为NFS共享 ${clientData.path} 创建客户端成功!`, `Create client for NFS share ${clientData.path} successfully!`));
+            } catch ({msg}){
+                message.error(lang(`Create client for NFS share ${clientData.path} 失败, 原因: `, `Create client for NFS share ${clientData.path} failed, reason: `) + msg);
+            }
+            this.setState({formSubmitting: false});
         }
     }
 
@@ -112,26 +129,30 @@ class CreateClient extends Component {
         this.setState({showAdvanced: !this.state.showAdvanced});
     }
 
-    show (clientList, notCreate){
+    show ({path, clientListOfNFS, notDirectlyCreate}){
         this.setState({
             visible: true,
-            notCreate,
-            clientList,
+            notDirectlyCreate,
+            clientListOfNFS,
             formValid: false,
             formSubmitting: false,
             showAdvanced: false,
             clientData: {
+                path,
                 type: 'host',
                 ips: '',
                 permission: 'read-only',
                 writeMode: 'synchronous',
                 permissionConstraint: 'all_squash',
                 rootPermissionConstraint: 'root_squash'
+            },
+            validation: {
+                ips: {status: '', help: '', valid: false},
             }
         });
     }
 
-    async hide (){
+    hide (){
         this.setState({visible: false});
     }
 
@@ -214,12 +235,12 @@ class CreateClient extends Component {
                         </Select>
                     </Form.Item>
                     <div style={{paddingLeft: 10}}>
-                        <span
-                            style={{fontSize: 12, color: '#1890ff', cursor: 'pointer', userSelect: 'none'}}
-                            onClick={this.showAdvanced.bind(this)}
-                        >
-                            {lang('高级', 'Advanced')} <Icon type={this.state.showAdvanced ? 'up' : 'down'} />
-                        </span>
+                                <span
+                                    style={{fontSize: 12, color: '#1890ff', cursor: 'pointer', userSelect: 'none'}}
+                                    onClick={this.showAdvanced.bind(this)}
+                                >
+                                    {lang('高级', 'Advanced')} <Icon type={this.state.showAdvanced ? 'up' : 'down'} />
+                                </span>
                     </div>
                     {
                         this.state.showAdvanced && <div>
@@ -248,7 +269,7 @@ class CreateClient extends Component {
                             <Form.Item {...formItemLayout} label={lang('root权限限制', 'root Permission Constraint')}>
                                 <Radio.Group
                                     onChange={({target: {value}}) => {
-                                        this.formValueChange.bind(this, 'permissionConstraint')(value);
+                                        this.formValueChange.bind(this, 'rootPermissionConstraint')(value);
                                     }}
                                     value={this.state.clientData.rootPermissionConstraint}
                                 >
@@ -277,4 +298,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateClient);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateClientToNFS);

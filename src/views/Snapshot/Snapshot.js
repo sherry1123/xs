@@ -15,7 +15,6 @@ class Snapshot extends Component {
         this.state = {
             // table
             query: '',
-            enableBatchDelete: false,
             snapshotList,
             snapshotListBackup: snapshotList,
             // table items batch delete
@@ -125,35 +124,30 @@ class Snapshot extends Component {
 
     batchDelete (){
         let {batchDeleteNames} = this.state;
-        let batchCount = batchDeleteNames.length;
-        if (!batchCount){
-            message.warning(lang('请选择要批量删除的快照', 'Please select the snapshots which you want to delete in batch.'));
-        } else {
-            Modal.confirm({
-                title: lang('警告', 'Warning'),
-                content: <div style={{fontSize: 12}}>
-                    <p>{lang(`您将要执行删除这 ${batchCount} 个快照的操作。`, `You are about to delete these ${batchCount} snapshot(s).`)}</p>
-                    <p>{lang(`该操作将会从系统中删除这些快照。`, `This operation will delete the snapshot(s) from the system. `)}</p>
-                    <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它(们)已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot(s) and it's(they're) no longer necessary.`)}</p>
-                </div>,
-                iconType: 'exclamation-circle-o',
-                okText: lang('删除', 'Delete'),
-                cancelText: lang('取消', 'Cancel'),
-                onOk: async () => {
-                    try {
-                        await httpRequests.deleteSnapshotsInBatch(batchDeleteNames);
-                        await this.setState({batchDeleteNames: []});
-                        httpRequests.getSnapshotList();
-                        message.success(lang('已开始批量删除快照！', 'Start deleting snapshots in batch!'));
-                    } catch ({msg}){
-                        message.error(lang('批量删除快照失败，原因：', 'Delete snapshots in batch failed, reason: ') + msg);
-                    }
-                },
-                onCancel: () => {
-
+        Modal.confirm({
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个快照的操作。`, `You are about to delete these ${batchDeleteNames.length} snapshot(s).`)}</p>
+                <p>{lang(`该操作将会从系统中删除这些快照。`, `This operation will delete the snapshot(s) from the system. `)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它(们)已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot(s) and it's(they're) no longer necessary.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okText: lang('删除', 'Delete'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.deleteSnapshotsInBatch(batchDeleteNames);
+                    await this.setState({batchDeleteNames: []});
+                    httpRequests.getSnapshotList();
+                    message.success(lang('已开始批量删除快照！', 'Start deleting snapshots in batch!'));
+                } catch ({msg}){
+                    message.error(lang('批量删除快照失败，原因：', 'Delete snapshots in batch failed, reason: ') + msg);
                 }
-            });
-        }
+            },
+            onCancel: () => {
+
+            }
+        });
     }
 
     render (){
@@ -179,13 +173,12 @@ class Snapshot extends Component {
             rowSelection: {
                 columnWidth: '2%',
                 selectedRowKeys: batchDeleteNames,
-                onChange: (selectedRowKeys) => {
-                    this.setState({batchDeleteNames: selectedRowKeys});
-                },
+                onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
                 getCheckboxProps: record => ({
                     disabled: record.deleting || record.rollbacking
                 }),
             },
+            rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 200, dataIndex: 'name',},
                 {title: lang('定时计划创建', 'Timed Schedule Create'), width: 80, dataIndex: 'isAuto',

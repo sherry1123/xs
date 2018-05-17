@@ -43,18 +43,18 @@ class ChangePassword  extends Component {
             } else if (!validatePassword(password)){
                 await this.validationUpdateState('password', {
                     cn: '请输入6至21位数字',
-                    en: 'please enter 6 to 21 digits'
+                    en: 'Please enter 6 to 21 digits'
                 }, false);
             } else if (password === adminDefaultPassword){
                 await this.validationUpdateState('password', {
                     cn: '密码不能和默认密码相同',
-                    en: 'password can\'t be the same with default password'
+                    en: 'Password can\'t be the same with default password'
                 }, false);
             } else {
                 if (password !== rePassword){
                     await this.validationUpdateState('rePassword', {
                         cn: '两次密码输入不一致',
-                        en: 'please enter two consistent passwords'
+                        en: 'Please enter two consistent passwords'
                     }, false);
                 } else {
                     await this.validationUpdateState('rePassword', {cn: '', en: ''}, true);
@@ -65,12 +65,12 @@ class ChangePassword  extends Component {
             if (!rePassword){
                 await this.validationUpdateState('rePassword', {
                     cn: '请再次输入新密码',
-                    en: 'please enter new password again'
+                    en: 'Please enter new password again'
                 }, false);
             } else if (password !== rePassword){
                 await this.validationUpdateState('rePassword', {
                     cn: '两次密码输入不一致',
-                    en: 'please enter two consistent passwords'
+                    en: 'Please enter two consistent passwords'
                 }, false);
             }
         }

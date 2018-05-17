@@ -37,15 +37,15 @@ class LocalAuthUserGroup extends Component {
         if (query || dataRefresh){
             await this.setState({
                 query,
-                NFSList: [...this.state.localAuthUserGroupListBackup].filter(({name = ''}) => name.match(query))
+                localAuthUserGroupList: [...this.state.localAuthUserGroupListBackup].filter(({name = ''}) => name.match(query))
             });
         } else {
-            this.setState({NFSList: this.state.localAuthUserGroupListBackup});
+            this.setState({localAuthUserGroupList: this.state.localAuthUserGroupListBackup});
         }
     }
 
-    user ({path}){
-        this.localAuthUserOfGroupSWrapper.getWrappedInstance().show(path);
+    user ({name}){
+        this.localAuthUserOfGroupWrapper.getWrappedInstance().show(name);
     }
 
     create (){
@@ -89,18 +89,19 @@ Before performing this operation.`)}</p>
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
-        let {NFSList} = this.state;
+        let {localAuthUserGroupList} = this.state;
         let tableProps = {
             size: 'normal',
-            dataSource: NFSList,
+            dataSource: localAuthUserGroupList,
             pagination: 'normal',
-            rowKey: 'path',
+            rowKey: 'name',
             locale: {
-                emptyText: lang('暂无NFS共享', 'No NFS Share')
+                emptyText: lang('暂无本地认证用户组', 'No local authentication user group')
             },
+            rowClassName: () => 'ellipsis',
             columns: [
-                {title: lang('共享路径', 'Share Path'), width: 200, dataIndex: 'path',},
-                {title: lang('描述', 'Description'), width: 200, dataIndex: 'description',
+                {title: lang('名称', 'Name'), width: 140, dataIndex: 'name',},
+                {title: lang('描述', 'Description'), width: '50%', dataIndex: 'description',
                     render: text => text || '--'
                 },
                 {title: lang('操作', 'Operations'), width: 80,
@@ -162,7 +163,7 @@ Before performing this operation.`)}</p>
                 </section>
                 <CreateLocalAuthUserGroup ref={ref => this.createLocalAuthUserGroupWrapper = ref} />
                 <EditLocalAuthUserGroup ref={ref => this.editLocalAuthUserGroupWrapper = ref} />
-                <LocalAuthUserOfGroup ref={ref => this.localAuthUserOfGroupSWrapper = ref} />
+                <LocalAuthUserOfGroup ref={ref => this.localAuthUserOfGroupWrapper = ref} />
             </div>
         );
     }

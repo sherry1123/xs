@@ -15,7 +15,8 @@ class SnapshotSchedule extends Component {
             query: '',
             snapshotScheduleList,
             snapshotScheduleListBackup: snapshotScheduleList,
-            batchDeleteScheduleNames: [],
+            // table items batch delete
+            batchDeleteNames: [],
         };
     }
 
@@ -117,50 +118,45 @@ class SnapshotSchedule extends Component {
     }
 
     batchDelete (){
-        let {batchDeleteScheduleNames} = this.state;
-        let batchCount = batchDeleteScheduleNames.length;
-        if (!batchCount){
-            message.warning(lang('请选择要批量删除的定时快照计划', 'Please select the timed snapshot schedules which you want to delete in batch.'));
-        } else {
-            Modal.confirm({
-                title: lang('警告', 'Warning'),
-                content: <div style={{fontSize: 12}}>
-                    <p>{lang(`您将要执行删除这 ${batchCount} 个定时快照计划的操作。`, `You are about to delete these ${batchCount} timed snapshot schedule(s).`)}</p>
-                    <p>{lang(`该操作将会从系统中删除这些定时快照计划。`, `This operation will delete the schedule(s) from the system. `)}</p>
-                    <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即执行用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
-                </div>,
-                iconType: 'exclamation-circle-o',
-                okText: lang('删除', 'Delete'),
-                cancelText: lang('取消', 'Cancel'),
-                onOk: async () => {
-                    try {
-                        await httpRequests.deleteSnapshotSchedulesInBatch(batchDeleteScheduleNames);
-                        await this.setState({batchDeleteSnapshotNames: []});
-                        httpRequests.getSnapshotScheduleList();
-                        message.success(lang('批量删除定时快照计划成功！', 'Delete timed snapshot schedules in batch successfully!'));
-                    } catch ({msg}){
-                        message.error(lang('批量删除定时快照计划失败，原因：', 'Delete timed snapshot schedules in batch failed, reason: ') + msg);
-                    }
-                },
-                onCancel: () => {
-
+        let {batchDeleteNames} = this.state;
+        Modal.confirm({
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个定时快照计划的操作。`, `You are about to delete these ${batchDeleteNames.length} timed snapshot schedule(s).`)}</p>
+                <p>{lang(`该操作将会从系统中删除这些定时快照计划。`, `This operation will delete the schedule(s) from the system. `)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即执行用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okText: lang('删除', 'Delete'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.deleteSnapshotSchedulesInBatch(batchDeleteNames);
+                    await this.setState({batchDeleteSnapshotNames: []});
+                    httpRequests.getSnapshotScheduleList();
+                    message.success(lang('批量删除定时快照计划成功！', 'Delete timed snapshot schedules in batch successfully!'));
+                } catch ({msg}){
+                    message.error(lang('批量删除定时快照计划失败，原因：', 'Delete timed snapshot schedules in batch failed, reason: ') + msg);
                 }
-            });
-        }
+            },
+            onCancel: () => {
+
+            }
+        });
     }
 
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
-        let {batchDeleteScheduleNames, snapshotScheduleList} = this.state;
+        let {batchDeleteNames, snapshotScheduleList} = this.state;
         let tableProps = {
             dataSource: snapshotScheduleList,
             size: 'normal',
             pagination: {
                 pageSize: 15,
                 showTotal: (total, range) => lang(
-                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteScheduleNames.length} 项`,
-                    `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteScheduleNames.length}`
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteNames.length} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteNames.length}`
                 ),
                 size: 'normal',
             },
@@ -170,11 +166,10 @@ class SnapshotSchedule extends Component {
             rowKey: 'name',
             rowSelection: {
                 columnWidth: '2%',
-                selectedRowKeys: batchDeleteScheduleNames,
-                onChange: (selectedRowKeys) => {
-                    this.setState({batchDeleteScheduleNames: selectedRowKeys});
-                },
+                selectedRowKeys: batchDeleteNames,
+                onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
+            rowClassName: () => 'ellipsis',
             columns: [{
                 title: lang('名称', 'Name'), dataIndex: 'name',
             }, {
@@ -245,7 +240,7 @@ class SnapshotSchedule extends Component {
                             </Button>
                             <Button
                                 className="fs-batch-delete-snapshot-button" size="small"
-                                disabled={!this.state.batchDeleteScheduleNames.length}
+                                disabled={!this.state.batchDeleteNames.length}
                                 onClick={this.batchDelete.bind(this)}
                             >
                                 {lang('批量删除', 'Delete In Batch')}

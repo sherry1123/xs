@@ -26,35 +26,23 @@ class ManagementSystemLog extends Component {
             locale: {
                 emptyText: lang('暂无日志', 'No Logs')
             },
-            columns: [{
-                width: 60,
-                align: 'center',
-                dataIndex: 'level',
-                key: 'level_circle',
-                render: text => <i className={`fs-log-level-circle level-${text}`} />
-            }, {
-                title: lang('节点', 'Node'),
-                dataIndex: 'node',
-                key: 'node',
-                render: (text, record) => record.node ? record.node : 'cluster'
-            }, {
-                title: lang('事件描述', 'Description'),
-                dataIndex: 'desc',
-                key: 'desc',
-                render: text => text[language]
-            }, {
-                title: lang('等级', 'Level'),
-                dataIndex: 'level',
-                key: 'level',
-                render: (text, record) => {
-                    return record.level * 1 === 1 ? lang('低', 'Low') : (record.level * 1 === 2 ? lang('中', 'Warn') : lang('高', 'Fatal'));
+            columns: [
+                {width: '3%', align: 'center', dataIndex: 'level', key: 'level_circle',
+                    render: text => <i className={`fs-log-level-circle level-${text}`} />
+                },
+                {width: '17%', title: lang('节点', 'Node'), dataIndex: 'node', key: 'node',
+                    render: (text, record) => record.node ? record.node : 'cluster'
+                },
+                {width: '50%', title: lang('事件描述', 'Description'), dataIndex: 'desc', key: 'desc',
+                    render: text => text[language]
+                },
+                {width: '10%', title: lang('等级', 'Level'), dataIndex: 'level', key: 'level',
+                    render: (text, record) => record.level * 1 === 1 ? lang('低', 'Low') : (record.level * 1 === 2 ? lang('中', 'Warn') : lang('高', 'Fatal'))
+                },
+                {width: '20%', title: lang('时间', 'Time'), dataIndex: 'time', key: 'time',
+                    render: text => timeFormat(text)
                 }
-            }, {
-                title: lang('时间', 'Time'),
-                dataIndex: 'time',
-                key: 'time',
-                render: text => timeFormat(text)
-            }]
+            ]
         };
         let auditLogProps = {
             dataSource: auditLogs,
@@ -69,30 +57,19 @@ class ManagementSystemLog extends Component {
             locale: {
                 emptyText: lang('暂无日志', 'No Logs')
             },
-            columns: [{
-                title: lang('用户名称', 'Username'),
-                dataIndex: 'user',
-                key: 'user',
-            }, {
-                title: lang('用户类型', 'User Type'),
-                dataIndex: 'group',
-                key: 'group',
-                render: text => text[language]
-            }, {
-                title: lang('用户登录地址', 'User Login IP'),
-                dataIndex: 'ip',
-                key: 'ip',
-            }, {
-                title: lang('事件描述', 'Event Description'),
-                dataIndex: 'desc',
-                key: 'desc',
-                render: text => text[language]
-            }, {
-                title: lang('时间', 'Time'),
-                dataIndex: 'time',
-                key: 'time',
-                render: text => timeFormat(text)
-            }]
+            columns: [
+                {width: '15%', title: lang('用户名称', 'Username'), dataIndex: 'user', key: 'user',},
+                {width: '10%', title: lang('用户类型', 'User Type'), dataIndex: 'group', key: 'group',
+                    render: text => text[language]
+                },
+                {width: '15%', title: lang('用户登录地址', 'User Login IP'), dataIndex: 'ip', key: 'ip',},
+                {width: '45%', title: lang('事件描述', 'Event Description'), dataIndex: 'desc', key: 'desc',
+                    render: text => text[language]
+                },
+                {width: '15%', title: lang('时间', 'Time'), dataIndex: 'time', key: 'time',
+                    render: text => timeFormat(text)
+                }
+            ]
         };
 
         return (

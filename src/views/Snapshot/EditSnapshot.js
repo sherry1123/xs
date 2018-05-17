@@ -29,9 +29,9 @@ class EditSnapshot extends Component {
             await httpRequests.updateSnapshot(snapshotData);
             httpRequests.getSnapshotList();
             await this.hide();
-            message.success(lang('编辑快照成功!', 'Edit Snapshot successfully!'));
+            message.success(lang('编辑快照成功!', 'Edit snapshot successfully!'));
         } catch ({msg}){
-            message.error(lang('编辑快照失败, 原因: ', 'Edit Snapshot failed, reason: ') + msg);
+            message.error(lang('编辑快照失败, 原因: ', 'Edit snapshot failed, reason: ') + msg);
         }
         this.setState({formSubmitting: false});
     }
