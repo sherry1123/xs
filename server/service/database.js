@@ -87,7 +87,7 @@ const model = {
         return await dao.deleteOne(snapshotSchedule, param);
     },
     async getCIFSShare(param) {
-        return await dao.findAll(cifsShare, param, { userList: 0 });
+        return await dao.findAll(cifsShare, param, { userOrGroupList: 0 });
     },
     async addCIFSShare(param) {
         return await dao.createOne(cifsShare, param);
@@ -98,28 +98,28 @@ const model = {
     async deleteCIFSShare(param) {
         return await dao.deleteOne(cifsShare, param);
     },
-    async getUserInCIFSShare(param) {
-        let { name } = param;
-        let { userList } = await dao.findOne(cifsShare, { name });
-        return userList;
+    async getUserOrGroupFromCIFSShare(param) {
+        let { shareName } = param;
+        let { userOrGroupList } = await dao.findOne(cifsShare, { name: shareName });
+        return userOrGroupList;
     },
-    async addUserInCIFSShare(param) {
+    async addUserOrGroupToCIFSShare(param) {
         let { items, shareName } = param;
-        let userList = await model.getUserInCIFSShare({ name: shareName });
-        userList = userList.concat(items);
-        return await dao.updateOne(cifsShare, { name: shareName }, { userList });
+        let userOrGroupList = await model.getUserOrGroupFromCIFSShare({ shareName });
+        userOrGroupList = userOrGroupList.concat(items);
+        return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
-    async updateUserInCIFSShare(param) {
-        let { name, type, permissionLevel, shareName } = param;
-        let userList = await model.getUserInCIFSShare({ name: shareName });
-        userList = userList.map(user => (user.name === name ? { name, type, permissionLevel } : user));
-        return await dao.updateOne(cifsShare, { name: shareName }, { userList });
+    async updateUserOrGroupInCIFSShare(param) {
+        let { name, type, permission, shareName } = param;
+        let userOrGroupList = await model.getUserOrGroupFromCIFSShare({ shareName });
+        userOrGroupList = userOrGroupList.map(user => (user.name === name && user.type === type ? { name, type, permission } : user));
+        return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
-    async deleteUserInCIFSShare(param) {
-        let { name, shareName } = param;
-        let userList = await model.getUserInCIFSShare({ name: shareName });
-        userList = userList.filter(user => (user.name === name ? false : true));
-        return await dao.updateOne(cifsShare, { name: shareName }, { userList });
+    async removeUserOrGroupFromCIFSShare(param) {
+        let { name, type, shareName } = param;
+        let userOrGroupList = await model.getUserOrGroupFromCIFSShare({ shareName });
+        userOrGroupList = userOrGroupList.filter(user => (user.name === name && user.type === type ? false : true));
+        return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
     async getNFSShare(param) {
         return await dao.findAll(nfsShare, param, { clientList: 0 });

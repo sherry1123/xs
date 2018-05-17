@@ -150,17 +150,17 @@ const model = {
     '/api/batchdeletecifsshare': async ctx => {
         ctx.body = await service.batchDeleteCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getuserincifsshare': async ctx => {
-        ctx.body = await service.getUserInCIFSShare(ctx.param);
+    '/api/getuserorgroupfromcifsshare': async ctx => {
+        ctx.body = await service.getUserOrGroupFromCIFSShare(ctx.param);
     },
-    '/api/createuserincifsshare': async ctx => {
-        ctx.body = await service.createUserInCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/adduserorgrouptocifsshare': async ctx => {
+        ctx.body = await service.addUserOrGroupToCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/updateuserincifsshare': async ctx => {
-        ctx.body = await service.updateUserInCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/updateuserorgroupincifsshare': async ctx => {
+        ctx.body = await service.updateUserOrGroupInCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deleteuserincifsshare': async ctx => {
-        ctx.body = await service.deleteUserInCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/removeuserorgroupfromcifsshare': async ctx => {
+        ctx.body = await service.removeUserOrGroupFromCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/getnfsshare': async ctx => {
         ctx.body = await service.getNFSShare(ctx.param);
