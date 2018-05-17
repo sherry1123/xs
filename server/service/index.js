@@ -160,45 +160,52 @@ const model = {
         }
         return result;
     },
-    async addUser(param) {
+    async createUser(param, user, ip) {
         let result = {};
         try {
             await database.addUser(param)
             result = handler.response(0, 'create user successfully');
+            await log.audit({ user, desc: `create user '${param.username}' successfully`, ip });
         } catch (error) {
             result = handler.response(53, error, param);
+            await log.audit({ user, desc: `create user '${param.username}' failed`, ip });
         }
         return result;
     },
-    async updateUser(param, ip) {
+    async updateUser(param, user, ip) {
         let query = { username: param.username };
         let result = {};
         try {
             await database.updateUser(query, param);
             result = handler.response(0, 'update user successfully');
-            await log.audit({ user: param.username, desc: `update user <${param.username}> successfully`, ip });
+            await log.audit({ user, desc: `update user '${param.username}' successfully`, ip });
         } catch (error) {
             result = handler.response(54, error, param);
+            await log.audit({ user, desc: `update user '${param.username}' failed`, ip });
         }
         return result;
     },
-    async deleteUser(param) {
+    async deleteUser(param, user, ip) {
         let result = {};
         try {
             await database.deleteUser(param);
             result = handler.response(0, 'delete user successfully');
+            await log.audit({ user, desc: `delete user '${param.username}' successfully`, ip });
         } catch (error) {
             result = handler.response(55, error, param);
+            await log.audit({ user, desc: `delete user '${param.username}' failed`, ip });
         }
         return result;
     },
-    async testMail(param) {
+    async testMail(param, user, ip) {
         let result = {};
         try {
             await email.sendMail(param);
             result = handler.response(0, 'test mail successfully');
+            await log.audit({ user, desc: `test SMTP server '${param.host}' successfully`, ip });
         } catch (error) {
             result = handler.response(61, error, param);
+            await log.audit({ user, desc: `test SMTP server '${param.host}' failed`, ip });
         }
         return result;
     },

@@ -186,5 +186,6 @@ exports.i18n = {
     log: '日志',
     directory: '目录',
     pattern: '条带',
-    or: '或者'
+    or: '或者',
+    server: '服务器'
 };

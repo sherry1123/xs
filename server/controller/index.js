@@ -44,17 +44,17 @@ const model = {
     '/api/getuser': async ctx => {
         ctx.body = await service.getUser(ctx.param);
     },
-    '/api/adduser': async ctx => {
-        ctx.body = await service.addUser(ctx.param);
+    '/api/createuser': async ctx => {
+        ctx.body = await service.createUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/updateuser': async ctx => {
-        ctx.body = await service.updateUser(ctx.param, handler.clientIP(ctx));
+        ctx.body = await service.updateUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/deleteuser': async ctx => {
-        ctx.body = await service.deleteUser(ctx.param);
+        ctx.body = await service.deleteUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/testmail': async ctx => {
-        ctx.body = await service.testMail(ctx.param);
+        ctx.body = await service.testMail(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/gethardware': async ctx => {
         ctx.body = await service.getHardware(ctx.param);
