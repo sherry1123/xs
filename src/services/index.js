@@ -16,6 +16,9 @@ export {timeLeftFormat, timeFormat} from './format/time';
 // case
 export {someUpperCase} from './format/toUpperCase';
 
+// cut string
+export {cutString} from './format/cutString';
+
 // validation
 export {validateIpv4, validateIpv4Segment, validateFsName, validateEmail, validatePassword, validateNotZeroInteger, validatePositiveInteger} from './validation';
 

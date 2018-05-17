@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Button, Form, Radio, Select, Modal} from "antd";
+import {Button, Form, Radio, Select, message, Modal} from "antd";
 import lang from "../../components/Language/lang";
+import httpRequests from "../../http/requests";
 
 class EditClient extends Component {
     constructor (props){
@@ -11,6 +12,7 @@ class EditClient extends Component {
             formValid: false,
             formSubmitting: false,
             clientData: {
+                path: '',
                 type: 'host',
                 ip: '',
                 permission: 'read-only',
@@ -30,14 +32,27 @@ class EditClient extends Component {
         this.setState({clientData});
     }
 
-    edit (){
-
+    async edit (){
+        let clientData = Object.assign({}, this.state.clientData);
+        this.setState({formSubmitting: true});
+        try {
+            await httpRequests.updateClient(clientData);
+            httpRequests.getClientListByNFSSharePath(clientData.path);
+            await this.hide();
+            message.success(lang('编辑客户端成功!', 'Edit Client successfully!'));
+        } catch ({msg}){
+            message.error(lang('编辑客户端失败, 原因: ', 'Edit Client failed, reason: ') + msg);
+        }
+        this.setState({formSubmitting: false});
     }
 
-    show (clientData){
+    show ({client, path}){
+        if (!client.path){
+            client.path = path;
+        }
         this.setState({
             visible: true,
-            clientData: clientData
+            clientData: client
         });
     }
 
@@ -59,7 +74,7 @@ class EditClient extends Component {
         };
         return (
             <Modal
-                title={lang('创建客户端', 'Create Client')}
+                title={lang('编辑客户端', 'Edit Client')}
                 width={540}
                 closable={false}
                 maskClosable={false}
@@ -129,7 +144,7 @@ class EditClient extends Component {
                     <Form.Item {...formItemLayout} label={lang('root权限限制', 'root Permission Constraint')}>
                         <Radio.Group
                             onChange={({target: {value}}) => {
-                                this.formValueChange.bind(this, 'permissionConstraint')(value);
+                                this.formValueChange.bind(this, 'rootPermissionConstraint')(value);
                             }}
                             value={this.state.clientData.rootPermissionConstraint}
                         >

@@ -5,7 +5,7 @@ import lang from "../../components/Language/lang";
 import {ckGet} from '../../services';
 import routerPath from '../routerPath';
 
-// The staying page during the rolling back
+// The placeholder page during the rolling back
 
 class RollingBack extends PureComponent {
     componentWillMount (){

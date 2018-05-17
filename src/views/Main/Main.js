@@ -25,9 +25,13 @@ const StorageNodes = asyncLoad(() => import('../StorageNodes/StorageNodes'));
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
 const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
 
-// Share
+// share
 const NFS = asyncLoad(() => import('../NFS/NFS'));
 const CIFS = asyncLoad(() => import('../CIFS/CIFS'));
+
+// local authentication user and group
+const LocalAuthUser = asyncLoad(() => import('../LocalAuthUser/LocalAuthUser'));
+const LocalAuthUserGroup = asyncLoad(() => import('../LocalAuthUserGroup/LocalAuthUserGroup'));
 
 // management
 const ManagementSystemLog = asyncLoad(() => import('../Management/ManagementSystemLog'));
@@ -104,6 +108,8 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
                         <Route path={`${Main}${routerPath.NFS}`} component={NFS} />
                         <Route path={`${Main}${routerPath.CIFS}`} component={CIFS} />
+                        <Route path={`${Main}${routerPath.LocalAuthUser}`} component={LocalAuthUser} />
+                        <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
                         {/*<Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />*/}

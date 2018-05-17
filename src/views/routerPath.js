@@ -38,6 +38,9 @@ const routerPath = {
     NFS: '/nfs',
     CIFS: '/cifs',
 
+    LocalAuthUser: '/local-auth-user',
+    LocalAuthUserGroup: '/local-auth-user-group',
+
     ManagementSystemLog: '/management-system-log',
 
     FSOperation: '/fs-operation',
@@ -53,6 +56,7 @@ export const pathToMenu = {
     // UserStatistics: [routerPath.UserStatistics],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
     Share: [routerPath.NFS, routerPath.CIFS],
+    UserAndGroup: [routerPath.LocalAuthUser, routerPath.LocalAuthUserGroup],
     Management: [routerPath.ManagementSystemLog],
     FSOperation: [routerPath.FSOperation],
 };

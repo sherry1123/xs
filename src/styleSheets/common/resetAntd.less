@@ -13,6 +13,10 @@ a {
     }
 }
 
+.ant-modal-mask {
+    background-color: rgba(0, 0, 0, .35) !important;
+}
+
 .ant-btn-sm {
     padding: 0 15px;
     font-size: @smallFont !important;
@@ -46,6 +50,7 @@ a {
             .ant-form-item-label {
                 white-space: normal !important;
                 label {
+                    float: left;
                     font-size: @smallFont;
                 }
             }
@@ -65,6 +70,7 @@ a {
 
 textarea {
     &.ant-input {
+        padding: 1px 7px;
         font-size: @smallFont;
     }
 }
@@ -88,22 +94,6 @@ textarea {
 .ant-select-dropdown {
     .ant-select-dropdown-menu-item {
         font-size: @smallFont;
-    }
-}
-
-.ant-table {
-    &.ant-table-small {
-        font-size: @smallFont !important;
-        border: none !important;
-    }
-    .ant-table-thead > tr > th {
-        background-color: @white !important;
-        & > span {
-            color: @title;
-        }
-    }
-    .ant-table-footer {
-        padding: 8px 16px;
     }
 }
 
@@ -150,6 +140,60 @@ textarea {
 }
 
 .ant-table-wrapper {
+    .ant-table {
+        &.ant-table-small {
+            font-size: @smallFont !important;
+            border: none !important;
+            & > .ant-table-content > .ant-table-body > table {
+                padding: 0;
+            }
+        }
+        .ant-table-thead {
+            font-size: 12px;
+            .fs-box-shadow();
+            & > tr {
+                & > th {
+                    padding: 10px 16px;
+                    border: none;
+                    background-color: @white !important;
+                    & > span {
+                        color: @title;
+                    }
+                }
+            }
+        }
+        .ant-table-body {
+            table {
+                // 'table-layout: fixed' will let table calculate its width based on the set value
+                // of every td column, not their actual width widened by their contents when
+                // 'table-layout' is 'automatic'. So 'table-layout' is necessary here in order for
+                // the setting 'text-overflow: ellipsis' of 'td.ellipsis' take effect.
+                table-layout: fixed;
+                max-width: 100%;
+                .ant-table-tbody {
+                    & > tr {
+                        font-size: @smallFont;
+                    }
+                }
+                tr.ant-table-row {
+                    &.ellipsis {
+                        td {
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            overflow: hidden;
+                        }
+                    }
+                }
+            }
+        }
+        .ant-table-footer {
+            padding: 8px 16px;
+        }
+    }
+    .ant-table-placeholder {
+        margin-top: 8px;
+        font-size: 10px;
+    }
     .ant-table-scroll {
         .ant-table-header {
             margin-bottom: 0 !important;
@@ -159,25 +203,6 @@ textarea {
         .ant-table-body {
             margin: 0 8px !important;
         }
-    }
-    .ant-table-thead {
-        font-size: 12px;
-        .fs-box-shadow();
-        & > tr {
-            & > th {
-                padding: 10px 16px;
-                border: none;
-            }
-        }
-    }
-    .ant-table-tbody {
-        & > tr {
-            font-size: @smallFont;
-        }
-    }
-    .ant-table-placeholder {
-        margin-top: 8px;
-        font-size: 10px;
     }
 }
 

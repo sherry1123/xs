@@ -41,12 +41,22 @@ const fetchDataPer15s = () => {
 
     // NFS share
     if (routerHash.match(main + routerPath.NFS)){
-        httpRequests.getNFSList();
+        httpRequests.getNFSShareList();
     }
 
     // CIFS share
     if (routerHash.match(main + routerPath.CIFS)){
-        httpRequests.getCIFSList();
+        httpRequests.getCIFSShareList();
+    }
+
+    // local authentication user
+    if (routerHash.match(main + routerPath.LocalAuthUser)){
+        httpRequests.getLocalAuthUserList();
+    }
+
+    // local authentication user group
+    if (routerHash.match(main + routerPath.LocalAuthUserGroup)){
+        httpRequests.getLocalAuthUserGroupList();
     }
 
     // management - system log

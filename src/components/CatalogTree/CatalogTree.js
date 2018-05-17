@@ -65,15 +65,16 @@ class CatalogTree extends Component {
         });
     }
 
-    async show (){
+    async show (selectedCatalog = []){
         await this.setState({
             visible: true,
-            selectedCatalog: []
+            treeNodes: [],
+            selectedCatalog
         });
         // this is the root path
         let rootNode = {title: '/', key: '/'};
         // get the catalogs under root path
-        let children = await httpRequests.getFiles(rootNode.path);
+        let children = await httpRequests.getFiles(rootNode.key);
         children.forEach(node => this.convertNode(node));
         rootNode.children = children;
         this.setState({treeNodes: [rootNode]});
@@ -96,6 +97,7 @@ class CatalogTree extends Component {
                 title={lang('选择目录', 'Select Catalog')}
                 width={400}
                 visible={this.state.visible}
+                mask={!!this.props.mask}
                 closable={false}
                 maskClosable={false}
                 footer={
@@ -112,7 +114,7 @@ class CatalogTree extends Component {
                             size='small'
                             onClick={this.outputCatalog.bind(this)}
                         >
-                            {lang('确定', 'Create')}
+                            {lang('确定', 'Ok')}
                         </Button>
                     </div>
                 }
@@ -123,13 +125,14 @@ class CatalogTree extends Component {
                 >
                     {
                         !!treeNodes.length && <div style={{marginBottom: 10, fontSize: 12}}>
-                            {lang('已选路径：', 'Selected Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
+                            {lang('已选目录路径：', 'Selected Catalog Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
                         </div>
                     }
                     <Tree
                         showIcon
                         multiple={false}
                         defaultExpandedKeys={['/']}
+                        defaultSelectedKeys={selectedCatalog}
                         loadData={this.loadNode.bind(this)}
                         onSelect={this.selectNode.bind(this)}
                     >

@@ -175,7 +175,7 @@ class FSOperation extends Component {
                 <section className="fs-page-big-title">
                     <h3 className="fs-page-title">{lang('文件系统操作', 'FS Operation')}</h3>
                 </section>
-                <section className="fs-page-item-wrapper">
+                <section className="fs-page-item-wrapper fs-file-catalog-list-wrapper">
                     <section className="fs-page-item-content">
                         <Input.Search
                             className="fs-search-table-input"
@@ -184,7 +184,7 @@ class FSOperation extends Component {
                             placeholder={lang('请输入路径', 'enter path')}
                             value={this.state.dirPath}
                             enterButton={true}
-                            onChange={({target: {value}}) =>  this.setState({dirPath: value})}
+                            onChange={({target: {value}}) => this.setState({dirPath: value})}
                             onSearch={() => {this.queryDirPath.bind(this)()}}
                         />
                         <Table {...tableProps} />

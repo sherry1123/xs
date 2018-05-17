@@ -4,41 +4,41 @@ import {Button, Form, Input, message, Modal} from "antd";
 import lang from "../../components/Language/lang";
 import httpRequests from "../../http/requests";
 
-class EditNFS extends Component {
+class EditLocalAuthUserGroup extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
             formSubmitting: false,
-            shareData: {}
+            groupData: {}
         };
     }
 
     formValueChange (key, value){
-        let shareData = {[key]: value};
-        shareData = Object.assign({}, this.state.shareData, shareData);
-        this.setState({shareData});
+        let groupData = {[key]: value};
+        groupData = Object.assign({}, this.state.groupData, groupData);
+        this.setState({groupData});
     }
 
     async edit (){
-        let shareData = Object.assign({}, this.state.shareData);
+        let groupData = Object.assign({}, this.state.groupData);
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.updateNFSShare(shareData);
-            httpRequests.getNFSShareList();
+            await httpRequests.updateLocalAuthUserGroup(groupData);
+            httpRequests.getLocalAuthUserGroupList();
             await this.hide();
-            message.success(lang('编辑NFS共享成功!', 'Edit NFS share successfully!'));
+            message.success(lang('编辑本地认证用户组成功!', 'Edit local authentication user group successfully!'));
         } catch ({msg}){
-            message.error(lang('编辑NFS共享失败, 原因: ', 'Edit NFS share failed, reason: ') + msg);
+            message.error(lang('编辑本地认证用户组失败, 原因: ', 'Edit local authentication user group failed, reason: ') + msg);
         }
         this.setState({formSubmitting: false});
     }
 
-    show (shareData){
+    show (groupData){
         this.setState({
             visible: true,
             formSubmitting: false,
-            shareData
+            groupData
         });
     }
 
@@ -60,7 +60,7 @@ class EditNFS extends Component {
         };
         return (
             <Modal
-                title={lang('编辑NFS共享', 'Edit NFS Share')}
+                title={lang('编辑本地认证用户组', 'Edit Local Authentication User Group')}
                 width={400}
                 closable={false}
                 maskClosable={false}
@@ -85,8 +85,8 @@ class EditNFS extends Component {
                 }
             >
                 <Form>
-                    <Form.Item {...formItemLayout} label={lang('路径', 'Path')}>
-                        {this.state.shareData.path}
+                    <Form.Item {...formItemLayout} label={lang('名称', 'Name')}>
+                        {this.state.groupData.name}
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea
@@ -94,7 +94,7 @@ class EditNFS extends Component {
                             autosize={{minRows: 4, maxRows: 6}}
                             maxLength={200}
                             placeholder={lang('描述为选填项，长度0-200位', 'description is optional, length is 0-200')}
-                            value={this.state.shareData.description}
+                            value={this.state.groupData.description}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                             }}
@@ -119,4 +119,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditNFS);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditLocalAuthUserGroup);

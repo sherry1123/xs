@@ -1,4 +1,4 @@
-import {fetchGet, fetchPost, fetchMock} from './fetch';
+import {fetchGet, fetchPost, /*fetchMock*/} from './fetch';
 import {lsGet} from '../services';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
@@ -8,6 +8,7 @@ import storageNodeAction from '../redux/actions/storageNodeAction';
 import managementAction from '../redux/actions/managementAction';
 import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
+import localAuthUserAction from '../redux/actions/localAuthUserAction';
 
 const requestMiddleWare = fn => {
     try {
@@ -239,31 +240,150 @@ export default  {
     },
 
     // NFS share
-    async getNFSList (){
+    async getNFSShareList (){
         requestMiddleWare(async () => {
-            let data = await fetchMock([{path: '/a/a1', description: 'yyyyy'}, {path: '/a/a2', description: 'xxxxx'},]);
+            let data = await fetchGet('/api/getnfsshare');
             !!data && store.dispatch(shareAction.setNFSList(data));
         });
     },
 
+    async createNFSShare (shareData){
+        await fetchPost('/api/createnfsshare', shareData);
+    },
+
+    async updateNFSShare (shareData){
+        await fetchPost(' /api/updatenfsshare', shareData);
+    },
+
     async deleteNFSShare (shareData){
-        await fetchMock(shareData);
+        await fetchPost('/api/deletenfsshare', shareData);
     },
 
-    async getClientList (){
-        return requestMiddleWare(async () => await fetchMock([
-            {ip: '192.168.1.2', type: 'host', permission: 'read-only'},
-            {ip: '192.168.1.3', type: 'host', permission: 'read-only'},
-            {ip: '192.168.2.0/24', type: 'host', permission: 'read-only'},
-            {ip: 'wangxujie', type: 'host', permission: 'read-only'},
-        ]));
+    async deleteNFSShareInBatch (paths){
+        await fetchPost('/api/batchdeletenfsshare', {paths});
     },
 
-    async getCIFSList (){
+    // NFS share client
+    async getClientListByNFSSharePath (path){
         requestMiddleWare(async () => {
-            let data = await fetchMock([{path: '/b/b3', description: 'yyyyy'}, {path: '/b/b4', description: 'xxxxx'},]);
+            let data = await fetchGet('/api/getclientinnfsshare', {path});
+            !!data && store.dispatch(shareAction.setClientListOfNFS(data));
+        });
+    },
+
+    async createClient (client){
+        await fetchPost('/api/createclientinnfsshare', client);
+    },
+
+    async updateClient (client){
+        await fetchPost('/api/updateclientinnfsshare', client);
+    },
+
+    async deleteClient (client){
+        await fetchPost('/api/deleteclientinnfsshare', client);
+    },
+
+
+    // CIFS share
+    async getCIFSShareList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getcifsshare');
             !!data && store.dispatch(shareAction.setCIFSList(data));
         });
+    },
+
+    async createCIFSShare (shareData){
+        await fetchPost('/api/createcifsshare', shareData);
+    },
+
+    async updateCIFSShare (shareData){
+        await fetchPost('/api/updatecifsshare', shareData);
+    },
+
+    async deleteCIFSShare (shareData){
+        await fetchPost('/api/deletecifsshare', shareData);
+    },
+
+    async deleteCIFSShareInBatch (names){
+        await fetchPost('/api/batchdeletecifsshare', {names});
+    },
+
+    async getLocalAuthUserOrGroupListByCIFSShareName (shareName){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getuserorgroupfromcifsshare', {shareName});
+            !!data && store.dispatch(shareAction.setLocalAuthUserOrGroupListOfCIFS(data));
+        });
+    },
+
+    async addLocalAuthUserOrGroupToCIFSShare (shareName, items){
+        await fetchPost('/api/adduserorgrouptocifsshare', {shareName, items});
+    },
+
+    async updateLocalAuthUserOrGroupInCIFSShare (item){
+        await fetchPost('/api/updateuserorgroupincifsshare', item);
+    },
+
+    async removeLocalAuthUserOrGroupFromCIFSShare (item){
+        await fetchPost('/api/removeuserorgroupfromcifsshare', item);
+    },
+
+    // local authentication user
+    async getLocalAuthUserList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getlocalauthuser');
+            !!data && store.dispatch(localAuthUserAction.setLocalAuthUserList(data));
+        });
+    },
+
+    async createLocalAuthUser (userData){
+        await fetchPost('/api/createlocalauthuser', userData);
+    },
+
+    async updateLocalAuthUser (userData){
+        await fetchPost('/api/updatelocalauthuser', userData);
+    },
+
+    async deleteLocalAuthUser (userData){
+        await fetchPost('/api/deletelocalauthuser', userData);
+    },
+
+    async deleteLocalAuthUserInBatch (names){
+        await fetchPost('/api/batchdeletelocalauthuser', {names});
+    },
+
+    // local authentication user group
+    async getLocalAuthUserGroupList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getlocalauthusergroup');
+            !!data && store.dispatch(localAuthUserAction.setLocalAuthUserGroupList(data));
+        });
+    },
+
+    async createLocalAuthUserGroup (groupData){
+        await fetchPost('/api/createlocalauthusergroup', groupData);
+    },
+
+    async updateLocalAuthUserGroup (groupData){
+        await fetchPost('/api/updatelocalauthusergroup', groupData);
+    },
+
+    async deleteLocalAuthUserGroup (groupData){
+        await fetchPost('/api/deletelocalauthusergroup', groupData);
+    },
+
+    async getLocalAuthUserListByGroupName (groupName){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getlocalauthuserfromgroup', {groupName});
+            !!data && store.dispatch(localAuthUserAction.setLocalAuthUserListOfGroup(data));
+        });
+    },
+
+    async addLocalAuthUserToGroup (groupName, names){
+        await fetchPost('/api/addlocalauthusertogroup', {groupName, names});
+    },
+
+    async removeLocalAuthUserFromGtoup (userData){
+        await fetchPost('/api/removelocalauthuserfromgroup', userData);
     },
 
     // fs operation

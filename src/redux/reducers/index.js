@@ -4,18 +4,18 @@ import {lsGet} from '../../services';
 import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';
-import metadataNodeReducer from '../reducers/metadataNodeReducer';
-import storageNodeReducer from '../reducers/storageNodeReducer';
-import managementReducer from '../reducers/managementReducer';
-import snapshotReducer from '../reducers/snapshotReducer';
+import metadataNodeReducer from './metadataNodeReducer';
+import storageNodeReducer from './storageNodeReducer';
+import managementReducer from './managementReducer';
+import snapshotReducer from './snapshotReducer';
 import shareReducer from './shareReducer';
+import localAuthUserReducer from './localAuthUserReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
 const {VERSION, NODE_ENV} = process.env;
 State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 State.main.general.menuExpand = lsGet('menuExpand');
-
 
 // export a combined reducer
 export default combineReducers({
@@ -56,6 +56,10 @@ export default combineReducers({
 
                 case 'share':
                     state[key] = shareReducer(main[key], action);
+                    break;
+
+                case 'localAuthUser':
+                    state[key] = localAuthUserReducer(main[key], action);
                     break;
 
                 default:
