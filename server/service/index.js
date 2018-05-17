@@ -522,10 +522,10 @@ const model = {
         return result;
     },
     async createCIFSShare(param, user, ip) {
-        let { path, name, description, oplock, notify, offlineCacheMode, userList } = param;
+        let { path, name, description, oplock, notify, offlineCacheMode, userOrGroupList } = param;
         let result = {};
         try {
-            await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userList });
+            await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList });
             result = handler.response(0, 'create CIFS share successfully');
             await log.audit({ user, desc: `create CIFS share '${name}' successfully`, ip });
         } catch (error) {
@@ -586,15 +586,16 @@ const model = {
         return result;
     },
     async createUserInCIFSShare(param, user, ip) {
-        let { names, shareName } = param;
+        let { items, shareName } = param;
+        let names = items.map(item => (item.name));
         let result = {};
         try {
             await database.addUserInCIFSShare(param);
             result = handler.response(0, 'add CIFS share user successfully');
-            await log.audit({ user, desc: `add ${names.length} users '${String(handler.bypass(names))}' to CIFS share '${shareName}' successfully`, ip });
+            await log.audit({ user, desc: `add ${names.length} users or user groups '${String(handler.bypass(names))}' to CIFS share '${shareName}' successfully`, ip });
         } catch (error) {
             result = handler.response(152, error, param);
-            await log.audit({ user, desc: `add ${names.length} users '${String(handler.bypass(names))}' to CIFS share '${shareName}' failed`, ip });
+            await log.audit({ user, desc: `add ${names.length} users or user groups '${String(handler.bypass(names))}' to CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },

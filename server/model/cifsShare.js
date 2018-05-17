@@ -7,6 +7,6 @@ module.exports = mongoose.model('cifsshare',
         oplock: Boolean,
         notify: Boolean,
         offlineCacheMode: Number,
-        userList: Array
+        userOrGroupList: Array
     })
 );

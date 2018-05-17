@@ -185,5 +185,6 @@ exports.i18n = {
     event: '事件',
     log: '日志',
     directory: '目录',
-    pattern: '条带'
+    pattern: '条带',
+    or: '或者'
 };
