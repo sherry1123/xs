@@ -39,7 +39,12 @@ const model = {
         return { code, msg: typeof index === 'undefined' ? config.error[code] : config.error[code][index] };
     },
     i18n(text) {
-        return text.split(' ').map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : String(Number(word)) === word ? word + '个' : word)).join('');
+        let wordList = text.split(' ');
+        let unique = word => (word.includes('(s)') ? word.replace('(s)', '') : word);
+        let measure = word => (String(Number(word)) === word ? word + '个' : word);
+        let flip = (word, sentence) => (sentence.includes(word) ? sentence.splice(sentence.indexOf(word), sentence.length - sentence.indexOf(word) - 1).concat(['中'], sentence) : sentence);
+        wordList = wordList.includes('to') ? flip('to', wordList) : wordList.includes('in') ? flip('in', wordList) : wordList.includes('from') ? flip('from', wordList) : wordList;
+        return wordList.map(word => (unique(word))).map(word => (config.i18n.hasOwnProperty(word) ? config.i18n[word] : measure(word))).join('');
     },
     bypass(array) {
         if (array.length > 5) {

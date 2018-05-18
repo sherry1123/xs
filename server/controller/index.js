@@ -44,17 +44,17 @@ const model = {
     '/api/getuser': async ctx => {
         ctx.body = await service.getUser(ctx.param);
     },
-    '/api/adduser': async ctx => {
-        ctx.body = await service.addUser(ctx.param);
+    '/api/createuser': async ctx => {
+        ctx.body = await service.createUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/updateuser': async ctx => {
-        ctx.body = await service.updateUser(ctx.param, handler.clientIP(ctx));
+        ctx.body = await service.updateUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/deleteuser': async ctx => {
-        ctx.body = await service.deleteUser(ctx.param);
+        ctx.body = await service.deleteUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/testmail': async ctx => {
-        ctx.body = await service.testMail(ctx.param);
+        ctx.body = await service.testMail(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/gethardware': async ctx => {
         ctx.body = await service.getHardware(ctx.param);
@@ -135,17 +135,95 @@ const model = {
     '/api/batchdeletesnapshotschedule': async ctx => {
         ctx.body = await service.batchDeleteSnapshotSchedule(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getnasexport': async ctx => {
-        ctx.body = await service.getNasExport(ctx.param);
+    '/api/getcifsshare': async ctx => {
+        ctx.body = await service.getCIFSShare(ctx.param);
     },
-    '/api/createnasexport': async ctx => {
-        ctx.body = await service.createNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/createcifsshare': async ctx => {
+        ctx.body = await service.createCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/updatenasexport': async ctx => {
-        ctx.body = await service.updateNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/updatecifsshare': async ctx => {
+        ctx.body = await service.updateCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/deletenasexport': async ctx => {
-        ctx.body = await service.deleteNasExport(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/deletecifsshare': async ctx => {
+        ctx.body = await service.deleteCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/batchdeletecifsshare': async ctx => {
+        ctx.body = await service.batchDeleteCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getuserorgroupfromcifsshare': async ctx => {
+        ctx.body = await service.getUserOrGroupFromCIFSShare(ctx.param);
+    },
+    '/api/adduserorgrouptocifsshare': async ctx => {
+        ctx.body = await service.addUserOrGroupToCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updateuserorgroupincifsshare': async ctx => {
+        ctx.body = await service.updateUserOrGroupInCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/removeuserorgroupfromcifsshare': async ctx => {
+        ctx.body = await service.removeUserOrGroupFromCIFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getnfsshare': async ctx => {
+        ctx.body = await service.getNFSShare(ctx.param);
+    },
+    '/api/createnfsshare': async ctx => {
+        ctx.body = await service.createNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updatenfsshare': async ctx => {
+        ctx.body = await service.updateNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/deletenfsshare': async ctx => {
+        ctx.body = await service.deleteNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/batchdeletenfsshare': async ctx => {
+        ctx.body = await service.batchDeleteNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getclientinnfsshare': async ctx => {
+        ctx.body = await service.getClientInNFSShare(ctx.param);
+    },
+    '/api/createclientinnfsshare': async ctx => {
+        ctx.body = await service.createClientInNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updateclientinnfsshare': async ctx => {
+        ctx.body = await service.updateClientInNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/deleteclientinnfsshare': async ctx => {
+        ctx.body = await service.deleteClientInNFSShare(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getlocalauthusergroup': async ctx => {
+        ctx.body = await service.getLocalAuthUserGroup(ctx.param);
+    },
+    '/api/createlocalauthusergroup': async ctx => {
+        ctx.body = await service.createLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updatelocalauthusergroup': async ctx => {
+        ctx.body = await service.updateLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/deletelocalauthusergroup': async ctx => {
+        ctx.body = await service.deleteLocalAuthUserGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getlocalauthuserfromgroup': async ctx => {
+        ctx.body = await service.getLocalAuthUserFromGroup(ctx.param);
+    },
+    '/api/addlocalauthusertogroup': async ctx => {
+        ctx.body = await service.addLocalAuthUserToGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/removelocalauthuserfromgroup': async ctx => {
+        ctx.body = await service.removeLocalAuthUserFromGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getlocalauthuser': async ctx => {
+        ctx.body = await service.getLocalAuthUser(ctx.param);
+    },
+    '/api/createlocalauthuser': async ctx => {
+        ctx.body = await service.createLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updatelocalauthuser': async ctx => {
+        ctx.body = await service.updateLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/deletelocalauthuser': async ctx => {
+        ctx.body = await service.deleteLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/batchdeletelocalauthuser': async ctx => {
+        ctx.body = await service.batchDeleteLocalAuthUser(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/geteventlog': async ctx => {
         ctx.body = await service.getEventLog(ctx.param);

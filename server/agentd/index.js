@@ -29,24 +29,17 @@ const getMemoryUsage = () => {
     let usage = Math.round((1 - free / total) * 10000) / 100;
     return { total, free, usage };
 };
-const getIopsUsage = () => {
-    let command = `echo $(iostat -d 1 2 |awk "/Device/{i++}i==2"|egrep "sd|nvme"|awk '{ total += $2 } END { print total }')`;
-    let used = Number(String(child.execSync(command)).trim());
-    return { used };
-};
 //hardware
 let cpu = getCpuUsage();
 let memory = getMemoryUsage();
-let iops = getIopsUsage();
 //schedule
 new cron.CronJob('*/15 * * * * *', () => {
     cpu = getCpuUsage(cpu);
     memory = getMemoryUsage();
-    iops = getIopsUsage();
 }, null, true);
 //controller
 const getAll = ctx => {
-    ctx.body = { cpu, memory, iops };
+    ctx.body = { cpu, memory };
 };
 //router
 router.all('/hardware/getall', getAll);

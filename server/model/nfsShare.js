@@ -1,8 +1,8 @@
 const mongoose = require('../module/mongoose');
-module.exports = mongoose.model('nasexport',
+module.exports = mongoose.model('nfsshare',
     new mongoose.Schema({
         path: String,
-        protocol: String,
-        description: String
+        description: String,
+        clientList: Array
     })
 );

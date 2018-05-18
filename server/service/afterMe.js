@@ -85,6 +85,7 @@ const model = {
             if (res.data) {
                 for (let i of Object.keys(res.data)) {
                     res.data[i].size = Number(res.data[i].size);
+                    res.data[i].path = `${param.dir === '/' ? '' : param.dir}/${res.data[i].name}`;
                 }
             } else {
                 res.data = [];
