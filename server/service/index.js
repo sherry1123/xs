@@ -361,12 +361,12 @@ const model = {
     async updateSnapshotSetting(param, user, ip) {
         let result = {};
         try {
-            let res = await snapshot.updateSnapshotSetting(param);
-            if (!res.errorId) {
+            let { errorId, message } = await snapshot.updateSnapshotSetting(param);
+            if (!errorId) {
                 result = handler.response(0, 'update snapshot setting successfully');
                 await log.audit({ user, desc: `update snapshot setting successfully`, ip });
             } else {
-                result = handler.response(122, res.message, param);
+                result = handler.response(122, message, param);
                 await log.audit({ user, desc: `update snapshot setting failed`, ip });
             }
         } catch (error) {

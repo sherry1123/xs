@@ -19,9 +19,7 @@ const model = {
     async updateSnapshotSetting(param) {
         let { total, manual, auto } = param;
         let { errorId, message } = await afterMe.updateSnapshotSetting({ total, manual, schedule: auto });
-        if (!errorId) {
-            await database.updateSetting({ key: 'snapshotsetting' }, { value: { total, manual, auto } });
-        }
+        !errorId && await database.updateSetting({ key: 'snapshotsetting' }, { value: { total, manual, auto } });
         return { errorId, message };
     },
     async getSnapshot(param) {
