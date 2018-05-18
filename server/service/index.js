@@ -361,9 +361,14 @@ const model = {
     async updateSnapshotSetting(param, user, ip) {
         let result = {};
         try {
-            await snapshot.updateSnapshotSetting(param);
-            result = handler.response(0, 'update snapshot setting successfully');
-            await log.audit({ user, desc: `update snapshot setting successfully`, ip });
+            let res = await snapshot.updateSnapshotSetting(param);
+            if (!res.errorId) {
+                result = handler.response(0, 'update snapshot setting successfully');
+                await log.audit({ user, desc: `update snapshot setting successfully`, ip });
+            } else {
+                result = handler.response(122, res.message, param);
+                await log.audit({ user, desc: `update snapshot setting failed`, ip });
+            }
         } catch (error) {
             result = handler.response(122, error, param);
             await log.audit({ user, desc: `update snapshot setting failed`, ip });
@@ -401,9 +406,8 @@ const model = {
     },
     async deleteSnapshot(param, user, ip) {
         try {
-            await snapshot.deleteSnapshot(param);
-            await log.audit({ user, desc: `delete snapshot '${param.name}' successfully`, ip });
-            socket.postEventStatus('snapshot', 13, param.name, true, true);
+            let result = await snapshot.deleteSnapshot(param);
+            await log.audit({ user, desc: `delete snapshot '${param.name}' ${result ? 'successfully' : 'failed'}`, ip });
         } catch (error) {
             handler.error(134, error, param);
             await log.audit({ user, desc: `delete snapshot '${param.name}' failed`, ip });
@@ -412,9 +416,8 @@ const model = {
     },
     async batchDeleteSnapshot(param, user, ip) {
         try {
-            await snapshot.batchDeleteSnapshot(param);
-            await log.audit({ user, desc: `batch delete ${param.names.length} snapshot(s) '${String(handler.bypass(param.names))}' successfully`, ip });
-            socket.postEventStatus('snapshot', 15, { total: param.names.length }, true, true);
+            let result = await snapshot.batchDeleteSnapshot(param);
+            await log.audit({ user, desc: `batch delete ${param.names.length} snapshot(s) '${String(handler.bypass(param.names))}' ${result ? 'successfully' : 'failed'}`, ip });
         } catch (error) {
             handler.error(135, error, param);
             await log.audit({ user, desc: `batch delete ${param.names.length} snapshot(s) '${String(handler.bypass(param.names))}' failed`, ip });
@@ -425,10 +428,9 @@ const model = {
         try {
             process.send('rollback start');
             socket.postEventStatus('snapshot', 17, param.name, true, true);
-            await snapshot.rollbackSnapshot(param);
+            let result = await snapshot.rollbackSnapshot(param);
             process.send('rollback end');
-            await log.audit({ user, desc: `rollback snapshot '${param.name}' successfully`, ip });
-            socket.postEventStatus('snapshot', 18, param.name, true, true);
+            await log.audit({ user, desc: `rollback snapshot '${param.name}' ${result ? 'successfully' : 'failed'}`, ip });
         } catch (error) {
             snapshot.setRollbackStatus(false);
             handler.error(136, error, param);
@@ -857,7 +859,7 @@ const model = {
         let { name, changePassword, password, primaryGroup, description } = param;
         let result = {};
         try {
-            changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description }) ;
+            changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description });
             result = handler.response(0, 'update local authentication user successfully');
             await log.audit({ user, desc: `update local authentication user '${name}' successfully`, ip });
         } catch (error) {

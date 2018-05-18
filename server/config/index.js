@@ -56,8 +56,14 @@ exports.api = {
         getiostat: 'http://localhost:9090/cluster/getiostat',
         getstats: 'http://localhost:9090/cluster/getstats',
         entryinfo: 'http://localhost:9090/cluster/getentryinfo',
-        getfiles: 'http://localhost:9090/cluster/getfiles',
-        setpattern: 'http://localhost:9090/cluster/setpattern'
+        getfiles: 'http://localhost:9090/cluster/getdirs',
+        setpattern: 'http://localhost:9090/cluster/setpattern',
+        applysnapconf: 'http://localhost:9090/cluster/applysnapconf',
+        listsnapshot: 'http://localhost:9090/cluster/listsnapshot',
+        createsnapshot: 'http://localhost:9090/cluster/createsnapshot',
+        deletesnapshot: 'http://localhost:9090/cluster/deletesnapshot',
+        rollbacksnapshot: 'http://localhost:9090/cluster/rollbacksnapshot',
+        batchdeletesnap: 'http://localhost:9090/cluster/batchdeletesnap'
     }
 };
 exports.key = {
@@ -114,7 +120,7 @@ exports.error = {
     132: 'create snapshot error',
     133: 'update snapshot error',
     134: 'delete snapshot error',
-    135: 'delete snapshots error',
+    135: 'batch delete snapshot error',
     136: 'rollback snapshot error',
     141: 'get snapshot task error',
     142: 'create snapshot task error',
@@ -122,7 +128,7 @@ exports.error = {
     144: 'enable snapshot task error',
     145: 'disable snapshot task error',
     146: 'delete snapshot task error',
-    147: 'delete snapshot tasks error',
+    147: 'batch delete snapshot task error',
     148: 'run snapshot task error',
     151: 'get nas export error',
     152: 'create nas export error',

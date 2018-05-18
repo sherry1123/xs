@@ -99,6 +99,30 @@ const model = {
         param.numTargets = String(param.numTargets);
         let token = await model.getToken();
         return await request.post(config.api.orcafs.setpattern, param, token, true);
+    },
+    async updateSnapshotSetting(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.applysnapconf, param, token, true);
+    },
+    async getSnapshot(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.listsnapshot, param, token, true);
+    },
+    async createSnapshot(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.createsnapshot, param, token, true);
+    },
+    async deleteSnapshot(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.deletesnapshot, param, token, true);
+    },
+    async batchDeleteSnapshot(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.batchdeletesnap, param, token, true);
+    },
+    async rollbackSnapshot(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.rollbacksnapshot, param, token, true);
     }
 };
 module.exports = model;
