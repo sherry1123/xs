@@ -1,48 +1,38 @@
 .fs-top-bar-wrapper {
-    position: fixed;
-    top: 0;
-    z-index: 20;
-    box-sizing: border-box;
     width: 100%;
     height: 50px;
+    font-size: 12px;
     transition: transform .35s ease;
     will-change: transform;
     background-color: @white;
-    .fs-box-shadow();
     border-bottom: 1px solid @light-border;
-    &.up {
-        transform: translateY(-100%);
-    }
-    &.down {
-        transform: translateY(0);
-    }
-    .logo-wrapper {
+    .fs-menu-expand-button-wrapper {
         float: left;
-        width: 120px;
-        .logo-link {
-            position: relative;
-            margin: 5px 0;
-            height: 40px;
-            background: url(../../images/logo-h.svg) 0 0 no-repeat;
-            background-size: 100% 100%;
+        padding-top: 2px;
+        padding-left: 10px;
+        height: 50px;
+        line-height: 50px;
+        text-align: right;
+        .fs-menu-expand-button {
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            color: #b6b6b6;
+            cursor: pointer;
             &:hover {
-                &:before {
-                    content: '';
-                    display: block;
-                    width: 4px;
-                    height: 4px;
-                    border-radius: 100%;
-                    background-color: #4d8cda;
-                    opacity: 0;
-                    animation: fs-main-logo-point 5s ease 2s infinite alternate;
-                }
+                color: @light-blue;
             }
         }
+    }
+    .fs-copy-right-wrapper {
+        float: left;
+        padding-left: 30px;
+        height: 50px;
+        line-height: 50px;
     }
     .fs-top-info-wrapper {
         float: right;
         padding-right: 20px;
-        font-size: 12px;
         line-height: 50px;
         .fs-login-user-wrapper {
             margin-right: 20px;

@@ -17,11 +17,26 @@ a {
     background-color: rgba(0, 0, 0, .35) !important;
 }
 
-.ant-btn-sm {
-    padding: 0 15px;
-    font-size: @smallFont !important;
-    border-radius: 4px;
-    height: 28px;
+.ant-btn {
+    &.ant-btn-sm {
+        padding: 0 24px;
+        font-size: @smallFont !important;
+        height: 30px;
+        border-radius: 0;
+    }
+    &.ant-btn-primary {
+        color: @white;
+        background-color: @light-blue;
+        border: none;
+        &:hover {
+            background-color: @blue;
+        }
+    }
+    &.ant-btn-danger {
+        color: @white;
+        background-color: @red;
+        border: none;
+    }
 }
 
 .ant-popover {
@@ -63,6 +78,7 @@ a {
 }
 
 .ant-input {
+    border-radius: 0 !important;
     &.ant-input-sm {
         font-size: @smallFont;
     }
@@ -91,6 +107,10 @@ textarea {
     }
 }
 
+.ant-select-selection {
+    border-radius: 0 !important;
+}
+
 .ant-select-dropdown {
     .ant-select-dropdown-menu-item {
         font-size: @smallFont;
@@ -110,7 +130,26 @@ textarea {
     &.ant-menu-inline .ant-menu-submenu-title,
     .ant-menu-item {
         width: 100% !important;
+        height: 50px !important;
+        margin: 0 0 !important;
+        line-height: 50px !important;
         text-overflow: clip !important;
+    }
+    &.ant-menu-dark,
+    .ant-menu-dark {
+        background: #2d2d2d !important;
+        .ant-menu-item {
+            background: #2d2d2d;
+        }
+        .ant-menu-submenu {
+            .ant-menu-submenu-title {
+                background: #2d2d2d !important;
+            }
+            .ant-menu-sub,
+            .ant-menu-inline {
+                background: #2d2d2d !important;
+            }
+        }
     }
 }
 
@@ -148,12 +187,18 @@ textarea {
                 padding: 0;
             }
         }
+        .ant-table-title {
+            top: 0;
+            padding-left: 15px;
+            font-size: 14px;
+            border-bottom: 1px solid @light-border;
+        }
         .ant-table-thead {
             font-size: 12px;
-            .fs-box-shadow();
             & > tr {
                 & > th {
                     padding: 10px 16px;
+                    font-size: 14px;
                     border: none;
                     background-color: @white !important;
                     & > span {
@@ -208,6 +253,7 @@ textarea {
 
 .ant-pagination {
     &.ant-table-pagination {
+        margin-right: 15px !important;
         .ant-pagination-total-text {
             font-size: @smallFont;
             line-height: 32px;

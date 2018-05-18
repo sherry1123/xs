@@ -7,7 +7,6 @@ import routerPath from '../routerPath';
 // bar
 import TopBar from '../Bar/TopBar';
 import SideBar from '../Bar/SideBar';
-import FooterBar from '../Bar/FooterBar';
 
 // metadata nodes
 // const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
@@ -39,6 +38,9 @@ const ManagementSystemLog = asyncLoad(() => import('../Management/ManagementSyst
 // fs operation
 const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
+// test
+const Test = asyncLoad(() => import('../Test/Test'));
+
 // dashboard
 // const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 
@@ -67,6 +69,7 @@ export default class Main extends Component {
     }
 
     componentDidMount (){
+        /*
         let prevScrollTop = 0;
         let threshold = 30;
         let prevDirection = 'down';
@@ -86,19 +89,20 @@ export default class Main extends Component {
             }
         };
         window.addEventListener('scroll', this.scrollHandler, {passive: true});
+        */
     }
 
     componentWillUnmount (){
-        window.removeEventListener('scroll', this.scrollHandler, {passive: true});
+        // window.removeEventListener('scroll', this.scrollHandler, {passive: true});
     }
 
     render (){
         const Main = routerPath.Main;
         return (
             <div className="fs-main-wrapper">
-                <TopBar ref={ref => this.TopBar = ref} />
+                <SideBar />
                 <div className="fs-body-wrapper">
-                    <SideBar />
+                    <TopBar ref={ref => this.TopBar = ref} />
                     <main className='fs-content-wrapper'>
                         {/*<Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />*/}
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
@@ -112,10 +116,10 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
+                        <Route path={`${Main}${routerPath.Test}`} component={Test} />
                         {/*<Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />*/}
                     </main>
                 </div>
-                <FooterBar />
             </div>
         );
     }

@@ -1,66 +1,56 @@
 /*
- * for whole layout framework
+ * whole layout framework
+ * side-bar top-bar content
  */
 
 body {
     width: 100%;
     height: 100%;
+    min-height: 800px;
     color: @text !important;
     #root {
-        min-height: 100%;
+        height: 100%;
         .fs-main-wrapper {
             height: 100%;
+            display: flex;
+            flex-direction: row;
             .fs-body-wrapper {
                 flex: 1;
-                display: flex;
-                flex-direction: row;
-                padding-top: 50px;
-                min-height: 650px;
+                background-color: @page-bg;
                 .fs-content-wrapper {
                     flex: 1;
                     box-sizing: border-box;
-                    padding: 0 0 0 3px;
+                    padding: 10px;
                     overflow: hidden;
                     background-color: @page-bg;
                     .fs-page-content {
-                        height: 100%;
-                        background-color: @page-bg;
-                        .fs-page-big-title {
-                            position: relative;
-                            z-index: 2;
+                        .fs-table-operation-wrapper {
+                            margin-bottom: 10px;
+                            padding: 15px;
+                            height: 60px;
                             background-color: @white;
-                            .fs-box-shadow();
+                            .ant-input-search {
+                                width: 300px;
+                                height: 30px;
+                                line-height: 30px;
+                            }
+                            .ant-select-selection {
+                                width: 200px;
+                            }
+                            .fs-button-box {
+                                float: right;
+                                .ant-btn {
+                                    margin-left: 12px;
+                                }
+                            }
                         }
-                        .fs-page-item-group { // wanna one more '.fs-page-item's arrange horizontally, you need wrap them with this tag
-                            display: flex;
-                            flex-direction: row;
-                        }
-                        .fs-page-item-wrapper {
-                            // margin-top: 5px;
+                        .fs-main-content-wrapper {
+                            min-height: 450px;
                             background-color: @white;
-                            .fs-box-shadow();
-                            &.title {
-                                margin-top: 0;
-                            }
-                            &.m-t-0 {
-                                margin-top: 0;
-                            }
-                            .fs-page-item-content {
-                                padding: 20px 16px;
-                            }
-                        }
-                        .fs-page-big-title,
-                        .fs-page-item-wrapper {
-                            .fs-page-title {
-                                margin: 0;
-                                padding: 10px 16px;
-                                font-size: 15px;
-                                color: @big-title;
-                                overflow: hidden;
-                                &.item {
-                                    height: 45px;
-                                    color: @title;
-                                    border-bottom: 1px solid @light-border;
+                            .fs-table-title {
+                                color: @title;
+                                .anticon {
+                                    padding-right: 5px;
                                 }
                             }
                         }

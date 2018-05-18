@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {/*Badge, Icon,*/ Popover, notification} from 'antd';
+import generalAction from "../../redux/actions/generalAction";
+import {Affix, Icon, Popover, notification} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
 // import WarningPopover from './WarningPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
@@ -15,10 +16,6 @@ class TopBar extends Component {
         };
     }
 
-    switchScrollDirection (direction){
-        this.setState({direction});
-    }
-
     componentDidMount (){
         let abnormalNodes = lsGet('abnormalNodes');
         if (!abnormalNodes){
@@ -30,6 +27,16 @@ class TopBar extends Component {
         window.addEventListener('offline', this.offline);
         window.removeEventListener('online', this.online);
         window.addEventListener('online', this.online);
+    }
+
+    changeMenuExpand (){
+        let menuExpand = !this.props.menuExpand;
+        this.props.changeMenuExpand(menuExpand);
+        lsSet('menuExpand', menuExpand);
+    }
+
+    switchScrollDirection (direction){
+        this.setState({direction});
     }
 
     offline (){
@@ -83,40 +90,56 @@ class TopBar extends Component {
 
     render (){
         return (
-            <header className={`fs-top-bar-wrapper ${this.state.direction}`}>
-                <section className="logo-wrapper">
-                    <div className="logo-link" />
-                </section>
-                <section className="fs-top-info-wrapper">
-                    {/*
-                       <Popover placement="bottom" content={<WarningPopover forwardPage={this.forwardPage} history={this.props.history} />} trigger="click">
-                            <Badge className="fs-alarm-wrapper" count={9} overflowCount={100}>
-                                <Icon type="bell" className="fs-alarm-bell-icon" />
-                            </Badge>
-                        </Popover>
-                    */}
-                    <span className="fs-login-user-wrapper">
-                        {lang('您好, ', 'Hi, ')}
-                        <Popover placement="bottom" content={<UserSettingPopover />} trigger="click">
-                            <span className="fs-login-user">{this.props.user.username}</span>
-                        </Popover>
-                    </span>
-                    <LanguageButton width={80} border="none" pureText />
-                </section>
-            </header>
+            <Affix>
+                <header className={`fs-top-bar-wrapper ${this.state.direction}`}>
+                    <section className="fs-menu-expand-button-wrapper">
+                        <Icon
+                            className="fs-menu-expand-button"
+                            type={`${this.props.menuExpand ? 'menu-fold' : 'menu-unfold'}`}
+                            title={this.props.menuExpand ? lang('折叠菜单', 'Fold Menu') : lang('展开菜单', 'Expand Menu')}
+                            onClick={this.changeMenuExpand.bind(this)}
+                        />
+                    </section>
+                    <section className="fs-copy-right-wrapper">
+                        ©2018 OrcaFS {this.props.version}
+                    </section>
+                    <section className="fs-top-info-wrapper">
+                        {/*
+                           <Popover placement="bottom" content={<WarningPopover forwardPage={this.forwardPage} history={this.props.history} />} trigger="click">
+                                <Badge className="fs-alarm-wrapper" count={9} overflowCount={100}>
+                                    <Icon type="bell" className="fs-alarm-bell-icon" />
+                                </Badge>
+                            </Popover>
+                        */}
+                        <span className="fs-login-user-wrapper">
+                            {lang('您好, ', 'Hi, ')}
+                            <Popover placement="bottom" content={<UserSettingPopover />} trigger="click">
+                                <span className="fs-login-user">{this.props.user.username}</span>
+                            </Popover>
+                        </span>
+                        <LanguageButton width={80} border="none" pureText />
+                    </section>
+                </header>
+            </Affix>
         );
     }
 }
 
 const mapStateToProps = state => {
-    let {language, main: {general: {user, knownProblems}, metadataNode: {overview: {nodeList: metadataNodes}}, storageNode: {overview: {nodeList: storageNodes}}}} = state;
-    return {language, user, knownProblems, metadataNodes, storageNodes};
+    let {language, main: {general: {version, menuExpand, user, knownProblems}, metadataNode: {overview: {nodeList: metadataNodes}}, storageNode: {overview: {nodeList: storageNodes}}}} = state;
+    return {language, version, menuExpand, user, knownProblems, metadataNodes, storageNodes};
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changeMenuExpand: menuExpand => dispatch(generalAction.changeMenuExpand(menuExpand)),
+    };
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
+    return Object.assign({}, stateProps, dispatchProps, ownProps);
 };
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, [], mergeProps, options)(TopBar);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(TopBar);

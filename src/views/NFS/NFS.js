@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Input, message, Popover, Modal, Table} from 'antd';
+import {Button, Icon, Input, message, Popover, Modal, Table} from 'antd';
 import CreateNFS from './CreateNFS';
 import EditNFS from './EditNFS';
 import ClientOfNFS from './ClientOfNFS';
@@ -39,7 +39,7 @@ class NFS extends Component {
         if (query || dataRefresh){
             await this.setState({
                 query,
-                NFSList: [...this.state.NFSListBackup].filter(({name = ''}) => name.match(query))
+                NFSList: [...this.state.NFSListBackup].filter(({path = ''}) => path.match(query))
             });
         } else {
             this.setState({NFSList: this.state.NFSListBackup});
@@ -131,6 +131,7 @@ class NFS extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
+            title: () => (<span className="fs-table-title"><Icon type="database" />{lang('NFS共享', 'NFS Share')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('共享路径', 'Share Path'), width: 200, dataIndex: 'path',},
@@ -167,40 +168,36 @@ class NFS extends Component {
             ],
         };
         return (
-            <div className="fs-page-content fs-snapshot-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('NFS共享', 'NFS Share')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper">
-                    <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search
-                                style={{width: 170}}
-                                className="fs-search-table-input"
-                                size="small"
-                                placeholder={lang('共享路径', 'Share Name')}
-                                value={this.state.query}
-                                enterButton={true}
-                                onChange={this.queryChange.bind(this)}
-                                onSearch={this.searchInTable.bind(this)}
-                            />
-                            <Button
-                                className="fs-create-snapshot-button" size="small"
-                                onClick={this.create.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                            <Button
-                                className="fs-batch-delete-snapshot-button" size="small"
-                                disabled={!this.state.batchDeleteNames.length}
-                                onClick={this.batchDelete.bind(this)}
-                            >
-                                {lang('批量删除', 'Delete In Batch')}
-                            </Button>
-                        </div>
-                        <Table {...tableProps} />
-                    </section>
-                </section>
+            <div className="fs-page-content">
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        size="small"
+                        placeholder={lang('NFS共享路径', 'NFS share path')}
+                        value={this.state.query}
+                        onChange={this.queryChange.bind(this)}
+                        onSearch={this.searchInTable.bind(this)}
+                    />
+                    <div className="fs-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={this.create.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                        <Button
+                            size="small"
+                            type="danger"
+                            disabled={!this.state.batchDeleteNames.length}
+                            onClick={this.batchDelete.bind(this)}
+                        >
+                            {lang('批量删除', 'Delete In Batch')}
+                        </Button>
+                    </div>
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table {...tableProps} />
+                </div>
                 <CreateNFS ref={ref => this.createNFSWrapper = ref} />
                 <EditNFS ref={ref => this.editNFSWrapper = ref} />
                 <ClientOfNFS ref={ref => this.clientOfNFSWrapper = ref} />
