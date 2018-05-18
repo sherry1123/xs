@@ -1,3 +1,4 @@
+const status = require('./status');
 const config = require('../config');
 const afterMe = require('./afterMe');
 const database = require('./database');
@@ -37,7 +38,7 @@ const model = {
         if (count < limit) {
             await database.addSnapshot({ name, description, isAuto, creating, deleting, rollbacking, createTime });
             socket.postEventStatus('snapshot', 11, name, true, false);
-            let { errorId, data, message } = await afterMe.createSnapshot({ name, schedule: String(isAuto) });
+            let { errorId, data, message } = await afterMe.createSnapshot({ name, schedule: isAuto });
             if (!errorId) {
                 await database.updateSnapshot({ name }, { createTime: new Date(data.createTime), creating: false });
                 socket.postEventStatus('snapshot', 12, name, true, true);
@@ -156,17 +157,38 @@ const model = {
                 let nameToCreate = name + '-' + await promise.runCommandInPromise('date "+%Y%m%d%H%M%S"');
                 if (autoSnapshotList.length < limit) {
                     await database.addSnapshot({ name: nameToCreate, description: '', isAuto: true, creating: true, deleting: false, rollbacking: false, createTime: currentTime });
-                    await request.post(config.api.server.receiveevent, { channel: 'snapshot', code: 11, target: nameToCreate, result: true, notify: false }, {}, true);
-                    await promise.runTimeOutInPromise(10);
-                    await database.updateSnapshot({ name: nameToCreate }, { creating: false });
+                    await status.sendEvent('snapshot', 11, nameToCreate, true, false);
+                    let { errorId, data, message } = await afterMe.createSnapshot({ name: nameToCreate, schedule: true });
+                    if (!errorId) {
+                        await database.updateSnapshot({ name: nameToCreate }, { createTime: new Date(data.createTime), creating: false });
+                        await status.sendEvent('snapshot', 12, nameToCreate, true, false);
+                    } else {
+                        handler.error(132, message, { name: nameToCreate, isAuto: true });
+                        await database.deleteSnapshot({ name: nameToCreate });
+                        await status.sendEvent('snapshot', 12, nameToCreate, false, false);
+                    }
                 } else if (deleteRound) {
                     let autoSnapshotWithoutDeletingOrRollbackingList = await database.getSnapshot({ isAuto: true, deleting: false, rollbacking: false });
                     let nameToDelete = autoSnapshotWithoutDeletingOrRollbackingList[0].name;
-                    await database.deleteSnapshot({ name: nameToDelete });
-                    await database.addSnapshot({ name: nameToCreate, description: '', isAuto: true, creating: true, deleting: false, rollbacking: false, createTime: currentTime });
-                    await request.post(config.api.server.receiveevent, { channel: 'snapshot', code: 11, target: nameToCreate, result: true, notify: false }, {}, true);
-                    await promise.runTimeOutInPromise(10);
-                    await database.updateSnapshot({ name: nameToCreate }, { creating: false });
+                    await database.updateSnapshot({ name: nameToDelete }, { deleting: true });
+                    let res = await afterMe.deleteSnapshot({ name: nameToDelete });
+                    if (!res.errorId) {
+                        await database.deleteSnapshot({ name: nameToDelete });
+                        await database.addSnapshot({ name: nameToCreate, description: '', isAuto: true, creating: true, deleting: false, rollbacking: false, createTime: currentTime });
+                        await status.sendEvent('snapshot', 11, nameToCreate, true, false);
+                        let { errorId, data, message } = await afterMe.createSnapshot({ name: nameToCreate, schedule: true });
+                        if (!errorId) {
+                            await database.updateSnapshot({ name: nameToCreate }, { createTime: new Date(data.createTime), creating: false });
+                            await status.sendEvent('snapshot', 12, nameToCreate, true, false);
+                        } else {
+                            handler.error(132, message, { name: nameToCreate, isAuto: true });
+                            await database.deleteSnapshot({ name: nameToCreate });
+                            await status.sendEvent('snapshot', 12, nameToCreate, false, false);
+                        }
+                    } else {
+                        handler.error(132, res.message, { name: nameToCreate, isAuto: true });
+                        await database.updateSnapshot({ name }, { deleting: false });
+                    }
                 }
             } else if (autoDisableTime && timeGapInSecond > autoDisableTime) {
                 await database.updateSnapshotSchedule({ name }, { isRunning: false });
