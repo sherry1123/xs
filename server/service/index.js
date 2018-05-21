@@ -974,6 +974,79 @@ const model = {
             await log.audit({ user, desc: `update directory '${param.dirPath}' pattern setting failed`, ip });
         }
         return result;
+    },
+    async getClusterStatus(param) {
+        let result = {};
+        try {
+            let data = { status: true, total: 5, normal: 5, abnormal: 0 };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getTargetRanking(param) {
+        let result = {};
+        try {
+            let data = [
+                { targetId: 101, mountPath: '/mnt/target101', node: 'node1', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '90%' } },
+                { targetId: 107, mountPath: '/mnt/target107', node: 'node4', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 8, free: 1024 * 1024 * 1024 * 1024 * 2, usage: '80%' } },
+                { targetId: 108, mountPath: '/mnt/target108', node: 'node4', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 8, free: 1024 * 1024 * 1024 * 1024 * 2, usage: '80%' } },
+                { targetId: 103, mountPath: '/mnt/target103', node: 'node2', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 7, free: 1024 * 1024 * 1024 * 1024 * 3, usage: '70%' } },
+                { targetId: 105, mountPath: '/mnt/target105', node: 'node3', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 5, free: 1024 * 1024 * 1024 * 1024 * 5, usage: '50%' } },
+                { targetId: 102, mountPath: '/mnt/target102', node: 'node1', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 3, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '30%' } },
+                { targetId: 104, mountPath: '/mnt/target104', node: 'node2', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 3, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '30%' } },
+                { targetId: 106, mountPath: '/mnt/target106', node: 'node3', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '20%' } }
+            ];
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getClusterThroughput(param) {
+        let result = {};
+        try {
+            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
+            let list = Array.from({ length: 60 }).fill(0);
+            let time = list.map((item, index) => (item + currentTime - index * 15000));
+            let throughput = list.map(item => (item + Math.floor(Math.random() * 10000)));
+            let data = { value: throughput, time };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getClusterIops(param) {
+        let result = {};
+        try {
+            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
+            let list = Array.from({ length: 60 }).fill(0);
+            let time = list.map((item, index) => (item + currentTime - index * 15000));
+            let iops = list.map(item => (item + Math.floor(Math.random() * 10000)));
+            let data = { value: iops, time };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeList(param) {
+        let result = {};
+        try {
+            let data = [
+                { hostname: 'node1', service: ['meta', 'storage'], ip: '192.168.100.18', status: true, cpuUsage: '40%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 12, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '60%' } },
+                { hostname: 'node2', service: ['meta', 'storage'], ip: '192.168.100.19', status: true, cpuUsage: '45%', memoryUsage: '50%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 10, free: 1024 * 1024 * 1024 * 1024 * 10, usage: '50%' } },
+                { hostname: 'node3', service: ['meta', 'storage'], ip: '192.168.100.20', status: true, cpuUsage: '60%', memoryUsage: '85%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 13, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '65%' } },
+                { hostname: 'node4', service: ['storage'], ip: '192.168.100.21', status: true, cpuUsage: '30%', memoryUsage: '60%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 16, free: 1024 * 1024 * 1024 * 1024 * 4, usage: '80%' } },
+                { hostname: 'node5', service: ['mgmt'], ip: '192.168.100.22', status: true, cpuUsage: '20%', memoryUsage: '30%', space: '--' }
+            ];
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
     }
 };
 module.exports = model;

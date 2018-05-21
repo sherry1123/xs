@@ -242,6 +242,21 @@ const model = {
     },
     '/api/setpattern': async ctx => {
         ctx.body = await service.setPattern(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getclusterstatus': async ctx => {
+        ctx.body = await service.getClusterStatus(ctx.param);
+    },
+    '/api/gettargetranking': async ctx => {
+        ctx.body = await service.getTargetRanking(ctx.param);
+    },
+    '/api/getclusterthroughput': async ctx => {
+        ctx.body = await service.getClusterThroughput(ctx.param);
+    },
+    '/api/getclusteriops': async ctx => {
+        ctx.body = await service.getClusterIops(ctx.param);
+    },
+    '/api/getnodelist': async ctx => {
+        ctx.body = await service.getNodeList(ctx.param);
     }
 };
 module.exports = model;
