@@ -20,7 +20,7 @@ const model = {
     async updateSnapshotSetting(param) {
         let { total, manual, auto } = param;
         let { errorId, message } = await afterMe.updateSnapshotSetting({ total, manual, schedule: auto });
-        !errorId && await database.updateSetting({ key: 'snapshotsetting' }, { value: { total, manual, auto } });
+        !errorId && await database.updateSetting({ key: config.setting.snapshotSetting }, { value: { total, manual, auto } });
         return { errorId, message };
     },
     async getSnapshot(param) {
@@ -82,7 +82,7 @@ const model = {
         for (let name of names) {
             await database.updateSnapshot({ name }, { deleting: true });
         }
-        let { errorId } = await afterMe.batchDeleteSnapshot({ names });
+        let { errorId, message } = await afterMe.batchDeleteSnapshot({ names: String(names) });
         if (!errorId) {
             for (let name of names) {
                 await database.deleteSnapshot({ name });
@@ -103,7 +103,7 @@ const model = {
         let result = false;
         let { name } = param;
         await database.updateSnapshot({ name }, { rollbacking: true });
-        let { errorId } = await afterMe.rollbackSnapshot({ name });
+        let { errorId, message } = await afterMe.rollbackSnapshot({ name });
         await database.updateSnapshot({ name }, { rollbacking: false });
         if (!errorId) {
             socket.postEventStatus('snapshot', 18, name, true, true);

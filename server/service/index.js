@@ -397,6 +397,7 @@ const model = {
         let result = {};
         try {
             await snapshot.updateSnapshot(param);
+            result = handler.response(0, 'update snapshot successfully');
             await log.audit({ user, desc: `update snapshot '${param.name}' successfully`, ip });
         } catch (error) {
             result = handler.response(133, error, param);
@@ -1036,11 +1037,11 @@ const model = {
         let result = {};
         try {
             let data = [
-                { hostname: 'node1', service: ['meta', 'storage'], ip: '192.168.100.18', status: true, cpuUsage: '40%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 12, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '60%' } },
-                { hostname: 'node2', service: ['meta', 'storage'], ip: '192.168.100.19', status: true, cpuUsage: '45%', memoryUsage: '50%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 10, free: 1024 * 1024 * 1024 * 1024 * 10, usage: '50%' } },
-                { hostname: 'node3', service: ['meta', 'storage'], ip: '192.168.100.20', status: true, cpuUsage: '60%', memoryUsage: '85%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 13, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '65%' } },
-                { hostname: 'node4', service: ['storage'], ip: '192.168.100.21', status: true, cpuUsage: '30%', memoryUsage: '60%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 16, free: 1024 * 1024 * 1024 * 1024 * 4, usage: '80%' } },
-                { hostname: 'node5', service: ['mgmt'], ip: '192.168.100.22', status: true, cpuUsage: '20%', memoryUsage: '30%', space: '--' }
+                { hostname: 'node1', nodeId: 1, service: ['meta', 'storage'], ip: '192.168.100.18', status: true, cpuUsage: '40%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 12, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '60%' } },
+                { hostname: 'node2', nodeId: 2, service: ['meta', 'storage'], ip: '192.168.100.19', status: true, cpuUsage: '45%', memoryUsage: '50%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 10, free: 1024 * 1024 * 1024 * 1024 * 10, usage: '50%' } },
+                { hostname: 'node3', nodeId: 3, service: ['meta', 'storage'], ip: '192.168.100.20', status: true, cpuUsage: '60%', memoryUsage: '85%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 13, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '65%' } },
+                { hostname: 'node4', nodeId: 4, service: ['storage'], ip: '192.168.100.21', status: true, cpuUsage: '30%', memoryUsage: '60%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 16, free: 1024 * 1024 * 1024 * 1024 * 4, usage: '80%' } },
+                { hostname: 'node5', nodeId: 5, service: ['mgmt'], ip: '192.168.100.22', status: true, cpuUsage: '20%', memoryUsage: '30%', space: '--' }
             ];
             result = handler.response(0, data);
         } catch (error) {
