@@ -22,6 +22,9 @@ const model = {
             handler.error(22, error);
         }
         return result;
+    },
+    async sendEvent(channel, code, target, result, notify) {
+        await request.post(config.api.server.receiveevent, { channel, code, target, result, notify }, {}, true);
     }
 };
 module.exports = model;
