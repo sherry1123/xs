@@ -27,10 +27,8 @@ class FSOperation extends Component {
     }
 
     async getFilesByPath (dirPath, needBackIfError){
-        console.info(1);
         this.queryDirLock = true;
         try {
-            console.info(2);
             let files = await httpRequests.getFiles(dirPath);
             await this.setState({files, dirPath});
         } catch (e){
@@ -97,7 +95,6 @@ class FSOperation extends Component {
     }
 
     stripeSetting ({path}){
-
         this.stripeSettingWrapper.getWrappedInstance().show(path);
     }
 
@@ -118,6 +115,7 @@ class FSOperation extends Component {
                 emptyText: lang('暂无文件', 'No Files')
             },
             scroll: {y: 500},
+            title: () => (<span className="fs-table-title"><Icon type="setting" />{lang('文件目录浏览', 'File directory browser')}</span>),
             columns: [
                 {title: lang('名称', 'Name'), width: 225, dataIndex: 'name',
                     render: (text, record) => (
@@ -172,25 +170,19 @@ class FSOperation extends Component {
 
         return (
             <section className="fs-page-content fs-operation-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('文件系统操作', 'FS Operation')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper fs-file-catalog-list-wrapper">
-                    <section className="fs-page-item-content">
-                        <Input.Search
-                            className="fs-search-table-input"
-                            size="small"
-                            style={{width: 250}}
-                            placeholder={lang('请输入路径', 'enter path')}
-                            value={this.state.dirPath}
-                            enterButton={true}
-                            onChange={({target: {value}}) => this.setState({dirPath: value})}
-                            onSearch={() => {this.queryDirPath.bind(this)()}}
-                        />
-                        <Table {...tableProps} />
-                        <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
-                    </section>
-                </section>
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        size="small"
+                        placeholder={lang('请输入路径', 'enter path')}
+                        value={this.state.dirPath}
+                        onChange={({target: {value}}) => this.setState({dirPath: value})}
+                        onSearch={() => {this.queryDirPath.bind(this)()}}
+                    />
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table {...tableProps} />
+                </div>
+                <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
             </section>
         );
     }

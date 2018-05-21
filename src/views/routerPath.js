@@ -44,6 +44,8 @@ const routerPath = {
     ManagementSystemLog: '/management-system-log',
 
     FSOperation: '/fs-operation',
+
+    Test: '/test',
 };
 
 export default routerPath;

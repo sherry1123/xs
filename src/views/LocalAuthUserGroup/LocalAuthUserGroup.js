@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Input, message, Popover, Modal, Table} from 'antd';
+import {Button, Icon, Input, message, Popover, Modal, Table} from 'antd';
 import CreateLocalAuthUserGroup from './CreateLocalAuthUserGroup';
 import EditLocalAuthUserGroup from './EditLocalAuthUserGroup';
 import LocalAuthUserOfGroup from './LocalAuthUserOfGroup';
@@ -98,6 +98,7 @@ Before performing this operation.`)}</p>
             locale: {
                 emptyText: lang('暂无本地认证用户组', 'No local authentication user group')
             },
+            title: () => (<span className="fs-table-title"><Icon type="user-group-add" />{lang('本地认证用户组', 'Local Authentication User Group')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 140, dataIndex: 'name',},
@@ -135,32 +136,27 @@ Before performing this operation.`)}</p>
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('本地认证用户组', 'Local Authentication User Group')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper">
-                    <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search
-                                style={{width: 170}}
-                                className="fs-search-table-input"
-                                size="small"
-                                placeholder={lang('名称', 'Name')}
-                                value={this.state.query}
-                                enterButton={true}
-                                onChange={this.queryChange.bind(this)}
-                                onSearch={this.searchInTable.bind(this)}
-                            />
-                            <Button
-                                className="fs-create-snapshot-button" size="small"
-                                onClick={this.create.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                        </div>
-                        <Table {...tableProps} />
-                    </section>
-                </section>
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        size="small"
+                        placeholder={lang('名称', 'Name')}
+                        value={this.state.query}
+                        onChange={this.queryChange.bind(this)}
+                        onSearch={this.searchInTable.bind(this)}
+                    />
+                    <div className="fs-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={this.create.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                    </div>
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table {...tableProps} />
+                </div>
                 <CreateLocalAuthUserGroup ref={ref => this.createLocalAuthUserGroupWrapper = ref} />
                 <EditLocalAuthUserGroup ref={ref => this.editLocalAuthUserGroupWrapper = ref} />
                 <LocalAuthUserOfGroup ref={ref => this.localAuthUserOfGroupWrapper = ref} />

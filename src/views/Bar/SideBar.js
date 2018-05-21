@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import generalAction from '../../redux/actions/generalAction';
 import {withRouter} from 'react-router-dom';
 import {Menu, Icon} from 'antd';
-import generalAction from '../../redux/actions/generalAction';
-import {lsSet} from '../../services';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
 
@@ -25,12 +24,6 @@ class SideBar extends Component {
 
     componentWillUnmount (){
         window.onhashchange = null;
-    }
-
-    changeMenuExpand (){
-        let menuExpand = !this.props.menuExpand;
-        this.props.changeMenuExpand(menuExpand);
-        lsSet('menuExpand', menuExpand);
     }
 
     forwardPage ({key}){
@@ -57,19 +50,16 @@ class SideBar extends Component {
 
     render (){
         return (
-            <aside className={`fs-sidebar-wrapper ${this.props.menuExpand ? '' : 'hide'}`}>
-                <div className={`fs-visible-operation-wrapper`}>
-                    <Icon className="fs-visible-operation-button"
-                        type={`${this.props.menuExpand ? 'menu-fold' : 'menu-unfold'}`}
-                        title={this.props.menuExpand ? lang('折叠菜单', 'Fold Menu') : lang('展开菜单', 'Expand Menu')}
-                        onClick={this.changeMenuExpand.bind(this)}
-                    />
+            <aside className={`fs-sidebar-wrapper ${this.props.menuExpand ? '' : 'un-expand'}`}>
+                <div className="fs-logo-wrapper">
+                    <div className={`fs-logo-link ${this.props.menuExpand ? '' : 'un-expand'}`} />
                 </div>
                 <Menu
                     inlineIndent={16}
                     selectedKeys={[this.props.activePage]}
                     openKeys={this.props.activeMenu}
                     mode="inline"
+                    theme="dark"
                     onClick={this.forwardPage.bind(this)}
                     onOpenChange={this.openMenu.bind(this)}
                 >
@@ -98,7 +88,7 @@ class SideBar extends Component {
                         key="Snapshot"
                         title={
                             <span>
-                                <Icon type="camera-o" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
+                                <Icon type="camera-o" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} />
                                 <span>{lang('快照', 'Snapshot')}</span>
                             </span>
                         }
@@ -114,7 +104,7 @@ class SideBar extends Component {
                         key="Share"
                         title={
                             <span>
-                                <Icon type="share-alt" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
+                                <Icon type="share-alt" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} />
                                 <span>{lang('共享', 'Share')}</span>
                             </span>
                         }
@@ -130,7 +120,7 @@ class SideBar extends Component {
                         key="UserAndGroup"
                         title={
                             <span>
-                                <Icon type="user" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
+                                <Icon type="user" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} />
                                 <span>{lang('用户与组', 'User And Group')}</span>
                             </span>
                         }
@@ -191,7 +181,6 @@ const mapDispatchToProps = dispatch => {
     return {
         changeActiveMenu: key => dispatch(generalAction.changeActiveMenu(key)),
         changeActivePage: key => dispatch(generalAction.changeActivePage(key)),
-        changeMenuExpand: menuExpand => dispatch(generalAction.changeMenuExpand(menuExpand)),
     };
 };
 

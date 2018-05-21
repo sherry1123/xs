@@ -122,7 +122,6 @@ class AddLocalAuthUserGroupToCIFS extends Component {
                 <div>
                     <Input.Search
                         style={{width: 170}}
-                        className="fs-search-table-input"
                         size="small"
                         placeholder={lang('用户名称', 'User Name')}
                         value={this.state.query}

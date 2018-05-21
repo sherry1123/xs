@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Input, message, Modal, Popover, Table} from 'antd';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateCIFS from './CreateCIFS';
 import EditCIFS from './EditCIFS';
 import UserOrGroupOfCIFS from './UserOrGroupOfCIFS';
@@ -131,6 +131,7 @@ class CIFS extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
+            title: () => (<span className="fs-table-title"><Icon type="folder" />{lang('CIFS共享', 'CIFS Share')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('共享名称', 'Share Name'), width: 200, dataIndex: 'name',},
@@ -168,33 +169,36 @@ class CIFS extends Component {
             ],
         };
         return (
-            <div className="fs-page-content fs-snapshot-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('CIFS共享', 'CIFS Share')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper">
-                    <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search
-                                style={{width: 170}}
-                                className="fs-search-table-input"
-                                size="small"
-                                placeholder={lang('共享路径', 'Share Name')}
-                                value={this.state.query}
-                                enterButton={true}
-                                onChange={this.queryChange.bind(this)}
-                                onSearch={this.searchInTable.bind(this)}
-                            />
-                            <Button
-                                className="fs-create-snapshot-button" size="small"
-                                onClick={this.create.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                        </div>
-                        <Table clasName="" {...tableProps} />
-                    </section>
-                </section>
+            <div className="fs-page-content">
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        size="small"
+                        placeholder={lang('CIFS共享名称', 'CIFS share Name')}
+                        value={this.state.query}
+                        onChange={this.queryChange.bind(this)}
+                        onSearch={this.searchInTable.bind(this)}
+                    />
+                    <div className="fs-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={this.create.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                        <Button
+                            size="small"
+                            type="danger"
+                            disabled={!this.state.batchDeleteNames.length}
+                            onClick={this.batchDelete.bind(this)}
+                        >
+                            {lang('批量删除', 'Delete In Batch')}
+                        </Button>
+                    </div>
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table clasName="" {...tableProps} />
+                </div>
                 <CreateCIFS ref={ref => this.createCIFSWrapper = ref} />
                 <EditCIFS ref={ref => this.editCIFSWrapper = ref} />
                 <UserOrGroupOfCIFS ref={ref => this.userOrGroupOfCIFSWrapper = ref} />

@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Button, Input, message, Modal, Popover, Switch, Table} from "antd";
+import {Button, Icon, Input, message, Modal, Popover, Switch, Table} from "antd";
 import CreateSnapshotSchedule from './CreateSnapshotSchedule';
 import EditSnapshotSchedule from './EditSnapshotSchedule';
 import lang from "../../components/Language/lang";
@@ -165,10 +165,11 @@ class SnapshotSchedule extends Component {
             },
             rowKey: 'name',
             rowSelection: {
-                columnWidth: '2%',
+                columnWidth: '3%',
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
+            title: () => (<span className="fs-table-title"><Icon type="schedule" />{lang('定时快照计划', 'Timed snapshot schedule')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [{
                 title: lang('名称', 'Name'), dataIndex: 'name',
@@ -216,42 +217,37 @@ class SnapshotSchedule extends Component {
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('定时快照计划', 'Timed Snapshot Schedule')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper">
-                    <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search
-                                style={{marginRight: 15, width: 170}}
-                                size="small"
-                                placeholder={lang('计划名称', 'schedule name')}
-                                value={this.state.query}
-                                enterButton={true}
-                                onChange={this.queryChange.bind(this)}
-                                onSearch={this.searchInTable.bind(this)}
-                            />
-                            <Button
-                                className="fs-create-snapshot-button"
-                                size="small"
-                                onClick={this.create.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                            <Button
-                                className="fs-batch-delete-snapshot-button" size="small"
-                                disabled={!this.state.batchDeleteNames.length}
-                                onClick={this.batchDelete.bind(this)}
-                            >
-                                {lang('批量删除', 'Delete In Batch')}
-                            </Button>
-                        </div>
-                        <Table {...tableProps} />
-                        <CreateSnapshotSchedule ref={ref => this.createSnapshotScheduleWrapper = ref} />
-                        <EditSnapshotSchedule ref={ref => this.editSnapshotScheduleWrapper = ref} />
-                    </section>
-                </section>
-
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        size="small"
+                        placeholder={lang('定时快照计划名称', 'Time snapshot schedule name')}
+                        value={this.state.query}
+                        onChange={this.queryChange.bind(this)}
+                        onSearch={this.searchInTable.bind(this)}
+                    />
+                    <div className="fs-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={this.create.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                        <Button
+                            type="danger"
+                            size="small"
+                            disabled={!this.state.batchDeleteNames.length}
+                            onClick={this.batchDelete.bind(this)}
+                        >
+                            {lang('批量删除', 'Delete In Batch')}
+                        </Button>
+                    </div>
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table {...tableProps} />
+                </div>
+                <CreateSnapshotSchedule ref={ref => this.createSnapshotScheduleWrapper = ref} />
+                <EditSnapshotSchedule ref={ref => this.editSnapshotScheduleWrapper = ref} />
             </div>
         );
     }

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Input, message, Modal, Popover, Table} from 'antd';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
 import SetSnapshot from './SetSnapshot';
@@ -178,6 +178,7 @@ class Snapshot extends Component {
                     disabled: record.deleting || record.rollbacking
                 }),
             },
+            title: () => (<span className="fs-table-title"><Icon type="camera" />{lang('快照', 'Snapshot')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 200, dataIndex: 'name',},
@@ -228,51 +229,48 @@ class Snapshot extends Component {
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('快照', 'Snapshot')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper">
-                    <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search
-                                disabled={snapshotHandling}
-                                style={{width: 170}}
-                                className="fs-search-table-input"
-                                size="small"
-                                placeholder={lang('快照名称', 'snapshot name')}
-                                value={this.state.query}
-                                enterButton={true}
-                                onChange={this.queryChange.bind(this)}
-                                onSearch={this.searchInTable.bind(this)}
-                            />
-                            <Button
-                                disabled={snapshotHandling}
-                                className="fs-create-snapshot-button" size="small"
-                                onClick={this.create.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                            <Button
-                                disabled={snapshotHandling}
-                                className="fs-create-snapshot-button" size="small"
-                                onClick={this.setting.bind(this)}
-                            >
-                                {lang('设置', 'Setting')}
-                            </Button>
-                            <Button
-                                className="fs-batch-delete-snapshot-button" size="small"
-                                disabled={!this.state.batchDeleteNames.length || snapshotHandling}
-                                onClick={this.batchDelete.bind(this)}
-                            >
-                                {lang('批量删除', 'Delete In Batch')}
-                            </Button>
-                        </div>
-                        <Table {...tableProps} />
-                        <CreateSnapshot ref={ref => this.createSnapshotWrapper = ref} />
-                        <EditSnapshot ref={ref => this.editSnapshotWrapper = ref} />
-                        <SetSnapshot ref={ref => this.setSnapshotWrapper = ref} />
-                    </section>
-                </section>
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        disabled={snapshotHandling}
+                        size="small"
+                        placeholder={lang('快照名称', 'snapshot name')}
+                        value={this.state.query}
+                        onChange={this.queryChange.bind(this)}
+                        onSearch={this.searchInTable.bind(this)}
+                    />
+                    <div className="fs-button-box">
+                        <Button
+                            type="primary"
+                            disabled={snapshotHandling}
+                            size="small"
+                            onClick={this.create.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                        <Button
+                            type="primary"
+                            disabled={snapshotHandling}
+                            className="fs-create-snapshot-button" size="small"
+                            onClick={this.setting.bind(this)}
+                        >
+                            {lang('设置', 'Setting')}
+                        </Button>
+                        <Button
+                            type="danger"
+                            size="small"
+                            disabled={!this.state.batchDeleteNames.length || snapshotHandling}
+                            onClick={this.batchDelete.bind(this)}
+                        >
+                            {lang('批量删除', 'Delete In Batch')}
+                        </Button>
+                    </div>
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table {...tableProps} />
+                </div>
+                <CreateSnapshot ref={ref => this.createSnapshotWrapper = ref} />
+                <EditSnapshot ref={ref => this.editSnapshotWrapper = ref} />
+                <SetSnapshot ref={ref => this.setSnapshotWrapper = ref} />
             </div>
         );
     }

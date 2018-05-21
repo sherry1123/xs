@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Button, Input, message, Modal, Popover, Table} from "antd";
+import {Button, Icon, Input, message, Modal, Popover, Table} from "antd";
 import CreateLocalAuthUser from './CreateLocalAuthUser';
 import EditLocalAuthUser from './EditLocalAuthUser';
 import lang from "../../components/Language/lang";
@@ -132,6 +132,7 @@ class LocalAuthUser extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
+            title: () => (<span className="fs-table-title"><Icon type="user-add" />{lang('本地认证用户', 'Local Authentication User')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 120, dataIndex: 'name',},
@@ -169,41 +170,37 @@ class LocalAuthUser extends Component {
         };
         return (
             <div className="fs-page-content fs-snapshot-wrapper">
-                <section className="fs-page-big-title">
-                    <h3 className="fs-page-title">{lang('本地认证用户', 'Local Authentication User')}</h3>
-                </section>
-                <section className="fs-page-item-wrapper">
-                    <section className="fs-page-item-content fs-snapshot-list-wrapper">
-                        <div className="fs-snapshot-operation-wrapper">
-                            <Input.Search
-                                style={{width: 170}}
-                                className="fs-search-table-input"
-                                size="small"
-                                placeholder={lang('用户名称', 'user name')}
-                                value={this.state.query}
-                                enterButton={true}
-                                onChange={this.queryChange.bind(this)}
-                                onSearch={this.searchInTable.bind(this)}
-                            />
-                            <Button
-                                className="fs-create-snapshot-button" size="small"
-                                onClick={this.create.bind(this)}
-                            >
-                                {lang('创建', 'Create')}
-                            </Button>
-                            <Button
-                                className="fs-batch-delete-snapshot-button" size="small"
-                                disabled={!batchDeleteNames.length}
-                                onClick={this.batchDelete.bind(this)}
-                            >
-                                {lang('批量删除', 'Delete In Batch')}
-                            </Button>
-                        </div>
-                        <Table {...tableProps} />
-                        <CreateLocalAuthUser ref={ref => this.createLocalAuthUserWrapper = ref} />
-                        <EditLocalAuthUser ref={ref => this.editLocalAuthUserWrapper = ref} />
-                    </section>
-                </section>
+                <div className="fs-table-operation-wrapper">
+                    <Input.Search
+                        size="small"
+                        placeholder={lang('用户名称', 'Username')}
+                        value={this.state.query}
+                        onChange={this.queryChange.bind(this)}
+                        onSearch={this.searchInTable.bind(this)}
+                    />
+                    <div className="fs-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={this.create.bind(this)}
+                        >
+                            {lang('创建', 'Create')}
+                        </Button>
+                        <Button
+                            type="danger"
+                            size="small"
+                            disabled={!batchDeleteNames.length}
+                            onClick={this.batchDelete.bind(this)}
+                        >
+                            {lang('批量删除', 'Delete In Batch')}
+                        </Button>
+                    </div>
+                </div>
+                <div className="fs-main-content-wrapper">
+                    <Table {...tableProps} />
+                </div>
+                <CreateLocalAuthUser ref={ref => this.createLocalAuthUserWrapper = ref} />
+                <EditLocalAuthUser ref={ref => this.editLocalAuthUserWrapper = ref} />
             </div>
         );
     }
