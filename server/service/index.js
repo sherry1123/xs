@@ -1012,7 +1012,7 @@ const model = {
             let list = Array.from({ length: 60 }).fill(0);
             let time = list.map((item, index) => (item + currentTime - index * 15000));
             let throughput = list.map(item => (item + Math.floor(Math.random() * 10000)));
-            let data = { value: throughput, time };
+            let data = { total: throughput, time };
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1026,7 +1026,7 @@ const model = {
             let list = Array.from({ length: 60 }).fill(0);
             let time = list.map((item, index) => (item + currentTime - index * 15000));
             let iops = list.map(item => (item + Math.floor(Math.random() * 10000)));
-            let data = { value: iops, time };
+            let data = { total: iops, time };
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
