@@ -127,6 +127,7 @@ class SetSnapshot extends Component {
         this.setState({formSubmitting: true});
         try {
             await httpRequests.updateSnapshotSetting(settingData);
+            httpRequests.getSnapshotSetting();
             await this.hide();
             message.success(lang('保存快照设置成功!', 'Save snapshot setting successfully!'));
         } catch ({msg}){

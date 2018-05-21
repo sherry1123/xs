@@ -37,17 +37,30 @@ a {
         background-color: @red;
         border: none;
     }
+    &.ant-btn-warning {
+        color: @white;
+        background-color: @yellow;
+        border: none;
+        &:hover {
+            color: @white;
+            background-color: @orange;
+        }
+    }
 }
 
 .ant-popover {
     font-size: @smallFont !important;
-    .ant-popover-inner-content {
-        max-width: 300px;
+    .ant-popover-inner {
+        border-radius: 0;
+        .ant-popover-inner-content {
+            max-width: 300px;
+        }
     }
 }
 
 .ant-modal {
     .ant-modal-content {
+        border-radius: 0;
         .ant-modal-header {
             .ant-modal-title {
                 font-size: @normalFont;
@@ -246,16 +259,6 @@ textarea {
     .ant-table-placeholder {
         margin-top: 8px;
         font-size: 10px;
-    }
-    .ant-table-scroll {
-        .ant-table-header {
-            margin-bottom: 0 !important;
-            padding: 8px !important;
-            background-color: @white;
-        }
-        .ant-table-body {
-            margin: 0 8px !important;
-        }
     }
 }
 

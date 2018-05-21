@@ -30,6 +30,17 @@ class FSLineChart extends Component {
                     // show all symbol
                     series['showAllSymbol'] = false;
                     series['symbolSize'] = 0;
+                    if (!!series.area){
+                        series['areaStyle'] = {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1,
+                                    [
+                                        {offset: 0, color: series.area[0]},
+                                        {offset: 1, color: series.area[1]}
+                                    ], false)
+                            }
+                        }
+                    }
                 }
                 return series;
             })
@@ -122,6 +133,8 @@ class FSLineChart extends Component {
                 axisTick: {
                     length: 3
                 },
+                splitLine: {show: true},
+                splitArea: {show: false},
                 data: label
             }],
             yAxis: [{
@@ -141,7 +154,7 @@ class FSLineChart extends Component {
                 axisTick: {
                     show: false
                 },
-                splitLine: {show: false},
+                splitLine: {show: true},
                 splitArea: {show: false}
             }],
             series: this.state.series

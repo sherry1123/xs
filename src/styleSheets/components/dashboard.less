@@ -1,103 +1,146 @@
 .fs-dashboard-wrapper {
-  .fs-cluster-monitor-wrapper {
-    background:#fff;
-    border:none;
-      .fs-cluster-monitor-content {
-          display: flex;
-          flex-direction: row;
-          justify-content:flex-start;
-          .fs-title-block{
-            .fs-info-item{
-              padding: 0px 15px;
-              height: 78px;
-              width: 98%;
-              display: inline-block;
-              line-height: 71px;
-            }
-            .fs-chart-content {
-              margin-left:-6%;
-            }
-          }
-          .fs-node-status-circle {
-            display: inline-block;
-            margin-left: 10px;
-            width: 10px;
-            height: 10px;
-            border-radius: 100%;
-            &.up {
-                background-color: @green;
-                animation: 6s fs-node-up infinite 1s;
-            }
-            &.blue {
-                background-color: @blue;
-                animation: 6s fs-node-blue infinite 1s;
-            }
-            &.down {
-                background-color: @red;
-                animation: 6s fs-node-down infinite 1.5s;
-            }
-        }
-          .fs-cluster-monitor-detail-A {
-            width:49%;flex:1;
-            height:300px;
-            // background:rgb(198, 201, 181);
-          }
-          .fs-cluster-monitor-detail-B {
-            width:49%;
-            height:300px;
-            margin-left:20px; 
-            // background:rgb(190, 79, 224);
-          }
-      }
-  }
-  .fs-cluster-monitor-CpacityUsage {
-    .fs-CpacityUsage-content {
-      
-        display: flex;
-        flex-direction: row;
-        justify-content:flex-start;
-        
-        .fs-CpacityUsage-content-detail-A{
-          border:none;
-          width:30%;
-          height:300px;flex: 1;
-          background:rgb(201, 181, 181);
-        }
-        .fs-CpacityUsage-content-detail-B{
-          border:none;
-          height:300px;
-          width:30%;      flex: 1; 
-          margin-left:20px;    
-          background:rgb(41, 164, 235);
-        }
-        .fs-CpacityUsage-content-detail-C{
-          border:none;            
-          height:300px;
-          width:30%;
-          margin-left:20px;
-          background:rgb(156, 27, 27);
-        }
-    }
-  }
-  .fs-EventMonitor-wrapper {
-    .fs-EventMonitor-content {
-        display: flex;
-        flex-direction: row;
-        justify-content:flex-start;
-        .fs-EventMonitor-content-detail-A{
-          border:none;            
-          width:62.5%;flex:1;
-          height:300px;
-          background:rgb(201, 181, 181);
-        }
-        .fs-EventMonitor-content-detail-B{
-          border:none;            
-          height:300px;
-          width:30%;    
-          margin-left:20px;       
-          background:rgb(41, 164, 235);
-        }
-    }
-  }
-
+	.fs-dashboard-row {
+		display: flex;
+		flex-direction: row;
+		.fs-cluster-information-wrapper,
+		.fs-target-ranking-wrapper,
+		.fs-statistics-chart-wrapper {
+			background: @white;
+			.fs-box-shadow();
+			& > header {
+				padding: 18px 15px;
+				font-size: @normalFont;
+				color: @title;
+				border-bottom: 1px solid @light-border;
+				i {
+					margin-right: 12px;
+				}
+			}
+		}
+		.fs-cluster-information-wrapper {
+			.fs-cluster-information-content {
+				padding: 20px 40px 40px;
+				.fs-cluster-status-row {
+					padding-bottom: 18px;
+					font-size: @normalFont;
+					color: @title;
+				}
+				.fs-cluster-info-row {
+					display: flex;
+					flex-direction: row;
+					.fs-cluster-machine-image-wrapper {
+						width: 150px;
+						height: 190px;
+						text-align: center;
+						img {
+							width: 125px;
+							height: 190px;
+						}
+					}
+					.fs-cluster-node-information-wrapper {
+						margin-left: 58px;
+					}
+					.fs-cluster-storage-wrapper {
+						margin-left: 78px;
+					}
+					.fs-cluster-node-information-wrapper,
+					.fs-cluster-storage-wrapper {
+						header {
+							padding: 5px 0;
+							line-height: 16px;
+							font-size: @bigFont;
+							color: @title;
+						}
+						.fs-cluster-info-item {
+							margin-top: 17px;
+							padding: 5px 0;
+							width: 174px;
+							line-height: 15px;
+							color: @text;
+							&:nth-child(2) {
+								margin-top: 50px;
+							}
+							&.need-icon {
+								position: relative;
+								padding-left: 20px;
+								width: 146px;
+								&:before {
+									content: '';
+									position: absolute;
+									top: 7px;
+									left: 0;
+									display: block;
+									width: 12px;
+									height: 12px;
+								}
+								&.total {
+									&:before {
+										background: @blue;
+									}
+								}
+								&.used {
+									&:before {
+										background: @orange;
+									}
+								}
+								&.free {
+									&:before {
+										background: @green;
+									}
+								}
+							}
+							.fs-cluster-info-value {
+								float: right;
+								.fs-normal-node-value {
+									color: @green;
+								}
+								.fs-error-node-value {
+									color: @red;
+								}
+								.fs-cluster-info-unit {
+									font-size: @tinyFont;
+								}
+							}
+						}
+					}
+					.fs-cluster-chart-wrapper {
+						margin-top: 30px;
+						margin-left: 42px;
+						padding: 0 25px;
+						width: 180px;
+						height: 160px;
+						.fs-chart-bottom-title {
+							padding: 8px 0;
+							font-size: @smallFont;
+							line-height: 12px;
+							color: @text;
+							text-align: center;
+						}
+					}
+				}
+			}
+		}
+		.fs-target-ranking-wrapper {
+			flex: 1;
+			margin-left: 10px;
+			.fs-target-view-all {
+				float: right;
+				font-size: @smallFont;
+				color: @light-text;
+				cursor: pointer;
+				&:hover {
+					color: @blue;
+				}
+			}
+		}
+		.fs-statistics-chart-wrapper {
+			flex: 1;
+			margin-top: 10px;
+			min-width: 500px;
+			height: 270px;
+			&:nth-child(2) {
+				margin-left: 10px;
+			}
+		}
+	}
 }

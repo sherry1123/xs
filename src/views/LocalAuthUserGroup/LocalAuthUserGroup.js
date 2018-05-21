@@ -135,7 +135,7 @@ Before performing this operation.`)}</p>
             ],
         };
         return (
-            <div className="fs-page-content fs-snapshot-wrapper">
+            <div className="fs-page-content">
                 <div className="fs-table-operation-wrapper">
                     <Input.Search
                         size="small"

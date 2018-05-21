@@ -20,11 +20,11 @@ class UserSettingPopover extends Component {
     render (){
         return (
             <div style={{padding: '5px 0'}}>
-                <Button size="small" icon="lock" onClick={this.show.bind(this)}>
+                <Button type="warning" size="small" icon="lock" onClick={this.show.bind(this)}>
                     {lang('修改密码', 'Password')}
                 </Button>
                 <br/>
-                <Button size="small" icon="logout" onClick={this.logout.bind(this)} style={{marginTop: 10}}>
+                <Button type="danger" size="small" icon="logout" onClick={this.logout.bind(this)} style={{marginTop: 10}}>
                     {lang('注销', 'Logout')}
                 </Button>
                 <ChangePassword ref={ref => this.changePasswordWrapper = ref} />

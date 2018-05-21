@@ -128,12 +128,12 @@ class LocalAuthUserOfGroup extends Component {
                         size="small"
                         placeholder={lang('用户名称', 'User Name')}
                         value={this.state.query}
-                        enterButton={true}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}
                     />
                     <Button
                         size="small"
+                        type="primary"
                         style={{float: 'right'}}
                         onClick={this.add.bind(this)}
                     >

@@ -164,6 +164,10 @@ export default  {
         await fetchPost('/api/createsnapshot', snapshot);
     },
 
+    async updateSnapshot (snapshot){
+        await fetchPost('/api/updatesnapshot', snapshot);
+    },
+
     async rollbackSnapshot (snapshot){
         await fetchPost('/api/rollbacksnapshot', snapshot);
     },
@@ -207,7 +211,7 @@ export default  {
         await fetchPost('/api/disablesnapshotschedule', snapshotSchedule);
     },
 
-    async editSnapshotSchedule (snapshotSchedule){
+    async updateSnapshotSchedule (snapshotSchedule){
         await fetchPost('/api/updatesnapshotschedule', snapshotSchedule);
     },
 

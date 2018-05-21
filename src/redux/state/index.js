@@ -86,7 +86,7 @@ export default {
         },
         // snapshot
         snapshot: {
-            snapshotList: [{name: '1'}, {name: '2'}],
+            snapshotList: [],
             snapshotScheduleList: [],
             snapshotSetting: {total: 0, auto: 0, manual: 0,}
         },

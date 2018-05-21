@@ -8,6 +8,9 @@ import routerPath from '../routerPath';
 import TopBar from '../Bar/TopBar';
 import SideBar from '../Bar/SideBar';
 
+// dashboard
+const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
+
 // metadata nodes
 // const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
 
@@ -40,9 +43,6 @@ const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
 // test
 const Test = asyncLoad(() => import('../Test/Test'));
-
-// dashboard
-// const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 
 export default class Main extends Component {
     componentWillMount (){
@@ -104,6 +104,7 @@ export default class Main extends Component {
                 <div className="fs-body-wrapper">
                     <TopBar ref={ref => this.TopBar = ref} />
                     <main className='fs-content-wrapper'>
+                        <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
                         {/*<Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />*/}
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
                         {/*<Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />*/}
@@ -117,7 +118,6 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
                         <Route path={`${Main}${routerPath.Test}`} component={Test} />
-                        {/*<Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />*/}
                     </main>
                 </div>
             </div>
