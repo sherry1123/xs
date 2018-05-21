@@ -169,7 +169,7 @@ class SnapshotSchedule extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
-            title: () => (<span className="fs-table-title"><Icon type="database" />{lang('定时快照计划', 'Timed snapshot schedule')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="schedule" />{lang('定时快照计划', 'Timed snapshot schedule')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [{
                 title: lang('名称', 'Name'), dataIndex: 'name',

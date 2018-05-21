@@ -65,7 +65,7 @@ a {
             .ant-form-item-label {
                 white-space: normal !important;
                 label {
-                    float: left;
+                    // float: left;
                     font-size: @smallFont;
                 }
             }
@@ -96,6 +96,7 @@ textarea {
         .ant-input-group {
             .ant-input-group-addon {
                 font-size: @smallFont;
+                border-radius: 0;
             }
         }
     }
@@ -215,12 +216,19 @@ textarea {
                 // the setting 'text-overflow: ellipsis' of 'td.ellipsis' take effect.
                 table-layout: fixed;
                 max-width: 100%;
-                .ant-table-tbody {
-                    & > tr {
-                        font-size: @smallFont;
-                    }
-                }
                 tr.ant-table-row {
+                    font-size: @smallFont;
+                    &:nth-child(odd) {
+                        background: @table-row-stripe-bg;
+                    }
+                    &:nth-last-child(1) {
+                        td {
+                            border-bottom: 1px solid @light-border;
+                        }
+                    }
+                    td {
+                        border-bottom: none;
+                    }
                     &.ellipsis {
                         td {
                             text-overflow: ellipsis;
