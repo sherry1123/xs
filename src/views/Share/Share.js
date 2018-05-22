@@ -116,7 +116,7 @@ class Share extends Component {
             ],
         };
         return (
-            <div className="fs-page-content fs-snapshot-wrapper">
+            <div className="fs-page-content">
                 <section className="fs-page-big-title">
                     <h3 className="fs-page-title">{lang('共享', 'Share')}</h3>
                 </section>

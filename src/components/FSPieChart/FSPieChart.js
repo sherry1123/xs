@@ -4,20 +4,21 @@ import echarts from 'echarts';
 export default class FSPieChart extends Component {
     constructor (props) {
         super(props);
-        let {option: {title, width = '100%', height = '100%', legend = {}, series}} = this.props;
+        let {option: {width = '100%', height = '100%', title, tooltip, legend = {}, series,}} = this.props;
         this.state = {
-            title,
             width,
             height,
+            title,
+            tooltip,
             legend,
-            series: this.makeSeries(series, this.props)
+            series: this.makeSeries(series, this.props),
         };
     }
 
-    makeSeries (series, nextProps){
-        let {option: {formatter = ''}} = nextProps;
+    makeSeries (series, props){
+        let {option: {formatter = '',}} = props;
         return series.map(series => {
-            series['radius'] = ['80%', '100%'];
+            series['radius'] = ['70%', '100%'];
             series['hoverAnimation'] = false;
             series['itemStyle'] = {
                 normal: {
@@ -40,7 +41,7 @@ export default class FSPieChart extends Component {
                         labelLine: {
                             show: false
                         }
-                    }
+                    },
                 };
             });
             return series;
@@ -64,9 +65,10 @@ export default class FSPieChart extends Component {
         this.updateChart(this.state);
     }
 
-    generateOption ({title, legend}){
+    generateOption ({title, legend, tooltip}){
         return {
             title,
+            tooltip,
             legend: {
                 orient: 'vertical',
                 x: 'left',
@@ -89,13 +91,15 @@ export default class FSPieChart extends Component {
     resizeChart (){
         this.timer && clearTimeout(this.timer);
         this.timer = setTimeout(this._chartInstance.resize, 300);
-
     }
 
     render (){
         return (
-            <div className="fs-chart-content" style={{width: this.state.width, height: this.state.height + 'px'}}
-                 ref={chartWrapper => this.chartWrapper = chartWrapper}>
+            <div
+                className="fs-chart-content"
+                style={{width: this.state.width, height: this.state.height + 'px'}}
+                ref={chartWrapper => this.chartWrapper = chartWrapper}
+            >
                 Sorry, your browser does not support canvas,
                 so please replace it with modern browsers that support HTML5 standards.
             </div>

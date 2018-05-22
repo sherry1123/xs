@@ -30,7 +30,7 @@ class EditSnapshotSchedule extends Component {
         let schedule = Object.assign({}, this.state.scheduleData);
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.editSnapshotSchedule(schedule);
+            await httpRequests.updateSnapshotSchedule(schedule);
             httpRequests.getSnapshotScheduleList();
             await this.hide();
             message.success(lang(`编辑定时快照计划 ${schedule.name} 成功！`, `Edit timed snapshot schedule ${schedule.name} successfully!`));

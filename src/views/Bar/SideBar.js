@@ -63,19 +63,19 @@ class SideBar extends Component {
                     onClick={this.forwardPage.bind(this)}
                     onOpenChange={this.openMenu.bind(this)}
                 >
-                    {/*
+
                     <Menu.Item key={routerPath.Dashboard}>
                         <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>
-                    */}
                     {/*
                     <Menu.Item key={routerPath.MetadataNodes}>
                         <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
                     </Menu.Item>
                     */}
-                    <Menu.Item key={routerPath.StorageNodes}>
+                    {/*<Menu.Item key={routerPath.StorageNodes}>
                         <Icon type="database" />{lang('存储节点', 'Storage Nodes')}
                     </Menu.Item>
+                    */}
                     {/*
                     <Menu.Item key={routerPath.ClientStatistics}>
                         <Icon type="line-chart" />{lang('客户端统计', 'Client Statistics')}
@@ -113,7 +113,7 @@ class SideBar extends Component {
                             <Icon type="folder" />{lang('CIFS', 'CIFS')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.NFS}>
-                            <Icon type="database" />{lang('NFS', 'NFS')}
+                            <Icon type="desktop" />{lang('NFS', 'NFS')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu

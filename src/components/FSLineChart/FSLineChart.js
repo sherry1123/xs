@@ -30,6 +30,17 @@ class FSLineChart extends Component {
                     // show all symbol
                     series['showAllSymbol'] = false;
                     series['symbolSize'] = 0;
+                    if (!!series.area){
+                        series['areaStyle'] = {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1,
+                                    [
+                                        {offset: 0, color: series.area[0]},
+                                        {offset: 1, color: series.area[1]}
+                                    ], false)
+                            }
+                        }
+                    }
                 }
                 return series;
             })
@@ -110,18 +121,25 @@ class FSLineChart extends Component {
                 type: 'category',
                 axisLine: {
                     lineStyle: {
-                        color: '#C0D0E0'
+                        color: '#b6b6b6'
                     }
                 },
                 axisLabel: {
                     formatter: '{value}',
                     textStyle: {
-                        color: '#5F5F5F'
+                        color: '#5f5f5f'
                     }
                 },
                 axisTick: {
                     length: 3
                 },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#e5e5e5'
+                    }
+                },
+                splitArea: {show: false},
                 data: label
             }],
             yAxis: [{
@@ -130,18 +148,23 @@ class FSLineChart extends Component {
                 max: yMax,
                 axisLine: {
                     lineStyle: {
-                        color: '#C0D0E0'
+                        color: '#b6b6b6'
                     }
                 },
                 axisLabel: {
                     formatter: formatterFn ? formatterFn : '{value}' + yAxisUnit,
-                    textStyle: {color: '#5F5F5F'},
+                    textStyle: {color: '#5f5f5f'},
                     margin: 15
                 },
                 axisTick: {
                     show: false
                 },
-                splitLine: {show: false},
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#e5e5e5'
+                    }
+                },
                 splitArea: {show: false}
             }],
             series: this.state.series
@@ -165,7 +188,7 @@ class FSLineChart extends Component {
 
     render() {
         return (
-            <div className="fs-chart-content" style={{width: this.state.width, height: this.state.height + 'px'}}
+            <div className="fs-chart-content" style={{width: this.state.width, height: this.state.height, marginTop: 10}}
                  ref={chartWrapper => this.chartWrapper = chartWrapper}>
                 Sorry, your browser does not support canvas,
                 so please replace it with modern browsers that support HTML5 standards.

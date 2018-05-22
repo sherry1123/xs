@@ -102,15 +102,14 @@ class FSOperation extends Component {
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
         let {files} = this.state;
-        files = files.filter(file => file.isDir);
         if (this.directoryStack.length > 1){
-            files.unshift({name: '..', isDir: true});
+            files.unshift({name: '..', path: '..'});
         }
         let tableProps = {
             dataSource: files,
             pagination: false,
             // loading: this.queryDirLock,
-            rowKey: 'name',
+            rowKey: 'path',
             locale: {
                 emptyText: lang('暂无文件', 'No Files')
             },
@@ -119,16 +118,19 @@ class FSOperation extends Component {
             columns: [
                 {title: lang('名称', 'Name'), width: 225, dataIndex: 'name',
                     render: (text, record) => (
-                        record.isDir ?
-                            ((text === '..' && !record.hasOwnProperty('user')) ?
-                                <a onClick={this.returnUpperDirectory.bind(this, text)} title={lang('返回上层目录', 'Return Upper Directory')}>
-                                    <b>..</b>
-                                </a> :
-                                <a onClick={this.enterDirectory.bind(this, text)} title={lang('进入目录', 'Enter Directory')}>
-                                    <Icon type="folder" /> {text}
-                                </a>
-                            ) :
-                            <span><Icon type="file" /> {text}</span>
+                        (text === '..' && !record.hasOwnProperty('user')) ?
+                            <a
+                                onClick={this.returnUpperDirectory.bind(this, text)}
+                                title={lang('返回上层目录', 'Return Upper Directory')}
+                            >
+                                <b>..</b>
+                            </a> :
+                            <a
+                                onClick={this.enterDirectory.bind(this, text)}
+                                title={lang('进入目录', 'Enter Directory')}
+                            >
+                                <Icon type="folder" /> {text}
+                            </a>
                     )
                 },
                 {title: lang('目录数量', 'Catalog Number'), width: 80, dataIndex: 'size', render: text => text},
@@ -148,7 +150,7 @@ class FSOperation extends Component {
                 */
                 {title: lang('操作', 'Operation'), width: 60,
                     render: (text, record) => (
-                        record.isDir && record.hasOwnProperty('user') ?
+                        record.hasOwnProperty('user') ?
                             <Popover {...buttonPopoverConf} content={lang('条带设置', 'Stripe Setting')}>
                                 <Button
                                     {...buttonConf}
@@ -173,7 +175,7 @@ class FSOperation extends Component {
                 <div className="fs-table-operation-wrapper">
                     <Input.Search
                         size="small"
-                        placeholder={lang('请输入路径', 'enter path')}
+                        placeholder={lang('请输入文件目录路径', 'Please enter file directory path')}
                         value={this.state.dirPath}
                         onChange={({target: {value}}) => this.setState({dirPath: value})}
                         onSearch={() => {this.queryDirPath.bind(this)()}}

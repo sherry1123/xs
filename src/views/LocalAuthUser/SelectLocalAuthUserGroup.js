@@ -84,7 +84,7 @@ class SelectLocalAuthUserGroup extends Component {
             },
             rowClassName: () => 'ellipsis',
             rowSelection: {
-                columnWidth: '2%',
+                columnWidth: '5%',
                 selectedRowKeys: selectedLocalAuthUserGroups,
                 onChange: selectedRowKeys => this.setState({selectedLocalAuthUserGroups: selectedRowKeys}),
                 getCheckboxProps: record => ({
@@ -99,7 +99,6 @@ class SelectLocalAuthUserGroup extends Component {
                         size="small"
                         placeholder={lang('用户组名称', 'Group Name')}
                         value={this.state.query}
-                        enterButton={true}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}
                     />
