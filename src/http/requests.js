@@ -5,6 +5,7 @@ import initializeAction from '../redux/actions/initializeAction';
 import generalAction from '../redux/actions/generalAction';
 import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
+import dashboardAction from '../redux/actions/dashboardAction';
 import managementAction from '../redux/actions/managementAction';
 import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
@@ -135,6 +136,45 @@ export default  {
                 !!data && store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
             });
         }
+    },
+
+    // dashboard
+    getClusterInfo (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getclusterinfo');
+            if (!!data){
+                store.dispatch(dashboardAction.setClusterInfo(data));
+                store.dispatch(generalAction.setVersion(data.version));
+            }
+        });
+    },
+
+    getClusterTargets (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getclustertarget');
+            !!data && store.dispatch(dashboardAction.setClusterTargets(data));
+        });
+    },
+
+    getClusterThroughput (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getclusterthroughput');
+            !!data && store.dispatch(dashboardAction.setClusterThroughput(data));
+        });
+    },
+
+    getClusterIOPS (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getclusteriops');
+            !!data && store.dispatch(dashboardAction.setClusterIOPS(data));
+        });
+    },
+
+    getClusterPhysicalNodeList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getnodelist');
+            !!data && store.dispatch(dashboardAction.setClusterPhysicalNodeList(data));
+        });
     },
 
     // management

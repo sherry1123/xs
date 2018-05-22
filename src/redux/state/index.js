@@ -79,6 +79,15 @@ export default {
                 },
             }
         },
+        // dashboard
+        dashboard: {
+            clusterStatus: {status: true, total: 0, normal: 0, abnormal: 0},
+            clusterCapacity: {total: 0, used: 0, free: 0, usage: '--'},
+            clusterTargets: [],
+            clusterThroughput: {total: [], time: []},
+            clusterIOPS: {total: [], time: []},
+            clusterPhysicalNodeList: [],
+        },
         // management
         management: {
             eventLogs: [],

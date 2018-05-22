@@ -99,10 +99,11 @@ class FSLineChart extends Component {
                 borderRadius: 4,
                 borderWidth: 0,
                 padding: 5,
+                formatter: '{b} <br /> {a}: {c}',
                 axisPointer: {
                     type: 'line',
                     lineStyle: {
-                        color: '#c0d0e0',
+                        color: '#b6b6b6',
                         width: 1,
                         type: 'solid'
                     },
@@ -113,7 +114,7 @@ class FSLineChart extends Component {
                 },
                 textStyle: {
                     color: '#fff'
-                }
+                },
             },
             legend,
             grid: {
