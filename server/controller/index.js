@@ -243,11 +243,11 @@ const model = {
     '/api/setpattern': async ctx => {
         ctx.body = await service.setPattern(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getclusterstatus': async ctx => {
-        ctx.body = await service.getClusterStatus(ctx.param);
+    '/api/getclusterinfo': async ctx => {
+        ctx.body = await service.getClusterInfo(ctx.param);
     },
-    '/api/gettargetranking': async ctx => {
-        ctx.body = await service.getTargetRanking(ctx.param);
+    '/api/getclustertarget': async ctx => {
+        ctx.body = await service.getClusterTarget(ctx.param);
     },
     '/api/getclusterthroughput': async ctx => {
         ctx.body = await service.getClusterThroughput(ctx.param);

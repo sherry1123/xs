@@ -79,9 +79,10 @@ router.all('/api/getentryinfo', controller['/api/getentryinfo']);
 router.all('/api/getfiles', controller['/api/getfiles']);
 router.all('/api/setpattern', controller['/api/setpattern']);
 
-router.all('/api/getclusterstatus', controller['/api/getclusterstatus']);
-router.all('/api/gettargetranking', controller['/api/gettargetranking']);
+router.all('/api/getclusterinfo', controller['/api/getclusterinfo']);
+router.all('/api/getclustertarget', controller['/api/getclustertarget']);
 router.all('/api/getclusterthroughput', controller['/api/getclusterthroughput']);
 router.all('/api/getclusteriops', controller['/api/getclusteriops']);
 router.all('/api/getnodelist', controller['/api/getnodelist']);
+
 module.exports = router;
