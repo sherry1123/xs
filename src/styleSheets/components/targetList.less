@@ -5,11 +5,14 @@
 	.fs-target-item-wrapper {
 		margin-top: 13px;
 		cursor: pointer;
-		&:hover {
-			transform: scale(1.02, 1.02);
-		}
 		&:nth-child(1) {
 			margin-top: 0;
+		}
+		&:hover {
+			& > header {
+				color: @blue;
+			}
+			transform: scale(1.01, 1.01);
 		}
 		& > header {
 			padding: 10px 0;
