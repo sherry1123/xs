@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import {Icon} from 'antd';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import lang from "../../components/Language/lang";

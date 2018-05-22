@@ -1,11 +1,13 @@
 .fs-sidebar-wrapper {
     width: 200px;
-    transition: all .4s ease;
+    min-width: 200px;
     font-size: 30px;
     background-color: #2d2d2d;
     user-select: none;
+    transition: all .3s ease-in;
     &.un-expand {
         width: 45px;
+        min-width: 45px;
         .ant-menu-submenu-arrow {
             opacity: 0 !important;
         }

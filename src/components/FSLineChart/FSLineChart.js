@@ -4,7 +4,7 @@ import echarts from 'echarts';
 import moment from 'moment';
 
 class FSLineChart extends Component {
-    constructor(props) {
+    constructor (props){
         super(props);
         let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, formatterFn = '', legend = [], label = [], series}} = this.props;
         this.state = {
@@ -33,11 +33,14 @@ class FSLineChart extends Component {
                     if (!!series.area){
                         series['areaStyle'] = {
                             normal: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1,
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
                                     [
                                         {offset: 0, color: series.area[0]},
                                         {offset: 1, color: series.area[1]}
-                                    ], false)
+                                    ],
+                                    false
+                                )
                             }
                         }
                     }
@@ -47,16 +50,16 @@ class FSLineChart extends Component {
         };
     }
 
-    componentDidMount() {
+    componentDidMount (){
         this.renderChart();
         window.addEventListener('resize', this.resizeChart.bind(this));
     }
 
-    componentWillUnmount() {
+    componentWillUnmount (){
         window.removeEventListener('resize', this.resizeChart.bind(this));
     }
 
-    async componentWillReceiveProps(nextProps) {
+    async componentWillReceiveProps (nextProps){
         let {menuExpand, option: {label, series, title}} = nextProps;
         await this.setState({
             label: label.map(label => {
@@ -64,7 +67,7 @@ class FSLineChart extends Component {
                 return moment(new Date(label)).format(this.state.labelTimeFormat);
             }),
             series: series.map(series => {
-                if (series.type === 'line') {
+                if (series.type === 'line'){
                     // curve smoothing
                     series['smooth'] = true;
                     // show all symbol
@@ -77,13 +80,13 @@ class FSLineChart extends Component {
         this.updateChart(this.state);
 
         // if sidebar menu expand/fold, should resize chart
-        if (menuExpand !== this.state.menuExpand) {
+        if (menuExpand !== this.state.menuExpand){
             this.resizeChart();
         }
         this.setState({menuExpand});
     }
 
-    generateOption({title, label, x, y, formatterFn, yAxisUnit, yMin, yMax, legend}) {
+    generateOption ({title, label, x, y, formatterFn, yAxisUnit, yMin, yMax, legend}){
         return {
             title: title,
             tooltip: {
@@ -119,6 +122,7 @@ class FSLineChart extends Component {
             },
             xAxis: [{
                 type: 'category',
+                boundaryGap: false,
                 axisLine: {
                     lineStyle: {
                         color: '#b6b6b6'
@@ -171,19 +175,18 @@ class FSLineChart extends Component {
         };
     }
 
-    renderChart() {
+    renderChart (){
         this._chartInstance = echarts.init(this.chartWrapper);
         this._chartInstance.setOption(this.generateOption(this.state));
     }
 
-    updateChart(data) {
+    updateChart (data){
         this._chartInstance.setOption(this.generateOption(data));
     }
 
-    resizeChart() {
+    resizeChart (){
         this.timer && clearTimeout(this.timer);
         this.timer = setTimeout(this._chartInstance.resize, 300);
-
     }
 
     render() {

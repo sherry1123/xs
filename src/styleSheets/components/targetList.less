@@ -1,9 +1,12 @@
 .fs-target-list {
-	padding: 20px 40px 40px;
+	padding: 20px 40px;
 	max-height: 450px;
 	overflow-y: auto;
+	&.small-padding {
+		padding: 0 40px;
+	}
 	.fs-target-item-wrapper {
-		margin-top: 13px;
+		margin-top: 23px;
 		cursor: pointer;
 		&:nth-child(1) {
 			margin-top: 0;
@@ -15,8 +18,10 @@
 			transform: scale(1.01, 1.01);
 		}
 		& > header {
-			padding: 10px 0;
+			padding: 0 0 10px;
+			line-height: @smallFont;
 			font-size: @smallFont;
+			font-weight: 200;
 			color: @text;
 			span {
 				margin-left: 30px;
@@ -25,20 +30,30 @@
 				}
 			}
 		}
-		.fs-target-capacity-bar {
-			position: relative;
-			width: 100%;
-			height: 8px;
-			border-radius: 8px;
-			background: #d5d5d5;
-			.fs-target-used-bar {
-				position: absolute;
-				top: 0;
-				left: 0;
-				bottom: 0;
-				height: 8px;
-				border-radius: 8px;
-			}
+	}
+}
+
+.fs-capacity-bar {
+	position: relative;
+	width: 100%;
+	height: 8px;
+	border-radius: 8px;
+	background: #d5d5d5;
+	cursor: pointer;
+	.fs-capacity-used-bar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		height: 8px;
+		border-radius: 8px;
+	}
+	&.small {
+		height: 5px;
+		border-radius: 5px;
+		.fs-capacity-used-bar {
+			height: 5px;
+			border-radius: 5px;
 		}
 	}
 }

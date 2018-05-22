@@ -1,14 +1,19 @@
+// left : right is 845px: 845px in 1080p resolution ratio
+// keep '.fs-cluster-information-content' always be 845px min-width
+
 .fs-dashboard-wrapper {
 	.fs-dashboard-row {
 		display: flex;
 		flex-direction: row;
+		// common
 		.fs-cluster-information-wrapper,
 		.fs-target-ranking-wrapper,
-		.fs-statistics-chart-wrapper {
+		.fs-statistics-chart-wrapper,
+		.fs-physical-node-wrapper {
 			background: @white;
 			.fs-box-shadow();
 			& > header {
-				padding: 18px 15px;
+				padding: 9px 15px;
 				font-size: @normalFont;
 				color: @title;
 				border-bottom: 1px solid @light-border;
@@ -17,105 +22,109 @@
 				}
 			}
 		}
+
+		// respective
 		.fs-cluster-information-wrapper {
+			flex: 1;
 			.fs-cluster-information-content {
-				padding: 20px 40px 40px;
-				.fs-cluster-status-row {
-					padding-bottom: 18px;
-					font-size: @normalFont;
-					color: @title;
-				}
-				.fs-cluster-info-row {
-					display: flex;
-					flex-direction: row;
-					.fs-cluster-machine-image-wrapper {
-						width: 150px;
+				padding: 20px 40px;
+				display: flex;
+				min-width: 845px !important;
+				flex-direction: row;
+				justify-content: center;
+				.fs-cluster-machine-image-wrapper {
+					width: 150px;
+					height: 190px;
+					text-align: center;
+					img {
+						width: 125px;
 						height: 190px;
-						text-align: center;
-						img {
-							width: 125px;
-							height: 190px;
+					}
+				}
+				.fs-cluster-node-information-wrapper,
+				.fs-cluster-storage-wrapper {
+					header {
+						padding: 5px 0;
+						line-height: @bigFont;
+						font-size: @bigFont;
+						color: @title;
+					}
+					.fs-cluster-info-item {
+						margin-top: 17px;
+						padding: 5px 0;
+						width: 174px;
+						line-height: @normalFont + 1;
+						color: @text;
+						&:nth-child(2) {
+							margin-top: 50px;
 						}
-					}
-					.fs-cluster-node-information-wrapper {
-						margin-left: 58px;
-					}
-					.fs-cluster-storage-wrapper {
-						margin-left: 78px;
-					}
-					.fs-cluster-node-information-wrapper,
-					.fs-cluster-storage-wrapper {
-						header {
-							padding: 5px 0;
-							line-height: 16px;
-							font-size: @bigFont;
-							color: @title;
-						}
-						.fs-cluster-info-item {
-							margin-top: 17px;
-							padding: 5px 0;
-							width: 174px;
-							line-height: 15px;
-							color: @text;
-							&:nth-child(2) {
-								margin-top: 50px;
+						&.need-icon {
+							position: relative;
+							padding-left: 20px;
+							width: 146px;
+							&:before {
+								content: '';
+								position: absolute;
+								top: 7px;
+								left: 0;
+								display: block;
+								width: 12px;
+								height: 12px;
 							}
-							&.need-icon {
-								position: relative;
-								padding-left: 20px;
-								width: 146px;
+							&.total {
 								&:before {
-									content: '';
-									position: absolute;
-									top: 7px;
-									left: 0;
-									display: block;
-									width: 12px;
-									height: 12px;
-								}
-								&.total {
-									&:before {
-										background: @blue;
-									}
-								}
-								&.used {
-									&:before {
-										background: @orange;
-									}
-								}
-								&.free {
-									&:before {
-										background: @green;
-									}
+									background: @blue;
 								}
 							}
-							.fs-cluster-info-value {
-								float: right;
-								.fs-normal-node-value {
-									color: @green;
+							&.used {
+								&:before {
+									background: @orange;
 								}
-								.fs-error-node-value {
-									color: @red;
+							}
+							&.free {
+								&:before {
+									background: @light-green;
 								}
-								.fs-cluster-info-unit {
-									font-size: @tinyFont;
-								}
+							}
+						}
+						.fs-cluster-info-value {
+							margin-left: 30px;
+							.fs-normal-node-value {
+								color: @green;
+							}
+							.fs-error-node-value {
+								color: @red;
+							}
+							.fs-cluster-info-unit {
+								font-size: @smallFont;
 							}
 						}
 					}
-					.fs-cluster-chart-wrapper {
-						margin-top: 30px;
-						margin-left: 42px;
-						padding: 0 25px;
-						width: 180px;
-						height: 160px;
-						.fs-chart-bottom-title {
-							padding: 8px 0;
-							font-size: @smallFont;
-							line-height: 12px;
-							color: @text;
-							text-align: center;
+				}
+				.fs-cluster-node-information-wrapper {
+					margin-left: 58px;
+					.fs-cluster-info-item {
+						margin-top: 12px;
+						&:nth-child(2) {
+							margin-top: 25px;
 						}
+					}
+				}
+				.fs-cluster-storage-wrapper {
+					margin-left: 42px;
+				}
+				.fs-cluster-chart-wrapper {
+					margin-top: 30px;
+					margin-left: 15px;
+					padding: 0 25px;
+					width: 180px;
+					height: 160px;
+					.fs-chart-bottom-title {
+						padding: 8px 0;
+						font-size: @smallFont;
+						line-height: @smallFont;
+						color: @text;
+						text-align: center;
 					}
 				}
 			}
@@ -140,6 +149,16 @@
 			height: 270px;
 			&:nth-child(2) {
 				margin-left: 10px;
+			}
+		}
+		.fs-physical-node-wrapper {
+			flex: 1;
+			margin-top: 10px;
+			.fs-physical-node-normal {
+				color: @green;
+			}
+			.fs-physical-node-abnormal {
+				color: @red;
 			}
 		}
 	}

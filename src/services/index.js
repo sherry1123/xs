@@ -13,6 +13,9 @@ export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';
 // format digit to time, date
 export {timeLeftFormat, timeFormat} from './format/time';
 
+// calculate capacity bar color
+export {getCapacityColour} from './format/capacityColour';
+
 // case
 export {someUpperCase} from './format/toUpperCase';
 
