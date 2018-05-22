@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import ClusterInformation from './ClusterInformation';
 import ThroughputStatistics from './ThroughputStatistics';
 import IOPSStatistics from './IOPSStatistics';
 import TargetRanking from './TargetRanking';
+import PhysicalNodeList from './PhysicalNodeList';
 
 class Dashboard extends Component {
     render (){
@@ -16,6 +17,9 @@ class Dashboard extends Component {
                <div className="fs-dashboard-row">
                    <ThroughputStatistics />
                    <IOPSStatistics />
+               </div>
+               <div className="fs-dashboard-row">
+                   <PhysicalNodeList />
                </div>
            </div>
         );

@@ -1,32 +1,20 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {Popover} from 'antd';
-import {formatStorageSize} from "../../services";
+import {formatStorageSize, getCapacityColour} from "../../services";
 import lang from "../Language/lang";
 
 class TargetUsageRateRanking extends Component {
-    getColour (usage = 0){
-        let rate = parseInt(usage.replace('%'), 10);
-        if (rate >= 75){
-            return '#f6787a';
-        } else if (rate >= 50){
-            return '#f79c70';
-        } else if (rate >= 25){
-            return '#fbda2b';
-        } else {
-            return '#40cd00';
-        }
-    }
 
     render (){
         let buttonPopoverConf = {trigger: 'click', placement: 'bottom'};
-        let {targets} = this.props;
+        let {targets, className} = this.props;
         let serviceTypeMap = {
             metadata: lang('元数据服务', 'Metadata Service'),
             storage: lang('存储服务', 'Storage Service'),
         };
         return (
-            <div className="fs-target-list">
+            <div className={`fs-target-list ${className || ''}`}>
                 {
                     targets.map((target, i) => (
                         <Popover
@@ -49,12 +37,14 @@ class TargetUsageRateRanking extends Component {
                                 <header>
                                     <span>{lang('目标ID', 'Target ID')}: {target.targetId}</span>
                                     <span>{lang('总容量', 'Total Capacity')}: {formatStorageSize(target.space.total)}</span>
+                                    {/*
                                     <span>{lang('容量使用率', 'Capacity Usage Rate')}: {target.space.usage}</span>
+                                    */}
                                 </header>
-                                <div className="fs-target-capacity-bar">
+                                <div className="fs-capacity-bar">
                                     <div
-                                        className="fs-target-used-bar"
-                                        style={{width: target.space.usage, background: this.getColour(target.space.usage)}}
+                                        className="fs-capacity-used-bar"
+                                        style={{width: target.space.usage, background: getCapacityColour(target.space.usage)}}
                                     />
                                 </div>
                             </section>

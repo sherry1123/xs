@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import {Button, Icon, Modal} from 'antd';
 import TargetList from '../../components/TargetList/TargetList';
 import lang from "../../components/Language/lang";
@@ -35,7 +35,7 @@ class TargetUsageRateRanking extends Component {
         return (
             <div className="fs-target-ranking-wrapper">
                 <header>
-                    <Icon type="bars" />{lang('存储目标使用率排行', 'Target Usage Rate Ranking')}
+                    <Icon type="hdd" />{lang('存储目标使用率排行', 'Target Usage Rate Ranking')}
                     <span className="fs-target-view-all" onClick={this.showAllTargets.bind(this)}>{lang('查看所有 >>>', 'View All >>>')}</span>
                 </header>
                 <TargetList targets={rankingTargets} />
@@ -58,7 +58,7 @@ class TargetUsageRateRanking extends Component {
                         </div>
                     }
                 >
-                    <TargetList targets={targets} />
+                    <TargetList className="small-padding" targets={targets} />
                 </Modal>
             </div>
         );

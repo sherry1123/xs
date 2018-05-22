@@ -21,7 +21,6 @@ class TopBar extends Component {
         if (!abnormalNodes){
             lsSet('abnormalNodes', []);
         }
-
         // bind browser switch from online/offline status event
         window.removeEventListener('offline', this.offline);
         window.addEventListener('offline', this.offline);
@@ -30,9 +29,15 @@ class TopBar extends Component {
     }
 
     changeMenuExpand (){
+        // do expand or shrink
         let menuExpand = !this.props.menuExpand;
         this.props.changeMenuExpand(menuExpand);
         lsSet('menuExpand', menuExpand);
+        // trigger a window resize event to let some component know
+        // it's the time to resize itself, such as charts
+        let event = document.createEvent("Event");
+        event.initEvent("resize", true, true);
+        window.dispatchEvent(event);
     }
 
     switchScrollDirection (direction){
