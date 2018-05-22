@@ -186,8 +186,8 @@ const model = {
                             await status.sendEvent('snapshot', 12, nameToCreate, false, false);
                         }
                     } else {
-                        handler.error(132, res.message, { name: nameToCreate, isAuto: true });
-                        await database.updateSnapshot({ name }, { deleting: false });
+                        handler.error(134, res.message, { name: nameToDelete, isAuto: true });
+                        await database.updateSnapshot({ name: nameToDelete }, { deleting: false });
                     }
                 }
             } else if (autoDisableTime && timeGapInSecond > autoDisableTime) {
