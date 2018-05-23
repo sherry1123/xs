@@ -6,7 +6,7 @@ import moment from 'moment';
 class FSLineChart extends Component {
     constructor (props){
         super(props);
-        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, formatterFn = '', legend = [], label = [], series}} = this.props;
+        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, tooltipFormatter = '', yAxisLabelFormatter = '', legend = [], label = [], series}} = this.props;
         this.state = {
             menuExpand,
             title,
@@ -18,7 +18,8 @@ class FSLineChart extends Component {
             yMin,
             yMax,
             labelTimeFormat,
-            formatterFn,
+            tooltipFormatter,
+            yAxisLabelFormatter,
             legend,
             label: label.map(label => {
                 return moment(new Date(label)).format('HH:mm:ss');
@@ -86,7 +87,7 @@ class FSLineChart extends Component {
         this.setState({menuExpand});
     }
 
-    generateOption ({title, label, x, y, formatterFn, yAxisUnit, yMin, yMax, legend}){
+    generateOption ({title, label, x, y, tooltipFormatter, yAxisLabelFormatter, yAxisUnit, yMin, yMax, legend}){
         return {
             title: title,
             tooltip: {
@@ -99,7 +100,8 @@ class FSLineChart extends Component {
                 borderRadius: 4,
                 borderWidth: 0,
                 padding: 5,
-                formatter: '{b} <br /> {a}: {c}',
+                // formatter: '{b} <br /> {a}: {c}',
+                formatter: !!tooltipFormatter ? tooltipFormatter : '{b} <br /> {a}: {c}',
                 axisPointer: {
                     type: 'line',
                     lineStyle: {
@@ -157,7 +159,7 @@ class FSLineChart extends Component {
                     }
                 },
                 axisLabel: {
-                    formatter: formatterFn ? formatterFn : '{value}' + yAxisUnit,
+                    formatter: yAxisLabelFormatter ? yAxisLabelFormatter : '{value}' + yAxisUnit,
                     textStyle: {color: '#5f5f5f'},
                     margin: 15
                 },
