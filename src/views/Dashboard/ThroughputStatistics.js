@@ -10,7 +10,8 @@ class ThroughputStatistics extends Component {
         let {clusterThroughput: {total, time}} = this.props;
         let option = {
             height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
-            formatterFn: value => formatStorageSize(value),
+            tooltipFormatter: params  => `${params[0].name}<br/>${params[0].seriesName}: ${formatStorageSize(params[0].value)}`,
+            yAxisLabelFormatter: value => formatStorageSize(value),
             label: time,
             series: [
                 {
