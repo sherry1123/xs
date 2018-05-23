@@ -1001,16 +1001,16 @@ const model = {
                 { targetId: 102, mountPath: '/mnt/target102', node: 'node1', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 3, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '30%' } },
                 { targetId: 104, mountPath: '/mnt/target104', node: 'node2', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 3, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '30%' } },
                 { targetId: 106, mountPath: '/mnt/target106', node: 'node3', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '20%' } },
-                { targetId: 109, mountPath: '/mnt/target109', node: 'node6', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 110, mountPath: '/mnt/target110', node: 'node6', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 111, mountPath: '/mnt/target111', node: 'node7', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 112, mountPath: '/mnt/target112', node: 'node7', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 113, mountPath: '/mnt/target113', node: 'node8', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 114, mountPath: '/mnt/target114', node: 'node8', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 115, mountPath: '/mnt/target115', node: 'node9', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 116, mountPath: '/mnt/target116', node: 'node9', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 117, mountPath: '/mnt/target117', node: 'node10', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 118, mountPath: '/mnt/target118', node: 'node10', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } }
+                { targetId: 111, mountPath: '/mnt/target111', node: 'node6', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 112, mountPath: '/mnt/target112', node: 'node6', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 113, mountPath: '/mnt/target113', node: 'node7', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 114, mountPath: '/mnt/target114', node: 'node7', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 115, mountPath: '/mnt/target115', node: 'node8', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 116, mountPath: '/mnt/target116', node: 'node8', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 117, mountPath: '/mnt/target117', node: 'node9', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 118, mountPath: '/mnt/target118', node: 'node9', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 119, mountPath: '/mnt/target119', node: 'node10', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
+                { targetId: 120, mountPath: '/mnt/target120', node: 'node10', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } }
             ];
             result = handler.response(0, data);
         } catch (error) {
@@ -1024,7 +1024,7 @@ const model = {
             let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
             let list = Array.from({ length: 60 }).fill(0);
             let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let throughput = list.map(item => (item + (1 + Math.floor(Math.random() * 10) / 100) * 1024 * 1024));
+            let throughput = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1024 * 1024 * 9)));
             let data = { total: throughput, time };
             result = handler.response(0, data);
         } catch (error) {
@@ -1038,7 +1038,7 @@ const model = {
             let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
             let list = Array.from({ length: 60 }).fill(0);
             let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let iops = list.map(item => (item + (1 + Math.floor(Math.random() * 10) / 100) * 1000));
+            let iops = list.map(item => (item + (1 + Math.floor(Math.random() * 10) / 100) * 1000 * 9));
             let data = { total: iops, time };
             result = handler.response(0, data);
         } catch (error) {
@@ -1050,17 +1050,115 @@ const model = {
         let result = {};
         try {
             let data = [
-                { hostname: 'node1', nodeId: 1, service: ['metadata', 'storage'], ip: '192.168.100.18', status: true, cpuUsage: '40%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 12, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '60%' } },
-                { hostname: 'node2', nodeId: 2, service: ['metadata', 'storage'], ip: '192.168.100.19', status: true, cpuUsage: '45%', memoryUsage: '50%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 10, free: 1024 * 1024 * 1024 * 1024 * 10, usage: '50%' } },
-                { hostname: 'node3', nodeId: 3, service: ['metadata', 'storage'], ip: '192.168.100.20', status: true, cpuUsage: '60%', memoryUsage: '85%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 13, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '65%' } },
-                { hostname: 'node4', nodeId: 4, service: ['storage'], ip: '192.168.100.21', status: true, cpuUsage: '30%', memoryUsage: '60%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 16, free: 1024 * 1024 * 1024 * 1024 * 4, usage: '80%' } },
-                { hostname: 'node5', nodeId: 5, service: ['mgmt'], ip: '192.168.100.22', status: true, cpuUsage: '20%', memoryUsage: '30%', space: '--' },
-                { hostname: 'node6', nodeId: 6, service: ['storage'], ip: '192.168.100.23', status: true, cpuUsage: '30%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node7', nodeId: 7, service: ['storage'], ip: '192.168.100.24', status: true, cpuUsage: '40%', memoryUsage: '45%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node8', nodeId: 8, service: ['storage'], ip: '192.168.100.25', status: true, cpuUsage: '35%', memoryUsage: '55%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node9', nodeId: 9, service: ['storage'], ip: '192.168.100.26', status: true, cpuUsage: '45%', memoryUsage: '25%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node10', nodeId: 10, service: ['storage'], ip: '192.168.100.27', status: true, cpuUsage: '60%', memoryUsage: '75%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } }
+                { hostname: 'node1', nodeId: 1, service: ['metadata', 'storage'], isPureMgmt: false, ip: '192.168.100.18', status: true, cpuUsage: '40%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 12, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '60%' } },
+                { hostname: 'node2', nodeId: 2, service: ['metadata', 'storage'], isPureMgmt: false, ip: '192.168.100.19', status: true, cpuUsage: '45%', memoryUsage: '50%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 10, free: 1024 * 1024 * 1024 * 1024 * 10, usage: '50%' } },
+                { hostname: 'node3', nodeId: 3, service: ['metadata', 'storage'], isPureMgmt: false, ip: '192.168.100.20', status: true, cpuUsage: '60%', memoryUsage: '85%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 13, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '65%' } },
+                { hostname: 'node4', nodeId: 4, service: ['storage'], isPureMgmt: false, ip: '192.168.100.21', status: true, cpuUsage: '30%', memoryUsage: '60%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 16, free: 1024 * 1024 * 1024 * 1024 * 4, usage: '80%' } },
+                { hostname: 'node5', nodeId: 5, service: ['mgmt'], isPureMgmt: true, ip: '192.168.100.22', status: true, cpuUsage: '20%', memoryUsage: '30%', space: '--' },
+                { hostname: 'node6', nodeId: 6, service: ['storage'], isPureMgmt: false, ip: '192.168.100.23', status: true, cpuUsage: '30%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
+                { hostname: 'node7', nodeId: 7, service: ['storage'], isPureMgmt: false, ip: '192.168.100.24', status: true, cpuUsage: '40%', memoryUsage: '45%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
+                { hostname: 'node8', nodeId: 8, service: ['storage'], isPureMgmt: false, ip: '192.168.100.25', status: true, cpuUsage: '35%', memoryUsage: '55%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
+                { hostname: 'node9', nodeId: 9, service: ['storage'], isPureMgmt: false, ip: '192.168.100.26', status: true, cpuUsage: '45%', memoryUsage: '25%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
+                { hostname: 'node10', nodeId: 10, service: ['storage'], isPureMgmt: false, ip: '192.168.100.27', status: true, cpuUsage: '60%', memoryUsage: '75%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } }
             ];
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeInfo(param) {
+        let nodeId = Number(param.nodeId);
+        let result = {};
+        try {
+            let status = true;
+            let service = { metadata: 0, storage: 0 };
+            if (nodeId < 4) {
+                service = { metadata: 1, storage: 1 };
+            } else if (nodeId === 5) {
+                service = { metadata: 0, storage: 0 };
+            } else {
+                service = { metadata: 0, storage: 1 };
+            }
+            let data = { status, service };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeCpu(param) {
+        let result = {};
+        try {
+            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
+            let list = Array.from({ length: 60 }).fill(0);
+            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
+            let cpu = list.map(item => (item + 40 + Math.floor(Math.random() * 100) / 100));
+            let data = { total: cpu, time };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeMemory(param) {
+        let result = {};
+        try {
+            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
+            let list = Array.from({ length: 60 }).fill(0);
+            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
+            let memory = list.map(item => (item + 60 + Math.floor(Math.random() * 100) / 100));
+            let data = { total: memory, time };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeIops(param) {
+        let result = {};
+        try {
+            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
+            let list = Array.from({ length: 60 }).fill(0);
+            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
+            let iops = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1000)));
+            let data = { total: iops, time };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeThroughput(param) {
+        let result = {};
+        try {
+            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
+            let list = Array.from({ length: 60 }).fill(0);
+            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
+            let read = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1024 * 256)));
+            let write = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1024 * 768)));
+            let data = { read, write, time };
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async getNodeTarget(param) {
+        let nodeId = Number(param.nodeId);
+        let result = {};
+        try {
+            let target = { targetId: 100, mountPath: '/mnt/target10', node: 'node', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024, free: 1024 * 1024 * 1024 * 1024, usage: '0%' } };
+            let { targetId, mountPath, node, service, space: { total, used, free, usage } } = target;
+            let targetList = [];
+            if (nodeId < 5) {
+                targetList.push({ targetId: targetId + nodeId * 2 - 1, mountPath: mountPath + String(nodeId * 2 - 1), node: node + String(nodeId), service, space: { total, used: used * (10 - nodeId), free: free * nodeId, usage: String(10 - nodeId) + usage } });
+                targetList.push({ targetId: targetId + nodeId * 2, mountPath: mountPath + String(nodeId * 2), node: node + String(nodeId), service: nodeId === 4 ? service : 'metadata', space: { total, used: used * (10 - 5 - nodeId), free: free * nodeId, usage: String(10 - 5 - nodeId) + usage } });
+            } else if (nodeId > 5) {
+                targetList.push({ targetId: targetId + nodeId * 2 - 1, mountPath: mountPath.replace('0', '') + String(nodeId * 2 - 1), node: node + String(nodeId), service, space: { total, used: used * (10 - nodeId + 1), free: free * (nodeId - 1), usage: String(10 - nodeId + 1) + usage } });
+                targetList.push({ targetId: targetId + nodeId * 2, mountPath: mountPath.replace('0', '') + String(nodeId * 2), node: node + String(nodeId), service, space: { total, used: used * (10 - nodeId + 1), free: free * (nodeId - 1), usage: String(10 - nodeId + 1) + usage } });
+            }
+            let data = targetList;
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);

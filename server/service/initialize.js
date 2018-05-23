@@ -104,11 +104,11 @@ const model = {
     async initMongoDB(param) {
         let { primary, secondary, arbiter, replicaSet } = param;
         if (!replicaSet) {
-            let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --fork`;
+            let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --bind_ip_all --fork`;
             await promise.runCommandInPromise(command);
             await promise.runCommandInPromise(`sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
         } else {
-            let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --fork`;
+            let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --bind_ip_all --fork`;
             let ipList = [primary, secondary, arbiter];
             let conf = {
                 _id: config.database.replicaSet,
