@@ -21,26 +21,17 @@ class TargetUsageRateRanking extends Component {
     }
 
     render (){
-        let targets = [
-            {targetId: 101, mountPath: '/mnt/target101', node: 'node1', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '80%'}},
-            {targetId: 102, mountPath: '/mnt/target102', node: 'node2', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '75%'}},
-            {targetId: 103, mountPath: '/mnt/target103', node: 'node3', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '65%'}},
-            {targetId: 104, mountPath: '/mnt/target104', node: 'node4', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '55%'}},
-            {targetId: 105, mountPath: '/mnt/target101', node: 'node1', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '50%'}},
-            {targetId: 106, mountPath: '/mnt/target102', node: 'node2', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '45%'}},
-            {targetId: 107, mountPath: '/mnt/target103', node: 'node3', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '30%'}},
-            {targetId: 108, mountPath: '/mnt/target104', node: 'node4', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '21%'}},
-        ];
-        let rankingTargets = targets.slice(0, 4);
+        let {clusterTargets} = this.props;
+        let rankingTargets = clusterTargets.slice(0, 4);
         return (
             <div className="fs-target-ranking-wrapper">
                 <header>
-                    <Icon type="hdd" />{lang('存储目标使用率排行', 'Target Usage Rate Ranking')}
+                    <Icon type="hdd" />{lang('存储目标使用率 Top4', 'Target Usage Rate Top4')}
                     <span className="fs-target-view-all" onClick={this.showAllTargets.bind(this)}>{lang('查看所有 >>>', 'View All >>>')}</span>
                 </header>
                 <TargetList targets={rankingTargets} />
                 <Modal
-                    title={lang(`存储目标列表`, `Storage Target List`)}
+                    title={lang(`集群存储目标列表`, `Cluster Storage Target List`)}
                     width={500}
                     closable={false}
                     maskClosable={false}
@@ -58,7 +49,7 @@ class TargetUsageRateRanking extends Component {
                         </div>
                     }
                 >
-                    <TargetList className="small-padding" targets={targets} />
+                    <TargetList className="small-padding" targets={clusterTargets} />
                 </Modal>
             </div>
         );
@@ -66,8 +57,8 @@ class TargetUsageRateRanking extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language,} = state;
-    return {language,};
+    const {language, main: {dashboard: {clusterTargets}}} = state;
+    return {language, clusterTargets};
 };
 
 export default connect(mapStateToProps)(TargetUsageRateRanking);

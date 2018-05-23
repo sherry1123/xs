@@ -1,5 +1,6 @@
-// left : right is 845px: 845px in 1080p resolution ratio
-// keep '.fs-cluster-information-content' always be 845px min-width
+// left : right is 845px : 845px in 1080p resolution ratio
+// keep '.fs-cluster-information-content' always be in 845px min-width
+// right content min-width is 1200px
 
 .fs-dashboard-wrapper {
 	.fs-dashboard-row {
@@ -26,10 +27,10 @@
 		// respective
 		.fs-cluster-information-wrapper {
 			flex: 1;
+			min-width: 845px;
 			.fs-cluster-information-content {
 				padding: 20px 40px;
 				display: flex;
-				min-width: 845px !important;
 				flex-direction: row;
 				justify-content: center;
 				.fs-cluster-machine-image-wrapper {
@@ -52,7 +53,7 @@
 					.fs-cluster-info-item {
 						margin-top: 17px;
 						padding: 5px 0;
-						width: 174px;
+						width: 146px;
 						line-height: @normalFont + 1;
 						color: @text;
 						&:nth-child(2) {
@@ -61,7 +62,7 @@
 						&.need-icon {
 							position: relative;
 							padding-left: 20px;
-							width: 146px;
+							width: 174px;
 							&:before {
 								content: '';
 								position: absolute;
@@ -88,7 +89,7 @@
 							}
 						}
 						.fs-cluster-info-value {
-							margin-left: 30px;
+							float: right;
 							.fs-normal-node-value {
 								color: @green;
 							}
@@ -132,6 +133,7 @@
 		.fs-target-ranking-wrapper {
 			flex: 1;
 			margin-left: 10px;
+			min-width: 325px;
 			.fs-target-view-all {
 				float: right;
 				font-size: @smallFont;
@@ -145,7 +147,7 @@
 		.fs-statistics-chart-wrapper {
 			flex: 1;
 			margin-top: 10px;
-			min-width: 500px;
+			min-width: 585px;
 			height: 270px;
 			&:nth-child(2) {
 				margin-left: 10px;
@@ -154,11 +156,16 @@
 		.fs-physical-node-wrapper {
 			flex: 1;
 			margin-top: 10px;
+			min-width: 1180px;
 			.fs-physical-node-normal {
 				color: @green;
 			}
 			.fs-physical-node-abnormal {
 				color: @red;
+			}
+			.fs-physical-node-capacity {
+				display: inline-block;
+				vertical-align: middle;
 			}
 		}
 	}

@@ -1,12 +1,20 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
 import ClusterInformation from './ClusterInformation';
 import ThroughputStatistics from './ThroughputStatistics';
 import IOPSStatistics from './IOPSStatistics';
 import TargetRanking from './TargetRanking';
 import PhysicalNodeList from './PhysicalNodeList';
+import httpRequests from '../../http/requests';
 
-class Dashboard extends Component {
+export default class Dashboard extends Component {
+    componentDidMount (){
+        httpRequests.getClusterInfo();
+        httpRequests.getClusterTargets();
+        httpRequests.getClusterThroughput();
+        httpRequests.getClusterIOPS();
+        httpRequests.getClusterPhysicalNodeList();
+    }
+
     render (){
         return (
            <div className="fs-page-content fs-dashboard-wrapper">
@@ -25,10 +33,3 @@ class Dashboard extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language,} = state;
-    return {language,};
-};
-
-export default connect(mapStateToProps)(Dashboard);

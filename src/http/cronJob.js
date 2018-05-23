@@ -28,6 +28,21 @@ const fetchDataPer15s = () => {
         httpRequests.getStorageNodeDetailThroughput();
     }
 
+    // management - system log
+    if (routerHash.match(main + routerPath.ManagementSystemLog)){
+        httpRequests.getEventLogs();
+        httpRequests.getAuditLogs();
+    }
+
+    // dashboard
+    if (routerHash.match(main + routerPath.Dashboard)){
+        httpRequests.getClusterInfo();
+        httpRequests.getClusterTargets();
+        httpRequests.getClusterThroughput();
+        httpRequests.getClusterIOPS();
+        httpRequests.getClusterPhysicalNodeList();
+    }
+
     // snapshot
     if (routerHash.match(main + routerPath.Snapshot)){
         httpRequests.getSnapshotList();
@@ -57,12 +72,6 @@ const fetchDataPer15s = () => {
     // local authentication user group
     if (routerHash.match(main + routerPath.LocalAuthUserGroup)){
         httpRequests.getLocalAuthUserGroupList();
-    }
-
-    // management - system log
-    if (routerHash.match(main + routerPath.ManagementSystemLog)){
-        httpRequests.getEventLogs();
-        httpRequests.getAuditLogs();
     }
 };
 

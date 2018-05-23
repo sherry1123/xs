@@ -6,6 +6,7 @@ import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';
 import metadataNodeReducer from './metadataNodeReducer';
 import storageNodeReducer from './storageNodeReducer';
+import dashboardReducer from './dashboardReducer';
 import managementReducer from './managementReducer';
 import snapshotReducer from './snapshotReducer';
 import shareReducer from './shareReducer';
@@ -13,9 +14,10 @@ import localAuthUserReducer from './localAuthUserReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
-const {VERSION, NODE_ENV} = process.env;
-State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 State.main.general.menuExpand = lsGet('menuExpand');
+// no need this, now get the version from backend
+// const {VERSION, NODE_ENV} = process.env;
+// State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
 
 // export a combined reducer
 export default combineReducers({
@@ -44,6 +46,10 @@ export default combineReducers({
 
                 case 'storageNode':
                     state[key] = storageNodeReducer(main[key], action);
+                    break;
+
+                case 'dashboard':
+                    state[key] = dashboardReducer(main[key], action);
                     break;
 
                 case 'management':
