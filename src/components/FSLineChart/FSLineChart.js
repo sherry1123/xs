@@ -194,7 +194,7 @@ class FSLineChart extends Component {
 
     render() {
         return (
-            <div className="fs-chart-content" style={{width: this.state.width, height: this.state.height, marginTop: 10}}
+            <div className="fs-chart-content" style={{width: this.state.width, height: this.state.height, marginTop: 15}}
                  ref={chartWrapper => this.chartWrapper = chartWrapper}>
                 Sorry, your browser does not support canvas,
                 so please replace it with modern browsers that support HTML5 standards.

@@ -5,8 +5,6 @@ import lang from '../../components/Language/lang';
 import {lsGet, lsSet} from '../../services';
 import httpRequests from '../../http/requests';
 
-// 默认直接显示节点名称，点击切换按钮，切换出节点下拉框，选择以后，又默认显示节点名称
-
 class PhysicalNodeInfo extends Component {
     constructor (props){
         super(props);

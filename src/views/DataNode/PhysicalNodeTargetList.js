@@ -8,7 +8,7 @@ class PhysicalNodeTargetList extends Component {
     constructor (props){
         super(props);
         this.state = {
-            currentServerType: 'metadata'
+            currentServerType: 'all'
         };
     }
 
@@ -19,8 +19,11 @@ class PhysicalNodeTargetList extends Component {
     render (){
         let {currentServerType} = this.state;
         let {physicalNodeTargets, physicalNodeInfo: {service: {metadata, storage}}} = this.props;
-        physicalNodeTargets = physicalNodeTargets.filter(target => target.service === currentServerType);
+        if (currentServerType !== 'all'){
+            physicalNodeTargets = physicalNodeTargets.filter(target => target.service === currentServerType);
+        }
         let serviceTypeMap = {
+            all: lang('全部', 'All'),
             metadata: lang('元数据服务', 'Metadata'),
             storage: lang('存储服务', 'Storage'),
         };
@@ -74,6 +77,7 @@ class PhysicalNodeTargetList extends Component {
                             value={this.state.currentServerType}
                             onChange={this.switchService.bind(this)}
                         >
+                            <Radio value="all">{lang('全部', 'All')}</Radio>
                             {metadata === 1 && <Radio value="metadata">{lang('元数据服务', 'Metadata Service')}</Radio>}
                             {storage === 1 &&<Radio value="storage">{lang('存储服务', 'Storage Service')}</Radio>}
                         </Radio.Group>
