@@ -257,6 +257,24 @@ const model = {
     },
     '/api/getnodelist': async ctx => {
         ctx.body = await service.getNodeList(ctx.param);
+    },
+    '/api/getnodeinfo': async ctx => {
+        ctx.body = await service.getNodeInfo(ctx.param);
+    },
+    '/api/getnodecpu': async ctx => {
+        ctx.body = await service.getNodeCpu(ctx.param);
+    },
+    '/api/getnodememory': async ctx => {
+        ctx.body = await service.getNodeMemory(ctx.param);
+    },
+    '/api/getnodeiops': async ctx => {
+        ctx.body = await service.getNodeIops(ctx.param);
+    },
+    '/api/getnodethroughput': async ctx => {
+        ctx.body = await service.getNodeThroughput(ctx.param);
+    },
+    '/api/getnodetarget': async ctx => {
+        ctx.body = await service.getNodeTarget(ctx.param);
     }
 };
 module.exports = model;
