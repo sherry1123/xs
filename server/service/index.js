@@ -1024,7 +1024,7 @@ const model = {
             let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
             let list = Array.from({ length: 60 }).fill(0);
             let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let throughput = list.map(item => (item + Math.floor(Math.random() * 100) / 10 * 1024 * 1024));
+            let throughput = list.map(item => (item + (1 + Math.floor(Math.random() * 10) / 100) * 1024 * 1024));
             let data = { total: throughput, time };
             result = handler.response(0, data);
         } catch (error) {
@@ -1038,7 +1038,7 @@ const model = {
             let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
             let list = Array.from({ length: 60 }).fill(0);
             let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let iops = list.map(item => (item + Math.floor(Math.random() * 100) / 10 * 1000));
+            let iops = list.map(item => (item + (1 + Math.floor(Math.random() * 10) / 100) * 1000));
             let data = { total: iops, time };
             result = handler.response(0, data);
         } catch (error) {
