@@ -6,6 +6,7 @@ import generalAction from '../redux/actions/generalAction';
 import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 import dashboardAction from '../redux/actions/dashboardAction';
+import dataNodeAction from '../redux/actions/dataNodeAction';
 import managementAction from '../redux/actions/managementAction';
 import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
@@ -175,6 +176,60 @@ export default  {
             let data = await fetchGet('/api/getnodelist');
             !!data && store.dispatch(dashboardAction.setClusterPhysicalNodeList(data));
         });
+    },
+
+    // data node
+    getPhysicalNodeInfo ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+        if (!!nodeId){
+            requestMiddleWare(async () => {
+                let data = await fetchGet('/api/getnodeinfo', {nodeId});
+                !!data && store.dispatch(dataNodeAction.setPhysicalNodeInfo(data));
+            });
+        }
+    },
+
+    getPhysicalNodeTargets ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+        if (!!nodeId){
+            requestMiddleWare(async () => {
+                let data = await fetchGet('/api/getnodetarget', {nodeId});
+                !!data && store.dispatch(dataNodeAction.setPhysicalNodeTargets(data));
+            });
+        }
+    },
+    getPhysicalNodeCPU ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+        if (!!nodeId){
+            requestMiddleWare(async () => {
+                let data = await fetchGet('/api/getnodecpu', {nodeId});
+                !!data && store.dispatch(dataNodeAction.setPhysicalNodeCPU(data));
+            });
+        }
+    },
+
+    getPhysicalNodeRAM ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+        if (!!nodeId){
+            requestMiddleWare(async () => {
+                let data = await fetchGet('/api/getnodememory', {nodeId});
+                !!data && store.dispatch(dataNodeAction.setPhysicalNodeRAM(data));
+            });
+        }
+    },
+
+    getPhysicalNodeTPS ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+        if (!!nodeId){
+            requestMiddleWare(async () => {
+                let data = await fetchGet('/api/getnodethroughput', {nodeId});
+                !!data && store.dispatch(dataNodeAction.setPhysicalNodeTPS(data));
+            });
+        }
+    },
+
+    getPhysicalNodeIOPS ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+        if (!!nodeId){
+            requestMiddleWare(async () => {
+                let data = await fetchGet('/api/getnodeiops', {nodeId});
+                !!data && store.dispatch(dataNodeAction.setPhysicalNodeIOPS(data));
+            });
+        }
     },
 
     // management

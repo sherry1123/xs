@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import ClusterInformation from './ClusterInformation';
-import ThroughputStatistics from './ThroughputStatistics';
-import IOPSStatistics from './IOPSStatistics';
-import TargetRanking from './TargetRanking';
-import PhysicalNodeList from './PhysicalNodeList';
+import ClusterBasicInfo from './ClusterBasicInfo';
+import ClusterTPS from './ClusterTPS';
+import ClusterIOPS from './ClusterIOPS';
+import ClusterTargetsRanking from './ClusterTargetsRanking';
+import ClusterPhysicalNodeList from './ClusterPhysicalNodeList';
 import httpRequests from '../../http/requests';
 
 export default class Dashboard extends Component {
@@ -19,15 +19,15 @@ export default class Dashboard extends Component {
         return (
            <div className="fs-page-content fs-dashboard-wrapper">
                <div className="fs-dashboard-row">
-                    <ClusterInformation />
-                    <TargetRanking />
+                    <ClusterBasicInfo />
+                    <ClusterTargetsRanking />
                </div>
                <div className="fs-dashboard-row">
-                   <ThroughputStatistics />
-                   <IOPSStatistics />
+                   <ClusterTPS />
+                   <ClusterIOPS />
                </div>
                <div className="fs-dashboard-row">
-                   <PhysicalNodeList />
+                   <ClusterPhysicalNodeList />
                </div>
            </div>
         );

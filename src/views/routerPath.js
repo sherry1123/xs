@@ -24,6 +24,8 @@ const routerPath = {
     // the corresponding views of these paths will render after Main's rendering is completed
     Dashboard: '/dashboard',
 
+    DataNode: '/data-node',
+
     // MetadataNodes: '/metadata-nodes',
 
     StorageNodes: '/storage-nodes',
@@ -52,6 +54,7 @@ export default routerPath;
 
 export const pathToMenu = {
     Dashboard: [routerPath.Dashboard],
+    DataNode: [routerPath.DataNode],
     // MetadataNodes: [routerPath.MetadataNodes],
     StorageNodes: [routerPath.StorageNodes],
     // ClientStatistics: [routerPath.ClientStatistics],

@@ -6,7 +6,7 @@ import ClusterImage from '../../images/cluster.png';
 import lang from '../../components/Language/lang';
 import {formatStorageSize} from '../../services';
 
-class ClusterInformation extends Component {
+class ClusterBasicInfo extends Component {
     formatSizeAndSmallerUnit (size){
         let [value, unit] = formatStorageSize(size).split(' ');
         return <span>{value} <span className="fs-cluster-info-unit">{unit}</span></span>;
@@ -41,7 +41,7 @@ class ClusterInformation extends Component {
 
         return (
             <div className="fs-cluster-information-wrapper">
-                <header><Icon type="bars" /> {lang('集群基本信息', 'Cluster Basic Information')}</header>
+                <header><Icon type="bars" />{lang('集群基本信息', 'Cluster Basic Information')}</header>
                 <div className="fs-cluster-information-content">
                     <div className="fs-cluster-machine-image-wrapper">
                         <img alt={lang('集群', 'Cluster')} src={ClusterImage} />
@@ -51,7 +51,7 @@ class ClusterInformation extends Component {
                         <div className="fs-cluster-info-item">
                             {lang('集群状态:', 'Status:')}
                             <span className="fs-cluster-info-value">
-                                <i className="fs-status-circle up" />{status ? lang('正常', 'Normal') : lang('异常', 'Abnormal')}
+                                <i className={`fs-status-circle ${status ? 'up' : 'down'}`} />{status ? lang('正常', 'Normal') : lang('异常', 'Abnormal')}
                             </span>
                         </div>
                         <div className="fs-cluster-info-item">
@@ -109,4 +109,4 @@ const mapStateToProps = state => {
     return {language, clusterStatus, clusterCapacity};
 };
 
-export default connect(mapStateToProps)(ClusterInformation);
+export default connect(mapStateToProps)(ClusterBasicInfo);

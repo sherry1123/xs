@@ -238,7 +238,7 @@ class Snapshot extends Component {
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}
                     />
-                    <div className="fs-button-box">
+                    <div className="fs-table-operation-button-box">
                         <Button
                             type="primary"
                             disabled={snapshotHandling}

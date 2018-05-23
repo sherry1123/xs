@@ -1,8 +1,44 @@
-// left : right is 845px : 845px in 1080p resolution ratio
-// keep '.fs-cluster-information-content' always be in 845px min-width
-// right content min-width is 1200px
+/**
+ * this lees file is for the layout of both Dashboard and DataNode
+ * left : right is 845px : 845px in 1080p resolution ratio
+ * keep '.fs-cluster-information-content' always be in min-width 845px
+ * right content min-width is 1200px
+ */
 
 .fs-dashboard-wrapper {
+	.fs-table-operation-wrapper {
+		.fs-operation-text {
+			display: inline-block;
+			height: 30px;
+			line-height: 30px;
+			color: @title;
+		}
+		.fs-operation-info-box {
+			float: right;
+			display: flex;
+			flex-direction: row;
+			.fs-operation-info-item {
+				height: 30px;
+				&:nth-child(1) {
+					margin-right: 115px;
+				}
+				.fs-operation-info-item-value {
+					height: @bigFont;
+					line-height: @bigFont;
+					font-size: @bigFont;
+					color: @title;
+				}
+				.fs-operation-info-item-label {
+					margin-top: 3px;
+					height: @smallFont;
+					line-height: @smallFont;
+					font-size: @smallFont;
+					color: @text;
+				}
+			}
+		}
+	}
+
 	.fs-dashboard-row {
 		display: flex;
 		flex-direction: row;
@@ -20,6 +56,9 @@
 				border-bottom: 1px solid @light-border;
 				i {
 					margin-right: 12px;
+				}
+				.fs-header-button-box {
+					float: right;
 				}
 			}
 		}

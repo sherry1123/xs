@@ -7,6 +7,7 @@ import generalReducer from './generalReducer';
 import metadataNodeReducer from './metadataNodeReducer';
 import storageNodeReducer from './storageNodeReducer';
 import dashboardReducer from './dashboardReducer';
+import dataNodeReducer from './dataNodeReducer';
 import managementReducer from './managementReducer';
 import snapshotReducer from './snapshotReducer';
 import shareReducer from './shareReducer';
@@ -52,8 +53,8 @@ export default combineReducers({
                     state[key] = dashboardReducer(main[key], action);
                     break;
 
-                case 'management':
-                    state[key] = managementReducer(main[key], action);
+                case 'dataNode':
+                    state[key] = dataNodeReducer(main[key], action);
                     break;
 
                 case 'snapshot':
@@ -62,6 +63,10 @@ export default combineReducers({
 
                 case 'share':
                     state[key] = shareReducer(main[key], action);
+                    break;
+
+                case 'management':
+                    state[key] = managementReducer(main[key], action);
                     break;
 
                 case 'localAuthUser':

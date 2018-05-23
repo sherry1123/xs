@@ -1,46 +1,44 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
-import {Icon, Table, Popover} from 'antd';
+import {connect} from 'react-redux';
+import {Icon, Radio, Table, Popover} from 'antd';
 import lang from '../../components/Language/lang';
 import {formatStorageSize, getCapacityColour} from '../../services';
 
-class PhysicalNodeList extends Component {
-    forwardDataNodePage (hostname){
-        console.info(hostname);
+class PhysicalNodeTargetList extends Component {
+    constructor (props){
+        super(props);
+        this.state = {
+            currentServerType: 'metadata'
+        };
+    }
+
+    switchService ({target: {value}}){
+        this.setState({currentServerType: value});
     }
 
     render (){
-        let {clusterPhysicalNodeList} = this.props;
-        let serviceRoleMap = {
+        let {currentServerType} = this.state;
+        let {physicalNodeTargets, physicalNodeInfo: {service: {metadata, storage}}} = this.props;
+        physicalNodeTargets = physicalNodeTargets.filter(target => target.service === currentServerType);
+        let serviceTypeMap = {
             metadata: lang('元数据服务', 'Metadata'),
             storage: lang('存储服务', 'Storage'),
-            mgmt: lang('管理服务', 'Management')
         };
         let tableProps = {
-            dataSource: clusterPhysicalNodeList,
+            dataSource: physicalNodeTargets,
             pagination: false,
-            rowKey: 'hostname',
+            rowKey: record => `${record.targetId}@${record.mountPath}`,
             locale: {
                 emptyText: lang(' ', ' ')
             },
             scroll: {y: 270},
             columns: [
-                {title: lang('节点名称', 'Node Hostname'), width: 100, dataIndex: 'hostname',
-                    render: (text, record) => (record.service.length === 1 && record.service[0] === 'mgmt') ?
-                        text :
-                        <a onClick={this.forwardDataNodePage.bind(this, text)}>{text}</a>
+                {title: lang('目标ID', 'Target ID'), width: 100, dataIndex: 'targetId',},
+                {title: lang('挂载路径', 'Mount Path'), width: 100, dataIndex: 'mountPath'},
+                {title: lang('所属节点', 'Node Belong'), width: 100, dataIndex: 'node',},
+                {title: lang('所属服务', 'Service Belong'), width: 100, dataIndex: 'service',
+                    render: text => serviceTypeMap[text]
                 },
-                {title: lang('节点IP', 'Node IP'), width: 60, dataIndex: 'ip'},
-                {title: lang('服务角色', 'Service Role'), width: 100, dataIndex: 'service',
-                    render: text => text.map(role => serviceRoleMap[role]).join(', ')
-                },
-                {title: lang('节点状态', 'Node Status'), width: 60, dataIndex: 'status',
-                    render: text => text ?
-                        <span className="fs-physical-node-normal">{lang('正常', 'Normal')}</span> :
-                        <span className="fs-physical-node-abnormal">{lang('异常', 'Abnormal')}</span>
-                },
-                {title: lang('CPU使用率', 'CPU Usage Rate'), width: 80, dataIndex: 'cpuUsage'},
-                {title: lang('内存使用率', 'Memory Usage Rate'), width: 80, dataIndex: 'memoryUsage'},
                 {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
                         <Popover
@@ -69,7 +67,18 @@ class PhysicalNodeList extends Component {
         };
         return (
             <div className="fs-physical-node-wrapper">
-                <header><Icon type="laptop" /> {lang('集群物理节点', 'Physical Node')}</header>
+                <header>
+                    <Icon type="hdd" />{lang(`节点${serviceTypeMap[currentServerType]}存储目标`, `Node ${serviceTypeMap[currentServerType]} Service Targets`)}
+                    <div className="fs-header-button-box">
+                        <Radio.Group
+                            value={this.state.currentServerType}
+                            onChange={this.switchService.bind(this)}
+                        >
+                            {metadata === 1 && <Radio value="metadata">{lang('元数据服务', 'Metadata Service')}</Radio>}
+                            {storage === 1 &&<Radio value="storage">{lang('存储服务', 'Storage Service')}</Radio>}
+                        </Radio.Group>
+                    </div>
+                </header>
                 <Table {...tableProps} />
             </div>
         );
@@ -77,8 +86,8 @@ class PhysicalNodeList extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterPhysicalNodeList}}} = state;
-    return {language, clusterPhysicalNodeList};
+    const {language, main: {dataNode: {physicalNodeInfo, physicalNodeTargets}}} = state;
+    return {language, physicalNodeInfo, physicalNodeTargets};
 };
 
-export default connect(mapStateToProps)(PhysicalNodeList);
+export default connect(mapStateToProps)(PhysicalNodeTargetList);

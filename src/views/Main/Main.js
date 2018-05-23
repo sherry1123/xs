@@ -11,6 +11,9 @@ import SideBar from '../Bar/SideBar';
 // dashboard
 const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 
+// data node
+const DataNode = asyncLoad(() => import('../DataNode/DataNode'));
+
 // metadata nodes
 // const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
 
@@ -68,55 +71,42 @@ export default class Main extends Component {
         }
     }
 
-    componentDidMount (){
-        /*
-        let prevScrollTop = 0;
-        let threshold = 30;
-        let prevDirection = 'down';
-        this.scrollHandler = ({target: {scrollingElement: {scrollTop}}}) => {
-            let dif = scrollTop - prevScrollTop;
-            let direction = '';
-            if (dif > threshold){
-                direction = 'up'
-            } else if (dif < 0){
-                direction = 'down';
-            }
-            // prevScrollTop = scrollTop;
-            if (direction !== prevDirection){
-                prevDirection = direction;
-                this.TopBar.getWrappedInstance().switchScrollDirection(direction);
-                // this.SideBar.getWrappedInstance().switchScrollDirection(direction);
-            }
-        };
-        window.addEventListener('scroll', this.scrollHandler, {passive: true});
-        */
-    }
-
-    componentWillUnmount (){
-        // window.removeEventListener('scroll', this.scrollHandler, {passive: true});
-    }
-
     render (){
         const Main = routerPath.Main;
         return (
             <div className="fs-main-wrapper">
                 <SideBar />
                 <div className="fs-body-wrapper">
-                    <TopBar ref={ref => this.TopBar = ref} />
+                    <TopBar />
                     <main className='fs-content-wrapper'>
                         <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
+
+                        <Route path={`${Main}${routerPath.DataNode}`} component={DataNode} />
+
                         {/*<Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />*/}
+
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
+
                         {/*<Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />*/}
+
                         {/*<Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />*/}
+
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
+
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
+
                         <Route path={`${Main}${routerPath.NFS}`} component={NFS} />
+
                         <Route path={`${Main}${routerPath.CIFS}`} component={CIFS} />
+
                         <Route path={`${Main}${routerPath.LocalAuthUser}`} component={LocalAuthUser} />
+
                         <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
+
                         <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
+
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
+
                         <Route path={`${Main}${routerPath.Test}`} component={Test} />
                     </main>
                 </div>

@@ -1,7 +1,7 @@
 export const dashboardActionTypes = {
     SET_CLUSTER_INFO: 'SET_CLUSTER_INFO',
     SET_CLUSTER_TARGETS: 'SET_CLUSTER_TARGETS',
-    SET_CLUSTER_THROUGHPUT: 'SET_CLUSTER_THROUGHPUT',
+    SET_CLUSTER_TPS: 'SET_CLUSTER_TPS',
     SET_CLUSTER_IOPS: 'SET_CLUSTER_IOPS',
     SET_CLUSTER_PHYSICAL_NODE_LIST: 'SET_CLUSTER_PHYSICAL_NODE_LIST',
 };
@@ -17,9 +17,9 @@ export default {
         clusterTargets
     }),
 
-    setClusterThroughput: clusterThroughput => ({
-        type: dashboardActionTypes.SET_CLUSTER_THROUGHPUT,
-        clusterThroughput
+    setClusterThroughput: clusterTPS => ({
+        type: dashboardActionTypes.SET_CLUSTER_TPS,
+        clusterTPS
     }),
 
     setClusterIOPS: clusterIOPS => ({

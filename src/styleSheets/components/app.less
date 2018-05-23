@@ -29,6 +29,9 @@ body {
                             padding: 15px;
                             height: 60px;
                             background-color: @white;
+                            &.no-bottom-margin {
+                                margin-bottom: 0;
+                            }
                             .fs-box-shadow();
                             .ant-input-search {
                                 width: 300px;
@@ -38,7 +41,7 @@ body {
                             .ant-select-selection {
                                 width: 200px;
                             }
-                            .fs-button-box {
+                            .fs-table-operation-button-box {
                                 float: right;
                                 .ant-btn {
                                     margin-left: 12px;
@@ -52,7 +55,7 @@ body {
                             .fs-table-title {
                                 color: @title;
                                 .anticon {
-                                    padding-right: 5px;
+                                    padding-right: 10px;
                                 }
                             }
                         }

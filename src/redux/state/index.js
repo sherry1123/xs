@@ -84,14 +84,19 @@ export default {
             clusterStatus: {status: true, total: 0, normal: 0, abnormal: 0},
             clusterCapacity: {total: 0, used: 0, free: 0, usage: '--'},
             clusterTargets: [],
-            clusterThroughput: {total: [], time: []},
+            clusterTPS: {total: [], time: []},
             clusterIOPS: {total: [], time: []},
             clusterPhysicalNodeList: [],
         },
-        // management
-        management: {
-            eventLogs: [],
-            auditLogs: [],
+        // data node
+        dataNode: {
+            currentPhysicalNode: {},
+            physicalNodeInfo: {status: true, service: {metadata: 0, storage: 0}},
+            physicalNodeTargets: [],
+            physicalNodeCPU: {total: [], time: []},
+            physicalNodeRAM: {total: [], time: []},
+            physicalNodeTPS: {read: [], write: [], time: []},
+            physicalNodeIOPS: {total: [], time: []},
         },
         // snapshot
         snapshot: {
@@ -105,6 +110,11 @@ export default {
             clientListOfNFS: [],
             CIFSList: [],
             localAuthUserOrGroupListOfCIFS: [],
+        },
+        // management
+        management: {
+            eventLogs: [],
+            auditLogs: [],
         },
         // local authentication user and group for CIFS share
         localAuthUser: {

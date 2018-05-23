@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import {Popover} from 'antd';
-import {formatStorageSize, getCapacityColour} from "../../services";
-import lang from "../Language/lang";
+import {formatStorageSize, getCapacityColour} from '../../services';
+import lang from '../Language/lang';
 
 class TargetUsageRateRanking extends Component {
-
     render (){
         let buttonPopoverConf = {trigger: 'click', placement: 'bottom'};
         let {targets, className} = this.props;

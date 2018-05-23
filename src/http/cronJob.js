@@ -43,6 +43,16 @@ const fetchDataPer15s = () => {
         httpRequests.getClusterPhysicalNodeList();
     }
 
+    // data node
+    if (routerHash.match(main + routerPath.DataNode)){
+        httpRequests.getPhysicalNodeInfo();
+        httpRequests.getPhysicalNodeTargets();
+        httpRequests.getPhysicalNodeCPU();
+        httpRequests.getPhysicalNodeRAM();
+        httpRequests.getPhysicalNodeTPS();
+        httpRequests.getPhysicalNodeIOPS();
+    }
+
     // snapshot
     if (routerHash.match(main + routerPath.Snapshot)){
         httpRequests.getSnapshotList();

@@ -67,6 +67,9 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.Dashboard}>
                         <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>
+                    <Menu.Item key={routerPath.DataNode}>
+                        <Icon type="database" /><span className="fs-sidebar-menu-text">{lang('数据节点', 'Data Node')}</span>
+                    </Menu.Item>
                     {/*
                     <Menu.Item key={routerPath.MetadataNodes}>
                         <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
