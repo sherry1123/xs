@@ -1071,6 +1071,7 @@ const model = {
         let nodeId = Number(param.nodeId);
         let result = {};
         try {
+            let status = true;
             let service = { metadata: 0, storage: 0 };
             if (nodeId < 4) {
                 service = { metadata: 1, storage: 1 };
@@ -1079,7 +1080,7 @@ const model = {
             } else {
                 service = { metadata: 0, storage: 1 };
             }
-            let data = { service };
+            let data = { status, service };
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
