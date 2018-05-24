@@ -1,6 +1,29 @@
-/*
- * whole layout framework
- * side-bar top-bar content
+/**
+ * @ App layout structure less file
+ *
+ *               html
+ *                 |
+ *               body
+ *                 |
+ *               #root (the div dom that the App mount on)
+ *                 |
+ *             .fs-body (only user login)
+ *                 |
+ *        |-----------------|
+ *   .fs-side-bar       .fs-main
+ *        |                 |
+ *   ------------------------------------
+ *   |         |         top bar        |
+ *   |         |------------------------|
+ *   |   menu  |                        |
+ *   |         |         content        |  —— When we change the router to jump to another page,
+ *   |         |                        |     only content part will be changed.
+ *   ------------------------------------
+ *
+ * For other components:
+ * The Initialize, Login, RollingBack etc. aren't follow the structure mentioned above
+ * starting from #root. They are just forced to spread the whole screen simply.
+ *
  */
 
 body {
@@ -10,11 +33,11 @@ body {
     color: @text !important;
     #root {
         height: 100%;
-        .fs-main-wrapper {
+        .fs-body-wrapper {
             height: 100%;
             display: flex;
             flex-direction: row;
-            .fs-body-wrapper {
+            .fs-main-wrapper {
                 flex: 1;
                 border-top: 1px solid @light-border;
                 background-color: @page-bg;
