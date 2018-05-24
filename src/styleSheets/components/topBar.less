@@ -3,10 +3,9 @@
     height: 50px;
     font-size: 12px;
     transition: transform .35s ease;
-    will-change: transform;
     background-color: @white;
-    border-bottom: 1px solid @light-border;
-    .fs-box-shadow(0, 0, 1px, 0);
+    // only bottom-shadow ?
+    .fs-box-shadow(0, 1px, 1px, -1px);
     .fs-menu-expand-button-wrapper {
         float: left;
         padding-top: 2px;

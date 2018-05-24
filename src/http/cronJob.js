@@ -9,6 +9,7 @@ const fetchDataPer15s = () => {
 
     // main
     if (routerHash.match(main)){
+        httpRequests.getClusterInfo();
         // httpRequests.getKnownProblems();
         httpRequests.getMetadataNodes();
         httpRequests.getStorageNodes();
@@ -36,7 +37,6 @@ const fetchDataPer15s = () => {
 
     // dashboard
     if (routerHash.match(main + routerPath.Dashboard)){
-        httpRequests.getClusterInfo();
         httpRequests.getClusterTargets();
         httpRequests.getClusterThroughput();
         httpRequests.getClusterIOPS();

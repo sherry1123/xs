@@ -16,7 +16,7 @@ class PhysicalNodeRAM extends Component {
                     name: lang('内存使用率', 'RAM Usage Rate'),
                     type: 'line',
                     itemStyle: {normal: {color: '#fff', lineStyle: {width: 1}}},
-                    area: ['#fad08c', '#fdeedf'],
+                    area: ['#e494ff', '#fceeff'],
                 },
             ]
         };

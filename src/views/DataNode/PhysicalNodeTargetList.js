@@ -78,8 +78,8 @@ class PhysicalNodeTargetList extends Component {
                             onChange={this.switchService.bind(this)}
                         >
                             <Radio value="all">{lang('全部', 'All')}</Radio>
-                            {metadata === 1 && <Radio value="metadata">{lang('元数据服务', 'Metadata Service')}</Radio>}
-                            {storage === 1 &&<Radio value="storage">{lang('存储服务', 'Storage Service')}</Radio>}
+                            <Radio value="metadata" disabled={metadata === 0}>{lang('元数据服务', 'Metadata Service')}</Radio>
+                            <Radio value="storage" disabled={storage === 0}>{lang('存储服务', 'Storage Service')}</Radio>
                         </Radio.Group>
                     </div>
                 </header>

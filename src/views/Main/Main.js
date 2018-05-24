@@ -74,9 +74,9 @@ export default class Main extends Component {
     render (){
         const Main = routerPath.Main;
         return (
-            <div className="fs-main-wrapper">
+            <div className="fs-body-wrapper">
                 <SideBar />
-                <div className="fs-body-wrapper">
+                <div className="fs-main-wrapper">
                     <TopBar />
                     <main className='fs-content-wrapper'>
                         <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />

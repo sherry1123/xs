@@ -5,7 +5,7 @@ import {Icon, Table, Popover} from 'antd';
 import lang from '../../components/Language/lang';
 import {formatStorageSize, getCapacityColour} from '../../services';
 import routerPath from '../routerPath';
-import dataNodeAction from '../../redux/actions/generalAction';
+import dataNodeAction from '../../redux/actions/dataNodeAction';
 
 class ClusterPhysicalNodeList extends Component {
     forwardDataNodePage (physicalNode){
@@ -88,7 +88,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setCurrentPhysicalNode: key => dispatch(dataNodeAction.setCurrentPhysicalNode(key)),
+        setCurrentPhysicalNode: currentPhysicalNode => dispatch(dataNodeAction.setCurrentPhysicalNode(currentPhysicalNode)),
     };
 };
 
