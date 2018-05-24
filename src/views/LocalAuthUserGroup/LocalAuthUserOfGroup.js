@@ -137,7 +137,7 @@ class LocalAuthUserOfGroup extends Component {
                         style={{float: 'right'}}
                         onClick={this.add.bind(this)}
                     >
-                        {lang('增加', 'Add')}
+                        {lang('添加用户', 'Add User')}
                     </Button>
                 </div>
             ),

@@ -69,6 +69,7 @@ class NFS extends Component {
             </div>,
             iconType: 'exclamation-circle-o',
             okText: lang('删除', 'Delete'),
+            okType: 'danger',
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
@@ -97,6 +98,7 @@ class NFS extends Component {
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在这些共享上。`, `A suggestion: before deleting this share, ensure that there's no service is running on these shares.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {

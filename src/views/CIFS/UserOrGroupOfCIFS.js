@@ -57,6 +57,7 @@ class UserOrGroupOfCIFS extends Component {
                 <p>{lang(`建议：执行该操作前请确保该用户/用户组上无任何业务运行。`, `A suggestion: Before deleting a user/user group, ensure that the user/user group is not accessing shared resources.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -153,12 +154,12 @@ class UserOrGroupOfCIFS extends Component {
                         size="small"
                         placeholder={lang('名称', 'Name')}
                         value={this.state.query}
-                        enterButton={true}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}
                     />
                     <Button
                         size="small"
+                        type="primary"
                         style={{float: 'right'}}
                         onClick={this.showAddGroup.bind(this)}
                     >
@@ -166,6 +167,7 @@ class UserOrGroupOfCIFS extends Component {
                     </Button>
                     <Button
                         size="small"
+                        type="primary"
                         style={{float: 'right', marginRight: 10}}
                         onClick={this.showAddUser.bind(this)}
                     >

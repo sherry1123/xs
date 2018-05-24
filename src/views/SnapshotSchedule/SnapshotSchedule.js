@@ -98,6 +98,7 @@ class SnapshotSchedule extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即启用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule and it's no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -127,6 +128,7 @@ class SnapshotSchedule extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即执行用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {

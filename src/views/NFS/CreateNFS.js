@@ -204,9 +204,16 @@ class CreateNFS extends Component {
                 afterClose={this.close}
                 footer={
                     <div>
+                        <Button
+                            size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
                         {
                             this.state.formStep === 1 ? <Button
                                 size="small"
+                                type="primary"
                                 disabled={!this.state.formValid}
                                 onClick={this.nextStep.bind(this)}
                             >
@@ -214,6 +221,7 @@ class CreateNFS extends Component {
                             </Button> :
                             <Button
                                 size="small"
+                                type="primary"
                                 disabled={!this.state.formValid}
                                 loading={this.state.formSubmitting}
                                 onClick={this.create.bind(this)}
@@ -230,12 +238,6 @@ class CreateNFS extends Component {
                                 {lang('上一步', 'Previous')}
                             </Button>
                         }
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
-                        </Button>
                     </div>
                 }
             >

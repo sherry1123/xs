@@ -11,6 +11,7 @@ class SelectLocalAuthUserGroup extends Component {
         this.state = {
             visible: false,
             multipleSelect: false,
+            primaryGroup: '',
             selectedLocalAuthUserGroups: [],
             localAuthUserGroupList,
             localAuthUserGroupListBackup: localAuthUserGroupList,
@@ -38,7 +39,7 @@ class SelectLocalAuthUserGroup extends Component {
         }
     }
 
-    async show (multipleSelect){
+    async show (multipleSelect, primaryGroup){
         let {localAuthUserGroupList} = this.props;
         if (!localAuthUserGroupList.length){
             httpRequests.getLocalAuthUserGroupList();
@@ -46,6 +47,7 @@ class SelectLocalAuthUserGroup extends Component {
         await this.setState({
             visible: true,
             multipleSelect,
+            primaryGroup,
             selectedLocalAuthUserGroups: [],
             localAuthUserGroupList,
             localAuthUserGroupListBackup: localAuthUserGroupList,
@@ -55,7 +57,7 @@ class SelectLocalAuthUserGroup extends Component {
     add (){
         let {multipleSelect, selectedLocalAuthUserGroups} = this.state;
         if (!multipleSelect && selectedLocalAuthUserGroups.length > 1){
-            return message.warning(lang('主组只能选择一个', 'Primary group can only select one'));
+            return message.warning(lang('主组只允许选择一个', 'Allow to select only one primary group'));
         }
         this.props.onSelectGroup && this.props.onSelectGroup({
             type: multipleSelect ? 'secondaryGroup' : 'primaryGroup',
@@ -69,7 +71,11 @@ class SelectLocalAuthUserGroup extends Component {
     }
 
     render (){
-        let {selectedLocalAuthUserGroups, localAuthUserGroupList} = this.state;
+        let {multipleSelect, primaryGroup, selectedLocalAuthUserGroups, localAuthUserGroupList} = this.state;
+        if (!multipleSelect){
+            // select primary group case
+            localAuthUserGroupList = localAuthUserGroupList.filter(group => group.name !== primaryGroup);
+        }
         let tableProps = {
             size: 'small',
             dataSource: localAuthUserGroupList,
@@ -123,15 +129,17 @@ class SelectLocalAuthUserGroup extends Component {
                     <div>
                         <Button
                             size="small"
-                            onClick={this.add.bind(this)}
-                        >
-                            {lang('确定', 'Ok')}
-                        </Button>
-                        <Button
-                            size="small"
                             onClick={this.hide.bind(this)}
                         >
                             {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
+                            type="primary"
+                            disabled={!selectedLocalAuthUserGroups.length}
+                            onClick={this.add.bind(this)}
+                        >
+                            {lang('确定', 'Ok')}
                         </Button>
                     </div>
                 }

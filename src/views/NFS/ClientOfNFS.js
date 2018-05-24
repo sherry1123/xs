@@ -64,6 +64,7 @@ class ClientOfNFS extends Component {
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在该客户端上。`, `A suggestion: before deleting this client, ensure that there's no service is running on this share.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -138,12 +139,12 @@ class ClientOfNFS extends Component {
                         size="small"
                         placeholder={lang('客户端名称', 'Client Name')}
                         value={this.state.query}
-                        enterButton={true}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}
                     />
                     <Button
                         size="small"
+                        type="primary"
                         style={{float: 'right'}}
                         onClick={this.create.bind(this)}
                     >

@@ -71,16 +71,17 @@ class EditCIFS extends Component {
                     <div>
                         <Button
                             size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
+                            type="primary"
                             loading={this.state.formSubmitting}
                             onClick={this.edit.bind(this)}
                         >
                             {lang('编辑', 'Edit')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }

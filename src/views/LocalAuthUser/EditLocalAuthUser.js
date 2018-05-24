@@ -119,7 +119,7 @@ class EditLocalAuthUser extends Component {
     }
 
     showSelectPrimaryGroup (){
-        this.selectLocalAuthUserGroupWrapper.getWrappedInstance().show(false);
+        this.selectLocalAuthUserGroupWrapper.getWrappedInstance().show(false, this.state.userData.primaryGroup);
     }
 
     selectGroup ({type, groupNames}){
@@ -167,7 +167,7 @@ class EditLocalAuthUser extends Component {
         };
         return (
             <Modal
-                title={lang('创建本地认证用户', 'Create Local Authentication User')}
+                title={lang('编辑本地认证用户', 'Edit Local Authentication User')}
                 width={400}
                 closable={false}
                 maskClosable={false}
@@ -177,17 +177,18 @@ class EditLocalAuthUser extends Component {
                     <div>
                         <Button
                             size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
+                            type="primary"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.edit.bind(this)}
                         >
                             {lang('编辑', 'Edit')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }
@@ -262,7 +263,7 @@ class EditLocalAuthUser extends Component {
                         />
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('附属组', 'Secondary Group')}>
-                        {(this.state.userData.secondaryGroup || []).join(',')}
+                        {(this.state.userData.secondaryGroup || []).join(',') || '--'}
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea

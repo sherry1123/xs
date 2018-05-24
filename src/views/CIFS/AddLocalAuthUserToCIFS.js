@@ -125,7 +125,6 @@ class AddLocalAuthUserToCIFS extends Component {
                         size="small"
                         placeholder={lang('用户名称', 'User Name')}
                         value={this.state.query}
-                        enterButton={true}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}
                     />
@@ -184,17 +183,18 @@ class AddLocalAuthUserToCIFS extends Component {
                     <div>
                         <Button
                             size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
+                            type="primary"
                             disabled={!selectedLocalAuthUsers.length}
                             loading={formSubmitting}
                             onClick={this.add.bind(this)}
                         >
                             {lang('添加', 'Add')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }

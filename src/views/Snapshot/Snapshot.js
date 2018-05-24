@@ -79,6 +79,7 @@ class Snapshot extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照的创建时间是否是想要恢复到的时间点，并确保已无业务运行在系统上。`, `A suggestion: before executing this operation, ensure that the selected snapshot's create time is what you want the system to recover to, and ensure that there's no service is running on the system.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('回滚', 'Rollback'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -105,6 +106,7 @@ class Snapshot extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot and it's no longer necessary.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -124,7 +126,7 @@ class Snapshot extends Component {
 
     batchDelete (){
         let {batchDeleteNames} = this.state;
-        Modal.confirm({
+        let batchDeleteModal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个快照的操作。`, `You are about to delete these ${batchDeleteNames.length} snapshot(s).`)}</p>
@@ -132,6 +134,7 @@ class Snapshot extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它(们)已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot(s) and it's(they're) no longer necessary.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -145,7 +148,7 @@ class Snapshot extends Component {
                 }
             },
             onCancel: () => {
-
+                batchDeleteModal.destroy();
             }
         });
     }
@@ -241,16 +244,17 @@ class Snapshot extends Component {
                     <div className="fs-table-operation-button-box">
                         <Button
                             type="primary"
-                            disabled={snapshotHandling}
                             size="small"
+                            disabled={snapshotHandling}
                             onClick={this.create.bind(this)}
                         >
                             {lang('创建', 'Create')}
                         </Button>
                         <Button
-                            type="primary"
+                            type="warning"
+                            size="small"
                             disabled={snapshotHandling}
-                            className="fs-create-snapshot-button" size="small"
+                            className="fs-create-snapshot-button"
                             onClick={this.setting.bind(this)}
                         >
                             {lang('设置', 'Setting')}

@@ -62,6 +62,7 @@ class LocalAuthUser extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认它不再需要。`, `A suggestion: before executing this operation, determine whether the local authentication user is necessary.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
@@ -89,6 +90,7 @@ class LocalAuthUser extends Component {
                 <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认它不再需要。`, `A suggestion: before executing this operation, determine whether the local authentication users are necessary.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
+            okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
