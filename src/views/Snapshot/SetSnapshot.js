@@ -188,13 +188,13 @@ class SetSnapshot extends Component {
                             {lang('取消', 'Cancel')}
                         </Button>
                         <Button
-                            type="primary"
+                            type="warning"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             size='small'
                             onClick={this.saveSetting.bind(this)}
                         >
-                            {lang('保存', 'Save')}
+                            {lang('应用', 'Apply')}
                         </Button>
                     </div>
                 }

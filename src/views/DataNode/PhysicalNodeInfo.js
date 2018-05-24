@@ -9,32 +9,11 @@ import dataNodeAction from "../../redux/actions/dataNodeAction";
 class PhysicalNodeInfo extends Component {
     constructor (props){
         super(props);
-        /*
-        let currentPhysicalNode = (this.props.currentPhysicalNode.hostname || this.props.clusterPhysicalNodeList[0]);
-        console.info(currentPhysicalNode);
-        if (!!currentPhysicalNode){
-            lsSet('currentPhysicalNode', currentPhysicalNode);
-        } else {
-            currentPhysicalNode = lsGet('currentPhysicalNode') || {};
-        }
-        */
-        let currentPhysicalNode = lsGet('currentPhysicalNode');
+        let currentPhysicalNode = lsGet('currentPhysicalNode') || {};
         this.state = {
             showPhysicalNodeSelect: false,
-            currentPhysicalNode: currentPhysicalNode || {},
+            currentPhysicalNode,
         };
-    }
-
-    getPhysicalNodeData (currentPhysicalNode){
-        if (!currentPhysicalNode){
-            currentPhysicalNode = this.state.currentPhysicalNode;
-        }
-        httpRequests.getPhysicalNodeInfo(currentPhysicalNode);
-        httpRequests.getPhysicalNodeTargets(currentPhysicalNode);
-        httpRequests.getPhysicalNodeCPU(currentPhysicalNode);
-        httpRequests.getPhysicalNodeRAM(currentPhysicalNode);
-        httpRequests.getPhysicalNodeTPS(currentPhysicalNode);
-        httpRequests.getPhysicalNodeIOPS(currentPhysicalNode);
     }
 
     componentWillReceiveProps (nextProps){
@@ -52,6 +31,18 @@ class PhysicalNodeInfo extends Component {
                 this.getPhysicalNodeData(currentPhysicalNode);
             }
         }
+    }
+
+    getPhysicalNodeData (currentPhysicalNode){
+        if (!currentPhysicalNode){
+            currentPhysicalNode = this.state.currentPhysicalNode;
+        }
+        httpRequests.getPhysicalNodeInfo(currentPhysicalNode);
+        httpRequests.getPhysicalNodeTargets(currentPhysicalNode);
+        httpRequests.getPhysicalNodeCPU(currentPhysicalNode);
+        httpRequests.getPhysicalNodeRAM(currentPhysicalNode);
+        httpRequests.getPhysicalNodeTPS(currentPhysicalNode);
+        httpRequests.getPhysicalNodeIOPS(currentPhysicalNode);
     }
 
     showPhysicalNodeSelect (){
@@ -112,9 +103,10 @@ class PhysicalNodeInfo extends Component {
                         content={lang('切换数据节点', 'Switch data node')}
                     >
                         <a
+
                             onClick={this.showPhysicalNodeSelect.bind(this)}
                         >
-                            <Icon style={{marginLeft: 20, fontSize: 12}} type="sync" />
+                            <Icon style={{fontSize: 12}} type="ellipsis" />
                         </a>
                     </Popover>
                 }

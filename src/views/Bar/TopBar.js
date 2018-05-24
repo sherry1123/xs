@@ -106,7 +106,7 @@ class TopBar extends Component {
                         />
                     </section>
                     <section className="fs-copy-right-wrapper">
-                        ©2018 OrcaFS {this.props.version}
+                        ©2018 Orcadt {!this.props.version ? '' : `(OrcaFS v${this.props.version})`}
                     </section>
                     <section className="fs-top-info-wrapper">
                         {/*

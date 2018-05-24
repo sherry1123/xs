@@ -98,7 +98,7 @@ class LocalAuthUserGroup extends Component {
             locale: {
                 emptyText: lang('暂无本地认证用户组', 'No local authentication user group')
             },
-            title: () => (<span className="fs-table-title"><Icon type="user-group-add" />{lang('本地认证用户组', 'Local Authentication User Group')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="usergroup-add" />{lang('本地认证用户组', 'Local Authentication User Group')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 140, dataIndex: 'name',},

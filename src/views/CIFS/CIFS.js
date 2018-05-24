@@ -133,7 +133,7 @@ class CIFS extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
-            title: () => (<span className="fs-table-title"><Icon type="folder" />{lang('CIFS共享', 'CIFS Share')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="folder" />{lang('CIFS共享', 'CIFS Share')} (Windows/MAC)</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('共享名称', 'Share Name'), width: 200, dataIndex: 'name',},

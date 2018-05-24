@@ -27,7 +27,7 @@ class ManagementSystemLog extends Component {
                 showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
                 size: 'normal'
             },
-            size: 'small',
+            // size: 'small',
             rowKey: '_id',
             className: 'fs-log-table-wrapper',
             locale: {
@@ -35,10 +35,10 @@ class ManagementSystemLog extends Component {
             },
             title: () => (<span className="fs-table-title"><Icon type="laptop" />{lang('事件日志', 'Event Log')}</span>),
             columns: [
-                {width: '3%', align: 'center', dataIndex: 'level', key: 'level_circle',
+                {width: '2%', align: 'center', dataIndex: 'level', key: 'level_circle',
                     render: text => <i className={`fs-log-level-circle level-${text}`} />
                 },
-                {width: '17%', title: lang('节点', 'Node'), dataIndex: 'node', key: 'node',
+                {width: '18%', title: lang('节点', 'Node'), dataIndex: 'node', key: 'node',
                     render: (text, record) => record.node ? record.node : 'cluster'
                 },
                 {width: '50%', title: lang('事件描述', 'Description'), dataIndex: 'desc', key: 'desc',
@@ -59,7 +59,7 @@ class ManagementSystemLog extends Component {
                 showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
                 size: 'normal'
             },
-            size: 'small',
+            // size: 'small',
             rowKey: '_id',
             className: 'fs-log-table-wrapper',
             locale: {
@@ -67,12 +67,15 @@ class ManagementSystemLog extends Component {
             },
             title: () => (<span className="fs-table-title"><Icon type="user" />{lang('审计日志', 'Audit Log')}</span>),
             columns: [
+                {width: '2%', align: 'center', dataIndex: 'level', key: 'level_circle',
+                    render: text => <i className={`fs-log-level-circle level-${text}`} />
+                },
                 {width: '17%', title: lang('用户名称', 'Username'), dataIndex: 'user', key: 'user',},
                 {width: '8%', title: lang('用户类型', 'User Type'), dataIndex: 'group', key: 'group',
                     render: text => text[language]
                 },
                 {width: '15%', title: lang('用户登录地址', 'User Login IP'), dataIndex: 'ip', key: 'ip',},
-                {width: '40%', title: lang('事件描述', 'Event Description'), dataIndex: 'desc', key: 'desc',
+                {width: '38%', title: lang('事件描述', 'Event Description'), dataIndex: 'desc', key: 'desc',
                     render: text => text[language]
                 },
                 {width: '15%', title: lang('时间', 'Time'), dataIndex: 'time', key: 'time',

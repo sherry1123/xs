@@ -181,14 +181,17 @@ class Snapshot extends Component {
                     disabled: record.deleting || record.rollbacking
                 }),
             },
-            title: () => (<span className="fs-table-title"><Icon type="camera" />{lang('快照', 'Snapshot')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="camera-o" />{lang('快照', 'Snapshot')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
-                {title: lang('名称', 'Name'), width: 200, dataIndex: 'name',},
+                {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
                 {title: lang('定时计划创建', 'Timed Schedule Create'), width: 80, dataIndex: 'isAuto',
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
-                {title: lang('创建时间', 'Create Time'), width: 120, dataIndex: 'createTime',
+                {title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
+                    render: text => text || '--'
+                },
+                {title: lang('创建时间', 'Create Time'), width: 150, dataIndex: 'createTime',
                     render: (text, record) => record.creating ? '--' : timeFormat(text)
                 },
                 {title: lang('操作', 'Operations'), width: 80,

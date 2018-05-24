@@ -65,12 +65,12 @@ class StripeSetting extends Component {
         let isChinese = language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 6 : 8},
-                sm: {span: isChinese ? 6 : 8},
+                xs: {span: isChinese ? 8 : 8},
+                sm: {span: isChinese ? 8 : 8},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 18 : 16},
-                sm: {span: isChinese ? 18 : 16},
+                xs: {span: isChinese ? 16 : 16},
+                sm: {span: isChinese ? 16 : 16},
             }
         };
         return (
@@ -90,7 +90,7 @@ class StripeSetting extends Component {
                         </Button>
                         <Button
                             type="primary"
-                            loading={this.state.formSubmitting}
+                            loading={!entryInfo.hasOwnProperty('numTargets') || this.state.formSubmitting}
                             size='small' onClick={this.editStripeSetting.bind(this)}
                         >
                             {lang('编辑', 'Edit')}
@@ -119,7 +119,8 @@ class StripeSetting extends Component {
                         </Form.Item>
                         <Form.Item {...formItemLayout} label={lang('块大小', 'Block Size')}>
                             <Input
-                                style={{width: 140}} size="small"
+                                style={{width: 140}}
+                                size="small"
                                 placeholder={lang('请输入块大小', 'enter block size')}
                                 value={entryInfo.chunkSize}
                                 onChange={({target: {value}}) => {
@@ -127,10 +128,10 @@ class StripeSetting extends Component {
                                 }}
                             /><span style={{marginLeft: 12}}>Byte</span>
                             <Popover
-                                placement="left"
+                                placement="right"
                                 content={lang(
-                                    '块大小不能小于 65536 Byte，并且必须是2的幂',
-                                    'Chunk size can not be less than 65536 Byte, and must be power of 2'
+                                    '块大小不能小于 65536 Bytes，并且必须是2的幂',
+                                    'Chunk size can not be less than 65536 Bytes, and must be power of 2'
                                 )}
                             >
                                 <Icon type="question-circle-o" className="fs-info-icon m-l" />

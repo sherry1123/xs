@@ -258,15 +258,16 @@ class CreateSnapshotSchedule extends Component {
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('循环删除', 'Loop Delete')}>
                         <Switch
-                            style={{marginLeft: 10}} size="small"
+                            style={{marginRight: 10}} size="small"
                             checked={this.state.scheduleData.deleteRound}
                             onChange={checked => this.formValueChange.bind(this, 'deleteRound')(checked)}
                         />
+                        {this.state.scheduleData.deleteRound ? lang('启用', 'Enable') : lang('不启用', 'Enable')}
                         <Popover
                             placement="right"
                             content={lang(
-                                '快照数量达到限制后自动删除创建时间最早的定时快照',
-                                'Delete the earliest timed snapshot automatically once their count reach the limitation.'
+                                '一旦启用，当快照数量达到限制后自动删除创建时间最早的定时快照',
+                                'Once enabled, will delete the earliest timed snapshot automatically once their count reach the limitation.'
                             )}
                         >
                             <Icon type="question-circle-o" className="fs-info-icon m-ll" />

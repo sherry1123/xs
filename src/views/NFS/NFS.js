@@ -133,7 +133,7 @@ class NFS extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
-            title: () => (<span className="fs-table-title"><Icon type="desktop" />{lang('NFS共享', 'NFS Share')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="desktop" />{lang('NFS共享', 'NFS Share')} (Linux/UNIX/MAC)</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('共享路径', 'Share Path'), width: 200, dataIndex: 'path',},
