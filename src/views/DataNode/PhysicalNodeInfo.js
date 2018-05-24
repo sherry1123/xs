@@ -4,16 +4,21 @@ import {Icon, Select, Popover} from 'antd';
 import lang from '../../components/Language/lang';
 import {lsGet, lsSet} from '../../services';
 import httpRequests from '../../http/requests';
+import dataNodeAction from "../../redux/actions/dataNodeAction";
 
 class PhysicalNodeInfo extends Component {
     constructor (props){
         super(props);
-        let currentPhysicalNode = this.props.clusterPhysicalNodeList[0];
+        /*
+        let currentPhysicalNode = (this.props.currentPhysicalNode.hostname || this.props.clusterPhysicalNodeList[0]);
+        console.info(currentPhysicalNode);
         if (!!currentPhysicalNode){
             lsSet('currentPhysicalNode', currentPhysicalNode);
         } else {
-            currentPhysicalNode = lsGet('currentPhysicalNode');
+            currentPhysicalNode = lsGet('currentPhysicalNode') || {};
         }
+        */
+        let currentPhysicalNode = lsGet('currentPhysicalNode');
         this.state = {
             showPhysicalNodeSelect: false,
             currentPhysicalNode: currentPhysicalNode || {},
@@ -34,12 +39,18 @@ class PhysicalNodeInfo extends Component {
 
     componentWillReceiveProps (nextProps){
         let {clusterPhysicalNodeList, currentPhysicalNode} = nextProps;
-        if (!this.state.currentPhysicalNode.hostname){
-            // no any node selected yet
-            currentPhysicalNode = currentPhysicalNode ? currentPhysicalNode : (clusterPhysicalNodeList[0] || {});
+        let preCurrentPhysicalNode = this.state.currentPhysicalNode;
+        if (!!currentPhysicalNode.hostname){
+            // If currentPhysicalNode.hostname existed, it means this props change is not
+            // happened in the page firstly render phase.
+            // In firstly render phase we get the currentPhysicalNode from localStorage, so
+            // when we refresh the browser, we will know the previous value depend on the record.
+            currentPhysicalNode = currentPhysicalNode.hostname ? currentPhysicalNode : (clusterPhysicalNodeList[0] || {});
             this.setState({currentPhysicalNode});
             lsSet('currentPhysicalNode', currentPhysicalNode);
-            this.getPhysicalNodeData(currentPhysicalNode);
+            if (preCurrentPhysicalNode.hostname !== currentPhysicalNode.hostname){
+                this.getPhysicalNodeData(currentPhysicalNode);
+            }
         }
     }
 
@@ -48,10 +59,8 @@ class PhysicalNodeInfo extends Component {
     }
 
     switchPhysicalNode (nodeId, {props: {currentPhysicalNode}}){
-        this.setState({
-            showPhysicalNodeSelect: false,
-            currentPhysicalNode,
-        });
+        this.setState({showPhysicalNodeSelect: false,});
+        this.props.setCurrentPhysicalNode(currentPhysicalNode);
         lsSet('currentPhysicalNode', currentPhysicalNode);
         // get data
         this.getPhysicalNodeData(currentPhysicalNode);
@@ -111,7 +120,7 @@ class PhysicalNodeInfo extends Component {
                 }
                 <div className="fs-operation-info-box">
                     <div className="fs-operation-info-item">
-                        <div className="fs-operation-info-item-value">
+                        <div className="fs-operation-info-item-value light-green">
                             {metadata}
                         </div>
                         <div className="fs-operation-info-item-label">
@@ -119,7 +128,7 @@ class PhysicalNodeInfo extends Component {
                         </div>
                     </div>
                     <div className="fs-operation-info-item">
-                        <div className="fs-operation-info-item-value">
+                        <div className="fs-operation-info-item-value orange">
                             {storage}
                         </div>
                         <div className="fs-operation-info-item-label">
@@ -137,4 +146,14 @@ const mapStateToProps = state => {
     return {language, clusterPhysicalNodeList, physicalNodeInfo, currentPhysicalNode};
 };
 
-export default connect(mapStateToProps)(PhysicalNodeInfo);
+const mapDispatchToProps = dispatch => {
+    return {
+        setCurrentPhysicalNode: currentPhysicalNode => dispatch(dataNodeAction.setCurrentPhysicalNode(currentPhysicalNode)),
+    };
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+    return Object.assign({}, stateProps, dispatchProps, ownProps);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(PhysicalNodeInfo);

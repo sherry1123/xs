@@ -16,7 +16,7 @@ class PhysicalNodeCPU extends Component {
                     name: lang('CPU使用率', 'CPU Usage Rate'),
                     type: 'line',
                     itemStyle: {normal: {color: '#fff', lineStyle: {width: 1}}},
-                    area: ['#e494ff', '#fceeff'],
+                    area: ['#98cbff', '#faffff'],
                 },
             ]
         };
