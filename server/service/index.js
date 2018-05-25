@@ -982,8 +982,9 @@ const model = {
             let version = await afterMe.getVersion(param);
             version = version.errorId ? '1.0.0' : version.data;
             let clusterStatus = { status: true, total: 10, normal: 10, abnormal: 0 }
-            let clusterCapacity = { total: 1024 * 1024 * 1024 * 1024 * 10 * 18, used: 1024 * 1024 * 1024 * 1024 * 55, free: 1024 * 1024 * 1024 * 1024 * 125, usage: '30.56%' };
-            let data = { clusterStatus, clusterCapacity, version };
+            let space = await afterMe.getStorageDiskSpace(param);
+            space = version.errorId ? { total: 0, used: 0, free: 0, usage: '0%' } : { total: space.data.total, used: space.data.used, free: space.data.free, usage: `${Math.round((space.data.used / space.data.total) * 10000) / 100}%` };
+            let data = { clusterStatus, clusterCapacity: space, version };
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
