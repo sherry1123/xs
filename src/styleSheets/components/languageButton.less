@@ -10,11 +10,17 @@
         }
     }
     .fs-change-language-pure-text {
-        color: @light-gray;
+        color: @text;
         user-select: none;
         cursor: pointer;
         &:hover {
-            color: @white;
+            color: @light-blue;
+        }
+        &.login {
+            color: @light-gray;
+            &:hover {
+                color: @white;
+            }
         }
     }
 }

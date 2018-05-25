@@ -86,7 +86,7 @@ class Login extends Component {
         };
         return (
             <section className="fs-login-wrapper">
-                <LanguageButton width={80} border="none" pureText />
+                <LanguageButton width={80} login border="none" pureText />
                 <i className="fs-login-background-bubble b-1" />
                 <i className="fs-login-background-bubble b-2" />
                 <i className="fs-login-background-bubble b-3" />
