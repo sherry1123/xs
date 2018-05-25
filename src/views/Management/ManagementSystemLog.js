@@ -27,7 +27,6 @@ class ManagementSystemLog extends Component {
                 showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
                 size: 'normal'
             },
-            // size: 'small',
             rowKey: '_id',
             className: 'fs-log-table-wrapper',
             locale: {
@@ -47,7 +46,7 @@ class ManagementSystemLog extends Component {
                 {width: '10%', title: lang('等级', 'Level'), dataIndex: 'level', key: 'level',
                     render: (text, record) => record.level * 1 === 1 ? lang('低', 'Low') : (record.level * 1 === 2 ? lang('中', 'Warn') : lang('高', 'Fatal'))
                 },
-                {width: '20%', title: lang('时间', 'Time'), dataIndex: 'time', key: 'time',
+                {width: '20%', title: lang('上报时间', 'Reported Time'), dataIndex: 'time', key: 'time',
                     render: text => timeFormat(text)
                 }
             ]
@@ -59,7 +58,6 @@ class ManagementSystemLog extends Component {
                 showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
                 size: 'normal'
             },
-            // size: 'small',
             rowKey: '_id',
             className: 'fs-log-table-wrapper',
             locale: {
@@ -78,7 +76,7 @@ class ManagementSystemLog extends Component {
                 {width: '38%', title: lang('事件描述', 'Event Description'), dataIndex: 'desc', key: 'desc',
                     render: text => text[language]
                 },
-                {width: '15%', title: lang('时间', 'Time'), dataIndex: 'time', key: 'time',
+                {width: '15%', title: lang('上报时间', 'Reported Time'), dataIndex: 'time', key: 'time',
                     render: text => timeFormat(text)
                 }
             ]

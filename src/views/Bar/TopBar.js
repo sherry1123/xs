@@ -59,7 +59,7 @@ class TopBar extends Component {
     }
 
     componentWillReceiveProps (nextProps){
-        let abnormalNodes = lsGet('abnormalNodes');
+        let abnormalNodes = lsGet('abnormalNodes') || [];
         let {metadataNodes, storageNodes} = nextProps;
         let nodes = metadataNodes.concat(storageNodes);
         // because metadata and storage servers can run on one same node, so their 'hostname' may be the same,
@@ -106,7 +106,7 @@ class TopBar extends Component {
                         />
                     </section>
                     <section className="fs-copy-right-wrapper">
-                        ©2018 Orcadt {!this.props.version ? '' : `(OrcaFS v${this.props.version})`}
+                        © 2018 Orcadt {lang('版权所有', 'All Rights Reserved')} {!this.props.version ? '' : `(OrcaFS v${this.props.version})`}
                     </section>
                     <section className="fs-top-info-wrapper">
                         {/*
