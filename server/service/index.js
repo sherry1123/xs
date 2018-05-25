@@ -979,7 +979,8 @@ const model = {
     async getClusterInfo(param) {
         let result = {};
         try {
-            let version = '6.17.1c8870';
+            let version = await afterMe.getVersion(param);
+            version = version.errorId ? '1.0.0' : version.data;
             let clusterStatus = { status: true, total: 10, normal: 10, abnormal: 0 }
             let clusterCapacity = { total: 1024 * 1024 * 1024 * 1024 * 10 * 18, used: 1024 * 1024 * 1024 * 1024 * 55, free: 1024 * 1024 * 1024 * 1024 * 125, usage: '30.56%' };
             let data = { clusterStatus, clusterCapacity, version };

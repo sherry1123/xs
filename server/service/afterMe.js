@@ -122,6 +122,10 @@ const model = {
     async rollbackSnapshot(param) {
         let token = await model.getToken();
         return await request.post(config.api.orcafs.rollbacksnapshot, param, token, true);
+    },
+    async getVersion(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getversion, param, token, true);
     }
 };
 module.exports = model;
