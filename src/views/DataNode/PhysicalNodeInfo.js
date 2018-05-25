@@ -30,6 +30,10 @@ class PhysicalNodeInfo extends Component {
             if (preCurrentPhysicalNode.hostname !== currentPhysicalNode.hostname){
                 this.getPhysicalNodeData(currentPhysicalNode);
             }
+        } else {
+            let currentPhysicalNode = clusterPhysicalNodeList[0] || {};
+            this.setState({currentPhysicalNode});
+            lsSet('currentPhysicalNode', currentPhysicalNode);
         }
     }
 
