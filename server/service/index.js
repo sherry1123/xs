@@ -994,27 +994,12 @@ const model = {
     async getClusterTarget(param) {
         let result = {};
         try {
-            let data = [
-                { targetId: 101, mountPath: '/mnt/target101', node: 'node1', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 9, free: 1024 * 1024 * 1024 * 1024 * 1, usage: '90%' } },
-                { targetId: 107, mountPath: '/mnt/target107', node: 'node4', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 8, free: 1024 * 1024 * 1024 * 1024 * 2, usage: '80%' } },
-                { targetId: 108, mountPath: '/mnt/target108', node: 'node4', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 8, free: 1024 * 1024 * 1024 * 1024 * 2, usage: '80%' } },
-                { targetId: 103, mountPath: '/mnt/target103', node: 'node2', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 7, free: 1024 * 1024 * 1024 * 1024 * 3, usage: '70%' } },
-                { targetId: 105, mountPath: '/mnt/target105', node: 'node3', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 5, free: 1024 * 1024 * 1024 * 1024 * 5, usage: '50%' } },
-                { targetId: 102, mountPath: '/mnt/target102', node: 'node1', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 3, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '30%' } },
-                { targetId: 104, mountPath: '/mnt/target104', node: 'node2', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 3, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '30%' } },
-                { targetId: 106, mountPath: '/mnt/target106', node: 'node3', service: 'meta', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '20%' } },
-                { targetId: 111, mountPath: '/mnt/target111', node: 'node6', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 112, mountPath: '/mnt/target112', node: 'node6', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 113, mountPath: '/mnt/target113', node: 'node7', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 114, mountPath: '/mnt/target114', node: 'node7', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 115, mountPath: '/mnt/target115', node: 'node8', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 116, mountPath: '/mnt/target116', node: 'node8', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 117, mountPath: '/mnt/target117', node: 'node9', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 118, mountPath: '/mnt/target118', node: 'node9', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 119, mountPath: '/mnt/target119', node: 'node10', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } },
-                { targetId: 120, mountPath: '/mnt/target120', node: 'node10', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024 * 1, free: 1024 * 1024 * 1024 * 1024 * 9, usage: '10%' } }
-            ];
-            result = handler.response(0, data);
+            let res = await afterMe.getClusterTarget(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);   
+            } else {
+                result = handler.response(173, res.message, param); 
+            }
         } catch (error) {
             result = handler.response(173, error, param);
         }

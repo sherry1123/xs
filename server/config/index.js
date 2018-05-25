@@ -64,7 +64,8 @@ exports.api = {
         deletesnapshot: 'http://localhost:9090/cluster/deletesnapshot',
         rollbacksnapshot: 'http://localhost:9090/cluster/rollbacksnapshot',
         batchdeletesnap: 'http://localhost:9090/cluster/batchdeletesnap',
-        getversion: 'http://localhost:9090/cluster/getversion'
+        getversion: 'http://localhost:9090/cluster/getversion',
+        listtargets: 'http://localhost:9090/cluster/listtargets'
     }
 };
 exports.key = {

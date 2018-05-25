@@ -126,6 +126,18 @@ const model = {
     async getVersion(param) {
         let token = await model.getToken();
         return await request.get(config.api.orcafs.getversion, param, token, true);
+    },
+    async getClusterTarget(param) {
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.listtargets, param, token, true);
+        if (!res.errorId) {
+            for (let i of Object.keys(res.data)) {
+                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, storagePath, hostName, type } = res.data[i];
+                res.data[i] = { targetId, mountPath: storagePath, node: hostName, service: type === 'meta' ? 'metadata' : type, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${Math.round((usedSpace / totalSpace) * 10000) / 100}%` } }
+            }
+            res.data = res.data.sort((prev, next) => (prev.usage < next.usage));
+        }
+        return res;
     }
 };
 module.exports = model;
