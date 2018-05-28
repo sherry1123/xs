@@ -5,7 +5,7 @@ import lang from '../../components/Language/lang';
 import {timeFormat} from "../../services";
 import httpRequests from "../../http/requests";
 
-class ManagementSystemLog extends Component {
+class SystemLog extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -108,4 +108,4 @@ const mapStateToProps = state => {
     return {language, eventLogs, auditLogs};
 };
 
-export default connect(mapStateToProps)(ManagementSystemLog);
+export default connect(mapStateToProps)(SystemLog);

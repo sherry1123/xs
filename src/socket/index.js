@@ -59,8 +59,8 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
         window.location.href = routerPath.Root;
     }
     if (snapshotRollBackFinish.includes(code)){
-        window.location.href = routerPath.Root;
         ckRemove('rollbacking');
+        setTimeout(() => window.location.href = '/#' + routerPath.Main + routerPath.Snapshot, 2500);
     }
 
     // channel de-initialization
@@ -89,7 +89,7 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
             notification.error({
                 description: language === 'chinese' ?
                     '未能连接到HTTP服务器，请联系运维人员介入处理！' :
-                    'Connect to HTTP server failed, please contact operation and maintenance personnel to intervene!',
+                    'Connect to HTTP server failed, please ask operation and maintenance personnel for help!',
             });
         }, waitForServerUpTimeThreshold);
     }
