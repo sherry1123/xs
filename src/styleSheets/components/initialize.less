@@ -11,20 +11,22 @@
     .fs-initialize-divider-wrapper,
     .fs-initialize-step-content-wrapper,
     .fs-initialize-step-action-wrapper {
-        width: 1000px;
+        width: 1200px;
         margin: 0 auto;
     }
     .fs-initialize-welcome-wrapper {
         margin-bottom: 30px;
     }
     .fs-initialize-language-btn-wrapper {
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         text-align: right;
     }
     .fs-initialize-step-content-wrapper {
-        margin-top: 16px;
         .fs-initialize-step-content {
             min-height: 410px;
+            .fs-step-title {
+                margin-top: 30px;
+            }
             .ant-form-item-label {
                 label {
                     font-size: 12px;
@@ -38,27 +40,105 @@
             }
             .fs-ip-input-group {
                 margin-top: 40px;
-                > div { // animation wrapper
-                    display: flex;
-                    flex-direction: row;
-                }
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
                 .fs-ip-input-member {
-                    width: 25%;
-                    box-sizing: border-box;
+                    margin-right: 10px;
+                    width: 300px;
                     min-height: 350px;
-                    border-left: 1px solid @border;
-                    border-bottom: 1px solid @border;
+                    .fs-box-shadow(0, 0, 1px, 1px, #f3f3f3);
+                    transition: transform .5s ease;
                     &:nth-last-child(1) {
-                        border-right: 1px solid @border;
+                        margin-right: 0;
+                    }
+                    &.active {
+                        background: #5f90ff;
+                        .fs-ip-input-title {
+                            background: #6a98ff;
+                            span {
+                                color: @white;
+                            }
+                            .fs-ip-plus.anticon {
+                                color: @white;
+                                &:hover {
+                                    color: @light-gray;
+                                }
+                            }
+                        }
+                        .fs-ip-input-item {
+                            .fs-ip-input {
+                                caret-color: #5f90ff;
+                            }
+                            .fs-ip-minus.anticon {
+                                color: @white;
+                                border: 1px solid #7fa6ff;
+                                background: #7fa6ff;
+                                &:hover {
+                                    color: @light-gray;
+                                    border: 1px solid @light-gray;
+                                }
+                            }
+                            .ant-input-group-addon {
+                                background: @white;
+                            }
+                            .ant-form-item-label {
+                                label {color: @white;}
+                            }
+                            .ant-form-explain {
+                                color: @red;
+                            }
+                        }
+                        .fs-enable-ha-label {
+                            color: @white;
+                        }
+                        transform: translate(0, -10px) !important;
+                        .fs-box-shadow(0, 0, 20px, 2px, #c3d6ff);
                     }
                     .fs-ip-input-title {
-                        margin-top: -12px;
-                        cursor: pointer;
+                        margin-bottom: 15px;
+                        padding: 14px 25px;
+                        font-size: @normalFont;
+                        line-height: @normalFont;
+                        background: @page-bg;
+                        span {
+                            color: @title;
+                            cursor: pointer;
+                        }
+                        .fs-ip-plus.anticon {
+                            float: right;
+                            width: 14px;
+                            height: 14px;
+                            line-height: 14px;
+                            color: @title;
+                            user-select: none;
+                            &:hover {
+                                cursor: pointer;
+                                color: @blue;
+                            }
+                        }
                     }
                     .fs-ip-input-item {
-                        margin: 0 10px 5px;
+                        margin: 5px 25px;
                         .fs-ip-input {
-
+                            width: ~"calc(100% - 35px)";
+                            height: 30px;
+                            line-height: 30px;
+                            text-align: center;
+                            &.no-margin {
+                                width: 100%;
+                            }
+                        }
+                        .fs-ip-minus.anticon {
+                            margin-left: 5px;
+                            padding: 7px;
+                            border: 1px solid @dark-border;
+                            user-select: none;
+                            &:hover {
+                                cursor: pointer;
+                                color: @blue;
+                                border: 1px solid @blue;
+                            }
                         }
                     }
                     .fs-ip-sub-btn,
@@ -117,19 +197,10 @@
         }
     }
     .fs-initialize-divider-wrapper {
-        margin-top: 40px;
-        margin-bottom: 40px;
+        margin: 20px 0 40px;
     }
     .fs-initialize-step-action-wrapper {
         margin-top: 24px;
-        .fs-initialize-btn {
-            &.next,
-            &.done {
-                float: right;
-            }
-            &.prev {
-                float: left;
-            }
-        }
+        text-align: center;
     }
 }
