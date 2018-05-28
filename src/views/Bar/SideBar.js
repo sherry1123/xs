@@ -129,10 +129,10 @@ class SideBar extends Component {
                         }
                     >
                         <Menu.Item key={routerPath.LocalAuthUser}>
-                            <Icon type="user-add" />{lang('本地认证用户', 'L.A. User')}
+                            <Icon type="user-add" />{lang('本地认证用户', 'Local Auth. User')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.LocalAuthUserGroup}>
-                            <Icon type="usergroup-add" />{lang('本地认证用户组', 'L.A. User Group')}
+                            <Icon type="usergroup-add" />{lang('本地认证用户组', 'Local Auth. Group')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     {/*<Menu.SubMenu key="Management"
@@ -146,7 +146,7 @@ class SideBar extends Component {
                         <Menu.Item key={routerPath.ManagementKnownProblems}>
                             <Icon type="frown-o" />{lang('已知问题', 'Known Issues')}
                         </Menu.Item>*/}
-                        <Menu.Item key={routerPath.ManagementSystemLog}>
+                        <Menu.Item key={routerPath.SystemLog}>
                             <Icon type="file-text" />{lang('系统日志', 'System Log')}
                         </Menu.Item>
                     {/*</Menu.SubMenu>*/}

@@ -39,7 +39,7 @@ const LocalAuthUser = asyncLoad(() => import('../LocalAuthUser/LocalAuthUser'));
 const LocalAuthUserGroup = asyncLoad(() => import('../LocalAuthUserGroup/LocalAuthUserGroup'));
 
 // management
-const ManagementSystemLog = asyncLoad(() => import('../Management/ManagementSystemLog'));
+const SystemLog = asyncLoad(() => import('../SystemLog/SystemLog'));
 
 // fs operation
 const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
@@ -103,7 +103,7 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
 
-                        <Route path={`${Main}${routerPath.ManagementSystemLog}`} component={ManagementSystemLog} />
+                        <Route path={`${Main}${routerPath.SystemLog}`} component={SystemLog} />
 
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
 

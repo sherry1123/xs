@@ -15,7 +15,7 @@ import localAuthUserReducer from './localAuthUserReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
-State.main.general.menuExpand = lsGet('menuExpand');
+State.main.general.menuExpand = lsGet('menuExpand') || true;
 // no need this, now get the version from backend
 // const {VERSION, NODE_ENV} = process.env;
 // State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');
