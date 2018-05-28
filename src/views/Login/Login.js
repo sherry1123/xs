@@ -41,7 +41,7 @@ class Login extends Component {
     async validateUsername (value){
         await this.setState({
             usernameStatus: !value ? 'error' : '',
-            usernameHelp: !value ? lang('请输入密码', 'please enter username') : '',
+            usernameHelp: !value ? 1 : '',
             loginErrorCode: ''
         });
     }
@@ -54,7 +54,7 @@ class Login extends Component {
     async validatePassword (value){
         await this.setState({
             passwordStatus: !value ? 'error' : '',
-            passwordHelp: !value ? lang('请输入用户名', 'please enter password') : '',
+            passwordHelp: !value ? 2 : '',
             loginErrorCode: ''
         });
     }
@@ -81,22 +81,23 @@ class Login extends Component {
     }
 
     render (){
-        let loginErrorInfoMap = {
-            51: lang('用户名或密码错误', 'username or password error')
+        let errorTipMap = {
+            1: lang('请输入用户名', 'Please enter password'),
+            2: lang('请输入密码', 'Please enter password'),
+            51: lang('用户名或密码错误', 'username or password error'),
         };
         return (
             <section className="fs-login-wrapper">
-                <LanguageButton width={80} login border="none" pureText />
-                <i className="fs-login-background-bubble b-1" />
-                <i className="fs-login-background-bubble b-2" />
-                <i className="fs-login-background-bubble b-3" />
-                <i className="fs-login-background-bubble b-4" />
-                <i className="fs-login-background-bubble b-5" />
-
+                <LanguageButton width={80} border="none" login pureText />
+                <div>
+                    {Object.keys(Array.apply(null, {length: 5})).map(i => (
+                        <i className={`fs-login-background-bubble b-${parseInt(i, 10) + 1}`} key={i} />
+                    ))}
+                </div>
                 <div className="fs-login-content-wrapper">
                     <div className="fs-logo-text-content">
-                        <div>{lang('奥卡云OrcaFS存储奥卡云OrcaFS存储奥卡云OrcaFS存储', '')}</div>
-                        <div>{lang('我们提供了高效、安全、稳定、可靠的系统，用于存储和高性能计算领域', '')}</div>
+                        <div>{lang('OrcaFS提供高了安全、高可靠、高性能、易用的服务', 'OrcaFS provides high security, high reliability, high performance and easy-using services')}</div>
+                        <div>{lang('满足各种文件系统和高性能计算的需求', 'Meets the needs of file systems and high performance computing')}</div>
                     </div>
                     <section className="fs-bubble-logo-wrapper">
                         {Object.keys(Array.apply(null, {length: 120})).map(i => (
@@ -104,7 +105,7 @@ class Login extends Component {
                         ))}
                     </section>
                     <div className="fs-login-title-content">
-                        <div>{lang('OrcaFS管理平台登录', 'OrcaFS Management Platform Login')}</div>
+                        <div>{lang('OrcaFS管理平台登录', 'OrcaFS Platform Sign In')}</div>
                     </div>
                     <div className="fs-login-form-wrapper">
                         <div className="fs-logo-wrapper" />
@@ -112,7 +113,7 @@ class Login extends Component {
                             <Form.Item
                                 className="fs-login-input-wrapper"
                                 validateStatus={this.state.usernameStatus}
-                                help={this.state.usernameHelp}
+                                help={errorTipMap[this.state.usernameHelp]}
                             >
                                 <Input
                                     placeholder={lang('用户名', 'Username')}
@@ -123,9 +124,9 @@ class Login extends Component {
                                 />
                             </Form.Item>
                             <Form.Item
-                                className="fs-login-input-wrapper"
+                                className="fs-login-input-wrapper password"
                                 validateStatus={this.state.passwordStatus}
-                                help={this.state.passwordHelp}
+                                help={errorTipMap[this.state.passwordHelp]}
                             >
                                 <Input
                                     placeholder={lang('密码', 'Password')}
@@ -136,21 +137,26 @@ class Login extends Component {
                                     onPressEnter={this.doLogin.bind(this)}
                                 />
                             </Form.Item>
-                            <Button
-                                className="fs-login-btn"
-                                style={{fontSize: 16}}
-                                type="primary"
-                                icon="login"
-                                loading={this.state.doingLogin}
-                                onClick={this.doLogin.bind(this)}
-                            >
-                                {this.state.doingLogin ? lang('登录中...', 'Logging in...') : lang('登录', 'Login')}
-                            </Button>
                             {
                                 this.state.loginErrorCode && <p className="fs-login-error-info-wrapper">
-                                    {lang('登录失败：', 'Login failed: ')}{loginErrorInfoMap[this.state.loginErrorCode]}
+                                    {lang('登录失败：', 'Sign In failed: ')}{errorTipMap[this.state.loginErrorCode]}
                                 </p>
                             }
+                            <div className="fs-login-btn-box">
+                                <Button
+                                    className="fs-login-btn"
+                                    style={{fontSize: 16}}
+                                    type="primary"
+                                    icon="login"
+                                    loading={this.state.doingLogin}
+                                    onClick={this.doLogin.bind(this)}
+                                >
+                                    {this.state.doingLogin ? lang('登录中...', 'Signing in...') : lang('登录', 'Sign In')}
+                                </Button>
+                                <div className="fs-login-forget-password-tip">
+                                    <Icon type="question-circle-o" /> {lang('如果忘记密码，请联系运维人员协助找回', 'If forget password, ask Q&M personnel for help')}
+                                </div>
+                            </div>
                         </Form>
                     </div>
                 </div>

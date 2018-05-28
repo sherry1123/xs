@@ -41,9 +41,9 @@
         }
         .fs-login-title-content {
             position: absolute;
-            top: 20px;
+            top: 80px;
             right: 0;
-            width: 430px;
+            width: 350px;
             text-align: center;
             font-size: @hugeFont;
             color: @white;
@@ -52,36 +52,61 @@
             position: relative;
             display: inline-block;
             float: right;
-            margin-top: 90px;
-            padding: 60px;
-            width: 430px;
-            height: 510px;
+            margin-top: 150px;
+            padding: 30px;
+            width: 350px;
+            height: 400px;
             background: @white;
             .fs-box-shadow();
             z-index: 10;
             .fs-logo-wrapper {
-                margin: 0 auto 30px;
-                width: 240px;
-                height: 72px;
+                width: 120px;
+                height: 36px;
                 background: url(../../images/login-from-login.png) 0 0 no-repeat;
+                background-size: 100% 100%;
             }
             .fs-login-form-box {
+                margin-top: 50px;
                 .ant-input {
                     height: 50px;
                     line-height: 50px;
                 }
                 .ant-form-explain {
-                    margin-top: 10px;
+                    margin: 5px 0;
                 }
                 .fs-login-input-wrapper {
-                    margin-bottom: 20px !important;
+                    margin-bottom: 0 !important;
+                    &.password {
+                        position: absolute;
+                        top: 195px;
+                        width: ~"calc(100% - 60px)"
+                    }
                 }
-                .fs-login-btn {
-                    margin-top: 20px;
-                    width: 100%;
-                    height: 50px !important;
-                    line-height: 50px;
-                    font-size: @bigFont ~"important";
+                .fs-login-error-info-wrapper {
+                    margin-top: 85px;
+                    font-size: @smallFont;
+                    color: @red;
+                }
+                .fs-login-btn-box {
+                    position: absolute;
+                    bottom: 30px;
+                    width: ~"calc(100% - 60px)";
+                    .ant-btn.fs-login-btn.ant-btn-primary {
+                        margin-top: 30px;
+                        width: 100%;
+                        height: 50px !important;
+                        line-height: 50px;
+                        font-size: @bigFont ~"!important";
+                        background: linear-gradient(to bottom right, #3c8efe, #388cff, #3284ff, #2776ff, #2473ff, #1c66fe, #1a64ff);
+                        .fs-box-shadow(1px, 1px, 5px, 1px, #bfd8ff);
+                    }
+                    .fs-login-forget-password-tip {
+                        padding-top: 20px;
+                        font-size: @smallFont;
+                        .anticon {
+                            color: @blue;
+                        }
+                    }
                 }
             }
         }
@@ -144,8 +169,28 @@
                         background: #a3c2fe;
                         animation: 10s fs-bubble-move-7 infinite 1s;
                     }
-
                 }
+                &:nth-child(7n + 1) {
+                    animation: 20s fs-bubble-box-rock-8 infinite 10s;
+                    .fs-b {
+                        background: #a3c2fe;
+                        animation: 10s fs-bubble-move-8 infinite 1s;
+                    }
+                }
+                &:nth-child(8n + 1) {
+                    animation: 20s fs-bubble-box-rock-9 infinite 10s;
+                    .fs-b {
+                        background: #a3c2fe;
+                        animation: 10s fs-bubble-move-9 infinite 1s;
+                    }
+                }
+                &:nth-child(9n + 1) {
+                     animation: 20s fs-bubble-box-rock-10 infinite 10s;
+                     .fs-b {
+                         background: #a3c2fe;
+                         animation: 10s fs-bubble-move-10 infinite 1s;
+                     }
+                 }
                 .fs-b {
                     display: block;
                     border-radius: 100%;
@@ -648,28 +693,32 @@
         width: 300px;
         height: 300px;
         border-radius: 100%;
-        animation: 15s fs-background-bubble-move infinite 0s;
         background: @white;
         opacity: .05;
         &.b-1 {
             top: -80px;
             left: 178px;
+            animation: 15s fs-background-bubble-move-1 infinite 0s;
         }
         &.b-2 {
             bottom: -80px;
             left: -80px;
+            animation: 15s fs-background-bubble-move-2 infinite 0s;
         }
         &.b-3 {
             top: 50%;
             right: 670px;
+            animation: 15s fs-background-bubble-move-3 infinite 0s;
         }
         &.b-4 {
             bottom: -100px;
             left: 1480px;
+            animation: 15s fs-background-bubble-move-4 infinite 0s;
         }
         &.b-5 {
             top: 70px;
             right: -100px;
+            animation: 15s fs-background-bubble-move-5 infinite 0s;
         }
     }
 }
