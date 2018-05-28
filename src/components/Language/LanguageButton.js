@@ -8,20 +8,21 @@ import lang from './lang';
 class LanguageButton extends Component {
     constructor (props){
         super(props);
-        let {style, type = 'default', ghost = false, width = '100px', border = '', transparentBg = false, pureText = false} = this.props;
+        let {style, type = 'default', ghost = false, width = '100px', border = '', transparentBg = false, pureText = false, login = false} = this.props;
         this.state = {
-            style, type, ghost, width, border, transparentBg, pureText,
+            style, type, ghost, width, border, transparentBg, pureText, login,
         };
     }
 
     render (){
         let tip = lang('切换语言', 'Switch Language');
-        let {style, type, ghost, width, border, transparentBg, pureText} = this.state;
+        let {style, type, ghost, width, border, transparentBg, pureText, login} = this.state;
         let language = this.props.language === 'chinese' ? 'english' : 'chinese';
         return (<div className="fs-switch-language-btn-wrapper" style={style}>
             {
                 pureText ?
-                <span className="fs-change-language-pure-text"
+                <span
+                    className={`fs-change-language-pure-text ${login ? 'login' : ''}`}
                     title={tip}
                     onClick={this.props.changeLanguage.bind(this, language)}
                 >
