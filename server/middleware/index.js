@@ -45,8 +45,9 @@ const model = {
 		return async (ctx, next) => {
 			let { api, status: { init: initStatus, deinit: deinitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			let syncAPI = 'syncsystemstatus';
-			let initApiList = ['checkclusterenv', 'getraidrecommendedconfiguration', 'getdisklist', 'init'];
-			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus && !deinitStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !deinitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
+			let raidAPI = 'getraidrecommendedconfiguration';
+			let initApiList = ['checkclusterenv', 'getdisklist', 'init'];
+			(api === syncAPI || api === raidAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus && !deinitStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !deinitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
 		}
 	},
 	compressResponse() {
