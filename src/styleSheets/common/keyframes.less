@@ -1,26 +1,4 @@
-@keyframes fs-login-logo-bg {
-    from {transform: rotate(0);}
-    to {transform: rotate(1turn);}
-}
-
-@keyframes fs-login-logo-point {
-    0% {opacity: 1;transform: scale(1);}
-    50% {opacity: 1;transform: scale(0);}
-    100% {opacity: 1;transform: scale(1);}
-}
-
-@keyframes fs-main-logo-point {
-    25% {opacity: 1;transform: translate(0, 40px);}
-    50% {opacity: 0;transform: translate(120px, 40px);}
-    75% {opacity: 1;transform: translate(120px, 0);}
-    100% {opacity: 0;transform: translate(0, 0);}
-}
-
-@keyframes fs-main-logo-fade-in-out {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
-}
-
+// for node status blink animations
 @keyframes fs-node-up {
     49% {background: @green;}
     55% {background: @white;}
@@ -39,11 +17,24 @@
     61% {background: @red;}
 }
 
+// for ArrowButton component
 @keyframes fs-arrow-glitter {
     from {opacity: 0;}
     to {opacity: 1;}
 }
 
+// for initialization page background animations
+@keyframes clockwise-rotate {
+    0% {transform:rotate(0deg);}
+    100% {transform:rotate(360deg);}
+}
+
+@keyframes anticlockwise-rotate {
+    0% {transform:rotate(0deg);}
+    100% {transform:rotate(-360deg);}
+}
+
+// for login page background animations
 @keyframes fs-bubble-move-1 {
     0% {transform: translate(0, 0);}
     20% {transform: translate(2px, 2px);}

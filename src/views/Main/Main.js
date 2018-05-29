@@ -50,7 +50,7 @@ const Test = asyncLoad(() => import('../Test/Test'));
 export default class Main extends Component {
     componentWillMount (){
         // see router interceptor rule in routerPath.js
-        let isDeInit = ckGet('deInit');
+        let isDeInit = ckGet('deinit');
         let isInitialized = ckGet('init');
         if (isDeInit === 'true' && isInitialized === 'true'){
             this.props.history.replace(routerPath.DeInitializing);

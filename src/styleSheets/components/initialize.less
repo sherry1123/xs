@@ -4,8 +4,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding-top: 10px;
-    background-image: url(../../images/bg.svg);
+    overflow: hidden;
+    // background-image: url(../../images/bg.svg);
     .fs-initialize-welcome-wrapper,
     .fs-initialize-step-index-wrapper,
     .fs-initialize-divider-wrapper,
@@ -14,18 +14,26 @@
         width: 1200px;
         margin: 0 auto;
     }
+    .fs-initialize-title-wrapper {
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: @hugeFont;
+        color: @title;
+    }
     .fs-initialize-welcome-wrapper {
         margin-bottom: 30px;
     }
     .fs-initialize-language-btn-wrapper {
-        margin-bottom: 30px;
+        margin-right: 30px;
+        margin-bottom: 20px;
+        padding-top: 10px;
         text-align: right;
     }
     .fs-initialize-step-content-wrapper {
         .fs-initialize-step-content {
             min-height: 410px;
             .fs-step-title {
-                margin-top: 30px;
+                margin-top: 60px;
             }
             .ant-form-item-label {
                 label {
@@ -39,21 +47,21 @@
                 font-size: 12px;
             }
             .fs-ip-input-group {
-                margin-top: 40px;
                 display: flex;
                 flex-direction: row;
                 justify-content: center;
                 .fs-ip-input-member {
                     margin-right: 10px;
                     width: 300px;
-                    min-height: 350px;
-                    .fs-box-shadow(0, 0, 1px, 1px, #f3f3f3);
+                    min-height: 400px;
+                    .fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
                     transition: transform .5s ease;
                     &:nth-last-child(1) {
                         margin-right: 0;
                     }
                     &.active {
                         background: #5f90ff;
+                        opacity: .9;
                         .fs-ip-input-title {
                             background: #6a98ff;
                             span {
@@ -93,10 +101,10 @@
                             color: @white;
                         }
                         transform: translate(0, -10px) !important;
-                        .fs-box-shadow(0, 0, 20px, 2px, #c3d6ff);
+                        .fs-box-shadow(0, 20px, 20px, -20px, #c3d6ff);
                     }
                     .fs-ip-input-title {
-                        margin-bottom: 15px;
+                        margin-bottom: 10px;
                         padding: 14px 25px;
                         font-size: @normalFont;
                         line-height: @normalFont;
@@ -197,10 +205,98 @@
         }
     }
     .fs-initialize-divider-wrapper {
-        margin: 20px 0 40px;
+        margin: 20px 0 25px;
     }
     .fs-initialize-step-action-wrapper {
-        margin-top: 24px;
+        margin-top: 25px;
         text-align: center;
+    }
+
+    // background animations
+    .fs-initialize-background-stone {
+        position: absolute;
+        display: block;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        border-radius: 100%;
+        border: 1px solid @light-border;
+        .fs-sand {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 100%;
+            background: @light-red;
+        }
+        .fs-earth-layer {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            bottom: 4px;
+            left: 4px;
+            animation: anticlockwise-rotate 6s linear infinite;
+            .fs-satellite {
+                position: absolute;
+                display: block;
+                border-radius: 100%;
+                top: -20px;
+                right: 23px;
+                width: 4px;
+                height: 4px;
+                background: @light-red;
+            }
+        }
+        .fs-moon-layer,
+        .fs-mercury-layer {
+            position: absolute;
+            animation: clockwise-rotate 8s linear infinite;
+            .fs-satellite {
+                display: block;
+                width: 3px;
+                height: 3px;
+                background: @blue-gray;
+            }
+        }
+        .fs-moon-layer {
+            top: -12px;
+            right: -12px;
+            bottom: -12px;
+            left: -12px;
+        }
+        .fs-mercury-layer {
+            top: -20px;
+            right: -20px;
+            bottom: -20px;
+            left: -20px;
+            animation: anticlockwise-rotate 10s linear infinite;
+            .fs-satellite {
+                background: @light-red;
+            }
+        }
+        &.b-1 {
+            top: 5%; left: 5%;
+            animation: fs-background-bubble-move-4 10s linear infinite;
+        }
+        &.b-2 {
+            bottom: 20%; left: 18%;
+            animation: fs-background-bubble-move-1 10s linear infinite;
+        }
+        &.b-3 {
+            bottom: 40%; left: 48%;
+            animation: fs-background-bubble-move-2 10s linear infinite;
+        }
+        &.b-4 {
+            top: 30%; right: -20px;
+            animation: fs-background-bubble-move-3 10s linear infinite;
+        }
+        &.b-5 {
+            bottom: 5px; right: 30%;
+            animation: fs-background-bubble-move-1 10s linear infinite;
+        }
+        &.b-6 {
+            top: -10px; right: 30%;
+            animation: fs-background-bubble-move-5 10s linear infinite;
+        }
     }
 }

@@ -5,25 +5,49 @@ import {Button, Form, Icon, Input, message} from 'antd';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import routerPath from "../routerPath";
+import {ckGet} from '../../services';
 import httpRequests from "../../http/requests";
 
 class Login extends Component {
     constructor (props){
         super(props);
         this.state = {
+            // username input value and validation
             username: '',
             usernameStatus: '',
             usernameHelp: '',
-
+            // password input value and validation
             password: '',
             passwordStatus: '',
             passwordHelp: '',
-
+            // login operation
             doingLogin: false,
             loginErrorCode: ''
         };
     }
 
+    componentWillMount (){
+        // see router interceptor rule in routerPath.js
+        let isDeInit = ckGet('deinit');
+        let isInitialized = ckGet('init');
+        if (isDeInit === 'true' && isInitialized === 'true'){
+            this.props.history.replace(routerPath.DeInitializing);
+        } else {
+            let isRollingBack = ckGet('rollbacking');
+            if (isRollingBack === 'true' && isInitialized === 'true'){
+                this.props.history.replace(routerPath.RollingBack);
+            } else {
+                if (isInitialized === 'true'){
+                    let isLoggedIn = ckGet('login');
+                    if (!!isLoggedIn && (isLoggedIn !== 'false')){
+                        this.props.history.replace(routerPath.Main + routerPath.Dashboard);
+                    }
+                } else {
+                    this.props.history.replace(routerPath.Init);
+                }
+            }
+        }
+    }
 
     componentDidMount (){
         // console.info(this.props.history.location);
@@ -97,7 +121,7 @@ class Login extends Component {
                 <div className="fs-login-content-wrapper">
                     <div className="fs-logo-text-content">
                         <div>{lang('OrcaFS提供高了安全、高可靠、高性能、易用的服务', 'OrcaFS provides high security, high reliability, high performance and easy-using services')}</div>
-                        <div>{lang('满足各种文件系统和高性能计算的需求', 'Meets the needs of file systems and high performance computing')}</div>
+                        <div>{lang('满足各种文件存储和高性能计算的需求', 'Meets the needs of file storage and high performance computing')}</div>
                     </div>
                     <section className="fs-bubble-logo-wrapper">
                         {Object.keys(Array.apply(null, {length: 120})).map(i => (
