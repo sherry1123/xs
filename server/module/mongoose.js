@@ -15,10 +15,8 @@ const getMongoDBReplSetConfig = async () => {
         if (config.env.name && config.env.initialize === 'true' && config.env.mgmt === 'true') {
             if (await getMongoDBType()) {
                 let ipList = await getMongoDBReplSetConfig();
-                console.log(1);
                 await mongoose.connect(`mongodb://${String(ipList)}/${config.database.name}?replicaSet=${config.database.replicaSet}`);
             } else {
-                console.log(2);
                 await mongoose.connect(`mongodb://localhost/${config.database.name}`);
             }
         }
