@@ -96,7 +96,7 @@ if (isInitialized === 'true'){
     }, null, true);
 
     // request immediately
-    if (isLogin){
+    if (isLogin === 'true'){
         httpRequests.getFiles('/');
     }
 }

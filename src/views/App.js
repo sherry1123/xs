@@ -19,7 +19,7 @@ export default class App extends Component {
     constructor (props){
         super(props);
         let defaultPath = '';
-        let isDeInit = ckGet('deInit');
+        let isDeInit = ckGet('deinit');
         let isInitialized = ckGet('init');
         if (isDeInit === 'true' && isInitialized === 'true'){
             defaultPath = `${routerPath.DeInitializing}`;

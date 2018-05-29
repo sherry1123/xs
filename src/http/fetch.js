@@ -6,7 +6,7 @@ import {ckGet} from '../services/cookie/index';
 const alwaysAllowURL = '/api/syncsystemstatus';
 
 const initRequest = (url, options) => {
-    let isDeInit = ckGet('deInit');
+    let isDeInit = ckGet('deinit');
     let isRollingBack = ckGet('rollbacking');
     // if system is de-initializing or rolling back, all HTTP requests shouldn't be sent,
     // only except the alwaysAllowURL, it can go through properly.
