@@ -132,8 +132,8 @@ const model = {
         let res = await request.get(config.api.orcafs.listtargets, param, token, true);
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
-                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, storagePath, hostName, type } = res.data[i];
-                res.data[i] = { targetId, mountPath: storagePath, node: hostName, service: type === 'meta' ? 'metadata' : type, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${Math.round((usedSpace / totalSpace) * 10000) / 100}%` } }
+                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${Math.round((usedSpace / totalSpace) * 10000) / 100}%` } }
             }
             res.data = res.data.sort((prev, next) => (prev.usage < next.usage));
         }

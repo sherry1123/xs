@@ -68,7 +68,7 @@ const model = {
                             socket.postInitStatus(current, 0, total);
                             await init.saveInitInfo({ nodeList, initParam: param });
                             current = 7;
-                            init.setInitStatus(true);
+                            process.send('initialize successfully');
                             socket.postInitStatus(current, 0, total);
                             logger.info('initialize the cluster successfully');
                             await init.restartServer(nodeList);
@@ -206,16 +206,6 @@ const model = {
         } catch (error) {
             result = handler.response(61, error, param);
             await log.audit({ user, desc: `test SMTP server '${param.host}' failed`, ip });
-        }
-        return result;
-    },
-    async getHardware(param) {
-        let result = {};
-        try {
-            let data = await database.getHardware(param);
-            result = handler.response(0, data);
-        } catch (error) {
-            result = handler.response(71, error, param);
         }
         return result;
     },
