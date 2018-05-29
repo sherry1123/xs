@@ -3,7 +3,6 @@ const user = require('../model/user');
 const setting = require('../model/setting');
 const eventLog = require('../model/eventLog');
 const auditLog = require('../model/auditLog');
-const hardware = require('../model/hardware');
 const snapshot = require('../model/snapshot');
 const nfsShare = require('../model/nfsShare');
 const cifsShare = require('../model/cifsShare');
@@ -40,12 +39,6 @@ const model = {
     },
     async addAuditLog(param) {
         return await dao.createOne(auditLog, param);
-    },
-    async getHardware(param) {
-        return await dao.findAll(hardware, param, {}, { sort: { date: -1 }, limit: 200 });
-    },
-    async addHardware(param) {
-        return await dao.createOne(hardware, param);
     },
     async addSetting(param) {
         param = { key: param.key, value: JSON.stringify(param.value) };

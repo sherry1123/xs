@@ -17,7 +17,6 @@ router.all('/api/createuser', controller['/api/createuser']);
 router.all('/api/updateuser', controller['/api/updateuser']);
 router.all('/api/deleteuser', controller['/api/deleteuser']);
 router.all('/api/testmail', controller['/api/testmail']);
-router.all('/api/gethardware', controller['/api/gethardware']);
 router.all('/api/getmetanodestatus', controller['/api/getmetanodestatus']);
 router.all('/api/getstoragenodestatus', controller['/api/getstoragenodestatus']);
 router.all('/api/getstoragediskspace', controller['/api/getstoragediskspace']);

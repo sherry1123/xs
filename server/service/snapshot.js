@@ -6,14 +6,7 @@ const socket = require('../module/socket');
 const promise = require('../module/promise');
 const handler = require('../module/handler');
 const request = require('../module/request');
-let rollbacking = false;
 const model = {
-    getRollbackStatus() {
-        return rollbacking;
-    },
-    setRollbackStatus(status) {
-        rollbacking = status;
-    },
     async getSnapshotSetting(param) {
         return await database.getSetting({ key: config.setting.snapshotSetting })
     },

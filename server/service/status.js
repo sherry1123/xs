@@ -4,24 +4,42 @@ const handler = require('../module/handler');
 const promise = require('../module/promise');
 const request = require('../module/request');
 const model = {
-    async getInitStatus() {
-        let result = false;
+    isMgmt() {
+        return process.env.MGMT === 'true';
+    },
+    isMaster() {
+        return process.env.MASTER === 'true';
+    },
+    getInitStatus() {
+        return process.env.INITIALIZE === 'true';
+    },
+    setInitStatus(status) {
+        process.env.INITIALIZE = status;
+    },
+    getDeinitStatus() {
+        return process.env.DEINITIALIZE === 'true';
+    },
+    setDeinitStatus(status) {
+        process.env.DEINITIALIZE = status;
+    },
+    getRollbackStatus() {
+        return process.env.ROLLBACK === 'true';
+    },
+    setRollbackStatus(status) {
+        process.env.ROLLBACK = status;
+    },
+    async checkAllStatus() {
+        let initialize = false;
+        let mgmt = false;
+        let master = false;
         try {
-            result = await init.getOrcaFSStatus();
+            initialize = await init.getOrcaFSStatus();
+            mgmt = initialize ? await init.getOrcaFSMasterOrNot() : false;
+            master = initialize ? await init.getOrcaFSMasterOrNot() && await init.getMongoDBMasterOrNot() : true;
         } catch (error) {
             handler.error(21, error);
         }
-        init.setInitStatus(result);
-        return result;
-    },
-    async isMaster() {
-        let result = false;
-        try {
-            result = !init.getInitStatus() ? true : await init.getOrcaFSMasterOrNot() && await init.getMongoDBMasterOrNot();
-        } catch (error) {
-            handler.error(22, error);
-        }
-        return result;
+        return { initialize, mgmt, master };
     },
     async sendEvent(channel, code, target, result, notify) {
         await request.post(config.api.server.receiveevent, { channel, code, target, result, notify }, {}, true);
