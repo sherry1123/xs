@@ -57,7 +57,7 @@ export default  {
 
     getRecommendedRIAD (metadataServerIPs, storageServerIPs){
         requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
+            let data = await fetchPost('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
             console.info('recommended RAID config', data);
             !!data && store.dispatch(initializeAction.setRAIDConfig(data));
         });
