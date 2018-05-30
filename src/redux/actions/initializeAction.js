@@ -6,6 +6,7 @@ export const initializeActionTypes = {
     SET_ENABLE_RAID: 'SET_ENABLE_RAID',
     SET_INIT_STATUS: 'SET_INIT_STATUS',
     SET_DEFAULT_USER: 'SET_DEFAULT_USER',
+    SET_RAID_CONFIG: 'SET_RAID_CONFIG',
 };
 
 export default {
@@ -35,6 +36,11 @@ export default {
     setEnableRAID: enableRAID => ({
         type: initializeActionTypes.SET_ENABLE_RAID,
         enableRAID
+    }),
+
+    setRAIDConfig: RAIDConfig => ({
+        type: initializeActionTypes.SET_RAID_CONFIG,
+        RAIDConfig
     }),
 
     setInitStatus: initStatus => ({
