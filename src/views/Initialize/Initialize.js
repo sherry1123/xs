@@ -738,10 +738,10 @@ class Initialize extends Component {
                                 <section className="fs-service-ip-wrapper">
                                     <section className="fs-type-wrapper">
                                         <div className={`fs-type-item ${this.state.currentServiceType === 'metadataServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'metadataServerIPs')}>
-                                            <Icon type="database" />{lang('元数据服务', 'Metadata')}
+                                            <Icon type="profile" />{lang('元数据服务', 'Metadata')}
                                         </div>
                                         <div className={`fs-type-item ${this.state.currentServiceType === 'storageServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'storageServerIPs')}>
-                                            <Icon type="hdd" />{lang('存储服务', 'Storage')}
+                                            <Icon type="database" />{lang('存储服务', 'Storage')}
                                         </div>
                                         <div className={`fs-type-item ${this.state.currentServiceType === 'managementServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'managementServerIPs')}>
                                             <Icon type="laptop" />{lang('管理服务', 'Management')}

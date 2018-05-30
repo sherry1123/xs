@@ -64,7 +64,7 @@ export default {
                             { path: '/dev/nvme7n1', space: 1024 * 1024 * 1024 * 400 }
                         ],
                         totalSpace: 1024 * 1024 * 1024 * 400 * 8,
-                        chunkSize: 1024 * 8,
+                        stripeSize: 1024 * 8,
                         diskType: 'sdd'
                     },
                     {

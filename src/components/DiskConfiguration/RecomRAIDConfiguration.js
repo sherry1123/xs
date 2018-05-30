@@ -50,8 +50,8 @@ class RecomRAIDConfiguration extends Component {
                             <span onClick={this.enabledCustomRAID.bind(this)}>{lang('自定义', 'Custom')}</span>
                             <Popover
                                 content={lang(
-                                    '将允许您对所有元数据和存储服务节点的RAID按照您的需求进行重新配置。建议您直接使用推荐配置，这是我们针对您系统的配置给出的在安全、性能和容量利用率等方面的最优方案。',
-                                    'Will allow you to reconfigure the RAID configurations for all nodes that metadata and storage services run on. We suggest you to use the recommended configuration by default, for it\' the optimal plan we give out on security, performance, and capacity usage rate sides based on your system.')
+                                    '将允许您自定义所有元数据和存储服务节点的RAID配置。建议您直接使用推荐配置，这是我们针对您系统的配置给出的在安全、性能和容量利用率等方面的最优方案。',
+                                    'Will allow you to custom the RAID configurations for all nodes that metadata and storage services run on. We suggest you to use the recommended configuration by default, for it\' the optimal plan we give out on security, performance, and capacity usage rate sides based on your system.')
                                 }
                             >
                                 <Icon type="question-circle-o" className="fs-info-icon m-l" />
@@ -95,7 +95,7 @@ class RecomRAIDConfiguration extends Component {
                         {
                             currentRAIDConf.diskList.map((disk, i) => (
                                 <div className="fs-raid-disk-item" key={i}>
-                                    <span>{disk.path}</span><span>{formatStorageSize(disk.space)}</span>
+                                    <Icon type="hdd" /><span>{disk.path}</span><span>{formatStorageSize(disk.space)}</span>
                                 </div>
                             ))
                         }
