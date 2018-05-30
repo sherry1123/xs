@@ -133,7 +133,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
         }
@@ -145,7 +145,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { hostname, ip, service, cpuUsage, memUsage, spaceUsage, spaceTotal, spaceUsed, spaceFree, status } = res.data[i];
-                res.data[i] = { hostname, ip, service, status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${(spaceUsed / spaceTotal * 100).toFixed(2)}%` } };
+                res.data[i] = { hostname, ip, service: service.map(i => (i === 'meta' ? 'metadata' : i)), status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${(spaceUsed / spaceTotal * 100).toFixed(2)}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.hostname > next.hostname));
         }
@@ -161,7 +161,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
         }
