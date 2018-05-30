@@ -36,7 +36,7 @@ const model = {
     async getRaidRecommendedConfiguration(param) {
         let { metadataServerIPs, storageServerIPs } = param;
         let ipList = Array.from(new Set(metadataServerIPs.concat(storageServerIPs)));
-        let diskGroup = await Promise.all(ipList.map(async ip => ({ ip, diskList: Object.assign(await afterMe.getDiskList({ ip })).data })));
+        let diskGroup = await Promise.all(ipList.map(async ip => ({ ip, diskList: Object.assign(await afterMe.getDiskList({ ip })).data.filter(disk => (!disk.isUsed)) })));
         let metadataList = {};
         let storageList = {};
         diskGroup.forEach(item => {
@@ -55,7 +55,7 @@ const model = {
 
             }
         });
-        return { metadataServerIPs: metadataList, storageServerIPs: storageList };
+        return { metadataServerIPs: metadataList, storageServerIPs: storageList, diskGroup };
     },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
