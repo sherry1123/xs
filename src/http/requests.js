@@ -55,6 +55,14 @@ export default  {
         return requestMiddleWare(async () => await fetchPost('/api/checkclusterenv', IPs));
     },
 
+    getRecommendedRIAD (metadataServerIPs, storageServerIPs){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
+            console.info('recommended RAID config', data);
+            !!data && store.dispatch(initializeAction.setRAIDConfig(data));
+        });
+    },
+
     // user - login, logout, update
     async login (user){
         return await fetchPost('/api/login', user);

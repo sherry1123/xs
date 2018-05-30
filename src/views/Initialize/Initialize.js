@@ -4,8 +4,9 @@ import update from "react-addons-update";
 import {Button, Divider, Form, Icon, Input, message, notification, Popover, Progress, Steps, Switch} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
-import RAIDConfiguration from '../../components/DiskConfiguration/RAIDConfiguration';
-import DiskSelection from '../../components/DiskConfiguration/DiskSelection';
+// import RAIDConfiguration from '../../components/DiskConfiguration/RAIDConfiguration';
+// import DiskSelection from '../../components/DiskConfiguration/DiskSelection';
+import RecomRAIDConfiguration from '../../components/DiskConfiguration/RecomRAIDConfiguration';
 import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
 import {validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from '../../services';
@@ -23,7 +24,7 @@ class Initialize extends Component {
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
-            currentStep: 0,
+            currentStep: 1,
             totalStep: 4,
             checking: false,
             // enable client input
@@ -37,6 +38,12 @@ class Initialize extends Component {
             managementServerIPsError: managementServerIPs.map(() => ({status: '', help: ''})),
             floatIPsError: floatIPs.map(() => ({status: '', help: ''})),
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
+            // current select service type
+            currentServiceType: 'metadataServerIPs',
+            currentServiceIP: {
+                type: 'metadataServerIPs',
+                ip: ''
+            },
             // running initialization
             initStatusNum: 0,
             initProgressStep: 0,
@@ -155,6 +162,11 @@ class Initialize extends Component {
         }
     }
 
+    componentDidMount (){
+        // httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
+    }
+
+    // step 1
     changeActiveInputMember (i){
         this.setState({activeInputMember: i});
     }
@@ -179,10 +191,6 @@ class Initialize extends Component {
             await this.removeIP('managementServerIPs', 1);
         }
         await this.props.setEnableHA(checked);
-    }
-
-    setEnableRAID (checked){
-        this.props.setEnableRAID(checked);
     }
 
     async addIP (category){
@@ -305,6 +313,28 @@ class Initialize extends Component {
         return validated;
     }
 
+    // step 2
+    setEnableRAID (checked){
+        this.props.setEnableRAID(checked);
+    }
+
+    setCurrentServiceType (currentServiceType){
+        // let ip = this.props[currentServiceType + 'ServerIPs'][0];
+        // this.setState({currentServiceType, currentServiceIP: {type: currentServiceType, ip}});
+        this.setState({currentServiceType});
+    }
+
+    setCurrentServiceIP (ip){
+        if (this.state.currentServiceType !== 'managementServerIPs'){
+            let currentServiceIP = {type: this.state.currentServiceType, ip};
+            this.setState({currentServiceIP});
+            // change recommended RAID configuration
+            this.recomRAIDConfigurationWrapper.getWrappedInstance().changeServiceIP(currentServiceIP);
+        }
+    }
+
+
+    // step button
     prev (){
         lsRemove('initStep');
         this.setState({currentStep: this.state.currentStep - 1});
@@ -313,7 +343,6 @@ class Initialize extends Component {
     async next (){
         let next = this.state.currentStep + 1;
         lsSet('initStep', next);
-        // console.info('set initStep to ' + next);
         switch (next){
             case 1:
                 await this.setState({checking: true});
@@ -340,6 +369,7 @@ class Initialize extends Component {
                     let {result, metadataServerIPsError, storageServerIPsError} = await httpRequests.checkIPs({metadataServerIPs, storageServerIPs});
                     if (result){
                         // IP availability check successfully
+                        await httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
                         this.setState({currentStep: next});
                     } else {
                         // IP availability check failed
@@ -360,13 +390,6 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                if (this.state.enableRAID){
-                    // get disk or RAID configuration data
-
-                }
-                this.setState({currentStep: next});
-                break;
-            case 3:
                 this.setState({currentStep: next});
                 this.startInitialization();
                 break;
@@ -467,7 +490,7 @@ class Initialize extends Component {
                     {
                         this.state.currentStep === 0 &&
                         <div className="fs-initialize-step-content">
-                            <section key={1} className="fs-step-title">
+                            <section className="fs-step-title">
                                 {lang(
                                     '步骤1 - 定义角色：请定义存储集群中各类型服务所在节点的IP和客户端IP(可选)。',
                                     'Step1 - define roles: Please define the various types of services of node IP and the clients IP(optional) of the storage cluster.'
@@ -697,47 +720,63 @@ class Initialize extends Component {
                     {
                         this.state.currentStep === 1 &&
                         <div className="fs-initialize-step-content">
-                            <QueueAnim type="left" delay={200}>
-                                <section key={1} className="fs-step-title">
-                                    {lang(
-                                        '步骤3：请决定是否为元数据节点和存储节点配置RAID。',
-                                        'Step3: Please decide whether configure RAID for metadata nodes & storage nodes or not.'
-                                    )}
+                            <section className="fs-step-title">
+                                {lang(
+                                    '步骤2 - 确认配置：请确定您输入的各类型服务所在节点的IP是正确的，并确认推荐给您的RAID配置是否符合需求，若不符合您可自定义。并决定是否在系统初始化期间创建Buddy Group。',
+                                    'Step2 - confirm configuration: Please confirm the IP of nodes which have various services run on, and also the recommended RAID configuration, if not match your needs can custom it. And decide whether to create Buddy Group during system initialization or not.'
+                                )}
+                            </section>
+                            <Divider className="fs-initialize-divider-wrapper" dashed />
+                            <section className="fs-confirm-conf-wrapper">
+                                <section className="fs-service-ip-wrapper">
+                                    <section className="fs-type-wrapper">
+                                        <div className={`fs-type-item ${this.state.currentServiceType === 'metadataServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'metadataServerIPs')}>
+                                            <Icon type="profile" />{lang('元数据服务', 'Metadata')}
+                                        </div>
+                                        <div className={`fs-type-item ${this.state.currentServiceType === 'storageServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'storageServerIPs')}>
+                                            <Icon type="database" />{lang('存储服务', 'Storage')}
+                                        </div>
+                                        <div className={`fs-type-item ${this.state.currentServiceType === 'managementServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'managementServerIPs')}>
+                                            <Icon type="laptop" />{lang('管理服务', 'Management')}
+                                        </div>
+                                    </section>
+                                    <section className="fs-ip-wrapper">
+                                        {this.props[this.state.currentServiceType].map((ip, i) => (
+                                            <div
+                                                className={`
+                                                    fs-ip-item
+                                                    ${this.state.currentServiceType === 'managementServerIPs' ? 'no-hover' : ''}
+                                                    ${(ip === this.state.currentServiceIP.ip && this.state.currentServiceType === this.state.currentServiceIP.type) ? 'active' : ''}
+                                                `}
+                                                key={i}
+                                                onClick={this.setCurrentServiceIP.bind(this, ip)}
+                                            >
+                                                {ip}
+                                            </div>
+                                        ))}
+                                    </section>
                                 </section>
-                            </QueueAnim>
-                            <QueueAnim type="right" delay={200}>
-                                <section key={1} className="fs-config-raid-wrapper">
-                                    <div className="fs-raid-switch-wrapper">
-                                        <label >{lang('为元数据节点和存储节点配置RAID', 'Configure RAID for metadata nodes & storage nodes')}</label>
-                                        <Switch size="small" checked={this.props.enableRAID} onChange={this.setEnableRAID.bind(this)} />
-                                    </div>
-                                    {
-                                        this.props.enableRAID ? <RAIDConfiguration /> : <DiskSelection />
-                                    }
-                                </section>
-                            </QueueAnim>
+                                <RecomRAIDConfiguration ref={ref => this.recomRAIDConfigurationWrapper = ref} />
+                            </section>
                         </div>
                     }
                     {
                         this.state.currentStep === 2 &&
                         <div className="fs-initialize-step-content">
-                            <QueueAnim type="left" delay={200}>
-                                <section key={1} className="fs-step-title">
-                                    {lang(
-                                        '步骤4 - 初始化：初始化已经开始！请保持设备网络畅通，请勿关闭电源。',
-                                        'Step4 - initialization: Initializing has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
-                                    )}
-                                </section>
-                            </QueueAnim>
-                            <QueueAnim type="right">
-                                <Progress key={1} className="fs-initialization-progress-bar"
-                                    showInfo={false}
-                                    percent={this.state.initProgress}
-                                    status={this.state.initStatusNum === 0 ? (this.state.initProgress === 100 ? 'success' : 'active') : 'exception'}
-                                    strokeWidth={15}
-                                />
-                            </QueueAnim>
-                            <QueueAnim key={1} type="bottom">
+                            <section className="fs-step-title">
+                                {lang(
+                                    '步骤3 - 初始化：初始化已经开始！请保持设备网络畅通，请勿关闭电源。',
+                                    'Step3 - initialization: Initializing has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
+                                )}
+                            </section>
+                            <Progress
+                                className="fs-initialization-progress-bar"
+                                showInfo={false}
+                                percent={this.state.initProgress}
+                                status={this.state.initStatusNum === 0 ? (this.state.initProgress === 100 ? 'success' : 'active') : 'exception'}
+                                strokeWidth={15}
+                            />
+                            <QueueAnim type="bottom">
                                 <section key="fs-initializing-3" className="fs-initialization-wrapper">
                                     {
                                         this.state.initInfoList.map((info, i) => info.step === -1 ?
@@ -759,8 +798,8 @@ class Initialize extends Component {
                                 <section key={1} className="fs-step-title">
                                     <p>
                                         {lang(
-                                            '步骤5 - 完成：初始化已完成，您的存储集群已经准备好了!',
-                                            'Step5 - finished: The initialization is complete and your storage cluster is ready!'
+                                            '步骤4 - 完成：初始化已完成，您的存储集群已经准备好了!',
+                                            'Step4 - finished: The initialization is complete and your storage cluster is ready!'
                                         )}
                                     </p>
                                 </section>

@@ -1,0 +1,112 @@
+.fs-recom-raid-conf-wrapper {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	.fs-left-side-wrapper {
+		width: 281px;
+		height: 355px;
+		.fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+		.fs-raid-list-title {
+			padding: 0 15px;
+			height: 40px;
+			line-height: 40px;
+			font-size: @normalFont;
+			color: @title;
+			background: @page-bg;
+			border-bottom: 1px solid @border;
+			.fs-raid-custom {
+				float: right;
+				font-size: @smallFont;
+				user-select: none;
+				span {
+					&:hover {
+						color: @light-blue;
+						cursor: pointer;
+					}
+				}
+			}
+		}
+		.fs-raid-service {
+			padding: 0 15px;
+			height: 40px;
+			line-height: 40px;
+			font-size: @smallFont;
+			border-bottom: 1px solid @border;
+			span {
+				float: right;
+			}
+		}
+		.fs-raid-conf-list-wrapper {
+			user-select: none;
+			.fs-raid-conf-item {
+				float: left;
+				width: 70px;
+				height:  70px;
+				line-height: 70px;
+				text-align: center;
+				border-right: 1px solid @border;
+				border-bottom: 1px solid @border;
+				cursor: pointer;
+				&:nth-child(4n) {
+					border-right: none;
+				}
+				&.active {
+					border: 1px solid @blue;
+				}
+				img {
+					width: 60%;
+					height: 60%;
+				}
+			}
+		}
+	}
+	.fs-right-side-wrapper {
+		flex: 1;
+		margin-left: 10px;
+		display: flex;
+		flex-direction: column;
+		.fs-raid-info-wrapper {
+			padding: 0 20px;
+			height: 40px;
+			line-height: 40px;
+			.fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+			span {
+				margin-right: 15px;
+				font-size: @smallFont;
+				color: @text;
+			}
+		}
+		.fs-raid-disk-wrapper {
+			margin-top: 10px;
+			height: 305px;
+			.fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+			.fs-raid-disk-title {
+				padding: 0 25px;
+				height: 30px;
+				line-height: 30px;
+				font-size: @smallFont;
+				color: @title;
+				background: @page-bg;
+			}
+			.fs-raid-disk-item {
+				padding: 0 25px;
+				height: 32px;
+				line-height: 32px;
+				font-size: @smallFont;
+				&:nth-child(odd) {
+					background: @page-bg;
+				}
+				&:hover {
+					color: @white;
+					background: @light-blue;
+				}
+				span {
+					margin-left: 15px;
+					&:nth-last-child(1) {
+						float: right;
+					}
+				}
+			}
+		}
+	}
+}
