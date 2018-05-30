@@ -56,9 +56,6 @@ const model = {
     '/api/testmail': async ctx => {
         ctx.body = await service.testMail(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/gethardware': async ctx => {
-        ctx.body = await service.getHardware(ctx.param);
-    },
     '/api/getmetanodestatus': async ctx => {
         ctx.body = await service.getMetaNodeStatus(ctx.param);
     },

@@ -1,17 +1,13 @@
 const cron = require('cron');
 const task = require('../service/task');
+const status = require('../service/status');
 const init = require('../service/initialize');
-const snapshot = require('../service/snapshot');
-const doOrNotDo = () => (!init.getAntiInitStatus() && !snapshot.getRollbackStatus());
-
-new cron.CronJob('*/15 * * * * *', async () => {
-    doOrNotDo() && await task.getHardware();
-}, null, true);
+const doOrNotDo = async () => (status.getInitStatus() && await init.getMongoDBMasterOrNot() && !status.getDeinitStatus() && !status.getRollbackStatus());
 
 new cron.CronJob('0 * * * * *', async () => {
-    doOrNotDo() && await task.createSnapshot();
+    await doOrNotDo() && await task.createSnapshot();;
 }, null, true);
 
 new cron.CronJob('0 */5 * * * *', async () => {
-    doOrNotDo() && await task.sendChangePasswordMessage();
+    await doOrNotDo() && await task.sendChangePasswordMessage();
 }, null, true);

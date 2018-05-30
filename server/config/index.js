@@ -1,11 +1,11 @@
 exports.process = {
-    name: ['master', 'agentd', 'job', 'task']
+    name: ['master', 'server', 'schedule']
 };
 exports.env = {
-    root: process.env.PWD,
     name: process.env.NAME,
-    init: process.env.INIT_STATUS,
-    master: process.env.IS_MASTER
+    initialize: process.env.INITIALIZE,
+    mgmt: process.env.MGMT,
+    master: process.env.MASTER
 };
 exports.database = {
     name: 'storage',
@@ -37,9 +37,6 @@ exports.setting = {
     snapshotSetting: 'SNAPSHOT-SETTING'
 };
 exports.api = {
-    agentd: {
-        hardware: 'http://localhost:3457/hardware/getall'
-    },
     server: {
         receiveevent: 'http://localhost/api/receiveevent'
     },
@@ -63,7 +60,9 @@ exports.api = {
         createsnapshot: 'http://localhost:9090/cluster/createsnapshot',
         deletesnapshot: 'http://localhost:9090/cluster/deletesnapshot',
         rollbacksnapshot: 'http://localhost:9090/cluster/rollbacksnapshot',
-        batchdeletesnap: 'http://localhost:9090/cluster/batchdeletesnap'
+        batchdeletesnap: 'http://localhost:9090/cluster/batchdeletesnap',
+        getversion: 'http://localhost:9090/cluster/getversion',
+        listtargets: 'http://localhost:9090/cluster/listtargets'
     }
 };
 exports.key = {

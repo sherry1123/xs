@@ -1,8 +1,7 @@
 const config = require('../config');
+const status = require('../service/status');
 const handler = require('../module/handler');
 const promise = require('../module/promise');
-const init = require('../service/initialize');
-const snapshot = require('../service/snapshot');
 const model = {
 	initRequest() {
 		return async (ctx, next) => {
@@ -12,15 +11,15 @@ const model = {
 				key: ctx.get('Api-Key'),
 				cookie: {
 					init: handler.cookie(ctx.cookies.get('init')),
-					deInit: handler.cookie(ctx.cookies.get('deInit')),
+					deinit: handler.cookie(ctx.cookies.get('deinit')),
 					rollbacking: handler.cookie(ctx.cookies.get('rollbacking')),
 					login: handler.cookie(ctx.cookies.get('login'))
 				},
 				encoding: ctx.get('Accept-Encoding'),
 				status: {
-					init: init.getInitStatus(),
-					deInit: init.getAntiInitStatus(),
-					rollbacking: snapshot.getRollbackStatus()
+					init: status.getInitStatus(),
+					deinit: status.getDeinitStatus(),
+					rollbacking: status.getRollbackStatus()
 				}
 			};
 			await next();
@@ -35,19 +34,19 @@ const model = {
 	syncStatus() {
 		return async (ctx, next) => {
 			await next();
-			let { cookie: { init: initCookie, deInit: antiInitCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, deInit: antiInitStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let { cookie: { init: initCookie, deinit: deinitCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, deinit: deinitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookie);
-			(antiInitCookie !== antiInitStatus) && ctx.cookies.set('deInit', String(antiInitStatus), config.cookie);
+			(deinitCookie !== deinitStatus) && ctx.cookies.set('deinit', String(deinitStatus), config.cookie);
 			(rollbackCookie !== rollbackStatus) && ctx.cookies.set('rollbacking', String(rollbackStatus), config.cookie);
 			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookie) && ctx.cookies.set('user', '', config.cookie);
 		}
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let { api, status: { init: initStatus, deInit: antiInitStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let { api, status: { init: initStatus, deinit: deinitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			let syncAPI = 'syncsystemstatus';
 			let initApiList = ['checkclusterenv', 'getraidrecommendedconfiguration', 'getdisklist', 'init'];
-			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus && !antiInitStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !antiInitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
+			(api === syncAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus && !deinitStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !deinitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
 		}
 	},
 	compressResponse() {
