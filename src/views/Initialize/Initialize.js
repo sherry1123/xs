@@ -390,13 +390,6 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                if (this.state.enableRAID){
-                    // get disk or RAID configuration data
-
-                }
-                this.setState({currentStep: next});
-                break;
-            case 3:
                 this.setState({currentStep: next});
                 this.startInitialization();
                 break;
