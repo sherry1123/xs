@@ -69,11 +69,18 @@ const model = {
             orcafsParam = [
                 {
                     type: 'meta',
-                    hosts: meta.map(ip => ({ ip }))
+                    hosts: meta.map(ip => ({ ip })),
+                    diskGroup: [
+                        { diskList: ['/dev/sdb'] }
+                    ]
                 },
                 {
                     type: 'storage',
-                    hosts: storage.map(ip => ({ ip }))
+                    hosts: storage.map(ip => ({ ip })),
+                    diskGroup: [
+                        { diskList: ['/dev/sdc'] },
+                        { diskList: ['/dev/sdd'] }
+                    ]
                 },
                 {
                     type: 'client',
