@@ -83,7 +83,7 @@ router.all('/api/getclustertarget', controller['/api/getclustertarget']);
 router.all('/api/getclusterthroughput', controller['/api/getclusterthroughput']);
 router.all('/api/getclusteriops', controller['/api/getclusteriops']);
 router.all('/api/getnodelist', controller['/api/getnodelist']);
-router.all('/api/getnodeinfo', controller['/api/getnodeinfo']);
+router.all('/api/getnodeservice', controller['/api/getnodeservice']);
 router.all('/api/getnodecpu', controller['/api/getnodecpu']);
 router.all('/api/getnodememory', controller['/api/getnodememory']);
 router.all('/api/getnodeiops', controller['/api/getnodeiops']);

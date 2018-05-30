@@ -255,8 +255,8 @@ const model = {
     '/api/getnodelist': async ctx => {
         ctx.body = await service.getNodeList(ctx.param);
     },
-    '/api/getnodeinfo': async ctx => {
-        ctx.body = await service.getNodeInfo(ctx.param);
+    '/api/getnodeservice': async ctx => {
+        ctx.body = await service.getNodeService(ctx.param);
     },
     '/api/getnodecpu': async ctx => {
         ctx.body = await service.getNodeCpu(ctx.param);
