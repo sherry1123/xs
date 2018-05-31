@@ -369,7 +369,13 @@ class Initialize extends Component {
 
     checkCustomRAID (){
         let {customRAID} = this.props;
+        let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => {
+            let nodes = customRAID[curr];
+            return nodes.some(node => node.raidList.some(raid => !raid.selectedDisks.length));
+        }, true);
         console.info(customRAID);
+        console.info(isCheckOK);
+        return isCheckOK;
     }
 
     // step button
@@ -428,11 +434,15 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                if (!this.checkCustomRAID()){
-
+                if (this.state.enableCustomRAID && !this.checkCustomRAID()){
+                    message.error(lang(
+                        '您已开始自定义RAID配置，请正确配置所有元数据和存储服务所在节点的RAID，否则请选择使用推荐RAID配置。',
+                        'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the recommended RAID configuration.')
+                    );
+                } else {
+                    this.setState({currentStep: next});
+                    this.startInitialization();
                 }
-                this.setState({currentStep: next});
-                this.startInitialization();
                 break;
             default:
                 break;
