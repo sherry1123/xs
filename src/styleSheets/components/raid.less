@@ -10,13 +10,12 @@
 			padding: 0 15px;
 			height: 40px;
 			line-height: 40px;
-			font-size: @normalFont;
+			font-size: @smallFont;
 			color: @title;
 			background: @page-bg;
 			border-bottom: 1px solid @border;
 			.fs-raid-custom {
 				float: right;
-				font-size: @smallFont;
 				user-select: none;
 				span {
 					&:hover {
@@ -41,6 +40,7 @@
 			user-select: none;
 			.fs-raid-conf-item {
 				float: left;
+				position: relative;
 				width: 70px;
 				height:  70px;
 				line-height: 70px;
@@ -58,6 +58,21 @@
 					width: 60%;
 					height: 60%;
 				}
+				.fs-remove-raid {
+					position: absolute;
+					top: 2px;
+					right: 2px;
+					&:hover {
+						color: @red;
+					}
+				}
+				.fs-raid-conf-ok {
+					position: absolute;
+					bottom: 0;
+					left: 2px;
+					width: 10px;
+					color: @green;
+				}
 			}
 		}
 	}
@@ -71,7 +86,7 @@
 			height: 40px;
 			line-height: 40px;
 			.fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
-			span {
+			.fs-raid-info-item {
 				margin-right: 15px;
 				font-size: @smallFont;
 				color: @text;
@@ -98,13 +113,33 @@
 					background: @page-bg;
 				}
 				&:hover {
-					color: @white;
-					background: @light-blue;
+					background: #e6f7ff;
 				}
 				span {
 					margin-left: 15px;
 					&:nth-last-child(1) {
 						float: right;
+					}
+				}
+			}
+		}
+		.fs-raid-custom-wrapper {
+			margin-top: 10px;
+			height: 305px;
+			.fs-raid-node-array-selector {
+				.ant-transfer-list {
+					width: 416px;
+					height: 305px;
+					border: none;
+					border-radius: 0;
+					.fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+					&.ant-transfer-list-with-footer {
+						&:nth-child(1) {
+							padding-bottom: 0;
+							.ant-transfer-list-footer {
+								display: none;
+							}
+						}
 					}
 				}
 			}

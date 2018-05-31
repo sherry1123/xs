@@ -223,6 +223,15 @@
                         }
                     }
                 }
+                .fs-buddy-group-wrapper {
+                    margin-top: 10px;
+                    padding: 0 25px;
+                    height: 40px;
+                    line-height: 40px;
+                    font-size: @smallFont;
+                    .fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+
+                }
             }
             .fs-initialization-wrapper {
                 min-height: 350px;
@@ -321,7 +330,7 @@
             }
         }
         &.b-2 {
-            bottom: 20%; left: 18%;
+            bottom: 30%; left: 18%;
             animation: fs-background-bubble-move-1 10s linear infinite;
             .fs-earth-layer {
                 animation: anticlockwise-rotate 6s linear infinite 1s;
@@ -337,13 +346,13 @@
             bottom: 40%; left: 48%;
             animation: fs-background-bubble-move-2 10s linear infinite;
             .fs-earth-layer {
-                animation: anticlockwise-rotate 6s linear infinite .5s;
+                animation: clockwise-rotate 6s linear infinite .5s;
             }
             .fs-moon-layer {
-                animation: clockwise-rotate 8s linear infinite .25s;
+                animation: anticlockwise-rotate 8s linear infinite .25s;
             }
             .fs-mercury-layer {
-                animation: anticlockwise-rotate 10s linear infinite 1.25s;
+                animation: clockwise-rotate 10s linear infinite 1.25s;
             }
         }
         &.b-4 {
@@ -363,13 +372,13 @@
             bottom: 5px; right: 30%;
             animation: fs-background-bubble-move-1 10s linear infinite;
             .fs-earth-layer {
-                animation: anticlockwise-rotate 6s linear infinite 1.25s;
+                animation: clockwise-rotate 6s linear infinite 1.25s;
             }
             .fs-moon-layer {
-                animation: clockwise-rotate 8s linear infinite .5s;
+                animation: anticlockwise-rotate 8s linear infinite .5s;
             }
             .fs-mercury-layer {
-                animation: anticlockwise-rotate 10s linear infinite .25s;
+                animation: clockwise-rotate 10s linear infinite .25s;
             }
         }
         &.b-6 {
