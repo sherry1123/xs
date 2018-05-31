@@ -58,8 +58,8 @@ class RecommendedRAID extends Component {
                             <span onClick={this.customRAID.bind(this)}>{lang('自定义', 'Custom')}</span>
                             <Popover
                                 content={lang(
-                                    '将允许您自定义所有元数据和存储服务节点的RAID配置。建议您直接使用推荐配置，这是我们针对您系统的配置给出的在安全、性能和容量利用率等方面的最优方案。',
-                                    'Will allow you to custom the RAID configurations for all nodes that metadata and storage services run on. We suggest you to use the recommended configuration by default, for it\' the optimal plan we give out on security, performance, and capacity usage rate sides based on your system.')
+                                    '将允许您自定义所有元数据和存储服务节点的RAID配置。如果您非专业人士，建议您直接使用推荐配置，这是我们针对您系统的配置给出的在安全、性能和容量利用率等方面的最优方案。',
+                                    'Will allow you to custom the RAID configurations for all nodes that metadata and storage services run on. If you are not professional, we suggest you to use the recommended configuration by default, for it\' the optimal plan we give out on security, performance, and capacity usage rate sides based on your system.')
                                 }
                             >
                                 <Icon type="question-circle-o" className="fs-info-icon m-l" />

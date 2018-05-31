@@ -331,6 +331,7 @@ class Initialize extends Component {
             let currentServiceNode = {type: this.state.currentServiceType, ip, i};
             this.setState({currentServiceNode});
             // change recommended RAID configuration
+            // console.info('change to:', this.state.currentServiceType, '  ip:', ip);
             this[(this.state.enableCustomRAID ? 'custom' : 'recommended') + 'RAIDWrapper'].getWrappedInstance().changeServiceIP(currentServiceNode);
         }
     }
@@ -364,6 +365,11 @@ class Initialize extends Component {
 
     enableCreateBuddyGroup (checked){
         this.props.setEnableCreateBuddyGroup(checked);
+    }
+
+    checkCustomRAID (){
+        let {customRAID} = this.props;
+        console.info(customRAID);
     }
 
     // step button
@@ -422,6 +428,9 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
+                if (!this.checkCustomRAID()){
+
+                }
                 this.setState({currentStep: next});
                 this.startInitialization();
                 break;
@@ -431,12 +440,23 @@ class Initialize extends Component {
     }
 
     startInitialization (){
-        this.setState({
-            initInfoList: [{step: 0, initProgress: 0}]
-        });
-        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID} = this.props;
+        this.setState({initInfoList: [{step: 0, initProgress: 0}]});
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID} = this.props;
         httpRequests.startInitialization({
-            metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID
+            // service and client IPs
+            metadataServerIPs,
+            storageServerIPs,
+            managementServerIPs,
+            clientIPs,
+            // HA
+            enableHA,
+            floatIPs,
+            hbIPs,
+            // RAID
+            enableRAID,
+            enableCustomRAID: this.state.enableCustomRAID,
+            recommendedRAID,
+            customRAID,
         });
         this.setProgressTimer();
     }
@@ -940,8 +960,8 @@ class Initialize extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser}} = state;
-    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser};
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID};
 };
 
 const mapDispatchToProps = dispatch => {

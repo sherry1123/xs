@@ -14,6 +14,7 @@ export default {
         hbIPs: ['192.168.101.98','192.168.101.99'],
         // step 3 RAID configuration
         enableRAID: true,
+        enableCustomRAID: false,
         recommendedRAID:  {
             metadataServerIPs: {
                 '192.168.100.48': [

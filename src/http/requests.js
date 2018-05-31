@@ -40,6 +40,10 @@ export default  {
     },
 
     // initialize
+    getNodeDisksByNodeIP (ip){
+        return requestMiddleWare(async () => await fetchGet('/api/getdisklist', {ip}));
+    },
+
     startInitialization (config){
         requestMiddleWare(async () => await fetchPost('/api/init', config));
     },
@@ -63,7 +67,7 @@ export default  {
         });
     },
 
-    // user - login, logout, update
+    // user login, logout, update
     async login (user){
         return await fetchPost('/api/login', user);
     },

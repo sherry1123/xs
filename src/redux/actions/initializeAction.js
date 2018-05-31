@@ -5,6 +5,7 @@ export const initializeActionTypes = {
     SET_ENABLE_HA: 'SET_ENABLE_HA',
     SET_ENABLE_RAID: 'SET_ENABLE_RAID',
     SET_RECOMMENDED_RAID: 'SET_RECOMMENDED_RAID',
+    SET_ENABLE_CUSTOM_RAID: 'SET_ENABLE_CUSTOM_RAID',
     SET_CUSTOM_RAID: 'SET_CUSTOM_RAID',
     SET_ENABLE_CREATE_BUDDY_GROUP: 'SET_ENABLE_CREATE_BUDDY_GROUP',
     SET_INIT_STATUS: 'SET_INIT_STATUS',
@@ -43,6 +44,11 @@ export default {
     setRecommendedRAID: recommendedRAID => ({
         type: initializeActionTypes.SET_RECOMMENDED_RAID,
         recommendedRAID
+    }),
+
+    setEnableCustomRAID: enableCustomRAID => ({
+        type: initializeActionTypes.SET_ENABLE_CUSTOM_RAID,
+        enableCustomRAID
     }),
 
     setCustomRAID: customRAID => ({
