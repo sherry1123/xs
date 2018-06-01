@@ -40,6 +40,10 @@ export default  {
     },
 
     // initialize
+    getNodeDisksByNodeIP (ip){
+        return requestMiddleWare(async () => await fetchGet('/api/getdisklist', {ip}));
+    },
+
     startInitialization (config){
         requestMiddleWare(async () => await fetchPost('/api/init', config));
     },
@@ -59,11 +63,11 @@ export default  {
         requestMiddleWare(async () => {
             let data = await fetchPost('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
             console.info('recommended RAID config', data);
-            !!data && store.dispatch(initializeAction.setRAIDConfig(data));
+            !!data && store.dispatch(initializeAction.setRecommendedRAID(data));
         });
     },
 
-    // user - login, logout, update
+    // user login, logout, update
     async login (user){
         return await fetchPost('/api/login', user);
     },

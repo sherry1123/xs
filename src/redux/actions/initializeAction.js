@@ -4,9 +4,12 @@ export const initializeActionTypes = {
     SET_IP: 'SET_IP',
     SET_ENABLE_HA: 'SET_ENABLE_HA',
     SET_ENABLE_RAID: 'SET_ENABLE_RAID',
+    SET_RECOMMENDED_RAID: 'SET_RECOMMENDED_RAID',
+    SET_ENABLE_CUSTOM_RAID: 'SET_ENABLE_CUSTOM_RAID',
+    SET_CUSTOM_RAID: 'SET_CUSTOM_RAID',
+    SET_ENABLE_CREATE_BUDDY_GROUP: 'SET_ENABLE_CREATE_BUDDY_GROUP',
     SET_INIT_STATUS: 'SET_INIT_STATUS',
     SET_DEFAULT_USER: 'SET_DEFAULT_USER',
-    SET_RAID_CONFIG: 'SET_RAID_CONFIG',
 };
 
 export default {
@@ -38,9 +41,24 @@ export default {
         enableRAID
     }),
 
-    setRAIDConfig: RAIDConfig => ({
-        type: initializeActionTypes.SET_RAID_CONFIG,
-        RAIDConfig
+    setRecommendedRAID: recommendedRAID => ({
+        type: initializeActionTypes.SET_RECOMMENDED_RAID,
+        recommendedRAID
+    }),
+
+    setEnableCustomRAID: enableCustomRAID => ({
+        type: initializeActionTypes.SET_ENABLE_CUSTOM_RAID,
+        enableCustomRAID
+    }),
+
+    setCustomRAID: customRAID => ({
+        type: initializeActionTypes.SET_CUSTOM_RAID,
+        customRAID
+    }),
+
+    setEnableCreateBuddyGroup: enableCreateBuddyGroup => ({
+        type: initializeActionTypes.SET_ENABLE_CREATE_BUDDY_GROUP,
+        enableCreateBuddyGroup
     }),
 
     setInitStatus: initStatus => ({

@@ -102,12 +102,12 @@ class RAIDConfiguration extends Component {
     getNodeDisksByNodeIP (){
         // should fetch them from server through API
         return [
-            {diskname: "/dev/nvme0n1", totalspace: 429604103782, key: '/dev/nvme0n1'},
-            {diskname: "/dev/nvme1n1", totalspace: 429604103782, key: '/dev/nvme1n1'},
-            {diskname: "/dev/nvme2n1", totalspace: 429604103782, key: '/dev/nvme2n1'},
-            {diskname: "/dev/nvme3n1", totalspace: 429604103782, key: '/dev/nvme3n1'},
-            {diskname: "/dev/nvme4n1", totalspace: 429604103782, key: '/dev/nvme4n1'},
-            {diskname: "/dev/nvme5n1", totalspace: 429604103782, key: '/dev/nvme5n1'}
+            {diskName: "/dev/nvme0n1", totalSpace: 429604103782, key: '/dev/nvme0n1'},
+            {diskName: "/dev/nvme1n1", totalSpace: 429604103782, key: '/dev/nvme1n1'},
+            {diskName: "/dev/nvme2n1", totalSpace: 429604103782, key: '/dev/nvme2n1'},
+            {diskName: "/dev/nvme3n1", totalSpace: 429604103782, key: '/dev/nvme3n1'},
+            {diskName: "/dev/nvme4n1", totalSpace: 429604103782, key: '/dev/nvme4n1'},
+            {diskName: "/dev/nvme5n1", totalSpace: 429604103782, key: '/dev/nvme5n1'}
         ];
     }
 
@@ -143,7 +143,7 @@ class RAIDConfiguration extends Component {
             currentNode.selectedDisks = [...this.state.selectedDisks];
             currentNode.arrayLevel = Object.assign({}, this.state.arrayLevel);
             currentNode.stripeSize = this.state.stripeSize;
-            let nodes = Object.assign(this.state[currentNode.type + 'Nodes']);
+            let nodes = [...this.state[currentNode.type + 'Nodes']];
             nodes[currentNode.i] = currentNode;
             this.setState({[currentNode.type + 'Nodes']: nodes});
             if (!currentNode.selectedDisks.length){

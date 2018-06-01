@@ -6,7 +6,8 @@ import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
 // import RAIDConfiguration from '../../components/DiskConfiguration/RAIDConfiguration';
 // import DiskSelection from '../../components/DiskConfiguration/DiskSelection';
-import RecomRAIDConfiguration from '../../components/DiskConfiguration/RecomRAIDConfiguration';
+import RecommendedRAID from '../../components/DiskConfiguration/RecommendedRAID';
+import CustomRAID from '../../components/DiskConfiguration/CustomRAID';
 import initializeAction from '../../redux/actions/initializeAction';
 import lang from '../../components/Language/lang';
 import {validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from '../../services';
@@ -39,11 +40,12 @@ class Initialize extends Component {
             floatIPsError: floatIPs.map(() => ({status: '', help: ''})),
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
             // current select service type
-            currentServiceType: 'metadataServerIPs',
-            currentServiceIP: {
-                type: 'metadataServerIPs',
+            currentServiceType: 'metadata',
+            currentServiceNode: {
+                type: 'metadata',
                 ip: ''
             },
+            enableCustomRAID: false,
             // running initialization
             initStatusNum: 0,
             initProgressStep: 0,
@@ -320,19 +322,61 @@ class Initialize extends Component {
 
     setCurrentServiceType (currentServiceType){
         // let ip = this.props[currentServiceType + 'ServerIPs'][0];
-        // this.setState({currentServiceType, currentServiceIP: {type: currentServiceType, ip}});
+        // this.setState({currentServiceType, currentServiceNode: {type: currentServiceType, ip}});
         this.setState({currentServiceType});
     }
 
-    setCurrentServiceIP (ip){
-        if (this.state.currentServiceType !== 'managementServerIPs'){
-            let currentServiceIP = {type: this.state.currentServiceType, ip};
-            this.setState({currentServiceIP});
+    setCurrentServiceNode (ip, i){
+        if (this.state.currentServiceType !== 'management'){
+            let currentServiceNode = {type: this.state.currentServiceType, ip, i};
+            this.setState({currentServiceNode});
             // change recommended RAID configuration
-            this.recomRAIDConfigurationWrapper.getWrappedInstance().changeServiceIP(currentServiceIP);
+            // console.info('change to:', this.state.currentServiceType, '  ip:', ip);
+            this[(this.state.enableCustomRAID ? 'custom' : 'recommended') + 'RAIDWrapper'].getWrappedInstance().changeServiceIP(currentServiceNode);
         }
     }
 
+    customRAID (){
+        // switch to custom RAID mode
+        let currentServiceNode = {
+            type: 'metadata',
+            ip: this.props.metadataServerIPs[0], // the first one
+        };
+        this.setState({
+            enableCustomRAID: true,
+            currentServiceType: 'metadata',
+            currentServiceNode,
+        });
+    }
+
+    async recommendedRAID (){
+        // switch to recommended RAID mode
+        let currentServiceNode = {
+            type: 'metadata',
+            ip: this.props.metadataServerIPs[0], // the first one
+        };
+        await this.setState({
+            enableCustomRAID: false,
+            currentServiceType: 'metadata',
+            currentServiceNode,
+        });
+        this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
+    }
+
+    enableCreateBuddyGroup (checked){
+        this.props.setEnableCreateBuddyGroup(checked);
+    }
+
+    checkCustomRAID (){
+        let {customRAID} = this.props;
+        let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => {
+            let nodes = customRAID[curr];
+            return nodes.some(node => node.raidList.some(raid => !raid.selectedDisks.length));
+        }, true);
+        console.info(customRAID);
+        console.info(isCheckOK);
+        return isCheckOK;
+    }
 
     // step button
     prev (){
@@ -390,8 +434,15 @@ class Initialize extends Component {
                 await this.setState({checking: false});
                 break;
             case 2:
-                this.setState({currentStep: next});
-                this.startInitialization();
+                if (this.state.enableCustomRAID && !this.checkCustomRAID()){
+                    message.error(lang(
+                        '您已开始自定义RAID配置，请正确配置所有元数据和存储服务所在节点的RAID，否则请选择使用推荐RAID配置。',
+                        'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the recommended RAID configuration.')
+                    );
+                } else {
+                    this.setState({currentStep: next});
+                    this.startInitialization();
+                }
                 break;
             default:
                 break;
@@ -399,12 +450,23 @@ class Initialize extends Component {
     }
 
     startInitialization (){
-        this.setState({
-            initInfoList: [{step: 0, initProgress: 0}]
-        });
-        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID} = this.props;
+        this.setState({initInfoList: [{step: 0, initProgress: 0}]});
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID} = this.props;
         httpRequests.startInitialization({
-            metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID
+            // service and client IPs
+            metadataServerIPs,
+            storageServerIPs,
+            managementServerIPs,
+            clientIPs,
+            // HA
+            enableHA,
+            floatIPs,
+            hbIPs,
+            // RAID
+            enableRAID,
+            enableCustomRAID: this.state.enableCustomRAID,
+            recommendedRAID,
+            customRAID,
         });
         this.setProgressTimer();
     }
@@ -439,6 +501,7 @@ class Initialize extends Component {
     }
 
     render (){
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0, placement: 'top'};
         let initTipsMap = {
             '-1': lang('初始化失败，请联系运维人员寻求帮助！', 'Initialization failed, please ask operation and maintenance staff for help!'),
             0: lang('初始化已开始，请稍候', 'Initializing, pleas wait for a moment'),
@@ -504,7 +567,10 @@ class Initialize extends Component {
                             <div className="fs-ip-input-group">
                                 <section key="ip-input-1" className={`fs-ip-input-member ${this.state.activeInputMember === 1 ? 'active' : ''}`} onClick={this.changeActiveInputMember.bind(this, 1)}>
                                     <div className="fs-ip-input-title">
-                                        <Popover placement="top" content={lang('元数据服务器允许配置1至N个', 'Allow 1 to N metadata servers to be configured')}>
+                                        <Popover
+                                            {...buttonPopoverConf}
+                                            content={lang('元数据服务器允许配置1至N个', 'Allow 1 to N metadata servers to be configured')}
+                                        >
                                             <span>{lang('元数据服务', 'Metadata Servers')}</span>
                                         </Popover>
                                         <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'metadataServerIPs')} />
@@ -541,7 +607,10 @@ class Initialize extends Component {
                                 </section>
                                 <section key="ip-input-2" className={`fs-ip-input-member ${this.state.activeInputMember === 2 ? 'active' : ''}`} onClick={this.changeActiveInputMember.bind(this, 2)}>
                                     <div className="fs-ip-input-title">
-                                        <Popover placement="top" content={lang('存储服务器允许配置1至N个', 'Allow 1 to N storage servers to be configured')}>
+                                        <Popover
+                                            {...buttonPopoverConf}
+                                            content={lang('存储服务器允许配置1至N个', 'Allow 1 to N storage servers to be configured')}
+                                        >
                                             <span>{lang('存储服务', 'Storage Servers')}</span>
                                         </Popover>
                                         <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'storageServerIPs')} />
@@ -578,7 +647,10 @@ class Initialize extends Component {
                                 </section>
                                 <section key="ip-input-3" className={`fs-ip-input-member ${this.state.activeInputMember === 3 ? 'active' : ''}`} onClick={this.changeActiveInputMember.bind(this, 3)}>
                                     <div className="fs-ip-input-title">
-                                        <Popover placement="top" content={lang('管理服务器允许配置1至2个', 'Allow 1 to 2 management servers to be configured')}>
+                                        <Popover
+                                            {...buttonPopoverConf}
+                                            content={lang('管理服务器允许配置1至2个', 'Allow 1 to 2 management servers to be configured')}
+                                        >
                                             <span>{lang('管理服务', 'Management Server')}</span>
                                         </Popover>
                                     </div>
@@ -631,7 +703,10 @@ class Initialize extends Component {
                                                         size="small"
                                                         placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
                                                         addonAfter={
-                                                            <Popover placement="right" content={lang(`该IP首次将默认映射至管理服务所在节点${i + 1}的IP上`, `This IP will be mapped to the IP of management server Node ${i + 1} firstly by default`)}>
+                                                            <Popover
+                                                                {...buttonPopoverConf}
+                                                                content={lang(`该IP首次将默认映射至管理服务所在节点${i + 1}的IP上`, `This IP will be mapped to the IP of management server Node ${i + 1} firstly by default`)}
+                                                            >
                                                                 <Icon type="question-circle-o" className="fs-info-icon" />
                                                             </Popover>
                                                         }
@@ -655,11 +730,12 @@ class Initialize extends Component {
                                                         addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
                                                         placeholder={lang('请输入HB IP', 'please enter HB IP')}
                                                         addonAfter={
-                                                            <Popover placement="right"
-                                                                 content={
-                                                                     lang(`对应管理服务所在节点${i + 1}，不能与管理服务所在节点处于同一网段`,
+                                                            <Popover
+                                                                {...buttonPopoverConf}
+                                                                content={
+                                                                    lang(`对应管理服务所在节点${i + 1}，不能与管理服务所在节点处于同一网段`,
                                                                     `Corresponding with management server Node ${i + 1}, can't be in the same network segment with management servers`)
-                                                                 }
+                                                                }
                                                             >
                                                                 <Icon type="question-circle-o" className="fs-info-icon" />
                                                             </Popover>
@@ -678,7 +754,10 @@ class Initialize extends Component {
                                 {this.state.enableClient &&
                                     <section key="ip-input-4" className={`fs-ip-input-member ${this.state.activeInputMember === 4 ? 'active' : ''}`} onClick={this.changeActiveInputMember.bind(this, 4)}>
                                         <div className="fs-ip-input-title">
-                                            <Popover placement="top" content={lang('客户端允许配置0至N个', 'Allow 0 to N clients to be configured')}>
+                                            <Popover
+                                                {...buttonPopoverConf}
+                                                content={lang('客户端允许配置0至N个', 'Allow 0 to N clients to be configured')}
+                                            >
                                                 <span>{lang('客户端', 'Clients')}</span>
                                             </Popover>
                                             <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'clientIPs')} />
@@ -730,33 +809,62 @@ class Initialize extends Component {
                             <section className="fs-confirm-conf-wrapper">
                                 <section className="fs-service-ip-wrapper">
                                     <section className="fs-type-wrapper">
-                                        <div className={`fs-type-item ${this.state.currentServiceType === 'metadataServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'metadataServerIPs')}>
+                                        <div className={`fs-type-item ${this.state.currentServiceType === 'metadata' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'metadata')}>
                                             <Icon type="profile" />{lang('元数据服务', 'Metadata')}
                                         </div>
-                                        <div className={`fs-type-item ${this.state.currentServiceType === 'storageServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'storageServerIPs')}>
+                                        <div className={`fs-type-item ${this.state.currentServiceType === 'storage' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'storage')}>
                                             <Icon type="database" />{lang('存储服务', 'Storage')}
                                         </div>
-                                        <div className={`fs-type-item ${this.state.currentServiceType === 'managementServerIPs' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'managementServerIPs')}>
+                                        <div className={`fs-type-item ${this.state.currentServiceType === 'management' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'management')}>
                                             <Icon type="laptop" />{lang('管理服务', 'Management')}
                                         </div>
                                     </section>
                                     <section className="fs-ip-wrapper">
-                                        {this.props[this.state.currentServiceType].map((ip, i) => (
+                                        {this.props[this.state.currentServiceType + 'ServerIPs'].map((ip, i) => (
                                             <div
                                                 className={`
                                                     fs-ip-item
-                                                    ${this.state.currentServiceType === 'managementServerIPs' ? 'no-hover' : ''}
-                                                    ${(ip === this.state.currentServiceIP.ip && this.state.currentServiceType === this.state.currentServiceIP.type) ? 'active' : ''}
+                                                    ${this.state.currentServiceType === 'management' ? 'no-hover' : ''}
+                                                    ${(ip === this.state.currentServiceNode.ip && this.state.currentServiceType === this.state.currentServiceNode.type) ? 'active' : ''}
                                                 `}
                                                 key={i}
-                                                onClick={this.setCurrentServiceIP.bind(this, ip)}
+                                                onClick={this.setCurrentServiceNode.bind(this, ip, i)}
                                             >
                                                 {ip}
                                             </div>
                                         ))}
                                     </section>
                                 </section>
-                                <RecomRAIDConfiguration ref={ref => this.recomRAIDConfigurationWrapper = ref} />
+                                {
+                                    !this.state.enableCustomRAID ?
+                                        <RecommendedRAID
+                                            ref={ref => this.recommendedRAIDWrapper = ref}
+                                            customRAID={this.customRAID.bind(this)}
+                                        /> :
+                                        <CustomRAID
+                                            ref={ref => this.customRAIDWrapper = ref}
+                                            recommendedRAID={this.recommendedRAID.bind(this)}
+                                        />
+                                }
+                                <section className="fs-buddy-group-wrapper">
+                                    {lang('Buddy Group', 'Buddy Group')}
+                                    <Switch
+                                        style={{margin: '0 15px'}}
+                                        size="small"
+                                        value={this.props.enableCreateBuddyGroup}
+                                        onChange={this.enableCreateBuddyGroup.bind(this)}
+                                    />
+                                    {this.props.enableCreateBuddyGroup ? lang('创建', 'Create') : lang('不创建', 'Not Create')}
+                                    <Popover
+                                        {...buttonPopoverConf}
+                                        content={lang(
+                                            '如果您在这里不开启创建Buddy Group，在系统初始化期间将不会创建Buddy Group。您可以在系统初始化成功后登录到业务界面再进行创建。',
+                                            'If you don\'t enable create Buddy Group here, it will not create Buddy Group during system initialization. And you can login to the business page to do create Buddy Group operation after the system is initialized successfully.')
+                                        }
+                                    >
+                                        <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                                    </Popover>
+                                </section>
                             </section>
                         </div>
                     }
@@ -862,8 +970,8 @@ class Initialize extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, initStatus, defaultUser}} = state;
-    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, initStatus, defaultUser};
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID};
 };
 
 const mapDispatchToProps = dispatch => {
@@ -873,6 +981,7 @@ const mapDispatchToProps = dispatch => {
         setIP: (category, index, ip) => dispatch(initializeAction.setIP(category, index, ip)),
         setEnableHA: enableHA => dispatch(initializeAction.setEnableHA(enableHA)),
         setEnableRAID: enableRAID => dispatch(initializeAction.setEnableRAID(enableRAID)),
+        setEnableCreateBuddyGroup: enableCreateBuddyGroup => dispatch(initializeAction.setEnableCreateBuddyGroup(enableCreateBuddyGroup)),
     };
 };
 

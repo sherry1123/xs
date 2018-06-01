@@ -36,6 +36,10 @@ class FSTransfer extends Component {
         // console.info('received selected disks: ' + targetItems.map(item => item[this.rowKey]).toString());
     }
 
+    changeSource (source){
+        this.setState({source});
+    }
+
     async allSourceSelect ({target: {checked}}){
         // set all items checked
         let source = [...this.state.source].map(item => {
@@ -138,7 +142,6 @@ class FSTransfer extends Component {
             render,
             footer,
         } = this.state;
-
         return (
             <div className={`ant-transfer ${className}`}>
                 <div className="ant-transfer-list ant-transfer-list-with-footer">
@@ -237,11 +240,9 @@ class FSTransfer extends Component {
                         </ul>
                     </div>
                     {
-                        footer ?
-                            <div className="ant-transfer-list-footer">
-                                {footer()}
-                            </div> :
-                            null
+                        (typeof footer === 'function') && <div className="ant-transfer-list-footer">
+                            {footer()}
+                        </div>
                     }
                 </div>
             </div>
@@ -254,7 +255,15 @@ const mapStateToProps = state => {
     return {language};
 };
 
-export default connect(mapStateToProps)(FSTransfer);
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+    return Object.assign({}, stateProps, dispatchProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(FSTransfer);
 
 /*
  * @props
