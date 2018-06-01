@@ -8,7 +8,7 @@ import "./styleSheets/index.less";
 import './socket';
 import './http/cronJob';
 import {lsGet} from './services';
-// import httpRequests from "./http/requests";
+import httpRequests from "./http/requests";
 
 (async () => {
     const NODE_ENV = process.env.NODE_ENV;
@@ -21,7 +21,7 @@ import {lsGet} from './services';
     // 3. init
     // 4. login
     try {
-        // await httpRequests.syncUpSystemStatus();
+        await httpRequests.syncUpSystemStatus();
         NODE_ENV === 'development' && console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
