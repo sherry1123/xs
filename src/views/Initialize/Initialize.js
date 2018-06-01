@@ -13,6 +13,7 @@ import lang from '../../components/Language/lang';
 import {validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from '../../services';
 import httpRequests from '../../http/requests';
 import routerPath from '../routerPath';
+import {Modal} from "antd/lib/index";
 
 class Initialize extends Component {
     constructor (props){
@@ -369,11 +370,12 @@ class Initialize extends Component {
 
     checkCustomRAID (){
         let {customRAID} = this.props;
-        let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => {
-            let nodes = customRAID[curr];
-            return nodes.some(node => node.raidList.some(raid => !raid.selectedDisks.length));
-        }, true);
         console.info(customRAID);
+        // One node has at least one RAID conf, add disks into this RAID conf should check the RAID rule depends
+        // on this RAID level, this validation has already done when user click apply button in CustomRAID component.
+        // So, at here, we only need to check whether one RAID has no selected disks or not. If no, it means this
+        // RAID conf isn't properly configured.
+        let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => prev && !customRAID[curr].some(node => node.raidList.some(raid => !raid.selectedDisks.length)), true);
         console.info(isCheckOK);
         return isCheckOK;
     }
@@ -440,8 +442,27 @@ class Initialize extends Component {
                         'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the recommended RAID configuration.')
                     );
                 } else {
-                    this.setState({currentStep: next});
-                    this.startInitialization();
+                    Modal.confirm({
+                        title: lang('警告', 'Warning'),
+                        content: <div style={{fontSize: 12}}>
+                            {
+                                this.props.enableCreateBuddyGroup ?
+                                    <p>{lang(`您确定要在初始化期间创建Buddy Group吗？`, `Are you sure to create Buddy Group during initialization?`)}</p> :
+                                    <p>{lang(`您确定不在初始化期间创建Buddy Group吗？您可以在系统初始化完成之后再创建。`, `Are you sure not to create Buddy Group during initialization? You can create it after system is initialized.`)}</p>
+                            }
+                        </div>,
+                        iconType: 'exclamation-circle-o',
+                        okType: 'danger',
+                        okText: lang('开始初始化', 'Initializing'),
+                        cancelText: lang('取消', 'Cancel'),
+                        onOk: async () => {
+                            this.setState({currentStep: next});
+                            // this.startInitialization();
+                        },
+                        onCancel: () => {
+
+                        }
+                    });
                 }
                 break;
             default:
@@ -451,7 +472,7 @@ class Initialize extends Component {
 
     startInitialization (){
         this.setState({initInfoList: [{step: 0, initProgress: 0}]});
-        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID} = this.props;
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID, enableCreateBuddyGroup} = this.props;
         httpRequests.startInitialization({
             // service and client IPs
             metadataServerIPs,
@@ -467,6 +488,8 @@ class Initialize extends Component {
             enableCustomRAID: this.state.enableCustomRAID,
             recommendedRAID,
             customRAID,
+            // buddy group
+            enableCreateBuddyGroup,
         });
         this.setProgressTimer();
     }
