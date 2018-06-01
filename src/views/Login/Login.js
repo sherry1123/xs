@@ -121,7 +121,7 @@ class Login extends Component {
                 <div className="fs-login-content-wrapper">
                     <div className="fs-logo-text-content">
                         <div>{lang('OrcaFS提供高了安全、高可靠、高性能、易用的服务', 'OrcaFS provides high security, high reliability, high performance and easy-using services')}</div>
-                        <div>{lang('满足各种文件存储和高性能计算的需求', 'Meets the needs of file storage and high performance computing')}</div>
+                        <div>{lang('满足各类存储和高性能计算的需求', 'Meets the needs of storage and high performance computing')}</div>
                     </div>
                     <section className="fs-bubble-logo-wrapper">
                         {Object.keys(Array.apply(null, {length: 120})).map(i => (
