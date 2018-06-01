@@ -242,7 +242,7 @@ class CustomRAID extends Component {
             currentRAIDConf.arrayStripeSize = this.state.arrayStripeSize;
             let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
             nodes[currentServiceNode.i].raidList[currentRAIDConf.i] = currentRAIDConf;
-            await this.setState({[currentServiceNode.type + 'Nodes']: nodes});
+            await this.setState({[currentServiceNode.type + 'Nodes' ]: nodes});
             // reset the used disks record
             this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = nodes[currentServiceNode.i].raidList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
             message.success(lang('应用RAID配置成功!', 'Apply RAID configuration successfully!'));
@@ -259,9 +259,9 @@ class CustomRAID extends Component {
         }
     }
 
-    recommendedRAID (){
-        let {recommendedRAID} = this.props;
-        (typeof recommendedRAID === 'function') && recommendedRAID();
+    enableRecommendedRAID (){
+        let {enableRecommendedRAID} = this.props;
+        (typeof enableRecommendedRAID === 'function') && enableRecommendedRAID();
     }
 
     render (){
@@ -281,7 +281,7 @@ class CustomRAID extends Component {
                     <div className="fs-raid-list-title">
                         {lang('自定义RAID', 'Custom RAID')}
                         <span className="fs-raid-custom">
-                            <span onClick={this.recommendedRAID.bind(this)}>{lang('推荐配置', 'Recommended')}</span>
+                            <span onClick={this.enableRecommendedRAID.bind(this)}>{lang('推荐配置', 'Recommended')}</span>
                             <Popover
                                 {...buttonPopoverConf}
                                 content={lang(
@@ -346,10 +346,11 @@ class CustomRAID extends Component {
                 </div>
                 <div className="fs-right-side-wrapper">
                     <div className="fs-raid-info-wrapper">
+                        <span className="fs-raid-info-item">RAID {lang('配置信息: ', 'Info: ')}</span>
                         <span className="fs-raid-info-item">
-                            {lang('RAID级别', 'RAID Level')}:
+                            {lang('级别', 'Level')}:
                             <Select
-                                 style={{width: 100, marginLeft: 15}}
+                                 style={{width: 85, marginLeft: 15}}
                                  size="small"
                                  placeholder={lang('请选择', 'select')}
                                  value={arrayLevel.name}
@@ -366,12 +367,12 @@ class CustomRAID extends Component {
                                 }
                             </Select>
                         </span>
-                        <span className="fs-raid-info-item">{lang('阵列磁盘数量', 'Array Disk Number')}: {selectedDisks.length}</span>
-                        <span className="fs-raid-info-item">{lang('阵列总容量', 'Array Total Capacity')}: {formatStorageSize(arrayCapacity)}</span>
+                        <span className="fs-raid-info-item">{lang('磁盘数量', 'Disk Number')}: {selectedDisks.length}</span>
+                        <span className="fs-raid-info-item">{lang('总容量', 'Total Capacity')}: {formatStorageSize(arrayCapacity)}</span>
                         <span className="fs-raid-info-item">
                             {lang('条带大小', 'Stripe Size')}:
                             <Select
-                                style={{width: 100, marginLeft: 15}}
+                                style={{width: 75, marginLeft: 15}}
                                 size="small"
                                 placeholder={lang('请选择', 'select')}
                                 value={arrayStripeSize}
@@ -388,6 +389,7 @@ class CustomRAID extends Component {
                                 }
                             </Select>
                         </span>
+                        <span className="fs-raid-info-item add-disk-tip">{lang('请在下方为该RAID配置添加硬盘', 'Please add the disks for the RAID below')}</span>
                     </div>
                     <div className="fs-raid-custom-wrapper">
                         <FSTransfer
