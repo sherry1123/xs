@@ -55,7 +55,7 @@ const model = {
 
             }
         });
-        return { metadataServerIPs: metadataList, storageServerIPs: storageList };
+        return { metadataServerIPs: metadataList, storageServerIPs: storageList, diskGroup };
     },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
@@ -69,11 +69,18 @@ const model = {
             orcafsParam = [
                 {
                     type: 'meta',
-                    hosts: meta.map(ip => ({ ip }))
+                    hosts: meta.map(ip => ({ ip })),
+                    diskGroup: [
+                        { diskList: ['/dev/sdb'] }
+                    ]
                 },
                 {
                     type: 'storage',
-                    hosts: storage.map(ip => ({ ip }))
+                    hosts: storage.map(ip => ({ ip })),
+                    diskGroup: [
+                        { diskList: ['/dev/sdc'] },
+                        { diskList: ['/dev/sdd'] }
+                    ]
                 },
                 {
                     type: 'client',

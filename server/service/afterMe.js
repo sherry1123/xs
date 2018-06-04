@@ -10,7 +10,7 @@ const model = {
         let token = await model.getToken();
         let res = await request.get(config.api.orcafs.listdisk + param.ip, {}, token, true);
         if (!res.errorId) {
-            res.data = res.data ? res.data : [];
+            res.data = res.data ? res.data.filter(i => (!i.isUsed)) : [];
             res.data.forEach(disk => {
                 disk.totalSpace = handler.toByte(Number(disk.totalSpace.replace(/\SB/, '')), disk.totalSpace.replace(/\S+\d/, '')[0]);
             });
@@ -133,9 +133,37 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${Math.round((usedSpace / totalSpace) * 10000) / 100}%` } }
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
             }
-            res.data = res.data.sort((prev, next) => (prev.usage < next.usage));
+            res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
+        }
+        return res;
+    },
+    async getNodeList(param) {
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.listallnodes, param, token, true);
+        if (!res.errorId) {
+            for (let i of Object.keys(res.data)) {
+                let { hostname, ip, service, cpuUsage, memUsage, spaceUsage, spaceTotal, spaceUsed, spaceFree, status } = res.data[i];
+                res.data[i] = { hostname, ip, service: service.map(i => (i === 'meta' ? 'metadata' : i)), status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${(spaceUsed / spaceTotal * 100).toFixed(2)}%` } };
+            }
+            res.data = res.data.sort((prev, next) => (prev.hostname > next.hostname));
+        }
+        return res;
+    },
+    async getNodeService(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getnodeservice, param, token, true);
+    },
+    async getNodeTarget(param) {
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.listnodetargets, param, token, true);
+        if (!res.errorId) {
+            for (let i of Object.keys(res.data)) {
+                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+            }
+            res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
         }
         return res;
     }

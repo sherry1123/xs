@@ -971,9 +971,18 @@ const model = {
         try {
             let version = await afterMe.getVersion(param);
             version = version.errorId ? '1.0.0' : version.data;
-            let clusterStatus = { status: true, total: 10, normal: 10, abnormal: 0 }
+            let node = await afterMe.getNodeList(param);
+            let clusterStatus = {};
+            if (node.errorId) {
+                clusterStatus = { status: false, total: 0, normal: 0, abnormal: 0 };
+            } else {
+                let total = node.data.length;
+                let normal = node.data.filter(i => (i.status)).length;
+                let status = total === normal ? true : false;
+                clusterStatus = { status, total, normal, abnormal: total - normal };
+            }
             let space = await afterMe.getStorageDiskSpace(param);
-            space = version.errorId ? { total: 0, used: 0, free: 0, usage: '0%' } : { total: space.data.total, used: space.data.used, free: space.data.free, usage: `${Math.round((space.data.used / space.data.total) * 10000) / 100}%` };
+            space = version.errorId ? { total: 0, used: 0, free: 0, usage: '0%' } : { total: space.data.total, used: space.data.used, free: space.data.free, usage: `${(space.data.used / space.data.total * 100).toFixed(2)}%` };
             let data = { clusterStatus, clusterCapacity: space, version };
             result = handler.response(0, data);
         } catch (error) {
@@ -1026,39 +1035,26 @@ const model = {
     async getNodeList(param) {
         let result = {};
         try {
-            let data = [
-                { hostname: 'node1', nodeId: 1, service: ['metadata', 'storage'], isPureMgmt: false, ip: '192.168.100.18', status: true, cpuUsage: '40%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 12, free: 1024 * 1024 * 1024 * 1024 * 8, usage: '60%' } },
-                { hostname: 'node2', nodeId: 2, service: ['metadata', 'storage'], isPureMgmt: false, ip: '192.168.100.19', status: true, cpuUsage: '45%', memoryUsage: '50%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 10, free: 1024 * 1024 * 1024 * 1024 * 10, usage: '50%' } },
-                { hostname: 'node3', nodeId: 3, service: ['metadata', 'storage'], isPureMgmt: false, ip: '192.168.100.20', status: true, cpuUsage: '60%', memoryUsage: '85%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 13, free: 1024 * 1024 * 1024 * 1024 * 7, usage: '65%' } },
-                { hostname: 'node4', nodeId: 4, service: ['storage'], isPureMgmt: false, ip: '192.168.100.21', status: true, cpuUsage: '30%', memoryUsage: '60%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 16, free: 1024 * 1024 * 1024 * 1024 * 4, usage: '80%' } },
-                { hostname: 'node5', nodeId: 5, service: ['mgmt'], isPureMgmt: true, ip: '192.168.100.22', status: true, cpuUsage: '20%', memoryUsage: '30%', space: '--' },
-                { hostname: 'node6', nodeId: 6, service: ['storage'], isPureMgmt: false, ip: '192.168.100.23', status: true, cpuUsage: '30%', memoryUsage: '35%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node7', nodeId: 7, service: ['storage'], isPureMgmt: false, ip: '192.168.100.24', status: true, cpuUsage: '40%', memoryUsage: '45%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node8', nodeId: 8, service: ['storage'], isPureMgmt: false, ip: '192.168.100.25', status: true, cpuUsage: '35%', memoryUsage: '55%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node9', nodeId: 9, service: ['storage'], isPureMgmt: false, ip: '192.168.100.26', status: true, cpuUsage: '45%', memoryUsage: '25%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } },
-                { hostname: 'node10', nodeId: 10, service: ['storage'], isPureMgmt: false, ip: '192.168.100.27', status: true, cpuUsage: '60%', memoryUsage: '75%', space: { total: 1024 * 1024 * 1024 * 1024 * 20, used: 1024 * 1024 * 1024 * 1024 * 2, free: 1024 * 1024 * 1024 * 1024 * 18, usage: '10%' } }
-            ];
-            result = handler.response(0, data);
+            let res = await afterMe.getNodeList(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
+            } else {
+                result = handler.response(173, res.message, param);
+            }
         } catch (error) {
             result = handler.response(173, error, param);
         }
         return result;
     },
-    async getNodeInfo(param) {
-        let nodeId = Number(param.nodeId);
+    async getNodeService(param) {
         let result = {};
         try {
-            let status = true;
-            let service = { metadata: 0, storage: 0 };
-            if (nodeId < 4) {
-                service = { metadata: 1, storage: 1 };
-            } else if (nodeId === 5) {
-                service = { metadata: 0, storage: 0 };
+            let res = await afterMe.getNodeService(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
             } else {
-                service = { metadata: 0, storage: 1 };
+                result = handler.response(173, res.message, param);
             }
-            let data = { status, service };
-            result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
         }
@@ -1122,21 +1118,14 @@ const model = {
         return result;
     },
     async getNodeTarget(param) {
-        let nodeId = Number(param.nodeId);
         let result = {};
         try {
-            let target = { targetId: 100, mountPath: '/mnt/target10', node: 'node', service: 'storage', space: { total: 1024 * 1024 * 1024 * 1024 * 10, used: 1024 * 1024 * 1024 * 1024, free: 1024 * 1024 * 1024 * 1024, usage: '0%' } };
-            let { targetId, mountPath, node, service, space: { total, used, free, usage } } = target;
-            let targetList = [];
-            if (nodeId < 5) {
-                targetList.push({ targetId: targetId + nodeId * 2 - 1, mountPath: mountPath + String(nodeId * 2 - 1), node: node + String(nodeId), service, space: { total, used: used * (10 - nodeId), free: free * nodeId, usage: String(10 - nodeId) + usage } });
-                targetList.push({ targetId: targetId + nodeId * 2, mountPath: mountPath + String(nodeId * 2), node: node + String(nodeId), service: nodeId === 4 ? service : 'metadata', space: { total, used: used * (10 - 5 - nodeId), free: free * nodeId, usage: String(10 - 5 - nodeId) + usage } });
-            } else if (nodeId > 5) {
-                targetList.push({ targetId: targetId + nodeId * 2 - 1, mountPath: mountPath.replace('0', '') + String(nodeId * 2 - 1), node: node + String(nodeId), service, space: { total, used: used * (10 - nodeId + 1), free: free * (nodeId - 1), usage: String(10 - nodeId + 1) + usage } });
-                targetList.push({ targetId: targetId + nodeId * 2, mountPath: mountPath.replace('0', '') + String(nodeId * 2), node: node + String(nodeId), service, space: { total, used: used * (10 - nodeId + 1), free: free * (nodeId - 1), usage: String(10 - nodeId + 1) + usage } });
+            let res = await afterMe.getNodeTarget(param);
+            if (!res.errorId) {
+                result = handler.response(0, res.data);
+            } else {
+                result = handler.response(173, res.message, param);
             }
-            let data = targetList;
-            result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
         }
