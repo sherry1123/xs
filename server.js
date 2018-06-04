@@ -51,7 +51,6 @@ const workerMessageHandler = msg => {
 		cluster.settings = await status.checkAllStatus();
 		cluster.settings.initialize === cluster.settings.mgmt && startNewWorker(1);
 	} else {
-		console.log(config.env);
 		switch (config.env.name) {
 			case 'server':
 				require('./server/');
