@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import update from "react-addons-update";
-import {Button, Divider, Form, Icon, Input, message, notification, Popover, Progress, Steps, Switch} from 'antd';
+import {Button, Divider, Form, Icon, Input, message, Modal, notification, Popover, Progress, Steps, Switch} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
 // import RAIDConfiguration from '../../components/DiskConfiguration/RAIDConfiguration';
@@ -25,7 +25,7 @@ class Initialize extends Component {
         this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
         this.state = {
             // card step
-            currentStep: 1,
+            currentStep: 0,
             totalStep: 4,
             checking: false,
             // enable client input
@@ -43,7 +43,7 @@ class Initialize extends Component {
             currentServiceType: 'metadata',
             currentServiceNode: {
                 type: 'metadata',
-                ip: ''
+                ip: metadataServerIPs[0]
             },
             enableCustomRAID: false,
             // running initialization
@@ -336,7 +336,7 @@ class Initialize extends Component {
         }
     }
 
-    customRAID (){
+    enableCustomRAID (){
         // switch to custom RAID mode
         let currentServiceNode = {
             type: 'metadata',
@@ -349,7 +349,7 @@ class Initialize extends Component {
         });
     }
 
-    async recommendedRAID (){
+    async enableRecommendedRAID (){
         // switch to recommended RAID mode
         let currentServiceNode = {
             type: 'metadata',
@@ -369,11 +369,12 @@ class Initialize extends Component {
 
     checkCustomRAID (){
         let {customRAID} = this.props;
-        let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => {
-            let nodes = customRAID[curr];
-            return nodes.some(node => node.raidList.some(raid => !raid.selectedDisks.length));
-        }, true);
         console.info(customRAID);
+        // One node has at least one RAID conf, add disks into this RAID conf should check the RAID rule depends
+        // on this RAID level, this validation has already done when user click apply button in CustomRAID component.
+        // So, at here, we only need to check whether one RAID has no selected disks or not. If no, it means this
+        // RAID conf isn't properly configured.
+        let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => prev && !customRAID[curr].some(node => node.raidList.some(raid => !raid.selectedDisks.length)), true);
         console.info(isCheckOK);
         return isCheckOK;
     }
@@ -440,8 +441,27 @@ class Initialize extends Component {
                         'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the recommended RAID configuration.')
                     );
                 } else {
-                    this.setState({currentStep: next});
-                    this.startInitialization();
+                    Modal.confirm({
+                        title: lang('提示', 'Prompt'),
+                        content: <div style={{fontSize: 12}}>
+                            {
+                                this.props.enableCreateBuddyGroup ?
+                                    <p>{lang(`您确定要在初始化期间创建Buddy Group吗？`, `Are you sure to create Buddy Group during initialization?`)}</p> :
+                                    <p>{lang(`您确定不在初始化期间创建Buddy Group吗？您可以在系统初始化完成之后再创建。`, `Are you sure not to create Buddy Group during initialization? You can create it after system is initialized.`)}</p>
+                            }
+                        </div>,
+                        iconType: 'exclamation-circle-o',
+                        okType: 'primary',
+                        okText: lang('确认', 'Confirm'),
+                        cancelText: lang('取消', 'Cancel'),
+                        onOk: async () => {
+                            this.setState({currentStep: next});
+                            // this.startInitialization();
+                        },
+                        onCancel: () => {
+
+                        }
+                    });
                 }
                 break;
             default:
@@ -451,7 +471,7 @@ class Initialize extends Component {
 
     startInitialization (){
         this.setState({initInfoList: [{step: 0, initProgress: 0}]});
-        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID} = this.props;
+        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID, enableCreateBuddyGroup} = this.props;
         httpRequests.startInitialization({
             // service and client IPs
             metadataServerIPs,
@@ -467,6 +487,8 @@ class Initialize extends Component {
             enableCustomRAID: this.state.enableCustomRAID,
             recommendedRAID,
             customRAID,
+            // buddy group
+            enableCreateBuddyGroup,
         });
         this.setProgressTimer();
     }
@@ -545,7 +567,7 @@ class Initialize extends Component {
                 </section>
                 <Steps className="fs-initialize-step-index-wrapper" size="small" key="initialize-step" current={this.state.currentStep}>
                     <Steps.Step title={lang('定义角色', 'Define Roles')} icon={<Icon type="user" />} />
-                    <Steps.Step title={lang('配置RAID', 'Configure RAID')} icon={<Icon type="hdd" />} />
+                    <Steps.Step title={lang('确认配置', 'Confirm Configuration')} icon={<Icon type="hdd" />} />
                     <Steps.Step title={lang('初始化', 'Initialization')} icon={this.state.currentStep === 2 ? <Icon type="loading" /> : <Icon type="setting" />} />
                     <Steps.Step title={lang('完成', 'Complete')} icon={<Icon type="smile-o" />} />
                 </Steps>
@@ -839,11 +861,11 @@ class Initialize extends Component {
                                     !this.state.enableCustomRAID ?
                                         <RecommendedRAID
                                             ref={ref => this.recommendedRAIDWrapper = ref}
-                                            customRAID={this.customRAID.bind(this)}
+                                            enableCustomRAID={this.enableCustomRAID.bind(this)}
                                         /> :
                                         <CustomRAID
                                             ref={ref => this.customRAIDWrapper = ref}
-                                            recommendedRAID={this.recommendedRAID.bind(this)}
+                                            enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
                                         />
                                 }
                                 <section className="fs-buddy-group-wrapper">
@@ -873,8 +895,8 @@ class Initialize extends Component {
                         <div className="fs-initialize-step-content">
                             <section className="fs-step-title">
                                 {lang(
-                                    '步骤3 - 初始化：初始化已经开始！请保持设备网络畅通，请勿关闭电源。',
-                                    'Step3 - initialization: Initializing has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
+                                    '步骤3 - 初始化：初始化已经开始！请保持相关设备的网络畅通，请勿关闭电源。',
+                                    'Step3 - initialization: Initialization has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
                                 )}
                             </section>
                             <Progress

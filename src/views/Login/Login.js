@@ -178,7 +178,7 @@ class Login extends Component {
                                     {this.state.doingLogin ? lang('登录中...', 'Signing in...') : lang('登录', 'Sign In')}
                                 </Button>
                                 <div className="fs-login-forget-password-tip">
-                                    <Icon type="question-circle-o" /> {lang('如果忘记密码，请联系运维人员协助找回', 'If forget password, ask Q&M personnel for help')}
+                                    <Icon type="info-circle-o" /> {lang('如果忘记密码，请联系运维人员协助找回', 'If forget password, ask Q&M personnel for help')}
                                 </div>
                             </div>
                         </Form>

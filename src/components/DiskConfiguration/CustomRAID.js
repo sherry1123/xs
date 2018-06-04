@@ -11,7 +11,11 @@ import {formatStorageSize} from '../../services/index';
 class CustomRAID extends Component {
     constructor (props){
         super(props);
+        this.defaultRAIDLevel = {name: 'RAID 5', rule: '3|-1|-1'};
         let {metadataServerIPs, storageServerIPs} = props;
+        let metadataNodes = this.convertNodes('metadata', metadataServerIPs);
+        let storageNodes = this.convertNodes('storage', storageServerIPs);
+        let RAIDList = metadataNodes[0].raidList;
         // node disks group by node ip
         this.nodeDisksMap = {};
         // used node disks group by node ip
@@ -22,8 +26,8 @@ class CustomRAID extends Component {
             // current RAID conf in current node's RAID list
             currentRAIDConf: {i: -1, arrayLevel: {}, arrayStripeSize: '', selectedDisks: [],},
             // all node
-            metadataNodes: this.convertNodes('metadata', metadataServerIPs),
-            storageNodes: this.convertNodes('storage', storageServerIPs),
+            metadataNodes,
+            storageNodes,
             // RAID level for drop down selection
             // rule example: 'at least disks|at most disks|even or odd disks', '-1' means no need to validate this item
             RAIDLevels: [
@@ -36,11 +40,11 @@ class CustomRAID extends Component {
             // stripe size for drop down selection
             stripeSize: ['2 KB', '4 KB', '8 KB', '16 KB', '32 KB', '64 KB', '128 KB', '256 KB'],
             // RAID configuration list of current node
-            RAIDList: [],
+            RAIDList,
             // already selected disks in current RAID
             selectedDisks: [],
             // current RAID level, contains level text and rule
-            arrayLevel: {name: 'RAID 5', min: 3, max: '', rule: ''},
+            arrayLevel: {name: 'RAID 5', rule: '3|-1|-1'},
             // current RAID recommended stripe size
             arrayStripeSize: '8 KB',  // default to 8KB
             // current RAID total capacity
@@ -48,6 +52,10 @@ class CustomRAID extends Component {
             // if can apply this RAID configuration for the node, must pass the RAID rule validation
             enableApplyButton: true,
         };
+        this.props.setCustomRAID({
+            metadataNodes: [...metadataNodes],
+            storageNodes: [...storageNodes],
+        });
     }
 
     /*
@@ -63,7 +71,7 @@ class CustomRAID extends Component {
         return nodes.map(node => (node.hasOwnProperty('type') ? node : {
             type,
             ip: node,
-            raidList: [{i: 0, arrayLevel: {name: 'RAID 5', min: 3, max: '', rule: ''}, arrayStripeSize: '8 KB', selectedDisks: []}], // provide an un-finished RAID conf
+            raidList: [{i: 0, arrayLevel: this.defaultRAIDLevel, arrayStripeSize: '8 KB', selectedDisks: []}], // provide an un-finished RAID conf
         }));
     }
 
@@ -83,7 +91,7 @@ class CustomRAID extends Component {
         let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
         let newRAIDIndex = nodes[currentServiceNode.i].raidList.length;
         currentServiceNode.raidList.push({
-            i: newRAIDIndex, arrayLevel: {name: 'RAID 5', min: 3, max: '', rule: ''}, arrayStripeSize: '8 KB', selectedDisks: []
+            i: newRAIDIndex, arrayLevel: this.defaultRAIDLevel, arrayStripeSize: '8 KB', selectedDisks: []
         });
         nodes[currentServiceNode.i].raidList = currentServiceNode.raidList;
         this.setState({
@@ -106,44 +114,50 @@ class CustomRAID extends Component {
     async switchRAID (conf, i){
         let {currentServiceNode} = this.state;
         let ip = currentServiceNode.ip;
-        let nodeDisks = await this.getNodeDisksByNodeIP(ip);
-        // If some disks on one node are used by metadata service, they can't be used by storage service on the same node,
-        // and vice versa. This is aimed at the situation that metadata and storage services are created on one same node
-        let usedDisks = this.usedDiskNamesGroupByNodeIP[ip];
-        if (usedDisks){
-            let usedDiskNames = usedDisks.map(disk => disk.diskName);
-            if (!!usedDisks){
-                nodeDisks = nodeDisks.filter(disk => !usedDiskNames.includes(disk.diskName));
+        try {
+            // Switch to this RAID conf only when fetch this node's disk list successfully
+            let nodeDisks = await this.getNodeDisksByNodeIP(ip);
+            // If some disks on one node are used by metadata service, they can't be used by storage service on the same node,
+            // and vice versa. This is aimed at the situation that metadata and storage services are created on one same node
+            let usedDisks = this.usedDiskNamesGroupByNodeIP[ip];
+            if (usedDisks){
+                let usedDiskNames = usedDisks.map(disk => disk.diskName);
+                if (!!usedDisks){
+                    nodeDisks = nodeDisks.filter(disk => !usedDiskNames.includes(disk.diskName));
+                }
             }
-        }
-        // change the left side disks for FSTransfer
-        this.fsTransferWrapper.getWrappedInstance().changeSource(nodeDisks);
-        if (!conf.selectedDisks.length){
-            // the selected RAID hasn't finished RAID configuration yet
-            this.setState({
-                currentRAIDConf: Object.assign({}, conf, {i}), // i is a helpful key for mutating a conf in RAID conf list quickly
-                selectedDisks: [],
-                arrayLevel: {name: 'RAID 5', min: 3, max: '', rule: ''},
-                arrayStripeSize: '8 KB',
-                arrayCapacity: 0
-            });
-        } else {
-            // the selected node is configured
-            let selectedDisks = conf.selectedDisks;
-            // show RAID configuration of this node
-            let selectedDisksNames = selectedDisks.map(disk => disk.diskName);
-            // remove the disks that are already in selectedDisks
-            nodeDisks = nodeDisks.filter(disk => !selectedDisksNames.includes(disk.diskName));
+            // change the left side disks for FSTransfer
             this.fsTransferWrapper.getWrappedInstance().changeSource(nodeDisks);
-            // re-calculate RAID capacity
-            let arrayCapacity = this.calculateArrayCapacity(selectedDisks);
-            this.setState({
-                currentRAIDConf: Object.assign({}, conf, {i}),
-                selectedDisks,
-                arrayLevel: conf.arrayLevel,
-                arrayStripeSize: conf.arrayStripeSize,
-                arrayCapacity
-            });
+            if (!conf.selectedDisks.length){
+                // the selected RAID hasn't finished RAID configuration yet
+                this.setState({
+                    currentRAIDConf: Object.assign({}, conf, {i}), // i is a helpful key for mutating a conf in RAID conf list quickly
+                    selectedDisks: [],
+                    arrayLevel: this.defaultRAIDLevel,
+                    arrayStripeSize: '8 KB',
+                    arrayCapacity: 0
+                });
+            } else {
+                // the selected node is configured
+                let selectedDisks = conf.selectedDisks;
+                // show RAID configuration of this node
+                let selectedDisksNames = selectedDisks.map(disk => disk.diskName);
+                // remove the disks that are already in selectedDisks
+                nodeDisks = nodeDisks.filter(disk => !selectedDisksNames.includes(disk.diskName));
+                this.fsTransferWrapper.getWrappedInstance().changeSource(nodeDisks);
+                // re-calculate RAID capacity
+                let arrayCapacity = this.calculateArrayCapacity(selectedDisks);
+                this.setState({
+                    currentRAIDConf: Object.assign({}, conf, {i}),
+                    selectedDisks,
+                    arrayLevel: conf.arrayLevel,
+                    arrayStripeSize: conf.arrayStripeSize,
+                    arrayCapacity
+                });
+            }
+        } catch (e){
+            // fetch disks failed
+            message.error(lang(`获取节点 ${ip} 的磁盘失败！`, `Fetch disks of node ${ip} failed!`));
         }
     }
 
@@ -191,16 +205,19 @@ class CustomRAID extends Component {
         // check whether selected selectedDisks of this RAID match current RAID level rule or not
         let {arrayLevel: {rule}} = this.state;
         let [min, max, parity] = rule.split('|');
+        console.info(min, max, parity);
         let {selectedDisks} = this.state;
         let diskNumber = selectedDisks.length;
         // validate number at lest of disks
         if (min !== '-1'){
+            console.info(diskNumber, min, diskNumber < min);
              if (diskNumber < min){
                  return false;
              }
         }
         // validate number at most of disks
         if (max !== '-1'){
+            console.info(diskNumber, max, diskNumber > max);
             if (diskNumber > max){
                 return false;
             }
@@ -225,14 +242,14 @@ class CustomRAID extends Component {
             currentRAIDConf.arrayStripeSize = this.state.arrayStripeSize;
             let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
             nodes[currentServiceNode.i].raidList[currentRAIDConf.i] = currentRAIDConf;
-            await this.setState({[currentServiceNode.type + 'Nodes']: nodes});
+            await this.setState({[currentServiceNode.type + 'Nodes' ]: nodes});
             // reset the used disks record
             this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = nodes[currentServiceNode.i].raidList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
             message.success(lang('应用RAID配置成功!', 'Apply RAID configuration successfully!'));
             let {metadataNodes, storageNodes} = this.state;
             this.props.setCustomRAID({
-                metadataNodes: Object.assign({}, metadataNodes),
-                storageNodes: Object.assign({}, storageNodes),
+                metadataNodes: [...metadataNodes],
+                storageNodes: [...storageNodes],
             });
         } else {
             // Give some tips out according to current RAID level rule, and let user to
@@ -242,9 +259,9 @@ class CustomRAID extends Component {
         }
     }
 
-    recommendedRAID (){
-        let {recommendedRAID} = this.props;
-        (typeof recommendedRAID === 'function') && recommendedRAID();
+    enableRecommendedRAID (){
+        let {enableRecommendedRAID} = this.props;
+        (typeof enableRecommendedRAID === 'function') && enableRecommendedRAID();
     }
 
     render (){
@@ -264,7 +281,7 @@ class CustomRAID extends Component {
                     <div className="fs-raid-list-title">
                         {lang('自定义RAID', 'Custom RAID')}
                         <span className="fs-raid-custom">
-                            <span onClick={this.recommendedRAID.bind(this)}>{lang('推荐配置', 'Recommended')}</span>
+                            <span onClick={this.enableRecommendedRAID.bind(this)}>{lang('推荐配置', 'Recommended')}</span>
                             <Popover
                                 {...buttonPopoverConf}
                                 content={lang(
@@ -290,18 +307,19 @@ class CustomRAID extends Component {
                                     key={i}
                                 >
                                     <img src={RAIDImage} alt="raid-conf-img" />
-                                    <Popover
-                                        content={lang('移除该RAID配置', 'Remove this RAID')}
-                                    >
-                                        <Icon
-                                            className="fs-remove-raid"
-                                            type="close"
-                                            onClick={this.removeRAID.bind(this, conf, i)}
-                                        />
-                                    </Popover>
                                     {
-                                        !!conf.selectedDisks.length &&
-                                        <Popover
+                                        i !== 0 && <Popover
+                                            content={lang('移除该RAID配置', 'Remove this RAID')}
+                                        >
+                                            <Icon
+                                                className="fs-remove-raid"
+                                                type="close"
+                                                onClick={this.removeRAID.bind(this, conf, i)}
+                                            />
+                                        </Popover>
+                                    }
+                                    {
+                                        !!conf.selectedDisks.length && <Popover
                                             content={lang('该RAID配置完成', 'This RAID is configurated')}
                                         >
                                             <Icon
@@ -328,10 +346,11 @@ class CustomRAID extends Component {
                 </div>
                 <div className="fs-right-side-wrapper">
                     <div className="fs-raid-info-wrapper">
+                        <span className="fs-raid-info-item">RAID {lang('配置信息: ', 'Info: ')}</span>
                         <span className="fs-raid-info-item">
-                            {lang('RAID级别', 'RAID Level')}:
+                            {lang('级别', 'Level')}:
                             <Select
-                                 style={{width: 100, marginLeft: 15}}
+                                 style={{width: 85, marginLeft: 15}}
                                  size="small"
                                  placeholder={lang('请选择', 'select')}
                                  value={arrayLevel.name}
@@ -348,12 +367,12 @@ class CustomRAID extends Component {
                                 }
                             </Select>
                         </span>
-                        <span className="fs-raid-info-item">{lang('阵列磁盘数量', 'Array Disk Number')}: {selectedDisks.length}</span>
-                        <span className="fs-raid-info-item">{lang('阵列总容量', 'Array Total Capacity')}: {formatStorageSize(arrayCapacity)}</span>
+                        <span className="fs-raid-info-item">{lang('磁盘数量', 'Disk Number')}: {selectedDisks.length}</span>
+                        <span className="fs-raid-info-item">{lang('总容量', 'Total Capacity')}: {formatStorageSize(arrayCapacity)}</span>
                         <span className="fs-raid-info-item">
                             {lang('条带大小', 'Stripe Size')}:
                             <Select
-                                style={{width: 100, marginLeft: 15}}
+                                style={{width: 75, marginLeft: 15}}
                                 size="small"
                                 placeholder={lang('请选择', 'select')}
                                 value={arrayStripeSize}
@@ -370,6 +389,7 @@ class CustomRAID extends Component {
                                 }
                             </Select>
                         </span>
+                        <span className="fs-raid-info-item add-disk-tip">{lang('请在下方为该RAID配置添加硬盘', 'Please add the disks for the RAID below')}</span>
                     </div>
                     <div className="fs-raid-custom-wrapper">
                         <FSTransfer

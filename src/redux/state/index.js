@@ -5,8 +5,8 @@ export default {
     // initialize
     initialize: {
         // step 1 role definition
-        metadataServerIPs: ['192.168.100.48', '192.168.100.49'],
-        storageServerIPs: ['192.168.100.50'],
+        metadataServerIPs: ['192.168.100.48',],
+        storageServerIPs: ['192.168.100.49'],
         clientIPs: ['192.168.100.101'],
         managementServerIPs: ['192.168.100.101'],
         enableHA: false,
@@ -51,43 +51,9 @@ export default {
                         diskType: 'ssd'
                     }
                 ],
-                '192.168.100.49': [
-                    {
-                        raidLevel: 5,
-                        diskList: [
-                            { diskName: '/dev/nvme0n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme1n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme2n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme3n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme4n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme5n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme6n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme7n1', totalSpace: 1024 * 1024 * 1024 * 400 }
-                        ],
-                        totalSpace: 1024 * 1024 * 1024 * 400 * 8,
-                        stripeSize: 1024 * 8,
-                        diskType: 'sdd'
-                    },
-                    {
-                        raidLevel: 5,
-                        diskList: [
-                            { diskName: '/dev/nvme8n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme9n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme10n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme11n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme12n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme13n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme14n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme15n1', totalSpace: 1024 * 1024 * 1024 * 400 }
-                        ],
-                        totalSpace: 1024 * 1024 * 1024 * 400 * 8,
-                        stripeSize: 1024 * 8,
-                        diskType: 'sdd'
-                    }
-                ]
             },
             storageServerIPs: {
-                '192.168.100.50': [
+                '192.168.100.49': [
                     {
                         raidLevel: 1,
                         diskList: [
