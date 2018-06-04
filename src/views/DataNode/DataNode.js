@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PhysicalNodeInfo from './PhysicalNodeInfo';
 import PhysicalNodeCPU from './PhysicalNodeCPU';
-import PhysicalNodeRAM from './PhysicalNodeRAM';
+import PhysicalNodeDRAM from './PhysicalNodeDRAM';
 import PhysicalNodeTPS from './PhysicalNodeTPS';
 import PhysicalNodeIOPS from './PhysicalNodeIOPS';
 import PhysicalNodeTargetList from './PhysicalNodeTargetList';
@@ -13,7 +13,7 @@ export default class DataNode extends Component {
         httpRequests.getPhysicalNodeInfo();
         httpRequests.getPhysicalNodeTargets();
         httpRequests.getPhysicalNodeCPU();
-        httpRequests.getPhysicalNodeRAM();
+        httpRequests.getPhysicalNodeDRAM();
         httpRequests.getPhysicalNodeTPS();
         httpRequests.getPhysicalNodeIOPS();
     }
@@ -24,7 +24,7 @@ export default class DataNode extends Component {
                 <PhysicalNodeInfo />
                 <div className="fs-dashboard-row">
                     <PhysicalNodeCPU />
-                    <PhysicalNodeRAM />
+                    <PhysicalNodeDRAM />
                 </div>
                 <div className="fs-dashboard-row">
                     <PhysicalNodeTPS />

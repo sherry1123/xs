@@ -217,7 +217,7 @@ export default  {
         }
     },
 
-    getPhysicalNodeRAM ({nodeId} = (lsGet('currentPhysicalNode') || {})){
+    getPhysicalNodeDRAM ({nodeId} = (lsGet('currentPhysicalNode') || {})){
         if (!!nodeId){
             requestMiddleWare(async () => {
                 let data = await fetchGet('/api/getnodememory', {nodeId});

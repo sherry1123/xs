@@ -4,7 +4,7 @@ import {Icon} from 'antd';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import lang from '../../components/Language/lang';
 
-class PhysicalNodeRAM extends Component {
+class PhysicalNodeDRAM extends Component {
     render (){
         let {physicalNodeRAM: {total, time}} = this.props;
         let option = {
@@ -13,7 +13,7 @@ class PhysicalNodeRAM extends Component {
             series: [
                 {
                     data: total,
-                    name: lang('内存使用率', 'RAM Usage Rate'),
+                    name: lang('内存使用率', 'DRAM Usage Rate'),
                     type: 'line',
                     itemStyle: {normal: {color: '#fff', lineStyle: {width: 1}}},
                     area: ['#e494ff', '#fceeff'],
@@ -22,7 +22,7 @@ class PhysicalNodeRAM extends Component {
         };
         return (
             <div className="fs-statistics-chart-wrapper">
-                <header><Icon type="line-chart" />{lang('节点内存使用率', 'Node RAM Usage Rate')}</header>
+                <header><Icon type="line-chart" />{lang('节点内存使用率', 'Node DRAM Usage Rate')}</header>
                 <FSLineChart option={option} />
             </div>
         );
@@ -34,4 +34,4 @@ const mapStateToProps = state => {
     return {language, physicalNodeRAM};
 };
 
-export default connect(mapStateToProps)(PhysicalNodeRAM);
+export default connect(mapStateToProps)(PhysicalNodeDRAM);

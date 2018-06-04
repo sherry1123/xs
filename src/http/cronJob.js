@@ -48,7 +48,7 @@ const fetchDataPer15s = () => {
         httpRequests.getPhysicalNodeInfo();
         httpRequests.getPhysicalNodeTargets();
         httpRequests.getPhysicalNodeCPU();
-        httpRequests.getPhysicalNodeRAM();
+        httpRequests.getPhysicalNodeDRAM();
         httpRequests.getPhysicalNodeTPS();
         httpRequests.getPhysicalNodeIOPS();
     }

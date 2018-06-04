@@ -906,55 +906,50 @@ class Initialize extends Component {
                                 status={this.state.initStatusNum === 0 ? (this.state.initProgress === 100 ? 'success' : 'active') : 'exception'}
                                 strokeWidth={15}
                             />
-                            <QueueAnim type="bottom">
-                                <section key="fs-initializing-3" className="fs-initialization-wrapper">
-                                    {
-                                        this.state.initInfoList.map((info, i) => info.step === -1 ?
+                            <section className="fs-initialization-wrapper">
+                                {
+                                    this.state.initInfoList.map((info, i) => info.step === -1 ?
                                         <p className="fs-initialization-info failed" key={i}>
                                             {initTipsMap[-1]}
                                         </p> :
                                         <p className="fs-initialization-info" key={i}>
                                             {lang('完成百分比：', 'Completion percentage: ') + info.initProgress + '%, ' + initTipsMap[info.step]}
                                         </p>)
-                                    }
-                                </section>
-                            </QueueAnim>
+                                }
+                            </section>
                         </div>
                     }
                     {
                         this.state.currentStep === 3 &&
                         <div className="fs-initialize-step-content">
-                            <QueueAnim duration={200}>
-                                <section key={1} className="fs-step-title">
-                                    <p>
-                                        {lang(
-                                            '步骤4 - 完成：初始化已完成，您的存储集群已经准备好了!',
-                                            'Step4 - finished: The initialization is complete and your storage cluster is ready!'
-                                        )}
-                                    </p>
-                                </section>
-                            </QueueAnim>
-                            <QueueAnim type="bottom" delay={250}>
-                                <section key="fs-initialized-2" className="fs-done-wrapper">
-                                    <p>
-                                        {lang(
-                                            '以下是为您生成的登录账号，请将其记录并保存到一个安全的地方：',
-                                            'The following is a login account generated for you, please keep a record of it at a safe place: '
-                                        )}
-                                    </p>
-                                    <p>{lang('管理员帐号', 'Admin Account')}: {this.props.defaultUser.username}</p>
-                                    <p>{lang('管理员密码', 'Admin Password')}: {this.props.defaultUser.password}</p>
-                                    <p>
-                                        {lang('您可以随时在设置界面中修改密码。', 'You can modify the password at any time on the settings page.')}
-                                    </p>
-                                </section>
-                            </QueueAnim>
+                            <section className="fs-step-title">
+                                <p>
+                                    {lang(
+                                        '步骤4 - 完成：初始化已完成，您的存储集群已经准备好了!',
+                                        'Step4 - finished: The initialization is complete and your storage cluster is ready!'
+                                    )}
+                                </p>
+                            </section>
+                            <section key="fs-initialized-2" className="fs-done-wrapper">
+                                <p>
+                                    {lang(
+                                        '以下是为您生成的管理员账号及初始密码，请点击下方的"开始使用"按钮并通过该账号进行登录: ',
+                                        'The following is a administration account that generated for you, please click the "Start Using" button and do login through this account: '
+                                    )}
+                                </p>
+                                <p>{lang('帐号', 'Account')}: {this.props.defaultUser.username}</p>
+                                <p>{lang('密码', 'Password')}: {this.props.defaultUser.password}</p>
+                                <p>
+                                    <Icon style={{color: '#52a7fe'}} type="info-circle-o" /> {lang('出于账号安全的考虑，建议您在登录后立即点击右上方用户信息进行密码修改。', 'Consider to the security of account, we suggest you to click the user information at top-right region of the screen to change the password immediately after login.')}
+                                </p>
+                            </section>
                         </div>
                     }
                 </section >
                 <section className="fs-initialize-step-action-wrapper">
                     {
                         this.state.currentStep > 0 &&
+                        this.state.currentStep !== this.state.totalStep - 2 &&
                         this.state.currentStep !== this.state.totalStep - 1 &&
                         <Button
                             size="small"

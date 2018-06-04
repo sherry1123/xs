@@ -44,7 +44,7 @@ class PhysicalNodeInfo extends Component {
         httpRequests.getPhysicalNodeInfo(currentPhysicalNode);
         httpRequests.getPhysicalNodeTargets(currentPhysicalNode);
         httpRequests.getPhysicalNodeCPU(currentPhysicalNode);
-        httpRequests.getPhysicalNodeRAM(currentPhysicalNode);
+        httpRequests.getPhysicalNodeDRAM(currentPhysicalNode);
         httpRequests.getPhysicalNodeTPS(currentPhysicalNode);
         httpRequests.getPhysicalNodeIOPS(currentPhysicalNode);
     }

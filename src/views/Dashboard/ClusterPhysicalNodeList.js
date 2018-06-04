@@ -45,7 +45,7 @@ class ClusterPhysicalNodeList extends Component {
                         <span className="fs-physical-node-abnormal">{lang('异常', 'Abnormal')}</span>
                 },
                 {title: lang('CPU使用率', 'CPU Usage Rate'), width: 80, dataIndex: 'cpuUsage'},
-                {title: lang('内存使用率', 'Memory Usage Rate'), width: 80, dataIndex: 'memoryUsage'},
+                {title: lang('内存使用率', 'DRAM Usage Rate'), width: 80, dataIndex: 'memoryUsage'},
                 {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
                         <Popover
