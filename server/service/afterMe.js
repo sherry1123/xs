@@ -145,7 +145,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { hostname, ip, service, cpuUsage, memUsage, spaceUsage, spaceTotal, spaceUsed, spaceFree, status } = res.data[i];
-                res.data[i] = { hostname, ip, service: service.map(i => (i === 'meta' ? 'metadata' : i)), status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${(spaceUsed / spaceTotal * 100).toFixed(2)}%` } };
+                res.data[i] = { hostname, ip, service: service.map(i => (i === 'meta' ? 'metadata' : i)), isPureMgmt: service.length === 1 && service.includes('mgmt'), status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${(spaceUsed / spaceTotal * 100).toFixed(2)}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.hostname > next.hostname));
         }
@@ -166,6 +166,21 @@ const model = {
             res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
         }
         return res;
+    },
+    async getClusterThroughputAndIops(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getclusteriostat, param, token, true, { data: { throughput: [], iops: [] } });
+    },
+    async getNodeCpuAndMemory(param) {
+        let token = await model.getToken();
+        let res = await request.get(config.api.orcafs.getphysicresource, param, token, true, { data: { cpu: 0, memory: 0 } });
+        res.data.cpu = res.data.cpu.toFixed(2);
+        res.data.memory = res.data.memory.toFixed(2);
+        return res;
+    },
+    async getNodeThroughputAndIops(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getiostat, param, token, true, { data: { throughput: [], iops: [] } });
     }
 };
 module.exports = model;

@@ -65,7 +65,9 @@ exports.api = {
         listtargets: 'http://localhost:9090/cluster/listtargets',
         listallnodes: 'http://localhost:9090/cluster/listallnodes',
         getnodeservice: 'http://localhost:9090/cluster/getnodeservice',
-        listnodetargets: 'http://localhost:9090/cluster/listnodetargets'
+        listnodetargets: 'http://localhost:9090/cluster/listnodetargets',
+        getclusteriostat: 'http://localhost:9090/cluster/getclusteriostat',
+        getphysicresource: 'http://localhost:9090/cluster/getphysicresource'
     }
 };
 exports.key = {
