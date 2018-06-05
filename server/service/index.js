@@ -1123,10 +1123,10 @@ const model = {
         return result;
     },
     async createNasServer(param, user, ip) {
-        let { ip: server, path } = param;
+        let { ip: server, path, description } = param;
         let result = {};
         try {
-            await database.addNasServer({ ip: server, path });
+            await database.addNasServer({ ip: server, path, description });
             result = handler.response(0, 'create NAS server successfully');
             await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
         } catch (error) {
