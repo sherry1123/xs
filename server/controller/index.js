@@ -279,6 +279,9 @@ const model = {
     '/api/createnasserver': async ctx => {
         ctx.body = await service.createNasServer(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
+    '/api/updatenasserver': async ctx => {
+        ctx.body = await service.updateNasServer(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
     '/api/getinitparam': async ctx => {
         ctx.body = await service.getInitParam(ctx.param);
     }

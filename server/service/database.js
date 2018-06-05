@@ -264,6 +264,9 @@ const model = {
     },
     async addNasServer(param) {
         return await dao.createOne(nasServer, param);
+    },
+    async updateNasServer(query, param) {
+        return await dao.updateOne(nasServer, query, param);
     }
 };
 module.exports = model;
