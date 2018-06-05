@@ -92,5 +92,5 @@ router.all('/api/getnodetarget', controller['/api/getnodetarget']);
 
 router.all('/api/getnasserver', controller['/api/getnasserver']);
 router.all('/api/createnasserver', controller['/api/createnasserver']);
-
+router.all('/api/getinitparam', controller['/api/getinitparam']);
 module.exports = router;

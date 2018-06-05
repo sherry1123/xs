@@ -1134,6 +1134,16 @@ const model = {
             await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
         }
         return result;
-    }
+    },
+    async getInitParam(param) {
+        let result = {};
+        try {
+            let data = await database.getSetting({key: config.setting.initParam});
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
 };
 module.exports = model;
