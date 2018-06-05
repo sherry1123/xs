@@ -995,9 +995,9 @@ const model = {
         try {
             let res = await afterMe.getClusterTarget(param);
             if (!res.errorId) {
-                result = handler.response(0, res.data);   
+                result = handler.response(0, res.data);
             } else {
-                result = handler.response(173, res.message, param); 
+                result = handler.response(173, res.message, param);
             }
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1043,7 +1043,7 @@ const model = {
         try {
             let res = await afterMe.getNodeService(param);
             if (!res.errorId) {
-                result = handler.response(0, res.data);
+                result = handler.response(0, { metadata: res.data.meta, storage: res.data.storage });
             } else {
                 result = handler.response(173, res.message, param);
             }
