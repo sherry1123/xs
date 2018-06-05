@@ -270,7 +270,7 @@ class CustomRAID extends Component {
             currentServiceNode = {}, currentRAIDConf = {},
             enableApplyButton, RAIDLevels, arrayLevel, arrayStripeSize, arrayCapacity, stripeSize, RAIDList, selectedDisks,
         } = this.state;
-        let serviceTypeMap = {
+        let serviceRoleMap = {
             metadata: lang('元数据服务', 'Metadata'),
             storage: lang('存储服务', 'Storage'),
             management: lang('管理服务', 'Management'),
@@ -295,7 +295,7 @@ class CustomRAID extends Component {
                     </div>
                     {
                         currentServiceNode.hasOwnProperty('type') && <div className="fs-raid-service">
-                            {serviceTypeMap[currentServiceNode.type]}<span>{currentServiceNode.ip}</span>
+                            {serviceRoleMap[currentServiceNode.type]}<span>{currentServiceNode.ip}</span>
                         </div>
                     }
                     <div className="fs-raid-conf-list-wrapper">

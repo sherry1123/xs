@@ -7,10 +7,11 @@ import metadataNodeAction from '../redux/actions/metadataNodeAction';
 import storageNodeAction from '../redux/actions/storageNodeAction';
 import dashboardAction from '../redux/actions/dashboardAction';
 import dataNodeAction from '../redux/actions/dataNodeAction';
-import managementAction from '../redux/actions/managementAction';
+import systemLogAction from '../redux/actions/systemLogAction';
 import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
 import localAuthUserAction from '../redux/actions/localAuthUserAction';
+import targetAction from '../redux/actions/targetAction';
 
 const requestMiddleWare = fn => {
     try {
@@ -191,71 +192,71 @@ export default  {
     },
 
     // data node
-    getPhysicalNodeInfo ({nodeId} = (lsGet('currentPhysicalNode') || {})){
-        if (!!nodeId){
+    getPhysicalNodeInfo ({hostname} = (lsGet('currentPhysicalNode') || {})){
+        if (!!hostname){
             requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getnodeinfo', {nodeId});
+                let data = await fetchGet('/api/getnodeservice', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeInfo(data));
             });
         }
     },
 
-    getPhysicalNodeTargets ({nodeId} = (lsGet('currentPhysicalNode') || {})){
-        if (!!nodeId){
+    getPhysicalNodeTargets ({hostname} = (lsGet('currentPhysicalNode') || {})){
+        if (!!hostname){
             requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getnodetarget', {nodeId});
+                let data = await fetchGet('/api/getnodetarget', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeTargets(data));
             });
         }
     },
-    getPhysicalNodeCPU ({nodeId} = (lsGet('currentPhysicalNode') || {})){
-        if (!!nodeId){
+    getPhysicalNodeCPU ({hostname} = (lsGet('currentPhysicalNode') || {})){
+        if (!!hostname){
             requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getnodecpu', {nodeId});
+                let data = await fetchGet('/api/getnodecpu', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeCPU(data));
             });
         }
     },
 
-    getPhysicalNodeDRAM ({nodeId} = (lsGet('currentPhysicalNode') || {})){
-        if (!!nodeId){
+    getPhysicalNodeDRAM ({hostname} = (lsGet('currentPhysicalNode') || {})){
+        if (!!hostname){
             requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getnodememory', {nodeId});
+                let data = await fetchGet('/api/getnodememory', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeRAM(data));
             });
         }
     },
 
-    getPhysicalNodeTPS ({nodeId} = (lsGet('currentPhysicalNode') || {})){
-        if (!!nodeId){
+    getPhysicalNodeTPS ({hostname} = (lsGet('currentPhysicalNode') || {})){
+        if (!!hostname){
             requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getnodethroughput', {nodeId});
+                let data = await fetchGet('/api/getnodethroughput', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeTPS(data));
             });
         }
     },
 
-    getPhysicalNodeIOPS ({nodeId} = (lsGet('currentPhysicalNode') || {})){
-        if (!!nodeId){
+    getPhysicalNodeIOPS ({hostname} = (lsGet('currentPhysicalNode') || {})){
+        if (!!hostname){
             requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getnodeiops', {nodeId});
+                let data = await fetchGet('/api/getnodeiops', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeIOPS(data));
             });
         }
     },
 
-    // management
+    // system log
     getEventLogs (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/geteventlog');
-            !!data && store.dispatch(managementAction.setSystemEventLogs(data));
+            !!data && store.dispatch(systemLogAction.setSystemEventLogs(data));
         });
     },
 
     getAuditLogs (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getauditlog');
-            !!data && store.dispatch(managementAction.setSystemAuditLogs(data));
+            !!data && store.dispatch(systemLogAction.setSystemAuditLogs(data));
         });
     },
 
@@ -495,6 +496,29 @@ export default  {
 
     async removeLocalAuthUserFromGtoup (userData){
         await fetchPost('/api/removelocalauthuserfromgroup', userData);
+    },
+
+    // target and buddy group
+    async getTargetList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getclustertarget');
+            !!data && store.dispatch(targetAction.setTargetList(data));
+        });
+    },
+
+    async createTarget (){
+
+    },
+
+    async getBuddyGroupList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getbuddygroup');
+            !!data && store.dispatch(targetAction.setBuddyGroupList(data));
+        });
+    },
+
+    async createBuddyGroup (buddyGroups){
+        await fetchPost('/api/createbuddygroup', buddyGroups);
     },
 
     // fs operation

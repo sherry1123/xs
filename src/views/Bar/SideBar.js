@@ -70,23 +70,6 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.DataNode}>
                         <Icon type="database" /><span className="fs-sidebar-menu-text">{lang('数据节点', 'Data Node')}</span>
                     </Menu.Item>
-                    {/*
-                    <Menu.Item key={routerPath.MetadataNodes}>
-                        <Icon type="hdd" />{lang('元数据节点', 'Metadata Nodes')}
-                    </Menu.Item>
-                    */}
-                    {/*<Menu.Item key={routerPath.StorageNodes}>
-                        <Icon type="database" />{lang('存储节点', 'Storage Nodes')}
-                    </Menu.Item>
-                    */}
-                    {/*
-                    <Menu.Item key={routerPath.ClientStatistics}>
-                        <Icon type="line-chart" />{lang('客户端统计', 'Client Statistics')}
-                    </Menu.Item>
-                    <Menu.Item key={routerPath.UserStatistics}>
-                        <Icon type="bar-chart" />{lang('用户统计', 'User Statistics')}
-                    </Menu.Item>
-                    */}
                     <Menu.SubMenu
                         key="Snapshot"
                         title={
@@ -129,43 +112,31 @@ class SideBar extends Component {
                         }
                     >
                         <Menu.Item key={routerPath.LocalAuthUser}>
-                            <Icon type="user-add" />{lang('本地认证用户', 'Local Auth. User')}
+                            <Icon type="user" />{lang('本地认证用户', 'Local Auth. User')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.LocalAuthUserGroup}>
                             <Icon type="usergroup-add" />{lang('本地认证用户组', 'Local Auth. Group')}
                         </Menu.Item>
                     </Menu.SubMenu>
-                    {/*<Menu.SubMenu key="Management"
+                    <Menu.SubMenu
+                        key="TargetAndBuddyGroup"
                         title={
                             <span>
-                                <Icon type="tool" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
-                                <span>{lang('管理', 'Management')}</span>
+                                <Icon type="hdd" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} />
+                                <span>{lang('存储目标', 'Storage Target')}</span>
                             </span>
                         }
                     >
-                        <Menu.Item key={routerPath.ManagementKnownProblems}>
-                            <Icon type="frown-o" />{lang('已知问题', 'Known Issues')}
-                        </Menu.Item>*/}
-                        <Menu.Item key={routerPath.SystemLog}>
-                            <Icon type="file-text" />{lang('系统日志', 'System Log')}
+                        <Menu.Item key={routerPath.Target}>
+                            <Icon type="hdd" />{lang('存储目标', 'Storage Target')}
                         </Menu.Item>
-                    {/*</Menu.SubMenu>*/}
-
-                    {/*<Menu.SubMenu key="FSOperation" inlineIndent={16}
-                        title={
-                            <span>
-                                <Icon type="switcher" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} style={{color: this.props.menuExpand ? 'rgba(0, 0, 0, .65)' : '#3690ff'}} />
-                                <span>{lang('文件系统操作', 'FS Operation')}</span>
-                            </span>
-                        }
-                    >
-                        <Menu.Item key={routerPath.FSOperationStripeSettings}>
-                            <Icon type="setting" />{lang('条带设置', 'Stripe Settings')}
+                        <Menu.Item key={routerPath.BuddyGroup}>
+                            <Icon type="api" />{lang('伙伴组', 'Buddy Group')}
                         </Menu.Item>
-                        <Menu.Item key={routerPath.FSOperationFileBrowser}>
-                            <Icon type="folder-open" />{lang('文件浏览器', 'File Browser')}
-                        </Menu.Item>
-                    </Menu.SubMenu>*/}
+                    </Menu.SubMenu>
+                    <Menu.Item key={routerPath.SystemLog}>
+                        <Icon type="file-text" />{lang('系统日志', 'System Log')}
+                    </Menu.Item>
                     <Menu.Item key={routerPath.FSOperation}>
                         <Icon type="setting" />{lang('文件系统操作', 'FS Operation')}
                     </Menu.Item>

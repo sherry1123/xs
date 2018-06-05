@@ -29,12 +29,6 @@ const fetchDataPer15s = () => {
         httpRequests.getStorageNodeDetailThroughput();
     }
 
-    // management - system log
-    if (routerHash.match(main + routerPath.ManagementSystemLog)){
-        httpRequests.getEventLogs();
-        httpRequests.getAuditLogs();
-    }
-
     // dashboard
     if (routerHash.match(main + routerPath.Dashboard)){
         httpRequests.getClusterTargets();
@@ -82,6 +76,22 @@ const fetchDataPer15s = () => {
     // local authentication user group
     if (routerHash.match(main + routerPath.LocalAuthUserGroup)){
         httpRequests.getLocalAuthUserGroupList();
+    }
+
+    // target
+    if (routerHash.match(main + routerPath.Target)){
+        httpRequests.getTargetList();
+    }
+
+    // buddy group
+    if (routerHash.match(main + routerPath.BuddyGroup)){
+        httpRequests.getBuddyGroupList();
+    }
+
+    // system log
+    if (routerHash.match(main + routerPath.ManagementSystemLog)){
+        httpRequests.getEventLogs();
+        httpRequests.getAuditLogs();
     }
 };
 

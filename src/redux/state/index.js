@@ -165,10 +165,15 @@ export default {
             CIFSList: [],
             localAuthUserOrGroupListOfCIFS: [],
         },
-        // management
-        management: {
+        // system log
+        systemLog: {
             eventLogs: [],
             auditLogs: [],
+        },
+        // target and buddy group
+        target: {
+            targetList: [],
+            buddyGroupList: [],
         },
         // local authentication user and group for CIFS share
         localAuthUser: {
