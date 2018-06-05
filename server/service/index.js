@@ -1105,6 +1105,29 @@ const model = {
             result = handler.response(173, error, param);
         }
         return result;
+    },
+    async getNasServer(param) {
+        let result = {};
+        try {
+            let data = await database.getNasServer(param);
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async createNasServer(param, user, ip) {
+        let { ip: server, path } = param;
+        let result = {};
+        try {
+            await database.addNasServer({ ip: server, path });
+            result = handler.response(0, 'create NAS server successfully');
+            await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
+        }
+        return result;
     }
 };
 module.exports = model;
