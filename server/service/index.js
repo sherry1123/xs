@@ -1007,11 +1007,7 @@ const model = {
     async getClusterThroughput(param) {
         let result = {};
         try {
-            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
-            let list = Array.from({ length: 60 }).fill(0);
-            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let throughput = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1024 * 1024 * 9)));
-            let data = { total: throughput, time };
+            let data = await database.getClusterThrought(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1021,11 +1017,7 @@ const model = {
     async getClusterIops(param) {
         let result = {};
         try {
-            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
-            let list = Array.from({ length: 60 }).fill(0);
-            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let iops = list.map(item => (item + (1 + Math.floor(Math.random() * 10) / 100) * 1000 * 9));
-            let data = { total: iops, time };
+            let data = await database.getClusterIops(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1063,11 +1055,7 @@ const model = {
     async getNodeCpu(param) {
         let result = {};
         try {
-            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
-            let list = Array.from({ length: 60 }).fill(0);
-            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let cpu = list.map(item => (item + 40 + Math.floor(Math.random() * 100) / 100));
-            let data = { total: cpu, time };
+            let data = await database.getNodeCpu(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1077,11 +1065,7 @@ const model = {
     async getNodeMemory(param) {
         let result = {};
         try {
-            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
-            let list = Array.from({ length: 60 }).fill(0);
-            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let memory = list.map(item => (item + 60 + Math.floor(Math.random() * 100) / 100));
-            let data = { total: memory, time };
+            let data = await database.getNodeMemory(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1091,11 +1075,7 @@ const model = {
     async getNodeIops(param) {
         let result = {};
         try {
-            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
-            let list = Array.from({ length: 60 }).fill(0);
-            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let iops = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1000)));
-            let data = { total: iops, time };
+            let data = await database.getNodeIops(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1105,12 +1085,7 @@ const model = {
     async getNodeThroughput(param) {
         let result = {};
         try {
-            let currentTime = Math.floor(new Date().getTime() / 1000) * 1000;
-            let list = Array.from({ length: 60 }).fill(0);
-            let time = list.map((item, index) => (item + currentTime - index * 15000)).reverse();
-            let read = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1024 * 256)));
-            let write = list.map(item => (item + Math.floor((1 + Math.floor(Math.random() * 10) / 100) * 1024 * 768)));
-            let data = { read, write, time };
+            let data = await database.getNodeThroughput(param);
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);

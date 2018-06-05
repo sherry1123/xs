@@ -7,8 +7,11 @@ const snapshot = require('../model/snapshot');
 const nfsShare = require('../model/nfsShare');
 const cifsShare = require('../model/cifsShare');
 const localAuthUser = require('../model/localAuthUser');
-const localAuthUserGroup = require('../model/localAuthUserGroup');
 const snapshotSchedule = require('../model/snapshotSchedule');
+const nodeCpuAndMemory = require('../model/nodeCpuAndMemory');
+const localAuthUserGroup = require('../model/localAuthUserGroup');
+const nodeThroughputAndIops = require('../model/nodeThroughtputAndIops');
+const clusterThroughputAndIops = require('../model/clusterThroughputAndIops');
 const model = {
     async login(param) {
         return await dao.findOne(user, param);
@@ -196,6 +199,64 @@ const model = {
     },
     async deleteLocalAuthUser(param) {
         return await dao.deleteOne(localAuthUser, param);
+    },
+    async addClusterThroughputAndIops(param) {
+        return await dao.createOne(clusterThroughputAndIops, param);
+    },
+    async addNodeThroughputAndIops(param) {
+        return await dao.createOne(nodeThroughputAndIops, param);
+    },
+    async addNodeCpuAndMemory(param) {
+        return await dao.createOne(nodeCpuAndMemory, param);
+    },
+    async getClusterThrought(param) {
+        let throughputList = await dao.findAll(clusterThroughputAndIops, param, { iops: 0 }, { sort: { time: -1 }, limit: 60 });
+        let total = throughputList.map(item => (item.throughput)).reverse();
+        let time = throughputList.map(item => (item.time)).reverse();
+        return { total, time };
+    },
+    async getClusterIops(param) {
+        let iopsList = await dao.findAll(clusterThroughputAndIops, param, { throughput: 0 }, { sort: { time: -1 }, limit: 60 });
+        let total = iopsList.map(item => (item.iops)).reverse();
+        let time = iopsList.map(item => (item.time)).reverse();
+        return { total, time };
+    },
+    async getNodeCpu(param) {
+        let { hostname } = param;
+        let data = await dao.findAll(nodeCpuAndMemory, {}, {}, { sort: { time: -1 }, limit: 60 });
+        let hostList = data[0].hostList;
+        let index = hostList.indexOf(hostname);
+        let total = data.map(item => (item.dataList[index].cpu)).reverse();
+        let time = data.map(item => (item.time)).reverse();
+        return { total, time };
+    },
+    async getNodeMemory(param) {
+        let { hostname } = param;
+        let data = await dao.findAll(nodeCpuAndMemory, {}, {}, { sort: { time: -1 }, limit: 60 });
+        let hostList = data[0].hostList;
+        let index = hostList.indexOf(hostname);
+        let total = data.map(item => (item.dataList[index].memory)).reverse();
+        let time = data.map(item => (item.time)).reverse();
+        return { total, time };
+    },
+    async getNodeThroughput(param) {
+        let { hostname } = param;
+        let data = await dao.findAll(nodeThroughputAndIops, {}, {}, { sort: { time: -1 }, limit: 60 });
+        let hostList = data[0].hostList;
+        let index = hostList.indexOf(hostname);
+        let read = data.map(item => (item.dataList[index].throughput.read)).reverse();
+        let write = data.map(item => (item.dataList[index].throughput.write)).reverse();
+        let time = data.map(item => (item.time)).reverse();
+        return { read, write, time };
+    },
+    async getNodeIops(param) {
+        let { hostname } = param;
+        let data = await dao.findAll(nodeThroughputAndIops, {}, {}, { sort: { time: -1 }, limit: 60 });
+        let hostList = data[0].hostList;
+        let index = hostList.indexOf(hostname);
+        let total = data.map(item => (item.dataList[index].iops)).reverse();
+        let time = data.map(item => (item.time)).reverse();
+        return { total, time };
     }
 };
 module.exports = model;
