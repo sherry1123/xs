@@ -8,7 +8,7 @@ class TargetUsageRateRanking extends Component {
     render (){
         let buttonPopoverConf = {trigger: 'click', placement: 'bottom'};
         let {targets, className} = this.props;
-        let serviceTypeMap = {
+        let serviceRoleMap = {
             metadata: lang('元数据服务', 'Metadata Service'),
             storage: lang('存储服务', 'Storage Service'),
         };
@@ -24,7 +24,8 @@ class TargetUsageRateRanking extends Component {
                                     <p>{lang('目标ID', 'Target ID')}: <span>{target.targetId}</span></p>
                                     <p>{lang('挂载路径', 'Mount Path')}: <span>{target.mountPath}</span></p>
                                     <p>{lang('所属节点', 'Node Belong')}: <span>{target.node}</span></p>
-                                    <p>{lang('所属服务类型', 'Service Belong Type')}: <span>{serviceTypeMap[target.service]}</span></p>
+                                    <p>{lang('所属服务类型', 'Service Type')}: <span>{serviceRoleMap[target.service]}</span></p>
+                                    <p>{lang('所属服务ID', 'Service ID')}: <span>{target.nodeId}</span></p>
                                     <p>{lang('总容量', 'Total Capacity')}: <span>{formatStorageSize(target.space.total)}</span></p>
                                     <p>{lang('已使用容量', 'Used Capacity')}: <span>{formatStorageSize(target.space.used)}</span></p>
                                     <p>{lang('剩余容量', 'Remaining Capacity')}: <span>{formatStorageSize(target.space.free)}</span></p>
@@ -43,7 +44,7 @@ class TargetUsageRateRanking extends Component {
                                 <div className="fs-capacity-bar">
                                     <div
                                         className="fs-capacity-used-bar"
-                                        style={{width: target.space.usage, background: getCapacityColour(target.space.usage)}}
+                                        style={{width: target.space.usage > '1%' ? target.space.usage : '1px', background: getCapacityColour(target.space.usage)}}
                                     />
                                 </div>
                             </section>

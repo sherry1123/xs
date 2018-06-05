@@ -18,8 +18,8 @@ class physicalNodeTPS extends Component {
                     data: read,
                     name: lang('读', 'Read'),
                     type: 'line',
-                    itemStyle: {normal: {color: '#fad08c', lineStyle: {width: 1}}},
-                    area: ['#fad08c', '#fdeedf'],
+                    itemStyle: {normal: {color: '#f8ada1', lineStyle: {width: 1}}},
+                    area: ['#f8ada1', '#fdeedf'],
                 },
                 {
                     data: write,

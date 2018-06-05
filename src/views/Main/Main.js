@@ -14,17 +14,8 @@ const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 // data node
 const DataNode = asyncLoad(() => import('../DataNode/DataNode'));
 
-// metadata nodes
-// const MetadataNodes = asyncLoad(() => import('../MetadataNodes/MetadataNodes'));
-
 // storage nodes
 const StorageNodes = asyncLoad(() => import('../StorageNodes/StorageNodes'));
-
-// client statistics metadata
-// const ClientStatistics = asyncLoad(() => import('../ClientStatistics/ClientStatistics'));
-
-// user statistics metadata
-// const UserStatistics = asyncLoad(() => import('../UserStatistics/UserStatistics'));
 
 // snapshot
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
@@ -38,7 +29,11 @@ const CIFS = asyncLoad(() => import('../CIFS/CIFS'));
 const LocalAuthUser = asyncLoad(() => import('../LocalAuthUser/LocalAuthUser'));
 const LocalAuthUserGroup = asyncLoad(() => import('../LocalAuthUserGroup/LocalAuthUserGroup'));
 
-// management
+// storage target and buddy group
+const Target  = asyncLoad(() => import('../Target/Target'));
+const BuddyGroup  = asyncLoad(() => import('../BuddyGroup/BuddyGroup'));
+
+// system log
 const SystemLog = asyncLoad(() => import('../SystemLog/SystemLog'));
 
 // fs operation
@@ -83,13 +78,7 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.DataNode}`} component={DataNode} />
 
-                        {/*<Route path={`${Main}${routerPath.MetadataNodes}`} component={MetadataNodes} />*/}
-
                         <Route path={`${Main}${routerPath.StorageNodes}`} component={StorageNodes} />
-
-                        {/*<Route path={`${Main}${routerPath.ClientStatistics}`} component={ClientStatistics} />*/}
-
-                        {/*<Route path={`${Main}${routerPath.UserStatistics}`} component={UserStatistics} />*/}
 
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
 
@@ -102,6 +91,10 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.LocalAuthUser}`} component={LocalAuthUser} />
 
                         <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
+
+                        <Route path={`${Main}${routerPath.Target}`} component={Target} />
+
+                        <Route path={`${Main}${routerPath.BuddyGroup}`} component={BuddyGroup} />
 
                         <Route path={`${Main}${routerPath.SystemLog}`} component={SystemLog} />
 

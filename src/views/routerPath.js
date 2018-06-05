@@ -43,6 +43,10 @@ const routerPath = {
     LocalAuthUser: '/local-auth-user',
     LocalAuthUserGroup: '/local-auth-user-group',
 
+    Target: '/target',
+
+    BuddyGroup: '/buddy-group',
+
     SystemLog: '/system-log',
 
     FSOperation: '/fs-operation',
@@ -62,6 +66,7 @@ export const pathToMenu = {
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
     Share: [routerPath.NFS, routerPath.CIFS],
     UserAndGroup: [routerPath.LocalAuthUser, routerPath.LocalAuthUserGroup],
+    TargetAndBuddyGroup: [routerPath.Target, routerPath.BuddyGroup],
     SystemLog: [routerPath.SystemLog],
     FSOperation: [routerPath.FSOperation],
 };

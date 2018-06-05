@@ -16,7 +16,7 @@ class ClusterPhysicalNodeList extends Component {
 
     render (){
         let {clusterPhysicalNodeList} = this.props;
-        let serviceTypeMap = {
+        let serviceRoleMap = {
             metadata: lang('元数据服务', 'Metadata'),
             storage: lang('存储服务', 'Storage'),
             mgmt: lang('管理服务', 'Management')
@@ -37,7 +37,7 @@ class ClusterPhysicalNodeList extends Component {
                 },
                 {title: lang('节点IP', 'Node IP'), width: 60, dataIndex: 'ip'},
                 {title: lang('服务角色', 'Service Role'), width: 100, dataIndex: 'service',
-                    render: text => text.map(role => serviceTypeMap[role]).join(', ')
+                    render: text => text.map(role => serviceRoleMap[role]).join(', ')
                 },
                 {title: lang('节点状态', 'Node Status'), width: 60, dataIndex: 'status',
                     render: text => text ?
@@ -63,7 +63,7 @@ class ClusterPhysicalNodeList extends Component {
                             <div className="fs-capacity-bar small" style={{width: 100}}>
                                 <div
                                     className="fs-capacity-used-bar"
-                                    style={{width: text.usage, background: getCapacityColour(text.usage)}}
+                                    style={{width: text.usage > '1%' ? text.usage : '1px', background: getCapacityColour(text.usage)}}
                                 />
                             </div>
                             <span className="fs-physical-node-capacity">{formatStorageSize(text.total)}</span>

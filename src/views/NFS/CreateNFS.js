@@ -74,7 +74,7 @@ class CreateNFS extends Component {
     }
 
     showCatalogTree (){
-        this.catalogTreeWrapper.getWrappedInstance().show([this.state.shareData.path]);
+        this.catalogTreeWrapper.getWrappedInstance().show(this.state.shareData.path ? [this.state.shareData.path] : []);
     }
 
     async selectPath (path){

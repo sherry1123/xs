@@ -9,7 +9,7 @@ class SystemLog extends Component {
     constructor (props){
         super(props);
         this.state = {
-            showTableType: 'event'
+            showTableType: 'audit'
         };
     }
 
@@ -104,7 +104,7 @@ class SystemLog extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {management: {eventLogs, auditLogs}}} = state;
+    let {language, main: {systemLog: {eventLogs, auditLogs}}} = state;
     return {language, eventLogs, auditLogs};
 };
 

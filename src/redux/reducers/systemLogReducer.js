@@ -1,12 +1,12 @@
 import State from '../state';
-import {managementActionTypes} from '../actions/managementAction';
+import {systemLogActionTypes} from '../actions/systemLogAction';
 
-const managementReducer = (state = State.main.management, action) => {
+const managementReducer = (state = State.main.systemLog, action) => {
     switch (action.type){
-        case managementActionTypes.SET_SYSTEM_EVENT_LOGS:
+        case systemLogActionTypes.SET_SYSTEM_EVENT_LOGS:
             return Object.assign({}, state, {eventLogs: action.eventLogs});
 
-        case managementActionTypes.SET_SYSTEM_AUDIT_LOGS:
+        case systemLogActionTypes.SET_SYSTEM_AUDIT_LOGS:
             return Object.assign({}, state, {auditLogs: action.auditLogs});
 
         default:

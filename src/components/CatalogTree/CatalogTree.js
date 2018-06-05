@@ -128,16 +128,18 @@ class CatalogTree extends Component {
                             {lang('已选目录路径：', 'Selected Catalog Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
                         </div>
                     }
-                    <Tree
-                        showIcon
-                        multiple={false}
-                        defaultExpandedKeys={['/']}
-                        defaultSelectedKeys={selectedCatalog}
-                        loadData={this.loadNode.bind(this)}
-                        onSelect={this.selectNode.bind(this)}
-                    >
-                        {this.renderTreeNodes(treeNodes)}
-                    </Tree>
+                    {
+                        !!treeNodes.length && <Tree
+                            showIcon
+                            multiple={false}
+                            defaultExpandedKeys={['/']}
+                            defaultSelectedKeys={selectedCatalog}
+                            loadData={this.loadNode.bind(this)}
+                            onSelect={this.selectNode.bind(this)}
+                        >
+                            {this.renderTreeNodes(treeNodes)}
+                        </Tree>
+                    }
                 </Spin>
             </Modal>
         );

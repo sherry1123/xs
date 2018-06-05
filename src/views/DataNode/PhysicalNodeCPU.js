@@ -10,6 +10,10 @@ class PhysicalNodeCPU extends Component {
         let option = {
             height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
             label: time,
+            tooltipFormatter: params  => `${params[0].name}<br />${params[0].seriesName}: ${params[0].value}%`,
+            yAxisUnit: '%',
+            yMin: 0,
+            yMax: 100,
             series: [
                 {
                     data: total,

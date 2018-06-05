@@ -53,7 +53,7 @@ class PhysicalNodeInfo extends Component {
         this.setState({showPhysicalNodeSelect: !this.state.showPhysicalNodeSelect});
     }
 
-    switchPhysicalNode (nodeId, {props: {currentPhysicalNode}}){
+    switchPhysicalNode (hostname, {props: {currentPhysicalNode}}){
         this.setState({showPhysicalNodeSelect: false,});
         this.props.setCurrentPhysicalNode(currentPhysicalNode);
         lsSet('currentPhysicalNode', currentPhysicalNode);
@@ -63,7 +63,7 @@ class PhysicalNodeInfo extends Component {
 
     render (){
         let {showPhysicalNodeSelect, currentPhysicalNode} = this.state;
-        let {clusterPhysicalNodeList, physicalNodeInfo: {service: {metadata, storage}}} = this.props;
+        let {clusterPhysicalNodeList, physicalNodeInfo: {metadata, storage}} = this.props;
         return (
             <div className="fs-table-operation-wrapper no-bottom-margin">
                 <div className="fs-operation-text">
@@ -83,7 +83,7 @@ class PhysicalNodeInfo extends Component {
                     showPhysicalNodeSelect &&
                     <Select
                         style={{marginLeft: 10}}
-                        value={currentPhysicalNode.nodeId}
+                        value={currentPhysicalNode.hostname}
                         onChange={this.switchPhysicalNode.bind(this)}
                     >
                         {
@@ -92,7 +92,7 @@ class PhysicalNodeInfo extends Component {
                                     key={i}
                                     disabled={node.isPureMgmt}
                                     title={node.isPureMgmt ? lang('纯管理节点', 'Pure management node') : ''}
-                                    value={node.nodeId}
+                                    value={node.hostname}
                                     currentPhysicalNode={node}
                                 >
                                     {node.hostname}

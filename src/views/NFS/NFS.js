@@ -4,7 +4,7 @@ import {Button, Icon, Input, message, Popover, Modal, Table} from 'antd';
 import CreateNFS from './CreateNFS';
 import EditNFS from './EditNFS';
 import ClientOfNFS from './ClientOfNFS';
-import lang from "../../components/Language/lang";
+import lang from '../../components/Language/lang';
 import httpRequests from "../../http/requests";
 
 class NFS extends Component {

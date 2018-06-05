@@ -8,10 +8,11 @@ import metadataNodeReducer from './metadataNodeReducer';
 import storageNodeReducer from './storageNodeReducer';
 import dashboardReducer from './dashboardReducer';
 import dataNodeReducer from './dataNodeReducer';
-import managementReducer from './managementReducer';
+import systemLogReducer from './systemLogReducer';
 import snapshotReducer from './snapshotReducer';
 import shareReducer from './shareReducer';
 import localAuthUserReducer from './localAuthUserReducer';
+import targetReducer from './targetReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
@@ -65,12 +66,16 @@ export default combineReducers({
                     state[key] = shareReducer(main[key], action);
                     break;
 
-                case 'management':
-                    state[key] = managementReducer(main[key], action);
+                case 'systemLog':
+                    state[key] = systemLogReducer(main[key], action);
                     break;
 
                 case 'localAuthUser':
                     state[key] = localAuthUserReducer(main[key], action);
+                    break;
+
+                case 'target':
+                    state[key] = targetReducer(main[key], action);
                     break;
 
                 default:

@@ -18,11 +18,11 @@ class PhysicalNodeTargetList extends Component {
 
     render (){
         let {currentServerType} = this.state;
-        let {physicalNodeTargets, physicalNodeInfo: {service: {metadata, storage}}} = this.props;
+        let {physicalNodeTargets, physicalNodeInfo: {metadata, storage}} = this.props;
         if (currentServerType !== 'all'){
             physicalNodeTargets = physicalNodeTargets.filter(target => target.service === currentServerType);
         }
-        let serviceTypeMap = {
+        let serviceRoleMap = {
             all: lang('全部', 'All'),
             metadata: lang('元数据服务', 'Metadata'),
             storage: lang('存储服务', 'Storage'),
@@ -39,8 +39,8 @@ class PhysicalNodeTargetList extends Component {
                 {title: lang('目标ID', 'Target ID'), width: 100, dataIndex: 'targetId',},
                 {title: lang('挂载路径', 'Mount Path'), width: 100, dataIndex: 'mountPath'},
                 {title: lang('所属节点', 'Node Belong'), width: 100, dataIndex: 'node',},
-                {title: lang('所属服务', 'Service Belong'), width: 100, dataIndex: 'service',
-                    render: text => serviceTypeMap[text]
+                {title: lang('服务角色', 'Service Belong'), width: 100, dataIndex: 'service',
+                    render: text => serviceRoleMap[text]
                 },
                 {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
@@ -71,7 +71,7 @@ class PhysicalNodeTargetList extends Component {
         return (
             <div className="fs-physical-node-wrapper">
                 <header>
-                    <Icon type="hdd" />{lang(`节点${serviceTypeMap[currentServerType]}存储目标`, `Node ${serviceTypeMap[currentServerType]} Service Targets`)}
+                    <Icon type="hdd" />{lang(`节点${serviceRoleMap[currentServerType]}存储目标`, `Node ${serviceRoleMap[currentServerType]} Service Targets`)}
                     <div className="fs-header-button-box">
                         <Radio.Group
                             value={this.state.currentServerType}
