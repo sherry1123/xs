@@ -991,10 +991,16 @@ const model = {
         return result;
     },
     async getClusterTarget(param) {
+        let { ranking } = param;
         let result = {};
         try {
             let res = await afterMe.getClusterTarget(param);
             if (!res.errorId) {
+                if (ranking) {
+                    res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
+                } else {
+                    res.data = res.data.sort((prev, next) => (prev.targetId > next.targetId));
+                }
                 result = handler.response(0, res.data);
             } else {
                 result = handler.response(173, res.message, param);
