@@ -133,7 +133,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed: false, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
             }
         }
         return res;
