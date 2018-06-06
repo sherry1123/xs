@@ -4,6 +4,7 @@ export const dashboardActionTypes = {
     SET_CLUSTER_TPS: 'SET_CLUSTER_TPS',
     SET_CLUSTER_IOPS: 'SET_CLUSTER_IOPS',
     SET_CLUSTER_PHYSICAL_NODE_LIST: 'SET_CLUSTER_PHYSICAL_NODE_LIST',
+    SET_CLUSTER_ROLE_IPS: 'SET_CLUSTER_ROLE_IPS',
 };
 
 export default {
@@ -30,5 +31,10 @@ export default {
     setClusterPhysicalNodeList: clusterPhysicalNodeList => ({
         type: dashboardActionTypes.SET_CLUSTER_PHYSICAL_NODE_LIST,
         clusterPhysicalNodeList
+    }),
+
+    setClusterRoleIPs: clusterRoleIPs => ({
+        type: dashboardActionTypes.SET_CLUSTER_ROLE_IPS,
+        clusterRoleIPs
     }),
 };

@@ -66,7 +66,7 @@ class CreateClientToNFS extends Component {
                     // it's a hostname
                     return true
                 } else {
-                    // it's a fuck value
+                    // it's a meaningless value
                     return false;
                 }
             });
@@ -230,17 +230,17 @@ class CreateClientToNFS extends Component {
                             }}
                         >
                             <Select.Option value="read-only">{lang('只读', 'Read-only')}</Select.Option>
-                            <Select.Option value="read-write-n">{lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)')}</Select.Option>
+                            {/*<Select.Option value="read-write-n">{lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)')}</Select.Option>*/}
                             <Select.Option value="read-write">{lang('读写', 'Read-write')}</Select.Option>
                         </Select>
                     </Form.Item>
                     <div style={{paddingLeft: 10}}>
-                                <span
-                                    style={{fontSize: 12, color: '#1890ff', cursor: 'pointer', userSelect: 'none'}}
-                                    onClick={this.showAdvanced.bind(this)}
-                                >
-                                    {lang('高级', 'Advanced')} <Icon type={this.state.showAdvanced ? 'up' : 'down'} />
-                                </span>
+                        <span
+                            style={{fontSize: 12, color: '#1890ff', cursor: 'pointer', userSelect: 'none'}}
+                            onClick={this.showAdvanced.bind(this)}
+                        >
+                            {lang('高级', 'Advanced')} <Icon type={this.state.showAdvanced ? 'up' : 'down'} />
+                        </span>
                     </div>
                     {
                         this.state.showAdvanced && <div>

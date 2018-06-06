@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Input, Popover, Table} from 'antd';
+import CreateTarget from './CreateTarget';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 import {formatStorageSize, getCapacityColour} from '../../services';
@@ -43,7 +44,7 @@ class Target extends Component {
     }
 
     create (){
-
+        this.createTargetWrapper.getWrappedInstance().show();
     }
 
     render (){
@@ -113,6 +114,7 @@ class Target extends Component {
                 <div className="fs-main-content-wrapper">
                     <Table {...tableProps} />
                 </div>
+                <CreateTarget ref={ref => this.createTargetWrapper = ref} />
             </div>
         );
     }

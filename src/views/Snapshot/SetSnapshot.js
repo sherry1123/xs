@@ -106,7 +106,7 @@ class SetSnapshot extends Component {
                 }, false);
             } else if (manual < manualSnapshotNumber){
                 await this.validationUpdateState('auto', {
-                    cn: `手动快照数量不能小于当前已存在的定时快照的数量 ${manualSnapshotNumber}。执行此操作，请先删除一些手动快照`,
+                    cn: `手动快照数量不能小于当前已存在的定时快照的数量 ${manualSnapshotNumber}。若要执行此操作，请先删除一些手动快照`,
                     en: `Manual snapshot number less than existing manual snapshots count ${manualSnapshotNumber}, please delete some manual snapshots before doing this operation`
                 }, false);
             } else {

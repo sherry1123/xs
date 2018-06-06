@@ -116,7 +116,7 @@ class EditClient extends Component {
                             }}
                         >
                             <Select.Option value="read-only">{lang('只读', 'Read-only')}</Select.Option>
-                            <Select.Option value="read-write-n">{lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)')}</Select.Option>
+                            {/*<Select.Option value="read-write-n">{lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)')}</Select.Option>*/}
                             <Select.Option value="read-write">{lang('读写', 'Read-write')}</Select.Option>
                         </Select>
                     </Form.Item>

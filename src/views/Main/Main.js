@@ -22,6 +22,7 @@ const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
 const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
 
 // share
+const NASServer = asyncLoad(() => import('../NASServer/NASServer'));
 const NFS = asyncLoad(() => import('../NFS/NFS'));
 const CIFS = asyncLoad(() => import('../CIFS/CIFS'));
 
@@ -83,6 +84,8 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
 
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
+
+                        <Route path={`${Main}${routerPath.NASServer}`} component={NASServer} />
 
                         <Route path={`${Main}${routerPath.NFS}`} component={NFS} />
 

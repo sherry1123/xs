@@ -152,7 +152,7 @@ export default  {
         }
     },
 
-    // dashboard
+    // dashboard and cluster info
     getClusterInfo (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getclusterinfo');
@@ -165,7 +165,7 @@ export default  {
 
     getClusterTargets (){
         requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getclustertarget');
+            let data = await fetchGet('/api/getclustertarget', {ranking: true});
             !!data && store.dispatch(dashboardAction.setClusterTargets(data));
         });
     },
@@ -188,6 +188,13 @@ export default  {
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getnodelist');
             !!data && store.dispatch(dashboardAction.setClusterPhysicalNodeList(data));
+        });
+    },
+
+    getClusterRoleIPs (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getinitparam');
+            !!data && store.dispatch(dashboardAction.setClusterRoleIPs(data));
         });
     },
 
@@ -351,6 +358,29 @@ export default  {
         await fetchPost('/api/deletenasexport', nasExport);
     },
 
+    // NAS server
+    async getNASServerList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getnasserver');
+            !!data && store.dispatch(shareAction.setNASServerList(data));
+        });
+    },
+
+    async getClientListForNASServer (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getclient');
+            !!data && store.dispatch(shareAction.setClientListForNASServer(data));
+        });
+    },
+
+    async createNASServer (NASServer){
+        await fetchPost('/api/createnasserver', NASServer);
+    },
+
+    async updateNASServer (NASServer){
+        await fetchPost('/api/updatenasserver', NASServer);
+    },
+
     // NFS share
     async getNFSShareList (){
         requestMiddleWare(async () => {
@@ -501,13 +531,13 @@ export default  {
     // target and buddy group
     async getTargetList (){
         requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getclustertarget');
+            let data = await fetchGet('/api/getclustertarget', {ranking: false});
             !!data && store.dispatch(targetAction.setTargetList(data));
         });
     },
 
-    async createTarget (){
-
+    async createTarget (target){
+        await fetchPost('/api/createtarget', {target});
     },
 
     async getBuddyGroupList (){
@@ -518,7 +548,7 @@ export default  {
     },
 
     async createBuddyGroup (buddyGroups){
-        await fetchPost('/api/createbuddygroup', buddyGroups);
+        await fetchPost('/api/createbuddygroup', {buddyGroups});
     },
 
     // fs operation

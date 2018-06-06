@@ -95,11 +95,14 @@ class SideBar extends Component {
                             </span>
                         }
                     >
-                        <Menu.Item key={routerPath.CIFS}>
-                            <Icon type="folder" />{lang('CIFS', 'CIFS')}
+                        <Menu.Item key={routerPath.NASServer}>
+                            <Icon type="desktop" />{lang('NAS服务器', 'NAS Server')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.NFS}>
-                            <Icon type="desktop" />{lang('NFS', 'NFS')}
+                            <Icon type="laptop" />{lang('NFS', 'NFS')}
+                        </Menu.Item>
+                        <Menu.Item key={routerPath.CIFS}>
+                            <Icon type="folder" />{lang('CIFS', 'CIFS')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu
@@ -112,7 +115,7 @@ class SideBar extends Component {
                         }
                     >
                         <Menu.Item key={routerPath.LocalAuthUser}>
-                            <Icon type="user" />{lang('本地认证用户', 'Local Auth. User')}
+                            <Icon type="user-add" />{lang('本地认证用户', 'Local Auth. User')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.LocalAuthUserGroup}>
                             <Icon type="usergroup-add" />{lang('本地认证用户组', 'Local Auth. Group')}
