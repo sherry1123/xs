@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, message, Modal, Popover, Select} from 'antd';
-import pImg from '../../images/1.png';
-import sImg from '../../images/2.png';
+import pImg from '../../images/primary_target.png';
+import sImg from '../../images/secondary_target.png';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 import {formatStorageSize} from '../../services';
