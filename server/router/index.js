@@ -90,4 +90,8 @@ router.all('/api/getnodeiops', controller['/api/getnodeiops']);
 router.all('/api/getnodethroughput', controller['/api/getnodethroughput']);
 router.all('/api/getnodetarget', controller['/api/getnodetarget']);
 
+router.all('/api/getnasserver', controller['/api/getnasserver']);
+router.all('/api/createnasserver', controller['/api/createnasserver']);
+router.all('/api/updatenasserver', controller['/api/updatenasserver']);
+router.all('/api/getinitparam', controller['/api/getinitparam']);
 module.exports = router;

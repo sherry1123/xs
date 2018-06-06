@@ -991,10 +991,16 @@ const model = {
         return result;
     },
     async getClusterTarget(param) {
+        let { ranking } = param;
         let result = {};
         try {
             let res = await afterMe.getClusterTarget(param);
             if (!res.errorId) {
+                if (ranking) {
+                    res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
+                } else {
+                    res.data = res.data.sort((prev, next) => (prev.targetId > next.targetId));
+                }
                 result = handler.response(0, res.data);
             } else {
                 result = handler.response(173, res.message, param);
@@ -1105,6 +1111,52 @@ const model = {
             result = handler.response(173, error, param);
         }
         return result;
-    }
+    },
+    async getNasServer(param) {
+        let result = {};
+        try {
+            let data = await database.getNasServer(param);
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async createNasServer(param, user, ip) {
+        let { ip: server, path, description } = param;
+        let result = {};
+        try {
+            await database.addNasServer({ ip: server, path, description });
+            result = handler.response(0, 'create NAS server successfully');
+            await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
+        }
+        return result;
+    },
+    async updateNasServer(param, user, ip) {
+        let { ip: server, path, description } = param;
+        let result = {};
+        try {
+            await database.updateNasServer({ ip: server, path }, { description });
+            result = handler.response(0, 'update NAS server successfully');
+            await log.audit({ user, desc: `update NAS server '${server}' successfully`, ip });
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `update NAS server '${server}' failed`, ip });
+        }
+        return result;
+    },
+    async getInitParam(param) {
+        let result = {};
+        try {
+            let data = await database.getSetting({ key: config.setting.initParam });
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
 };
 module.exports = model;

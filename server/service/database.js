@@ -6,6 +6,7 @@ const auditLog = require('../model/auditLog');
 const snapshot = require('../model/snapshot');
 const nfsShare = require('../model/nfsShare');
 const cifsShare = require('../model/cifsShare');
+const nasServer = require('../model/nasServer');
 const localAuthUser = require('../model/localAuthUser');
 const snapshotSchedule = require('../model/snapshotSchedule');
 const nodeCpuAndMemory = require('../model/nodeCpuAndMemory');
@@ -257,6 +258,15 @@ const model = {
         let total = data.map(item => (item.dataList[index].iops)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
+    },
+    async getNasServer(param) {
+        return await dao.findAll(nasServer, param);
+    },
+    async addNasServer(param) {
+        return await dao.createOne(nasServer, param);
+    },
+    async updateNasServer(query, param) {
+        return await dao.updateOne(nasServer, query, param);
     }
 };
 module.exports = model;

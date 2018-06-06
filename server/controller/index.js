@@ -272,6 +272,18 @@ const model = {
     },
     '/api/getnodetarget': async ctx => {
         ctx.body = await service.getNodeTarget(ctx.param);
+    },
+    '/api/getnasserver': async ctx => {
+        ctx.body = await service.getNasServer(ctx.param);
+    },
+    '/api/createnasserver': async ctx => {
+        ctx.body = await service.createNasServer(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/updatenasserver': async ctx => {
+        ctx.body = await service.updateNasServer(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getinitparam': async ctx => {
+        ctx.body = await service.getInitParam(ctx.param);
     }
 };
 module.exports = model;
