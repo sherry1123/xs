@@ -1209,24 +1209,17 @@ const model = {
     async getClient(param) {
         let result = {};
         try {
-            let data = [
-                {
-                    hostname: 'client1',
-                    ip: '192.168.100.11',
-                    isUsed: false
-                },
-                {
-                    hostname: 'client2',
-                    ip: '192.168.100.13',
-                    isUsed: false
-                },
-                {
-                    hostname: 'client3',
-                    ip: '192.168.100.15',
-                    isUsed: false
-                }
+            let clientList = [
+                { hostname: 'client1', ip: '192.168.100.11' },
+                { hostname: 'client2', ip: '192.168.100.12' },
+                { hostname: 'client3', ip: '192.168.100.13' },
+                { hostname: 'client4', ip: '192.168.100.14' },
+                { hostname: 'client5', ip: '192.168.100.15' }
 
             ];
+            let nasServerList = await database.getNasServer();
+            let nasServerIpList = nasServerList.map(server => (server.ip));
+            let data = clientList.map(client => ({ hostname: client.hostname, ip: client.ip, isUsed: nasServerIpList.includes(client.ip) }));
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
