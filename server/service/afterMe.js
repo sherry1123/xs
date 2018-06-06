@@ -180,6 +180,18 @@ const model = {
     async getNodeThroughputAndIops(param) {
         let token = await model.getToken();
         return await request.get(config.api.orcafs.getiostat, param, token, true, { data: { throughput: [], iops: [] } });
+    },
+    async createTarget(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.addstoragetarget, param, token, true);
+    },
+    async getBuddyGroup(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.listmirrorgroup, param, token, true, { data: [] });
+    },
+    async createBuddyGroup(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.createbuddymirror, param, token, true);
     }
 };
 module.exports = model;

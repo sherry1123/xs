@@ -1158,5 +1158,73 @@ const model = {
         }
         return result;
     },
+    async createTarget(param, user, ip) {
+        let { ip: server } = param;
+        let result = {};
+        try {
+            let res = await afterMe.createTarget(param);
+            if (!res.errorId) {
+                result = handler.response(0, data);
+                await log.audit({ user, desc: `create target in '${server}' successfully`, ip });
+            } else {
+                result = handler.response(173, error, param);
+                await log.audit({ user, desc: `create target in '${server}' failed`, ip });
+            }
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `create target in '${server}' failed`, ip });
+        }
+        return result;
+    },
+    async getBuddyGroup(param) {
+        let result = {};
+        try {
+            let metaBuddyGroup = Object.assign(await afterMe.getBuddyGroup({ nodeType: 'meta' })).data || [];
+            let storageBuddyGroup = Object.assign(await afterMe.getBuddyGroup({ nodeType: 'storage' })).data || [];
+            let data = metaBuddyGroup.concat(storageBuddyGroup).sort((prev, next) => (prev.groupId > next.groupId));
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    },
+    async createBuddyGroup(param, user, ip) {
+        let { buddyGroups } = param;
+        let result = {};
+        try {
+            let res = await afterMe.createBuddyGroup(buddyGroups);
+            if (!res.errorId) {
+                result = handler.response(0, data);
+                await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) successfully`, ip });
+            } else {
+                result = handler.response(173, error, param);
+                await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) failed`, ip });
+            }
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) failed`, ip });
+        }
+        return result;
+    },
+    async getClient(param) {
+        let result = {};
+        try {
+            let clientList = [
+                { hostname: 'client1', ip: '192.168.100.11' },
+                { hostname: 'client2', ip: '192.168.100.12' },
+                { hostname: 'client3', ip: '192.168.100.13' },
+                { hostname: 'client4', ip: '192.168.100.14' },
+                { hostname: 'client5', ip: '192.168.100.15' }
+
+            ];
+            let nasServerList = await database.getNasServer();
+            let nasServerIpList = nasServerList.map(server => (server.ip));
+            let data = clientList.map(client => ({ hostname: client.hostname, ip: client.ip, isUsed: nasServerIpList.includes(client.ip) }));
+            result = handler.response(0, data);
+        } catch (error) {
+            result = handler.response(173, error, param);
+        }
+        return result;
+    }
 };
 module.exports = model;
