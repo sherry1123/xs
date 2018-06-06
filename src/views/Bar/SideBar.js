@@ -95,22 +95,15 @@ class SideBar extends Component {
                             </span>
                         }
                     >
+                        <Menu.Item key={routerPath.NASServer}>
+                            <Icon type="desktop" />{lang('NAS服务器', 'NAS Server')}
+                        </Menu.Item>
+                        <Menu.Item key={routerPath.NFS}>
+                            <Icon type="laptop" />{lang('NFS', 'NFS')}
+                        </Menu.Item>
                         <Menu.Item key={routerPath.CIFS}>
                             <Icon type="folder" />{lang('CIFS', 'CIFS')}
                         </Menu.Item>
-                        <Menu.Item key={routerPath.NFS}>
-                            <Icon type="desktop" />{lang('NFS', 'NFS')}
-                        </Menu.Item>
-                    </Menu.SubMenu>
-                    <Menu.SubMenu
-                        key="UserAndGroup"
-                        title={
-                            <span>
-                                <Icon type="user" title={this.props.menuExpand ? '' : lang('点击展开', 'Click To Expand')} />
-                                <span>{lang('用户与组', 'User And Group')}</span>
-                            </span>
-                        }
-                    >
                         <Menu.Item key={routerPath.LocalAuthUser}>
                             <Icon type="user" />{lang('本地认证用户', 'Local Auth. User')}
                         </Menu.Item>

@@ -4,8 +4,6 @@ import update from "react-addons-update";
 import {Button, Divider, Form, Icon, Input, message, Modal, notification, Popover, Progress, Steps, Switch} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
-// import RAIDConfiguration from '../../components/DiskConfiguration/RAIDConfiguration';
-// import DiskSelection from '../../components/DiskConfiguration/DiskSelection';
 import RecommendedRAID from '../../components/DiskConfiguration/RecommendedRAID';
 import CustomRAID from '../../components/DiskConfiguration/CustomRAID';
 import initializeAction from '../../redux/actions/initializeAction';
@@ -864,7 +862,6 @@ class Initialize extends Component {
                                             enableCustomRAID={this.enableCustomRAID.bind(this)}
                                         /> :
                                         <CustomRAID
-                                            ref={ref => this.customRAIDWrapper = ref}
                                             enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
                                         />
                                 }

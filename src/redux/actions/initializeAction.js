@@ -46,6 +46,7 @@ export default {
         recommendedRAID
     }),
 
+    // this sames is maintained in Initialize state
     setEnableCustomRAID: enableCustomRAID => ({
         type: initializeActionTypes.SET_ENABLE_CUSTOM_RAID,
         enableCustomRAID

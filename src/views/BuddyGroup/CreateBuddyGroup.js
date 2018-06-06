@@ -30,7 +30,7 @@ class CreateBuddyGroup extends Component {
         };
     }
 
-    serviceTypeChange (currentServiceRole){
+    serviceRoleChange (currentServiceRole){
         this.setState({currentServiceRole, selectedTargets: []});
     }
 
@@ -47,11 +47,14 @@ class CreateBuddyGroup extends Component {
         if (!alreadySelected){
             // this target hasn't been selected before
             if (selectedTargets.length < 2){
-                // two targets must be in different nodes
                 if (!!selectedTargets[0]){
-                    // if already one target existed, check their nodes
+                    // if already one target existed, two targets must be in different nodes
                     if (selectedTargets[0].node === target.node){
                         return message.warning(lang('用于配对成伙伴组的存储目标必须在不同的节点上！', 'The targets that used for pairing must be in different nodes.'));
+                    }
+                    // two targets must have a same capacity
+                    if (selectedTargets[0].space.total !== target.space.total){
+                        return message.warning(lang('用于配对成伙伴组的存储目标的容量必须相同！', 'The size of their capacity of the targets that used for pairing must be the same.'));
                     }
                 }
                 selectedTargets.push(target);
@@ -102,6 +105,7 @@ class CreateBuddyGroup extends Component {
     async show (){
         await this.setState({
             visible: true,
+            formSubmitting: false,
             currentServiceRole: 'metadata',
             availableTargets,
             selectedTargets: [],
@@ -160,10 +164,10 @@ class CreateBuddyGroup extends Component {
                             <div className="fs-buddy-group-target-title">
                                 <span>{lang('可配对的存储目标', 'Paired Able Storage Targets')}</span>
                                 <Select
-                                    style={{float: 'right', marginTop: 7, width: 90}}
+                                    style={{float: 'right', marginTop: 7}}
                                     size="small"
                                     value={this.state.currentServiceRole}
-                                    onChange={this.serviceTypeChange.bind(this)}
+                                    onChange={this.serviceRoleChange.bind(this)}
                                 >
                                     <Select.Option value="metadata">{lang('元数据服务', 'Metadata')}</Select.Option>
                                     <Select.Option value="storage">{lang('存储服务', 'Storage')}</Select.Option>

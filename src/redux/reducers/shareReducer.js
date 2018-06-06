@@ -2,8 +2,14 @@ import State from '../state';
 import {shareActionTypes} from '../actions/shareAction';
 
 const shareReducer = (state = State.main.share, action) => {
-    let {NFSList, clientListOfNFS, CIFSList, localAuthUserOrGroupListOfCIFS} = action;
+    let {clientListForNASServer, NASServerList, NFSList, clientListOfNFS, CIFSList, localAuthUserOrGroupListOfCIFS} = action;
     switch (action.type){
+        case shareActionTypes.SET_CLIENT_LIST_FOR_NAS_SERVER:
+            return Object.assign({}, state, {clientListForNASServer});
+
+        case shareActionTypes.SET_NAS_SERVER_LIST:
+            return Object.assign({}, state, {NASServerList});
+
         case shareActionTypes.SET_NFS_LIST:
             return Object.assign({}, state, {NFSList});
 

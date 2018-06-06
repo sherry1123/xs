@@ -13,6 +13,7 @@ class ClientOfNFS extends Component {
         this.state = {
             visible: false,
             path: '',
+            query: '',
             loadingList: true,
             clientListOfNFS: [],
             clientListOfNFSBackup: [],
@@ -89,6 +90,7 @@ class ClientOfNFS extends Component {
         await this.setState({
             visible: true,
             path,
+            query: '',
             loadingList: true,
             clientListOfNFS: [],
             clientListOfNFSBackup: [],

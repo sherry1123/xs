@@ -207,7 +207,7 @@ class UserOrGroupOfCIFS extends Component {
         };
         return (
             <Modal
-                title={lang(`CFIS共享 ${shareName} 的用户/用户组信息`, `User/User Group Of NFS Share ${shareName}`)}
+                title={lang(`CIFS共享 ${shareName} 的用户/用户组信息`, `User/User Group Of CIFS Share ${shareName}`)}
                 width={600}
                 closable={false}
                 maskClosable={false}

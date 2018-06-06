@@ -26,21 +26,18 @@ const routerPath = {
 
     DataNode: '/data-node',
 
-    // MetadataNodes: '/metadata-nodes',
-
-    StorageNodes: '/storage-nodes',
-
-    // ClientStatistics: '/client-statistics',
-
-    // UserStatistics: '/user-statistics',
-
     Snapshot: '/snapshot',
+
     SnapshotSchedule: '/snapshot-schedule',
 
+    NASServer: '/nas-server',
+
     NFS: '/nfs',
+
     CIFS: '/cifs',
 
     LocalAuthUser: '/local-auth-user',
+
     LocalAuthUserGroup: '/local-auth-user-group',
 
     Target: '/target',
@@ -59,13 +56,8 @@ export default routerPath;
 export const pathToMenu = {
     Dashboard: [routerPath.Dashboard],
     DataNode: [routerPath.DataNode],
-    // MetadataNodes: [routerPath.MetadataNodes],
-    StorageNodes: [routerPath.StorageNodes],
-    // ClientStatistics: [routerPath.ClientStatistics],
-    // UserStatistics: [routerPath.UserStatistics],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
-    Share: [routerPath.NFS, routerPath.CIFS],
-    UserAndGroup: [routerPath.LocalAuthUser, routerPath.LocalAuthUserGroup],
+    Share: [routerPath.NASServer, routerPath.NFS, routerPath.CIFS, routerPath.LocalAuthUser, routerPath.LocalAuthUserGroup],
     TargetAndBuddyGroup: [routerPath.Target, routerPath.BuddyGroup],
     SystemLog: [routerPath.SystemLog],
     FSOperation: [routerPath.FSOperation],

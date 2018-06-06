@@ -1,4 +1,6 @@
 export const shareActionTypes = {
+    SET_CLIENT_LIST_FOR_NAS_SERVER: 'SET_CLIENT_LIST_FOR_NAS_SERVER',
+    SET_NAS_SERVER_LIST: 'SET_NAS_SERVER_LIST',
     SET_NFS_LIST: 'SET_NFS_LIST',
     SET_CLIENT_LIST_OF_NFS: 'SET_CLIENT_LIST_OF_NFS',
     SET_CIFS_LIST: 'SET_CIFS_LIST',
@@ -6,6 +8,16 @@ export const shareActionTypes = {
 };
 
 export default {
+    setClientListForNASServer: clientListForNASServer => ({
+        type: shareActionTypes.SET_CLIENT_LIST_FOR_NAS_SERVER,
+        clientListForNASServer
+    }),
+
+    setNASServerList: NASServerList => ({
+        type: shareActionTypes.SET_NAS_SERVER_LIST,
+        NASServerList
+    }),
+
     setNFSList: NFSList => ({
         type: shareActionTypes.SET_NFS_LIST,
         NFSList

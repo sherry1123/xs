@@ -78,7 +78,6 @@ class CreateNFS extends Component {
     }
 
     async selectPath (path){
-        console.info(path);
         let shareData = Object.assign(this.state.shareData, {path});
         await this.setState({shareData});
         this.validateForm('path');

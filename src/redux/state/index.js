@@ -141,6 +141,7 @@ export default {
             clusterTPS: {total: [], time: []},
             clusterIOPS: {total: [], time: []},
             clusterPhysicalNodeList: [],
+            clusterRoleIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], client: []}
         },
         // data node
         dataNode: {
@@ -158,8 +159,10 @@ export default {
             snapshotScheduleList: [],
             snapshotSetting: {total: 0, auto: 0, manual: 0,}
         },
-        // NFS and CIFS share
+        // NAS server, NFS and CIFS share
         share: {
+            clientListForNASServer: [],
+            NASServerList: [],
             NFSList: [],
             clientListOfNFS: [],
             CIFSList: [],
