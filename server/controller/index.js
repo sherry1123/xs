@@ -284,6 +284,18 @@ const model = {
     },
     '/api/getinitparam': async ctx => {
         ctx.body = await service.getInitParam(ctx.param);
+    },
+    '/api/createtarget': async ctx => {
+        ctx.body = await service.createTarget(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getbuddygroup': async ctx => {
+        ctx.body = await service.getBuddyGroup(ctx.param);
+    },
+    '/api/createbuddygroup': async ctx => {
+        ctx.body = await service.createBuddyGroup(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/getclient': async ctx => {
+        ctx.body = await service.getClient(ctx.param);
     }
 };
 module.exports = model;

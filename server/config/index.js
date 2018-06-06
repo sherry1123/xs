@@ -67,7 +67,10 @@ exports.api = {
         getnodeservice: 'http://localhost:9090/cluster/getnodeservice',
         listnodetargets: 'http://localhost:9090/cluster/listnodetargets',
         getclusteriostat: 'http://localhost:9090/cluster/getclusteriostat',
-        getphysicresource: 'http://localhost:9090/cluster/getphysicresource'
+        getphysicresource: 'http://localhost:9090/cluster/getphysicresource',
+        addstoragetarget: 'http://localhost:9090/cluster/addstoragetarget',
+        listmirrorgroup: 'http://localhost:9090/cluster/listmirrorgroup',
+        createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror'
     }
 };
 exports.key = {
@@ -192,5 +195,6 @@ exports.i18n = {
     directory: '目录',
     pattern: '条带',
     or: '或者',
-    server: '服务器'
+    server: '服务器',
+    buddy: '伙伴'
 };

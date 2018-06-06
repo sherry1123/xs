@@ -94,4 +94,10 @@ router.all('/api/getnasserver', controller['/api/getnasserver']);
 router.all('/api/createnasserver', controller['/api/createnasserver']);
 router.all('/api/updatenasserver', controller['/api/updatenasserver']);
 router.all('/api/getinitparam', controller['/api/getinitparam']);
+ 
+router.all('/api/createtarget', controller['/api/createtarget']);
+router.all('/api/getbuddygroup', controller['/api/getbuddygroup']);
+router.all('/api/createbuddygroup', controller['/api/createbuddygroup']);
+router.all('/api/getclient', controller['/api/getclient']);
+
 module.exports = router;
