@@ -49,7 +49,7 @@ class SelectClient extends Component {
             loadingList: true,
             clientListForNASServer: [],
             clientListForNASServerBackup: [],
-            selectedClient: [],
+            selectedClientIPs: [],
         });
         await httpRequests.getClientListForNASServer();
         this.setState({loadingList: false});

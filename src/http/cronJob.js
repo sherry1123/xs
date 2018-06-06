@@ -58,6 +58,11 @@ const fetchDataPer15s = () => {
         httpRequests.getSnapshotScheduleList();
     }
 
+    // nas server
+    if (routerHash.match(main + routerPath.NASServer)){
+        httpRequests.getNASServerList();
+    }
+
     // NFS share
     if (routerHash.match(main + routerPath.NFS)){
         httpRequests.getNFSShareList();

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, Input, Table} from 'antd';
+import {Button, Icon, Input, Table, Popover} from 'antd';
 import CreateNASServer from './CreateNASServer';
+import EditNASServer from './EditNASServer';
 import lang from '../../components/Language/lang';
 import httpRequests from "../../http/requests";
 
@@ -20,7 +21,7 @@ class NASServer extends Component {
     }
 
     componentDidMount (){
-        httpRequests.getNFSShareList();
+        httpRequests.getNASServerList();
     }
 
     async componentWillReceiveProps (nextProps){
@@ -48,7 +49,13 @@ class NASServer extends Component {
         this.createNASServerWrapper.getWrappedInstance().show();
     }
 
+    edit (NASServerData){
+        this.editNASServerWrapper.getWrappedInstance().show(NASServerData);
+    }
+
     render (){
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
+        let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
         let {NASServerList} = this.state;
         let tableProps = {
             size: 'normal',
@@ -66,6 +73,17 @@ class NASServer extends Component {
                 {title: lang('描述', 'Description'), width: 200, dataIndex: 'description',
                     render: text => text || '--'
                 },
+                {title: lang('操作', 'Operations'), width: 80,
+                    render: (text, record, index) => {
+                        return <Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+                            <Button
+                                {...buttonConf}
+                                onClick={this.edit.bind(this, record, index)}
+                                icon="edit"
+                            />
+                        </Popover>;
+                    }
+                }
             ],
         };
         return (
@@ -92,6 +110,7 @@ class NASServer extends Component {
                     <Table {...tableProps} />
                 </div>
                 <CreateNASServer ref={ref => this.createNASServerWrapper = ref} />
+                <EditNASServer ref={ref => this.editNASServerWrapper = ref} />
             </div>
         );
     }
