@@ -120,10 +120,13 @@ class LocalAuthUser extends Component {
         let tableProps = {
             size: 'normal',
             dataSource: localAuthUserList,
-            pagination: {
+            pagination: localAuthUserList.length > 12 && {
+                pageSize: 12,
+                showTotal: (total, range) => lang(
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteNames.length} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteNames.length}`
+                ),
                 size: 'normal',
-                pageSize: 10,
-                showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
             },
             rowKey: 'name',
             locale: {

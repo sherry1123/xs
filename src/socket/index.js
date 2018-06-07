@@ -9,7 +9,7 @@ import lang from '../components/Language/lang';
 import routerPath from '../views/routerPath';
 
 const socket = io({transports: ['websocket']});
-let {
+const {
     snapshot, snapshotRollBackStart, snapshotRollBackFinish,
     deInitializationStart, deInitializationEnd,
 } = eventCodeForEventChannel;
@@ -60,7 +60,7 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
     }
     if (snapshotRollBackFinish.includes(code)){
         ckRemove('rollbacking');
-        setTimeout(() => window.location.href = '/#' + routerPath.Main + routerPath.Snapshot, 1000);
+        setTimeout(() => window.location.href = '/#' + routerPath.Main + routerPath.Snapshot, 2000);
     }
 
     // channel de-initialization

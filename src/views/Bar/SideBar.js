@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import generalAction from '../../redux/actions/generalAction';
 import {withRouter} from 'react-router-dom';
 import {Menu, Icon} from 'antd';
+import generalAction from '../../redux/actions/generalAction';
 import lang from '../../components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
 
@@ -50,20 +50,20 @@ class SideBar extends Component {
 
     render (){
         return (
-            <aside className={`fs-sidebar-wrapper ${this.props.menuExpand ? '' : 'un-expand'}`}>
-                <div className="fs-logo-wrapper">
-                    <div className={`fs-logo-link ${this.props.menuExpand ? '' : 'un-expand'}`} />
+            <aside className={`fs-sidebar-wrapper ${this.props.menuExpand ? 'expand' : 'un-expand'}`}>
+                <div className="fs-sidebar-logo-wrapper">
+                    {this.props.menuExpand && <div className="fs-sidebar-logo-link expand" />}
+                    {!this.props.menuExpand && <div className="fs-sidebar-logo-link un-expand" />}
                 </div>
                 <Menu
                     inlineIndent={16}
-                    selectedKeys={[this.props.activePage]}
-                    openKeys={this.props.activeMenu}
                     mode="inline"
                     theme="dark"
+                    selectedKeys={[this.props.activePage]}
+                    openKeys={this.props.activeMenu}
                     onClick={this.forwardPage.bind(this)}
                     onOpenChange={this.openMenu.bind(this)}
                 >
-
                     <Menu.Item key={routerPath.Dashboard}>
                         <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
                     </Menu.Item>

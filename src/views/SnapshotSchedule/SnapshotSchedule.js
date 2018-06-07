@@ -154,8 +154,8 @@ class SnapshotSchedule extends Component {
         let tableProps = {
             dataSource: snapshotScheduleList,
             size: 'normal',
-            pagination: {
-                pageSize: 15,
+            pagination: snapshotScheduleList.length > 12 && {
+                pageSize: 12,
                 showTotal: (total, range) => lang(
                     `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteNames.length} 项`,
                     `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteNames.length}`
@@ -195,12 +195,13 @@ class SnapshotSchedule extends Component {
                 },
                 {title: lang('操作', 'Operations'), width: 120,
                     render: (text, record, index) => <div>
-                        <Switch
-                            size="small" style={{marginTop: -2, marginRight: 5}}
-                            title={record.isRunning ? lang('关闭', 'Disable') : lang('执行', 'Execute')}
-                            checked={record.isRunning}
-                            onChange={this.switch.bind(this, record, index)}
-                        />
+                        <Popover {...buttonPopoverConf} content={record.isRunning ? lang('关闭计划', 'Disable Schedule') : lang('执行计划', 'Execute Schedule')}>
+                            <Switch
+                                size="small" style={{marginTop: -2, marginRight: 5}}
+                                checked={record.isRunning}
+                                onChange={this.switch.bind(this, record, index)}
+                            />
+                        </Popover>
                         <Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
                             <Button
                                 {...buttonConf}

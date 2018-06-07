@@ -49,10 +49,21 @@ class Target extends Component {
 
     render (){
         let {targetList} = this.state;
+        let serviceRoleMap = {
+            metadata: lang('元数据服务', 'Metadata'),
+            storage: lang('存储服务', 'Storage'),
+        };
         let tableProps = {
             size: 'normal',
             dataSource: targetList,
-            pagination: 'normal',
+            pagination: targetList.length > 12 && {
+                pageSize: 12,
+                showTotal: (total, range) => lang(
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items`
+                ),
+                size: 'normal',
+            },
             rowKey: record => `${record.targetId}-${record.service}`,
             locale: {
                 emptyText: lang('暂无存储目标', 'No Storage Target')
@@ -63,7 +74,9 @@ class Target extends Component {
                 {title: lang('目标ID', 'Target ID'), width: 100, dataIndex: 'targetId',},
                 {title: lang('挂载路径', 'Mount Path'), width: 200, dataIndex: 'mountPath',},
                 {title: lang('所属节点', 'Node'), width: 200, dataIndex: 'node',},
-                {title: lang('服务角色', 'Service Role'), width: 200, dataIndex: 'service',},
+                {title: lang('服务角色', 'Service Role'), width: 200, dataIndex: 'service',
+                    render: text => serviceRoleMap[text]
+                },
                 {title: lang('服务ID', 'Service ID'), width: 100, dataIndex: 'nodeId',},
                 {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (

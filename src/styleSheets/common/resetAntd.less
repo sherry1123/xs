@@ -72,17 +72,17 @@ a {
         }
     }
     &.ant-btn-circle {
-        width: 32px !important;
         padding: 0 !important;
+        width: 32px !important;
+        height: 32px !important;
         font-size: 16px !important;
         border-radius: 50% !important;
-        height: 32px !important;
         &.ant-btn-sm {
-            width: 24px !important;
             padding: 0 !important;
+            width: 24px !important;
+            height: 24px !important;
             font-size: 14px !important;
             border-radius: 50% !important;
-            height: 24px !important;
         }
     }
 }
@@ -243,6 +243,9 @@ textarea {
             border: none !important;
             & > .ant-table-content > .ant-table-body > table {
                 padding: 0;
+                td {
+                   height: 40px;
+                }
             }
         }
         .ant-table-title {
@@ -280,10 +283,14 @@ textarea {
                     }
                     &:nth-last-child(1) {
                         td {
-                            border-bottom: 1px solid @light-border;
+                            border-bottom: 1px solid @table-row-stripe-bg;
                         }
                     }
                     td {
+                        // here we set td's height to 56px in normal size table, because some table columns have
+                        // operation buttons inside, and they will hold up the height of td follow the table layout,
+                        // so, according to this phenomenon, and for the unity of the height of all tables we did this.
+                        height: 56px;
                         border-bottom: none;
                     }
                     &.ellipsis {

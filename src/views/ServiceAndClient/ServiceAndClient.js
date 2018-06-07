@@ -29,6 +29,42 @@ class ServiceAndClient extends Component {
         let {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs} = this.props;
         return (
             <section className="fs-page-content">
+                <div className="fs-table-operation-wrapper">
+                    <div className="fs-operation-info-box">
+                        <div className="fs-operation-info-item">
+                            <div className="fs-operation-info-item-value light-green">
+                                {metadataServerIPs.length}
+                            </div>
+                            <div className="fs-operation-info-item-label">
+                                {lang('元数据服务', 'Metadata Service')}
+                            </div>
+                        </div>
+                        <div className="fs-operation-info-item">
+                            <div className="fs-operation-info-item-value orange">
+                                {storageServerIPs.length}
+                            </div>
+                            <div className="fs-operation-info-item-label">
+                                {lang('存储服务', 'Storage Service')}
+                            </div>
+                        </div>
+                        <div className="fs-operation-info-item">
+                            <div className="fs-operation-info-item-value light-blue">
+                                {managementServerIPs.length}
+                            </div>
+                            <div className="fs-operation-info-item-label">
+                                {lang('管理服务', 'Management Service')}
+                            </div>
+                        </div>
+                        <div className="fs-operation-info-item">
+                            <div className="fs-operation-info-item-value purple">
+                                {clientIPs.length}
+                            </div>
+                            <div className="fs-operation-info-item-label">
+                                {lang('客户端', 'Client Service')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <section className="fs-service-and-client-wrapper">
                     <div className="fs-service-and-client-content">
                         <header className="fs-service-and-client-title">
@@ -54,7 +90,7 @@ class ServiceAndClient extends Component {
                     </div>
                     <div className="fs-service-and-client-content">
                         <header className="fs-service-and-client-title">
-                            <Icon type="profile" />{lang('管理服务', 'Management Service')}
+                            <Icon type="appstore-o" />{lang('管理服务', 'Management Service')}
                             <Icon type="plus" onClick={this.createManagementService.bind(this)} />
                         </header>
                         <div>
@@ -65,7 +101,7 @@ class ServiceAndClient extends Component {
                     </div>
                     <div className="fs-service-and-client-content">
                         <header className="fs-service-and-client-title">
-                            <Icon type="profile" />{lang('客户端', 'Client')}
+                            <Icon type="laptop" />{lang('客户端', 'Client')}
                             <Icon type="plus" onClick={this.createClient.bind(this)} />
                         </header>
                         <div>

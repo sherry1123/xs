@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import generalAction from "../../redux/actions/generalAction";
+import generalAction from '../../redux/actions/generalAction';
 import {Affix, Icon, Popover, notification} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
 // import WarningPopover from './WarningPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
-import {lsGet, lsSet} from "../../services";
+import {lsGet, lsSet} from '../../services';
 
 class TopBar extends Component {
     constructor (props){
@@ -62,16 +62,17 @@ class TopBar extends Component {
         let abnormalNodes = lsGet('abnormalNodes') || [];
         let {metadataNodes, storageNodes} = nextProps;
         let nodes = metadataNodes.concat(storageNodes);
-        // because metadata and storage servers can run on one same node, so their 'hostname' may be the same,
-        // for this case, it demands one other key 'type' to collaborate with 'hostname' to distinguish different server nodes precisely.
+        // In consideration of that a metadata service and a storage service can run on a same node,
+        // so their 'hostname' may be the same. Consider to this case, it demands another key 'type'
+        // to collaborate with key 'hostname' for distinguishing different services precisely.
         nodes.forEach(node => {
             if (node.status){
                 let removeNodes = [];
                 abnormalNodes.forEach(abnormalNode => {
                     if (`${node.type}-${node.hostname}` === abnormalNode){
                         notification.open({
-                            message: lang('节点恢复', 'Node Recovery'),
-                            description: lang(`${node.type === 'metadata' ? '元数据' : '存储节点' } ${node.hostname} 状态已恢复正常。`, `The status of ${node.type} node ${node.hostname} has recovered to normal.`)
+                            message: lang('服务恢复', 'Service Recovery'),
+                            description: lang(`运行在节点 ${node.hostname} 上的 ${node.type === 'metadata' ? '元数据服务' : '存储服务' }(ID: ${node.nodeId}) 的状态已恢复正常!`, `The status of ${node.type} service(ID: ${node.nodeId}) which runs on ${node.hostname} has recovered to normal!`)
                         });
                         removeNodes.push(abnormalNode);
                     }
@@ -83,8 +84,8 @@ class TopBar extends Component {
             } else {
                 if (!abnormalNodes.includes(`${node.type}-${node.hostname}`)){
                     notification.open({
-                        message: lang('节点异常', 'Node Abnormally'),
-                        description: lang(`${node.type === 'metadata' ? '元数据' : '存储节点' } ${node.hostname} 现处于异常状态，请检查。`, `The ${node.type} node ${node.hostname} is abnormal now, please have a check.`)
+                        message: lang('服务异常', 'Service Abnormally'),
+                        description: lang(`运行在节点 ${node.hostname} 上的 ${node.type === 'metadata' ? '元数据服务' : '存储服务' }(ID: ${node.nodeId}) 现处于异常状态!`, `The ${node.type} service(ID: ${node.nodeId}) which runs on ${node.hostname} is abnormal now!`)
                     });
                     abnormalNodes.push(`${node.type}-${node.hostname}`);
                     lsSet('abnormalNodes', abnormalNodes);

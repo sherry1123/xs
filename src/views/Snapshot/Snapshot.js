@@ -155,14 +155,14 @@ class Snapshot extends Component {
 
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
-        let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
+        let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
         let {batchDeleteNames, snapshotList} = this.state;
         let snapshotHandling = snapshotList.some(snapshot => snapshot.creating || snapshot.deleting || snapshot.rollbacking);
         let tableProps = {
             size: 'normal',
             dataSource: snapshotList,
-            pagination: {
-                pageSize: 15,
+            pagination: snapshotList.length > 12 && {
+                pageSize: 12,
                 showTotal: (total, range) => lang(
                     `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项，选中 ${batchDeleteNames.length} 项`,
                     `show ${range[0]}-${range[1]} of ${total} items, selected ${batchDeleteNames.length}`
@@ -185,8 +185,8 @@ class Snapshot extends Component {
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
-                {title: lang('定时计划创建', 'Timed Schedule Create'), width: 80, dataIndex: 'isAuto',
-                    render: text => text ? lang('是', 'Yes') : lang('否', 'No')
+                {title: lang('创建方式', 'Creation Mode'), width: 80, dataIndex: 'isAuto',
+                    render: text => text ? lang('定时计划', 'Timed Schedule') : lang('手动', 'Manual')
                 },
                 {title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
                     render: text => text || '--'
@@ -239,7 +239,7 @@ class Snapshot extends Component {
                     <Input.Search
                         disabled={snapshotHandling}
                         size="small"
-                        placeholder={lang('快照名称', 'snapshot name')}
+                        placeholder={lang('快照名称', 'Snapshot Name')}
                         value={this.state.query}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}

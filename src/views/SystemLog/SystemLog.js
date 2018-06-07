@@ -1,15 +1,15 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Icon, Select, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Icon, Radio, Table} from "antd";
 import lang from '../../components/Language/lang';
-import {timeFormat} from "../../services";
-import httpRequests from "../../http/requests";
+import {timeFormat} from '../../services';
+import httpRequests from '../../http/requests';
 
 class SystemLog extends Component {
     constructor (props){
         super(props);
         this.state = {
-            showTableType: 'audit'
+            showLogType: 'audit'
         };
     }
 
@@ -22,13 +22,15 @@ class SystemLog extends Component {
         let {language, eventLogs, auditLogs} = this.props;
         let eventLogProps = {
             dataSource: eventLogs,
-            pagination: {
-                pageSize: 15,
-                showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
+            pagination: eventLogs.length > 12 && {
+                pageSize: 12,
+                showTotal: (total, range) => lang(
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items`
+                ),
                 size: 'normal'
             },
             rowKey: '_id',
-            className: 'fs-log-table-wrapper',
             locale: {
                 emptyText: lang('暂无事件日志', 'No Event Logs')
             },
@@ -53,13 +55,15 @@ class SystemLog extends Component {
         };
         let auditLogProps = {
             dataSource: auditLogs,
-            pagination: {
-                pageSize: 15,
-                showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),
+            pagination: auditLogs.length > 12 && {
+                pageSize: 12,
+                showTotal: (total, range) => lang(
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items`
+                ),
                 size: 'normal'
             },
             rowKey: '_id',
-            className: 'fs-log-table-wrapper',
             locale: {
                 emptyText: lang('暂无审计日志', 'No Audit Logs')
             },
@@ -72,8 +76,8 @@ class SystemLog extends Component {
                 {width: '8%', title: lang('用户类型', 'User Type'), dataIndex: 'group', key: 'group',
                     render: text => text[language]
                 },
-                {width: '15%', title: lang('用户登录地址', 'User Login IP'), dataIndex: 'ip', key: 'ip',},
-                {width: '38%', title: lang('事件描述', 'Event Description'), dataIndex: 'desc', key: 'desc',
+                {width: '10%', title: lang('用户登录地址', 'User Login IP'), dataIndex: 'ip', key: 'ip',},
+                {width: '43%', title: lang('事件描述', 'Event Description'), dataIndex: 'desc', key: 'desc',
                     render: text => text[language]
                 },
                 {width: '15%', title: lang('上报时间', 'Reported Time'), dataIndex: 'time', key: 'time',
@@ -85,17 +89,17 @@ class SystemLog extends Component {
         return (
             <section className="fs-page-content fs-management-system-log">
                 <div className="fs-table-operation-wrapper">
-                    <Select
-                        value={this.state.showTableType}
-                        onChange={value => this.setState({showTableType: value})}
+                    <Radio.Group
+                        value={this.state.showLogType}
+                        onChange={({target: {value}}) => this.setState({showLogType: value})}
                     >
-                        <Select.Option value="event">{lang('事件日志', 'Event Log')}</Select.Option>
-                        <Select.Option value="audit">{lang('审计日志', 'Audit Log')}</Select.Option>
-                    </Select>
+                        <Radio value="audit">{lang('审计日志', 'Audit Log')}</Radio>
+                        <Radio value="event">{lang('事件日志', 'Event Log')}</Radio>
+                    </Radio.Group>
                 </div>
                 <div className="fs-main-content-wrapper">
                     {
-                        this.state.showTableType === 'event' ? <Table {...eventLogProps} /> : <Table {...auditLogProps} />
+                        this.state.showLogType === 'event' ? <Table {...eventLogProps} /> : <Table {...auditLogProps} />
                     }
                 </div>
             </section>

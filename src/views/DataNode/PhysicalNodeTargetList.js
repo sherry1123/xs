@@ -12,10 +12,6 @@ class PhysicalNodeTargetList extends Component {
         };
     }
 
-    switchService ({target: {value}}){
-        this.setState({currentServerType: value});
-    }
-
     render (){
         let {currentServerType} = this.state;
         let {physicalNodeTargets, physicalNodeInfo: {metadata, storage}} = this.props;
@@ -75,7 +71,7 @@ class PhysicalNodeTargetList extends Component {
                     <div className="fs-header-button-box">
                         <Radio.Group
                             value={this.state.currentServerType}
-                            onChange={this.switchService.bind(this)}
+                            onChange={({target: {value}}) => this.setState({currentServerType: value})}
                         >
                             <Radio value="all">{lang('全部', 'All')}</Radio>
                             <Radio value="metadata" disabled={metadata === 0}>{lang('元数据服务', 'Metadata Service')}</Radio>

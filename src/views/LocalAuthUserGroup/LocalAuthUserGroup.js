@@ -93,7 +93,14 @@ class LocalAuthUserGroup extends Component {
         let tableProps = {
             size: 'normal',
             dataSource: localAuthUserGroupList,
-            pagination: 'normal',
+            pagination: localAuthUserGroupList.length > 12 && {
+                pageSize: 12,
+                showTotal: (total, range) => lang(
+                    `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
+                    `show ${range[0]}-${range[1]} of ${total} items`
+                ),
+                size: 'normal',
+            },
             rowKey: 'name',
             locale: {
                 emptyText: lang('暂无本地认证用户组', 'No local authentication user group')

@@ -1,10 +1,47 @@
+.fs-table-operation-wrapper {
+	.fs-operation-info-box {
+		float: right;
+		margin-top: 15px;
+		display: flex;
+		flex-direction: row;
+		.fs-operation-info-item {
+			height: 30px;
+			margin-left: 60px;
+			.fs-operation-info-item-value {
+				height: @bigFont;
+				line-height: @bigFont;
+				font-size: @bigFont;
+				color: @title;
+				&.light-green {
+					color: @light-green;
+				}
+				&.orange {
+					color: @orange;
+				}
+				&.light-blue {
+					color: @light-blue;
+				}
+				&.purple {
+					color: @purple;
+				}
+			}
+			.fs-operation-info-item-label {
+				margin-top: 3px;
+				height: @smallFont;
+				line-height: @smallFont;
+				font-size: @smallFont;
+				color: @text;
+			}
+		}
+	}
+}
 .fs-service-and-client-wrapper {
 	display: flex;
 	flex-direction: row;
 	.fs-service-and-client-content {
 		flex: 1;
 		min-width: 200px;
-		height: 910px;
+		height: 840px;
 		background: @white;
 		.fs-box-shadow();
 		&:nth-child(2),
@@ -35,7 +72,7 @@
 			height: 40px;
 			line-height: 40px;
 			font-size: @smallFont;
-			&:nth-child(even) {
+			&:nth-child(odd) {
 				background: @table-row-stripe-bg;
 			}
 		}

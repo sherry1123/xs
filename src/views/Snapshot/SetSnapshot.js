@@ -16,6 +16,7 @@ class SetSnapshot extends Component {
             manualSnapshotNumber: 0,
             formValid: false,
             formSubmitting: false,
+            editQuotaMode: false,
             settingData: this.props.snapshotSetting,
             validation: {
                 total: {status: '', help: '', valid: false},
@@ -146,6 +147,7 @@ class SetSnapshot extends Component {
             manualSnapshotNumber,
             formValid: true, // we consider the data are all right at the first time
             formSubmitting: false,
+            editQuotaMode: false,
             settingData,
             validation: {
                 total: {status: '', help: '', valid: true},
@@ -159,7 +161,6 @@ class SetSnapshot extends Component {
     }
 
     render (){
-        let {timedSnapshotNumber, manualSnapshotNumber} = this.state;
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
@@ -225,49 +226,67 @@ class SetSnapshot extends Component {
                             <Icon type="question-circle-o" className="fs-info-icon m-l" />
                         </Popover>
                     </Form.Item>
-                    <div>
-                        <span className="fs-snapshot-setting-quota-label" style={{width: isChinese ? 74 : 103}}>
-                            {lang('数量配额', 'Number Quota')}
-                        </span>
-                        <Popover
-                            placement="right"
-                            content={lang(
-                                '推荐的定时快照数量和手动快照数量的比例为 6:4，请下面的拖动滑块来调整配额。各类型快照的数量不能被设置来小于其当前已有数量。',
-                                'The recommended timed snapshot number and manual snapshot number ratio is 6:4, please drag the slider below to adjust the quota. Number of snapshot of each type can\'t be set less than its current number'
-                            )}
+                    <Form.Item {...formItemLayout} label={lang('数量配额', 'Number Quota')}>
+                        {
+                            !this.state.editQuotaMode && <span>
+                                <span>
+                                    {lang('定时允许 ', 'Timed allow ')}
+                                    {Number(this.state.settingData.auto)}
+                                    {lang(' 个,', ',')}
+                                </span>
+                                <span style={{margin: '0 10px'}}>
+                                    {lang('手动允许 ', 'Manual allow ')}
+                                    {Number(this.state.settingData.total) - Number(this.state.settingData.auto)}
+                                    {isChinese ? ' 个' : ''}
+                                </span>
+                                <Popover content={lang('修改快照数量配置。', 'Edit snapshot number quota.')}>
+                                    <Icon type="edit" className="fs-snapshot-setting-eit-quota" onClick={() => this.setState({editQuotaMode: !this.state.editQuotaMode})} />
+                                </Popover>
+                            </span>
+                        }
+                        {
+                            this.state.editQuotaMode && <Popover
+                                placement="right"
+                                content={lang(
+                                    '推荐的定时快照数量和手动快照数量的比例为 6:4，请下面的拖动滑块来调整配额。各类型快照的数量不能被设置来小于其当前已有数量。',
+                                    'The recommended timed snapshot number and manual snapshot number ratio is 6:4, please drag the slider below to adjust the quota. Number of snapshot of each type can\'t be set less than its current number'
+                                )}
+                            >
+                                <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                            </Popover>
+                        }
+                    </Form.Item>
+                    {
+                        this.state.editQuotaMode && <Form.Item
+                            validateStatus={this.state.validation.auto.status}
+                            help={this.state.validation.auto.help}
                         >
-                            <Icon type="question-circle-o" className="fs-info-icon m-l" />
-                        </Popover>
-                    </div>
-                    <Form.Item
-                        validateStatus={this.state.validation.auto.status}
-                        help={this.state.validation.auto.help}
-                    >
-                        <div className="fs-snapshot-setting-slider-wrapper">
+                            <div className="fs-snapshot-setting-slider-wrapper">
                             <span className="fs-snapshot-setting-count" style={{width: isChinese ? 60 : 65}}>
                                 {lang('定时', 'Timed')} <span>{this.state.settingData.auto}</span>
                             </span>
-                            <Slider
-                                className="fs-snapshot-setting-slider"
-                                style={{width: isChinese ? 212 : 190}}
-                                disabled={this.state.settingData.total > this.state.totalLimitation}
-                                max={Number(this.state.settingData.total)}
-                                value={Number(this.state.settingData.auto)}
-                                tipFormatter={null}
-                                onChange={async value => {
-                                    await this.formValueChange.bind(this, 'auto')(value);
-                                    this.validateForm.bind(this, 'auto')();
-                                }}
-                            />
-                            <span className="fs-snapshot-setting-count" style={{width: isChinese ? 60 : 75}}>
+                                <Slider
+                                    className="fs-snapshot-setting-slider"
+                                    style={{width: isChinese ? 212 : 190}}
+                                    disabled={this.state.settingData.total > this.state.totalLimitation}
+                                    max={Number(this.state.settingData.total)}
+                                    value={Number(this.state.settingData.auto)}
+                                    tipFormatter={null}
+                                    onChange={async value => {
+                                        await this.formValueChange.bind(this, 'auto')(value);
+                                        this.validateForm.bind(this, 'auto')();
+                                    }}
+                                />
+                                <span className="fs-snapshot-setting-count" style={{width: isChinese ? 60 : 75}}>
                                 {lang('手动', 'Manual')} <span>{this.state.settingData.manual}</span>
                             </span>
-                        </div>
-                    </Form.Item>
+                            </div>
+                        </Form.Item>
+                    }
                     <div className="fs-snapshot-setting-reference">
                         {lang(
-                            `*参考：已有定时快照 ${timedSnapshotNumber} 个，手动快照 ${manualSnapshotNumber} 个`,
-                            `*Reference: ${timedSnapshotNumber} timed and ${manualSnapshotNumber} manual snapshots exist`
+                            `当前已有定时快照 ${this.state.timedSnapshotNumber} 个，手动快照 ${this.state.manualSnapshotNumber} 个`,
+                            `Currently there are ${this.state.timedSnapshotNumber} timed and ${this.state.manualSnapshotNumber} manual snapshots exist`
                         )}
                     </div>
                 </Form>
