@@ -187,7 +187,17 @@ const model = {
     },
     async getBuddyGroup(param) {
         let token = await model.getToken();
-        return await request.get(config.api.orcafs.listmirrorgroup, param, token, true, { data: [] });
+        let res = await request.get(config.api.orcafs.listmirrorgroup, param, token, true, { data: [] });
+        if (!res.errorId) {
+            res.data = res.data || [];
+            res.data = res.data.map(item => {
+                let { type, groupId, primary, secondary } = item;
+                primary = { targetId: primary.targetId, mountPath: primary.mountPath, node: primary.hostname, service: primary.service === 'meta' ? 'metadata' : primary.service, isUsed: primary.isUsed, nodeId: primary.nodeId, space: { total: primary.totalSpace, used: primary.usedSpace, free: primary.freeSpace, usage: `${(primary.usedSpace / primary.totalSpace).toFixed(2)}%` } };
+                secondary = { targetId: secondary.targetId, mountPath: secondary.mountPath, node: secondary.hostname, service: secondary.service === 'meta' ? 'metadata' : secondary.service, isUsed: secondary.isUsed, nodeId: secondary.nodeId, space: { total: secondary.totalSpace, used: secondary.usedSpace, free: secondary.freeSpace, usage: `${(secondary.usedSpace / secondary.totalSpace).toFixed(2)}%` } };
+                return { type, groupId, primary, secondary };
+            });
+        }
+        return res;
     },
     async createBuddyGroup(param) {
         let token = await model.getToken();
