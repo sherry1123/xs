@@ -163,11 +163,45 @@
                     }
                 }
             }
+            .fs-initialization-progress-gear-wrapper {
+                position: relative;
+                margin: 30px auto;
+                width: 116px;
+                height: 92px;
+                i {
+                    display: block;
+                    &.fs-initialization-gear-big {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 75px;
+                        height: 75px;
+                        background: url(../../images/gear_big.png) 0 0 no-repeat;
+                        background-size: 100% 100%;
+                        animation: clockwise-rotate 4s linear infinite .3s;
+                    }
+                    &.fs-initialization-gear-small {
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                        width: 45px;
+                        height: 45px;
+                        background: url(../../images/gear_small.png) 0 0 no-repeat;
+                        background-size: 100% 100%;
+                        animation: anticlockwise-rotate 3s linear infinite .3s;
+                    }
+                }
+            }
             .fs-initialization-progress-bar {
-                .ant-progress-inner {
-                    border-radius: 0;
-                    .ant-progress-bg {
-                        border-radius: 0;
+                margin: 0 0 30px 375px;
+                width: 450px;
+                .ant-progress-outer {
+                    .ant-progress-inner {
+                        background: linear-gradient(#b8b9ba, #e0e1e2) !important;
+                        .ant-progress-bg {
+                            height: 8px !important;
+                            background: linear-gradient(#7bcbff, #3385ff) !important;
+                        }
                     }
                 }
             }
@@ -237,9 +271,25 @@
                 margin-top: 10px;
                 min-height: 350px;
                 .fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
-                .fs-initialization-info {
+                .fs-initialization-info-title {
+                    padding: 0 25px;
+                    height: 40px;
+                    line-height: 40px;
+                    background: @page-bg;
+                }
+                .fs-initialization-info-item {
+                    padding: 0 25px;
+                    height: 32px;
+                    line-height: 32px;
+                    font-size: @smallFont;
+                    &:nth-child(odd) {
+                        background: @table-row-stripe-bg-opacity;
+                    }
                     &.failed {
                         color: @red;
+                    }
+                    span {
+                        margin-right: 20px;
                     }
                 }
             }

@@ -26,7 +26,7 @@ class ClusterTargetsRanking extends Component {
         return (
             <div className="fs-target-ranking-wrapper">
                 <header>
-                    <Icon type="hdd" />{lang('存储目标使用率 Top4', 'Target Usage Rate Top4')}
+                    <Icon type="hdd" />{lang('存储目标使用率排行', 'Target Usage Rate Ranking')}
                     <span className="fs-target-view-all" onClick={this.showAllTargets.bind(this)}>{lang('查看所有 >>>', 'View All >>>')}</span>
                 </header>
                 <TargetList targets={rankingTargets} />

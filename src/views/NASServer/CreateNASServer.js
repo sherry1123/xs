@@ -37,7 +37,9 @@ class CreateNASServer extends Component {
     }
 
     showCatalogTree (){
-        this.catalogTreeWrapper.getWrappedInstance().show();
+        let {path} = this.state.NASServerData;
+        let selectedCatalog = !path ? [] : [path];
+        this.catalogTreeWrapper.getWrappedInstance().show(selectedCatalog, 'NASServer');
     }
 
     async selectPath (path){

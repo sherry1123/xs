@@ -105,7 +105,7 @@ class CreateTarget extends Component {
             currentServiceIP: metadataServerIPs[0] || '',
             enableCustomRAID: false,
         };
-        httpRequests.getClusterRoleIPs();
+        httpRequests.getClusterServiceRoleIPs();
     }
 
     hide (){
@@ -188,7 +188,7 @@ class CreateTarget extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterPhysicalNodeList, clusterRoleIPs: {metadataServerIPs, storageServerIPs}}}} = state;
+    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterPhysicalNodeList, clusterServiceRoleIPs: {metadataServerIPs, storageServerIPs}}}} = state;
     return {language, recommendedRAID, customRAID, clusterPhysicalNodeList, metadataServerIPs, storageServerIPs};
 };
 

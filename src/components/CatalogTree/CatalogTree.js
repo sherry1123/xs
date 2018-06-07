@@ -1,28 +1,61 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, message, Modal, Spin, Tree} from 'antd';
-import lang from "../Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../Language/lang';
+import httpRequests from '../../http/requests';
 
 class CatalogTree extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
+            selectValid: false,
+            pathType: 'share', // NASServer or share
             treeNodes: [],
             selectedCatalog: [],
         };
     }
 
-    selectNode (selectedKeys){
-        // console.info(a);
-        this.setState({selectedCatalog: selectedKeys});
+    pathValidationCheck (path){
+        if (!!path){
+            let checkOk = true;
+            let {pathType} = this.state;
+            let levels = path.split('/').filter(level => !!level);
+            if (pathType === 'NASServer'){
+                // NASServer can only select the direct sub-catalog of root '/'
+                if (levels.length !== 1){
+                    message.warning(lang(
+                        'NAS服务器管理的目录只能是根目录的直接子目录，请正确选择！',
+                        'The path that managed by NAS server must be the direct sub-catalog of root path, please select correctly.'
+                    ));
+                    checkOk = false;
+                }
+            } else {
+                // Share can only select NASServer's sub-catalog
+                if (levels.length < 2){
+                    message.warning(lang(
+                        '共享的目录必须是NAS服务器所管理目录的子目录，请正确选择！',
+                        'The share catalog must be the sub-catalog that managed by NAS server, please select correctly.'
+                    ));
+                    checkOk = false;
+                }
+            }
+            return checkOk;
+        } else {
+            return false;
+        }
     }
 
-    outputCatalog (){
-        let {onSelect} = this.props;
-        onSelect && onSelect(this.state.selectedCatalog[0]);
-        this.setState({visible: false});
+    selectNode (selectedKeys){
+        let [path] = selectedKeys;
+        if (!!path){
+            let selectValid = this.pathValidationCheck(path);
+            if (selectValid){
+                this.setState({selectValid, selectedCatalog: selectedKeys});
+            } else {
+                this.setState({selectValid, selectedCatalog: []});
+            }
+        }
     }
 
     renderTreeNodes (nodes){
@@ -65,9 +98,20 @@ class CatalogTree extends Component {
         });
     }
 
-    async show (selectedCatalog = []){
+    outputCatalog (){
+        let {selectedCatalog: [path]} = this.state;
+        if (this.pathValidationCheck(path)){
+            let {onSelect} = this.props;
+            onSelect && onSelect(path);
+            this.setState({visible: false});
+        }
+    }
+
+    async show (selectedCatalog = [], pathType = 'share'){
         await this.setState({
             visible: true,
+            selectValid: this.pathValidationCheck(selectedCatalog[0]),
+            pathType,
             treeNodes: [],
             selectedCatalog
         });
@@ -77,7 +121,7 @@ class CatalogTree extends Component {
         let children = await httpRequests.getFiles(rootNode.key);
         children.forEach(node => this.convertNode(node));
         rootNode.children = children;
-        this.setState({treeNodes: [rootNode]});
+        await this.setState({treeNodes: [rootNode]});
     }
 
     convertNode (node){
@@ -91,7 +135,7 @@ class CatalogTree extends Component {
     }
 
     render (){
-        let {treeNodes, selectedCatalog} = this.state;
+        let {pathType, treeNodes, selectValid, selectedCatalog} = this.state;
         return (
             <Modal
                 title={lang('选择目录', 'Select Catalog')}
@@ -110,7 +154,7 @@ class CatalogTree extends Component {
                         </Button>
                         <Button
                             type="primary"
-                            disabled={!selectedCatalog.length}
+                            disabled={!(!!selectedCatalog.length && selectValid)}
                             size='small'
                             onClick={this.outputCatalog.bind(this)}
                         >
@@ -124,6 +168,16 @@ class CatalogTree extends Component {
                     spinning={!treeNodes.length}
                 >
                     {
+                        !!treeNodes.length && (pathType === 'NASServer' ?
+                            <div style={{marginBottom: 10, fontSize: 12}}>
+                                {lang('请选择根目录的直接子目录作为NAS服务器管理的目录', 'Please select the direct sub-catalog as the catalog that managed by NAS server')}
+                            </div> :
+                            <div style={{marginBottom: 10, fontSize: 12}}>
+                                {lang('请选择NAS服务器所管理目录的子目录作为共享的目录', 'Please select the the sub-catalog that managed by NAS server as share catalog')}
+                            </div>
+                        )
+                    }
+                    {
                         !!treeNodes.length && <div style={{marginBottom: 10, fontSize: 12}}>
                             {lang('已选目录路径：', 'Selected Catalog Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
                         </div>
@@ -133,7 +187,7 @@ class CatalogTree extends Component {
                             showIcon
                             multiple={false}
                             defaultExpandedKeys={['/']}
-                            defaultSelectedKeys={selectedCatalog}
+                            selectedKeys={selectedCatalog}
                             loadData={this.loadNode.bind(this)}
                             onSelect={this.selectNode.bind(this)}
                         >

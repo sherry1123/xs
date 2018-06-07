@@ -191,10 +191,10 @@ export default  {
         });
     },
 
-    getClusterRoleIPs (){
+    getClusterServiceRoleIPs (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getinitparam');
-            !!data && store.dispatch(dashboardAction.setClusterRoleIPs(data));
+            !!data && store.dispatch(dashboardAction.setClusterServiceRoleIPs(data));
         });
     },
 

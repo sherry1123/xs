@@ -24,8 +24,8 @@ class TargetUsageRateRanking extends Component {
                                     <p>{lang('目标ID', 'Target ID')}: <span>{target.targetId}</span></p>
                                     <p>{lang('挂载路径', 'Mount Path')}: <span>{target.mountPath}</span></p>
                                     <p>{lang('所属节点', 'Node Belong')}: <span>{target.node}</span></p>
-                                    <p>{lang('所属服务类型', 'Service Type')}: <span>{serviceRoleMap[target.service]}</span></p>
-                                    <p>{lang('所属服务ID', 'Service ID')}: <span>{target.nodeId}</span></p>
+                                    <p>{lang('服务角色', 'Service Role')}: <span>{serviceRoleMap[target.service]}</span></p>
+                                    <p>{lang('服务ID', 'Service ID')}: <span>{target.nodeId}</span></p>
                                     <p>{lang('总容量', 'Total Capacity')}: <span>{formatStorageSize(target.space.total)}</span></p>
                                     <p>{lang('已使用容量', 'Used Capacity')}: <span>{formatStorageSize(target.space.used)}</span></p>
                                     <p>{lang('剩余容量', 'Remaining Capacity')}: <span>{formatStorageSize(target.space.free)}</span></p>
@@ -36,10 +36,8 @@ class TargetUsageRateRanking extends Component {
                             <section className="fs-target-item-wrapper">
                                 <header>
                                     <span>{lang('目标ID', 'Target ID')}: {target.targetId}</span>
-                                    <span>{lang('总容量', 'Total Capacity')}: {formatStorageSize(target.space.total)}</span>
-                                    {/*
-                                    <span>{lang('容量使用率', 'Capacity Usage Rate')}: {target.space.usage}</span>
-                                    */}
+                                    <span>{serviceRoleMap[target.service]}</span>
+                                    <span>{formatStorageSize(target.space.total)}</span>
                                 </header>
                                 <div className="fs-capacity-bar">
                                     <div

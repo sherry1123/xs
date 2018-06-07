@@ -111,7 +111,7 @@ class FSOperation extends Component {
             // loading: this.queryDirLock,
             rowKey: 'path',
             locale: {
-                emptyText: lang('暂无文件', 'No Files')
+                emptyText: lang('暂无文件目录', 'No File Catalog')
             },
             scroll: {y: 500},
             title: () => (<span className="fs-table-title"><Icon type="setting" />{lang('文件系统操作', 'File System Operation')}</span>),

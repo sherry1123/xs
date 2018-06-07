@@ -30,6 +30,9 @@ const CIFS = asyncLoad(() => import('../CIFS/CIFS'));
 const LocalAuthUser = asyncLoad(() => import('../LocalAuthUser/LocalAuthUser'));
 const LocalAuthUserGroup = asyncLoad(() => import('../LocalAuthUserGroup/LocalAuthUserGroup'));
 
+// service and client
+const ServiceAndClient = asyncLoad(() => import('../ServiceAndClient/ServiceAndClient'));
+
 // storage target and buddy group
 const Target  = asyncLoad(() => import('../Target/Target'));
 const BuddyGroup  = asyncLoad(() => import('../BuddyGroup/BuddyGroup'));
@@ -94,6 +97,8 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.LocalAuthUser}`} component={LocalAuthUser} />
 
                         <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
+
+                        <Route path={`${Main}${routerPath.ServiceAndClient}`} component={ServiceAndClient} />
 
                         <Route path={`${Main}${routerPath.Target}`} component={Target} />
 

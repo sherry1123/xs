@@ -141,7 +141,7 @@ export default {
             clusterTPS: {total: [], time: []},
             clusterIOPS: {total: [], time: []},
             clusterPhysicalNodeList: [],
-            clusterRoleIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], client: []}
+            clusterServiceRoleIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], clientIPs: []}
         },
         // data node
         dataNode: {

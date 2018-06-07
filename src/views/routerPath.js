@@ -42,6 +42,8 @@ const routerPath = {
 
     Target: '/target',
 
+    ServiceAndClient: '/service-and-client',
+
     BuddyGroup: '/buddy-group',
 
     SystemLog: '/system-log',
@@ -58,6 +60,7 @@ export const pathToMenu = {
     DataNode: [routerPath.DataNode],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
     Share: [routerPath.NASServer, routerPath.NFS, routerPath.CIFS],
+    ServiceAndClient: [routerPath.ServiceAndClient],
     UserAndGroup: [routerPath.LocalAuthUser, routerPath.LocalAuthUserGroup],
     TargetAndBuddyGroup: [routerPath.Target, routerPath.BuddyGroup],
     SystemLog: [routerPath.SystemLog],

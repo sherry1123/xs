@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Modal, Table} from 'antd';
 import CreateShare from './CreateShare';
 import EditShare from './EditShare';
-import lang from "../../components/Language/lang";
+import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 
 class Share extends Component {
