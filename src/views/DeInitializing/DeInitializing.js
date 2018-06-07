@@ -31,6 +31,10 @@ class DeInitializing extends PureComponent {
                             </i>
                         ))}
                     </div>
+                    <div className="fs-de-initializing-title">
+                        OrcaFS
+                        <div className="fs-de-initializing-sub-title">{lang('安全、高可靠、一致、高效', 'High Security, High Reliability, High Performance, Consistent, Efficient')}</div>
+                    </div>
                     <div className="fs-de-initializing-gear-rotate-wrapper">
                         {Object.keys(Array.apply(null, {length: 7})).map(i => (
                             <i className={`fs-de-initializing-gear-circle gc-${parseInt(i, 10) + 1}`} key={i} />
@@ -39,7 +43,7 @@ class DeInitializing extends PureComponent {
                         <i className="fs-de-initializing-gear-small" />
                     </div>
                     <div className="fs-de-initializing-tip-wrapper">
-                        {lang('系统正在反初始化中，请稍候 ...', 'System is de-initializing, please wait ...')}
+                        {lang('系统正在反初始化中，请稍候 ', 'System is de-initializing, please wait ')}<i>.</i><i>.</i><i>.</i>
                     </div>
                 </section>
             </div>

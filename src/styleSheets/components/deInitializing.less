@@ -12,15 +12,26 @@
 		margin: 0 auto;
 		width: 600px;
 		text-align: center;
+		.fs-de-initializing-title {
+			margin-top: -120px;
+			margin-bottom: 100px;
+			font-size: @hugeFont;
+			color: @title;
+			.fs-de-initializing-sub-title {
+				margin-top: 20px;
+				font-size: @smallFont;
+				color: @text;
+			}
+		}
 		.fs-de-initializing-gear-rotate-wrapper {
 			position: relative;
 			margin: 0 auto;
 			width: 300px;
 			height: 300px;
 			i {
+				position: absolute;
 				display: block;
 				&.fs-de-initializing-gear-big {
-					position: absolute;
 					top: 100px;
 					left: 90px;
 					width: 75px;
@@ -30,7 +41,6 @@
 					animation: anticlockwise-rotate 4s linear infinite .3s;
 				}
 				&.fs-de-initializing-gear-small {
-					position: absolute;
 					top: 150px;
 					right: 92px;
 					width: 50px;
@@ -40,7 +50,6 @@
 					animation: clockwise-rotate 3s linear infinite .3s;
 				}
 				&.fs-de-initializing-gear-circle {
-					position: absolute;
 					top: 0;
 					left: 0;
 					right: 0;
@@ -86,8 +95,19 @@
 			}
 		}
 		.fs-de-initializing-tip-wrapper {
-			margin-top: 30px;
-			color: @light-blue;
+			margin-top: 100px;
+			i {
+				opacity: 0;
+				&:nth-child(1) {
+					animation: .99s fs-fade-in-out linear infinite .33s;
+				}
+				&:nth-child(2) {
+					animation: .99s fs-fade-in-out linear infinite .66s;
+				}
+				&:nth-child(3) {
+					animation: .99s fs-fade-in-out linear infinite .99s;
+				}
+			}
 		}
 	}
 }

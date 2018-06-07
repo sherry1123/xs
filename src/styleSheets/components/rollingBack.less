@@ -1,18 +1,101 @@
 .fs-rolling-back-wrapper {
     height: 100%;
-    min-height: 500px;
     display: flex;
     align-items: center;
-    color: rgba(0, 0, 0, 0.45);
+    .fs-rolling-back-language-btn-wrapper {
+        position: absolute;
+        top: 10px;
+        right: 30px;
+        text-align: right;
+    }
     .fs-rolling-back-content {
         margin: 0 auto;
         width: 600px;
         text-align: center;
-        .fs-rolling-back-img {
+        .fs-rolling-back-title {
+            margin-top: -120px;
+            margin-bottom: 100px;
+            font-size: @hugeFont;
+            color: @title;
+            .fs-rolling-back-sub-title {
+                margin-top: 20px;
+                font-size: @smallFont;
+                color: @text;
+            }
+        }
+        .fs-rolling-back-rotate-wrapper {
+            position: relative;
             display: inline-block;
-            width: 430px;
-            height: 360px;
-            background: url(../../images/error-bg.svg) 0 0 no-repeat;
+            width: 236px;
+            height: 236px;
+            i {
+                position: absolute;
+                display: block;
+                &.fs-rolling-back-system {
+                    top: 55px;
+                    left: 55px;
+                    width: 126px;
+                    height: 126px;
+                    background: url(../../images/server.png) 0 0 no-repeat;
+                    background-size: 100% 100%;
+                }
+                &.fs-rolling-back-roll {
+                    top: 0;
+                    right: 0;
+                    width: 236px;
+                    height: 236px;
+                    opacity: 0;
+                    &.r-1 {
+                        background: url(../../images/rolling_back_1.png) 0 0 no-repeat;
+                        background-size: 100% 100%;
+                        animation: 2s fs-anticlockwise-rotate-fade-in-out linear infinite 1s;
+                    }
+                    &.r-2 {
+                        background: url(../../images/rolling_back_2.png) 0 0 no-repeat;
+                        background-size: 100% 100%;
+                        animation: 2s fs-anticlockwise-rotate-fade-in-out linear infinite 2s;
+                    }
+                }
+                &.fs-rolling-back-light {
+                    right: 74px;
+                    width: 6px;
+                    height: 6px;
+                    background: @bright-green;
+                    border-radius: 100%;
+                    opacity: 0;
+                    &.l-1 {
+                        top: 75px;
+                        animation: 1.04s fs-fade-in-out linear infinite .26s;
+                    }
+                    &.l-2 {
+                        top: 103px;
+                        animation: 1.04s fs-fade-in-out linear infinite .52s;
+                    }
+                    &.l-3 {
+                        top: 131px;
+                        animation: 1.04s fs-fade-in-out linear infinite .78s;
+                    }
+                    &.l-4 {
+                        top: 159px;
+                        animation: 1.04s fs-fade-in-out linear infinite 1.04s;
+                    }
+                }
+            }
+        }
+    }
+    .fs-de-initializing-tip-wrapper {
+        margin-top: 100px;
+        i {
+            opacity: 0;
+            &:nth-child(1) {
+                animation: .99s fs-fade-in-out linear infinite .33s;
+            }
+            &:nth-child(2) {
+                animation: .99s fs-fade-in-out linear infinite .66s;
+            }
+            &:nth-child(3) {
+                animation: .99s fs-fade-in-out linear infinite .99s;
+            }
         }
     }
  }

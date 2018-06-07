@@ -1,10 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import {AppContainer} from 'react-hot-loader'
-import {Provider} from "react-redux";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {AppContainer} from 'react-hot-loader';
+import {Provider} from 'react-redux';
 import store from './redux';
-import App from "./views/App";
-import "./styleSheets/index.less";
+import App from './views/App';
+import './styleSheets/index.less';
 import './socket';
 import './http/cronJob';
 import {lsGet} from './services';
