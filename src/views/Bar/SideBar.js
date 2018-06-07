@@ -106,7 +106,7 @@ class SideBar extends Component {
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.Item key={routerPath.ServiceAndClient}>
-                        <Icon type="desktop" />{lang('NAS服务器', 'NAS Server')}
+                        <Icon type="desktop" />{lang('服务与客户端', 'Service And Client')}
                     </Menu.Item>
                     <Menu.SubMenu
                         key="UserAndGroup"

@@ -4,9 +4,9 @@ import generalAction from '../../redux/actions/generalAction';
 import {Button, Form, Icon, Input, message} from 'antd';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
-import routerPath from "../routerPath";
+import routerPath from '../routerPath';
 import {ckGet} from '../../services';
-import httpRequests from "../../http/requests";
+import httpRequests from '../../http/requests';
 
 class Login extends Component {
     constructor (props){
@@ -120,7 +120,7 @@ class Login extends Component {
                 </div>
                 <div className="fs-login-content-wrapper">
                     <div className="fs-logo-text-content">
-                        <div>{lang('OrcaFS提供高了安全、高可靠、一致高效的服务', 'OrcaFS provides high security, high reliability, high performance and consistent services')}</div>
+                        <div>{lang('OrcaFS提供高了安全、高可靠、一致、高效的服务', 'OrcaFS provides high security, high reliability, high performance, consistent, efficient services')}</div>
                         <div>{lang('满足各类存储和高性能计算的需求', 'Meets the needs of storage and high performance computing')}</div>
                     </div>
                     <section className="fs-bubble-logo-wrapper">

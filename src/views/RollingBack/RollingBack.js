@@ -15,11 +15,11 @@ class RollingBack extends PureComponent {
 
     render (){
         return (
-            <div className="fs-de-initializing-wrapper fs-initialize-wrapper">
-                <section className="fs-de-initializing-language-btn-wrapper">
+            <div className="fs-rolling-back-wrapper fs-initialize-wrapper">
+                <section className="fs-rolling-back-language-btn-wrapper">
                     <LanguageButton pureText />
                 </section>
-                <section className="fs-de-initializing-content">
+                <section className="fs-rolling-back-content">
                     <div>
                         {Object.keys(Array.apply(null, {length: 6})).map(i => (
                             <i className={`fs-initialize-background-stone b-${parseInt(i, 10) + 1}`} key={i}>
@@ -30,15 +30,20 @@ class RollingBack extends PureComponent {
                             </i>
                         ))}
                     </div>
-                    <div className="fs-de-initializing-gear-rotate-wrapper">
-                        {Object.keys(Array.apply(null, {length: 7})).map(i => (
-                            <i className={`fs-de-initializing-gear-circle gc-${parseInt(i, 10) + 1}`} key={i} />
+                    <div className="fs-rolling-back-title">
+                        OrcaFS
+                        <div className="fs-rolling-back-sub-title">{lang('安全、高可靠、一致、高效', 'High Security, High Reliability, High Performance, Consistent, Efficient')}</div>
+                    </div>
+                    <div className="fs-rolling-back-rotate-wrapper">
+                        <i className="fs-rolling-back-system" />
+                        <i className="fs-rolling-back-roll r-1" />
+                        <i className="fs-rolling-back-roll r-2" />
+                        {Object.keys(Array.apply(null, {length: 4})).map(i => (
+                            <i className={`fs-rolling-back-light l-${parseInt(i, 10) + 1}`} key={i} />
                         ))}
-                        <i className="fs-de-initializing-gear-big" />
-                        <i className="fs-de-initializing-gear-small" />
                     </div>
                     <div className="fs-de-initializing-tip-wrapper">
-                        {lang('快照正在回滚中，请稍候 ...', 'Snapshot is rolling back, please wait ...')}
+                        {lang('快照正在回滚中，请稍候 ', 'Snapshot is rolling back, please wait ')}<i>.</i><i>.</i><i>.</i>
                     </div>
                 </section>
             </div>

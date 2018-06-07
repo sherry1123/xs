@@ -17,19 +17,35 @@
     61% {background: @red;}
 }
 
-// for ArrowButton component
-@keyframes fs-arrow-glitter {
+// for pure fade in/out animations
+@keyframes fs-fade-in-out {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+@keyframes fs-fade-out-in {
     from {opacity: 0;}
     to {opacity: 1;}
 }
 
 // for pure rotate animations
 @keyframes clockwise-rotate {
-    100% {transform:rotate(360deg);}
+    100% {transform: rotate(360deg);}
 }
 
 @keyframes anticlockwise-rotate {
-    100% {transform:rotate(-360deg);}
+    100% {transform: rotate(-360deg);}
+}
+
+// for mixed rotate and fade in/out animations
+@keyframes fs-clockwise-rotate-fade-in-out {
+    0% {opacity: 1; transform: rotate(0deg);}
+    100% {opacity: 0; transform: rotate(360deg);}
+}
+
+@keyframes fs-anticlockwise-rotate-fade-in-out {
+    0% {opacity: 1; transform: rotate(0deg);}
+    100% {opacity: 0; transform: rotate(-360deg);}
 }
 
 // for login page background animations
