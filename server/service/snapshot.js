@@ -103,6 +103,7 @@ const model = {
             result = true;
         } else {
             handler.error(136, message, param);
+            await promise.runTimeOutInPromise(3);
             socket.postEventStatus('snapshot', 18, name, false, true);
             result = false;
         }

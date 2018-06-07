@@ -1179,9 +1179,8 @@ const model = {
     async getBuddyGroup(param) {
         let result = {};
         try {
-            let metaBuddyGroup = Object.assign(await afterMe.getBuddyGroup({ nodeType: 'meta' })).data || [];
-            let storageBuddyGroup = Object.assign(await afterMe.getBuddyGroup({ nodeType: 'storage' })).data || [];
-            let data = metaBuddyGroup.concat(storageBuddyGroup).sort((prev, next) => (prev.groupId > next.groupId));
+            let buddyGroup = Object.assign(await afterMe.getBuddyGroup(param)).data;
+            let data = buddyGroup.sort((prev, next) => (prev.groupId > next.groupId));
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
