@@ -539,15 +539,9 @@ class Initialize extends Component {
                     {Object.keys(Array.apply(null, {length: 6})).map(i => (
                         <i className={`fs-initialize-background-stone b-${parseInt(i, 10) + 1}`} key={i}>
                             <i className="fs-sand" />
-                            <i className="fs-earth-layer">
-                                <i className="fs-satellite" />
-                            </i>
-                            <i className="fs-moon-layer">
-                                <i className="fs-satellite" />
-                            </i>
-                            <i className="fs-mercury-layer">
-                                <i className="fs-satellite" />
-                            </i>
+                            <i className="fs-earth-layer"><i className="fs-satellite" /></i>
+                            <i className="fs-moon-layer"><i className="fs-satellite" /></i>
+                            <i className="fs-mercury-layer"><i className="fs-satellite" /></i>
                         </i>
                     ))}
                 </div>

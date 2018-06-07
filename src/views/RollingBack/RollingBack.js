@@ -1,11 +1,9 @@
 import React, {PureComponent} from 'react';
 import {connect} from "react-redux";
-import {Icon} from 'antd';
-import lang from "../../components/Language/lang";
+import LanguageButton from '../../components/Language/LanguageButton';
+import lang from '../../components/Language/lang';
 import {ckGet} from '../../services';
 import routerPath from '../routerPath';
-
-// The placeholder page during the rolling back
 
 class RollingBack extends PureComponent {
     componentWillMount (){
@@ -16,15 +14,32 @@ class RollingBack extends PureComponent {
     }
 
     render (){
-        // 这里需要一个回滚中的背景图
         return (
-            <div className="fs-rolling-back-wrapper">
-                <section className="fs-rolling-back-content">
-                    <div className="fs-rolling-back-img" />
-                    <p>
-                        <Icon type="setting" spin style={{marginRight: 24, fontSize: 24, color: '#188fff'}} />
-                        {lang('快照正在回滚中，请稍后 ...', 'Snapshot is rolling back, please wait ...')}
-                    </p>
+            <div className="fs-de-initializing-wrapper fs-initialize-wrapper">
+                <section className="fs-de-initializing-language-btn-wrapper">
+                    <LanguageButton pureText />
+                </section>
+                <section className="fs-de-initializing-content">
+                    <div>
+                        {Object.keys(Array.apply(null, {length: 6})).map(i => (
+                            <i className={`fs-initialize-background-stone b-${parseInt(i, 10) + 1}`} key={i}>
+                                <i className="fs-sand" />
+                                <i className="fs-earth-layer"><i className="fs-satellite" /></i>
+                                <i className="fs-moon-layer"><i className="fs-satellite" /></i>
+                                <i className="fs-mercury-layer"><i className="fs-satellite" /></i>
+                            </i>
+                        ))}
+                    </div>
+                    <div className="fs-de-initializing-gear-rotate-wrapper">
+                        {Object.keys(Array.apply(null, {length: 7})).map(i => (
+                            <i className={`fs-de-initializing-gear-circle gc-${parseInt(i, 10) + 1}`} key={i} />
+                        ))}
+                        <i className="fs-de-initializing-gear-big" />
+                        <i className="fs-de-initializing-gear-small" />
+                    </div>
+                    <div className="fs-de-initializing-tip-wrapper">
+                        {lang('快照正在回滚中，请稍候 ...', 'Snapshot is rolling back, please wait ...')}
+                    </div>
                 </section>
             </div>
         );
