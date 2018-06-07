@@ -132,8 +132,8 @@ const model = {
         let res = await request.get(config.api.orcafs.listtargets, param, token, true);
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
-                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed: false, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service, isUsed } = res.data[i];
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
             }
         }
         return res;
@@ -159,8 +159,8 @@ const model = {
         let res = await request.get(config.api.orcafs.listnodetargets, param, token, true);
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
-                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service, isUsed } = res.data[i];
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
         }
