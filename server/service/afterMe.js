@@ -270,6 +270,41 @@ const model = {
         param.opt = 'localgroupremoveuser';
         let token = await model.getToken();
         return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async getCIFSShare(param) {
+        param.opt = 'nasscifsharequery';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async createCIFSShare(param) {
+        param.opt = 'cifsaddshare';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async updateCIFSShare(param) {
+        param.opt = 'cifschangeshare';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async deleteCIFSShare(param) {
+        param.opt = 'cifsdeleteshare';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async addUserOrGroupToCIFSShare(param) {
+        param.opt = 'cifsaddclient';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async updateUserOrGroupInCIFSShare(param) {
+        param.opt = 'cifschangeclient';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async removeUserOrGroupFromCIFSShare(param) {
+        param.opt = 'cifsdeleteclient';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
     }
 };
 module.exports = model;

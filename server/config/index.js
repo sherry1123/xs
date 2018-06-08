@@ -73,7 +73,8 @@ exports.api = {
         createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror',
         getclientlist: 'http://localhost:9090/cluster/getclientlist',
         nasmanager: 'http://localhost:9090/cluster/nasmanager',
-        nasusermanager: 'http://localhost:9090/cluster/nasusermanager'
+        nasusermanager: 'http://localhost:9090/cluster/nasusermanager',
+        nascifssharemanager: 'http://localhost:9090/cluster/nascifssharemanager'
     }
 };
 exports.key = {

@@ -101,9 +101,9 @@ const model = {
         return userOrGroupList;
     },
     async addUserOrGroupToCIFSShare(param) {
-        let { items, shareName } = param;
+        let { type, name, permission, shareName } = param;
         let userOrGroupList = await model.getUserOrGroupFromCIFSShare({ shareName });
-        userOrGroupList = userOrGroupList.concat(items);
+        userOrGroupList = userOrGroupList.concat([{ type, name, permission }]);
         return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
     async updateUserOrGroupInCIFSShare(param) {
