@@ -12,9 +12,9 @@ class AddLocalAuthUserToCIFS extends Component {
             visible: false,
             notDirectlyCreate: false,
             formSubmitting: false,
-            shareName: '',
+            share: {},
             localAuthUserListOfCIFS: [],
-            permission: 'read-only',
+            permission: 'readonly',
             selectedLocalAuthUsers: [],
             localAuthUserList,
             localAuthUserListBackup: localAuthUserList,
@@ -51,18 +51,18 @@ class AddLocalAuthUserToCIFS extends Component {
     }
 
     async add (){
-        let {notDirectlyCreate, selectedLocalAuthUsers, permission, shareName} = this.state;
+        let {notDirectlyCreate, selectedLocalAuthUsers, permission, share: {name: shareName, path: sharePath}} = this.state;
         if (notDirectlyCreate){
             // 创建CIFS的时候不直接添加进去
-            selectedLocalAuthUsers = selectedLocalAuthUsers.map(user => ({type: 'localAuthenticationUser', name: user, permission,}));
+            selectedLocalAuthUsers = selectedLocalAuthUsers.map(user => ({type: 'local_user', name: user, permission, shareName, sharePath}));
             !!this.props.onAdd && this.props.onAdd(selectedLocalAuthUsers);
             this.hide();
         } else {
             // CIFS所属用户/用户组列表点击添加的时候直接添加进该CIFS
             this.setState({formSubmitting: true});
             try {
-                let localAuthUsers = selectedLocalAuthUsers.map(name => ({type: 'localAuthenticationUser', name, permission, shareName}));
-                await httpRequests.addLocalAuthUserOrGroupToCIFSShare(shareName, localAuthUsers);
+                let localAuthUsers = selectedLocalAuthUsers.map(name => ({type: 'local_user', name, permission, shareName}));
+                await httpRequests.addLocalAuthUserOrGroupToCIFSShare(shareName, sharePath, localAuthUsers);
                 httpRequests.getLocalAuthUserOrGroupListByCIFSShareName(shareName);
                 await this.hide();
                 message.success(lang(`为CIFS共享 ${shareName} 添加本地认证用户成功!`, `Add local authentication user for CIFS share ${shareName} successfully!`));
@@ -73,7 +73,7 @@ class AddLocalAuthUserToCIFS extends Component {
         }
     }
 
-    async show ({notDirectlyCreate, shareName, localAuthUserListOfCIFS}){
+    async show ({notDirectlyCreate, share, localAuthUserListOfCIFS}){
         let {localAuthUserList} = this.props;
         if (!localAuthUserList.length){
             httpRequests.getLocalAuthUserList();
@@ -83,10 +83,10 @@ class AddLocalAuthUserToCIFS extends Component {
             visible: true,
             notDirectlyCreate,
             formSubmitting: false,
-            shareName,
+            share,
             localAuthUserListOfCIFS,
             selectedLocalAuthUsers: [],
-            permission: 'read-only',
+            permission: 'readonly',
             localAuthUserList,
             localAuthUserListBackup: localAuthUserList,
         });
@@ -138,9 +138,9 @@ class AddLocalAuthUserToCIFS extends Component {
                                 this.setState({permission: value});
                             }}
                         >
-                            <Select.Option value="full-control">{lang('完全控制', 'Full control')}</Select.Option>
-                            <Select.Option value="read-write">{lang('读写', 'Read and write')}</Select.Option>
-                            <Select.Option value="read-only">{lang('只读', 'Readonly')}</Select.Option>
+                            {/*<Select.Option value="full-control">{lang('完全控制', 'Full control')}</Select.Option>*/}
+                            <Select.Option value="read_and_write">{lang('读写', 'Read and write')}</Select.Option>
+                            <Select.Option value="readonly">{lang('只读', 'Readonly')}</Select.Option>
                             <Select.Option value="forbidden">{lang('禁止', 'Forbidden')}</Select.Option>
                         </Select>
                         <Popover

@@ -1,19 +1,19 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import shareAction from "../../redux/actions/shareAction";
-import {Button, Icon, Input, message, Modal, Popover, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import shareAction from '../../redux/actions/shareAction';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import EditUserOrGroupOfCIFS from './EditUserOrGroupOfCIFS';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class UserOrGroupOfCIFS extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
-            shareName: '',
+            share: {},
             loadingList: true,
             localAuthUserOrGroupListOfCIFS: [],
             localAuthUserOrGroupListOfCIFSBackup: [],
@@ -44,7 +44,7 @@ class UserOrGroupOfCIFS extends Component {
     edit (itemData){
         this.editUserOrGroupOfCIFSWrapper.getWrappedInstance().show({
             itemData,
-            shareName: this.state.shareName,
+            share: this.state.share,
         });
     }
 
@@ -62,7 +62,8 @@ class UserOrGroupOfCIFS extends Component {
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
-                    item = Object.assign({}, item, {shareName: this.state.shareName});
+                    let {share: {name: shareName, path: sharePath}} = this.state;
+                    item = Object.assign({}, item, {shareName, sharePath});
                     await httpRequests.removeLocalAuthUserOrGroupFromCIFSShare(item);
                     let localAuthUserOrGroupListOfCIFS = Object.assign([], this.state.localAuthUserOrGroupListOfCIFS);
                     localAuthUserOrGroupListOfCIFS.splice(index, 1);
@@ -79,34 +80,34 @@ class UserOrGroupOfCIFS extends Component {
     }
 
     showAddUser (){
-        let {localAuthUserOrGroupListOfCIFS} = this.state;
-        let localAuthUserListOfCIFS = localAuthUserOrGroupListOfCIFS.filter(item => item.type === 'localAuthenticationUser');
+        let {localAuthUserOrGroupListOfCIFS, share} = this.state;
+        let localAuthUserListOfCIFS = localAuthUserOrGroupListOfCIFS.filter(item => item.type === 'local_user');
         this.addLocalAuthUserToCIFSWrapper.getWrappedInstance().show({
             localAuthUserListOfCIFS,
-            shareName: this.state.shareName,
+            share,
             notDirectlyCreate: false
         });
     }
 
     showAddGroup (){
-        let {localAuthUserOrGroupListOfCIFS} = this.state;
-        let localAuthUserGroupListOfCIFS = localAuthUserOrGroupListOfCIFS.filter(item => item.type === 'localAuthenticationUserGroup');
+        let {localAuthUserOrGroupListOfCIFS, share} = this.state;
+        let localAuthUserGroupListOfCIFS = localAuthUserOrGroupListOfCIFS.filter(item => item.type === 'local_group');
         this.addLocalAuthUserGroupToCIFSWrapper.getWrappedInstance().show({
             localAuthUserGroupListOfCIFS,
-            shareName: this.state.shareName,
+            share,
             notDirectlyCreate: false
         });
     }
 
-    async show (shareName){
+    async show (share){
         await this.setState({
             visible: true,
-            shareName,
+            share,
             loadingList: true,
             localAuthUserOrGroupListOfCIFS: [],
             localAuthUserOrGroupListOfCIFSBackup: [],
         });
-        await httpRequests.getLocalAuthUserOrGroupListByCIFSShareName(shareName);
+        await httpRequests.getLocalAuthUserOrGroupListByCIFSShareName(share.name);
         this.setState({loadingList: false});
     }
 
@@ -121,13 +122,13 @@ class UserOrGroupOfCIFS extends Component {
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
         let {shareName, loadingList, localAuthUserOrGroupListOfCIFS} = this.state;
         let typeMap = {
-            'localAuthenticationUser': lang('本地认证用户', 'Local Authentication User'),
-            'localAuthenticationUserGroup': lang('本地认证用户组', 'Local Authentication User Group'),
+            'local_user': lang('本地认证用户', 'Local Authentication User'),
+            'local_group': lang('本地认证用户组', 'Local Authentication User Group'),
         };
         let permissionMap = {
             'full-control': lang('完全控制', 'Full control'),
-            'read-write': lang('读写', 'Read and write'),
-            'read-only': lang('只读', 'Readonly'),
+            'read_and_write': lang('读写', 'Read and write'),
+            'readonly': lang('只读', 'Readonly'),
             'forbidden': lang('禁止', 'Forbidden'),
         };
         let tableProps = {

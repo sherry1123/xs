@@ -19,7 +19,7 @@ class CreateClientToNFS extends Component {
                 path: '',
                 type: 'host',
                 ips: '',
-                permission: 'read-only',
+                permission: 'readonly',
                 writeMode: 'synchronous',
                 permissionConstraint: 'all_squash',
                 rootPermissionConstraint: 'root_squash'
@@ -114,7 +114,7 @@ class CreateClientToNFS extends Component {
             // 调用创建客户端接口直接创建客户端
             this.setState({formSubmitting: true});
             try {
-                await httpRequests.createClient(clientData);
+                await httpRequests.createClientInNFSShare(clientData);
                 httpRequests.getClientListByNFSSharePath(clientData.path);
                 await this.hide();
                 message.success(lang(`为NFS共享 ${clientData.path} 创建客户端成功!`, `Create client for NFS share ${clientData.path} successfully!`));
@@ -141,7 +141,7 @@ class CreateClientToNFS extends Component {
                 path,
                 type: 'host',
                 ips: '',
-                permission: 'read-only',
+                permission: 'readonly',
                 writeMode: 'synchronous',
                 permissionConstraint: 'all_squash',
                 rootPermissionConstraint: 'root_squash'
@@ -229,9 +229,9 @@ class CreateClientToNFS extends Component {
                                 this.formValueChange.bind(this, 'permission')(value);
                             }}
                         >
-                            <Select.Option value="read-only">{lang('只读', 'Read-only')}</Select.Option>
+                            <Select.Option value="readonly">{lang('只读', 'Readonly')}</Select.Option>
                             {/*<Select.Option value="read-write-n">{lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)')}</Select.Option>*/}
-                            <Select.Option value="read-write">{lang('读写', 'Read-write')}</Select.Option>
+                            <Select.Option value="read_and_write">{lang('读写', 'Read-write')}</Select.Option>
                         </Select>
                     </Form.Item>
                     <div style={{paddingLeft: 10}}>

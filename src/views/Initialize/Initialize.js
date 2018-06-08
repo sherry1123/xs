@@ -28,21 +28,22 @@ class Initialize extends Component {
             checking: false,
             // enable client input
             enableClient: true,
-            // server IP input active
+            // service IP input active
             activeInputMember: -1,
-            // server IP input and corresponding verification result
+            // service IP input and corresponding verification result
             metadataServerIPsError: metadataServerIPs.map(() => ({status: '', help: ''})),
             storageServerIPsError: storageServerIPs.map(() => ({status: '', help: ''})),
             clientIPsError: clientIPs.map(() => ({status: '', help: ''})),
             managementServerIPsError: managementServerIPs.map(() => ({status: '', help: ''})),
             floatIPsError: floatIPs.map(() => ({status: '', help: ''})),
             hbIPsError: hbIPs.map(() => ({status: '', help: ''})),
-            // current select service type
+            // current select service role
             currentServiceType: 'metadata',
             currentServiceNode: {
                 type: 'metadata',
                 ip: metadataServerIPs[0]
             },
+            // RAID conf
             enableCustomRAID: false,
             // running initialization
             initStatusNum: 0,
@@ -608,12 +609,12 @@ class Initialize extends Component {
                                                     }}
                                                 />
                                                 {i !== 0 &&
-                                                <Icon
-                                                    className="fs-ip-minus"
-                                                    type="minus"
-                                                    title={lang('移除', 'remove')}
-                                                    onClick={this.removeIP.bind(this, 'metadataServerIPs', i)}
-                                                />
+                                                    <Icon
+                                                        className="fs-ip-minus"
+                                                        type="minus"
+                                                        title={lang('移除', 'remove')}
+                                                        onClick={this.removeIP.bind(this, 'metadataServerIPs', i)}
+                                                    />
                                                 }
                                             </Form.Item>)
                                         }
@@ -648,12 +649,12 @@ class Initialize extends Component {
                                                     }}
                                                 />
                                                 {i !== 0 &&
-                                                <Icon
-                                                    className="fs-ip-minus"
-                                                    title={lang('移除', 'remove')}
-                                                    type="minus"
-                                                    onClick={this.removeIP.bind(this, 'storageServerIPs', i)}
-                                                />
+                                                    <Icon
+                                                        className="fs-ip-minus"
+                                                        title={lang('移除', 'remove')}
+                                                        type="minus"
+                                                        onClick={this.removeIP.bind(this, 'storageServerIPs', i)}
+                                                    />
                                                 }
                                             </Form.Item>)
                                         }
@@ -679,7 +680,7 @@ class Initialize extends Component {
                                                 <Input
                                                     className="fs-ip-input no-margin"
                                                     size="small"
-                                                    addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
+                                                    addonBefore={this.props.enableHA ? lang(`服务 ${i + 1}`, `Service ${i + 1}`) : ''}
                                                     placeholder={lang('请输入IP', 'please enter IP')}
                                                     value={ip}
                                                     onChange={({target: {value}}) => {
@@ -703,109 +704,110 @@ class Initialize extends Component {
                                     </div>
                                     <Divider dashed style={{margin: "12px 0"}} />
                                     {this.props.enableHA &&
-                                    <div>
-                                        {this.props.floatIPs.map((ip, i) =>
-                                            <Form.Item
-                                                className="fs-ip-input-item"
-                                                key={`float-${i}`}
-                                                label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Mgmt IP') : null}
-                                                validateStatus={this.state['floatIPsError'][i].status}
-                                                help={this.state['floatIPsError'][i].help}
-                                            >
-                                                <Input
-                                                    className="fs-ip-input no-margin"
-                                                    size="small"
-                                                    placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
-                                                    addonAfter={
-                                                        <Popover
-                                                            {...buttonPopoverConf}
-                                                            content={lang(`该IP首次将默认映射至管理服务所在节点${i + 1}的IP上`, `This IP will be mapped to the IP of management server Node ${i + 1} firstly by default`)}
-                                                        >
-                                                            <Icon type="question-circle-o" className="fs-info-icon" />
-                                                        </Popover>
-                                                    }
-                                                    value={ip}
-                                                    onChange={({target: {value}}) => {
-                                                        this.setIP.bind(this, 'floatIPs', i, value)();
-                                                        this.validateIP.bind(this, 'floatIPs', i, value)();
-                                                    }}
-                                                />
-                                            </Form.Item>)
-                                        }
-                                        {this.props.hbIPs.map((ip, i) =>
-                                            <Form.Item className="fs-ip-input-item" key={`hb-${i}`}
-                                                       label={i === 0 ? lang('连接有效性检测IP', 'Connect validity check IP') : null}
-                                                       validateStatus={this.state['hbIPsError'][i].status}
-                                                       help={this.state['hbIPsError'][i].help}
-                                            >
-                                                <Input
-                                                    className="fs-ip-input no-margin"
-                                                    size="small"
-                                                    addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
-                                                    placeholder={lang('请输入HB IP', 'please enter HB IP')}
-                                                    addonAfter={
-                                                        <Popover
-                                                            {...buttonPopoverConf}
-                                                            content={
-                                                                lang(`对应管理服务所在节点${i + 1}，不能与管理服务所在节点处于同一网段`,
-                                                                    `Corresponding with management server Node ${i + 1}, can't be in the same network segment with management servers`)
-                                                            }
-                                                        >
-                                                            <Icon type="question-circle-o" className="fs-info-icon" />
-                                                        </Popover>
-                                                    }
-                                                    value={ip}
-                                                    onChange={({target: {value}}) => {
-                                                        this.setIP.bind(this, 'hbIPs', i, value)();
-                                                        this.validateIP.bind(this, 'hbIPs', i, value)();
-                                                    }}
-                                                />
-                                            </Form.Item>)
-                                        }
-                                    </div>
+                                        <div>
+                                            {this.props.floatIPs.map((ip, i) =>
+                                                <Form.Item
+                                                    className="fs-ip-input-item"
+                                                    key={`float-${i}`}
+                                                    label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Mgmt IP') : null}
+                                                    validateStatus={this.state['floatIPsError'][i].status}
+                                                    help={this.state['floatIPsError'][i].help}
+                                                >
+                                                    <Input
+                                                        className="fs-ip-input no-margin"
+                                                        size="small"
+                                                        placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
+                                                        addonAfter={
+                                                            <Popover
+                                                                {...buttonPopoverConf}
+                                                                content={lang('为管理平台提供服务的IP', 'The IP that servers the management platform')}
+                                                            >
+                                                                <Icon type="question-circle-o" className="fs-info-icon" />
+                                                            </Popover>
+                                                        }
+                                                        value={ip}
+                                                        onChange={({target: {value}}) => {
+                                                            this.setIP.bind(this, 'floatIPs', i, value)();
+                                                            this.validateIP.bind(this, 'floatIPs', i, value)();
+                                                        }}
+                                                    />
+                                                </Form.Item>)
+                                            }
+                                            {this.props.hbIPs.map((ip, i) =>
+                                                <Form.Item
+                                                    className="fs-ip-input-item" key={`hb-${i}`}
+                                                    label={i === 0 ? lang('连接有效性检测IP', 'Connect validity check IP') : null}
+                                                    validateStatus={this.state['hbIPsError'][i].status}
+                                                    help={this.state['hbIPsError'][i].help}
+                                                >
+                                                    <Input
+                                                        className="fs-ip-input no-margin"
+                                                        size="small"
+                                                        addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
+                                                        placeholder={lang('请输入有效性检测 IP', 'please enter heart beat IP')}
+                                                        addonAfter={
+                                                            <Popover
+                                                                {...buttonPopoverConf}
+                                                                content={
+                                                                    lang(`对应管理服务所在节点${i + 1}，不能与管理服务所在节点处于同一网段`,
+                                                                        `Corresponding with management server Node ${i + 1}, can't be in the same network segment with management servers`)
+                                                                }
+                                                            >
+                                                                <Icon type="question-circle-o" className="fs-info-icon" />
+                                                            </Popover>
+                                                        }
+                                                        value={ip}
+                                                        onChange={({target: {value}}) => {
+                                                            this.setIP.bind(this, 'hbIPs', i, value)();
+                                                            this.validateIP.bind(this, 'hbIPs', i, value)();
+                                                        }}
+                                                    />
+                                                </Form.Item>)
+                                            }
+                                        </div>
                                     }
                                 </section>
                                 {this.state.enableClient &&
-                                <section key="ip-input-4" className={`fs-ip-input-member ${this.state.activeInputMember === 4 ? 'active' : ''}`} onClick={this.changeActiveInputMember.bind(this, 4)}>
-                                    <div className="fs-ip-input-title">
-                                        <Popover
-                                            {...buttonPopoverConf}
-                                            content={lang('客户端允许配置0至N个', 'Allow 0 to N clients to be configured')}
-                                        >
-                                            <span>{lang('客户端', 'Clients')}</span>
-                                        </Popover>
-                                        <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'clientIPs')} />
-                                    </div>
-                                    <QueueAnim type={['right', 'left']}>
-                                        {this.props.clientIPs.map((ip, i) =>
-                                            <Form.Item
-                                                className="fs-ip-input-item"
-                                                key={`clients-${i}`}
-                                                validateStatus={this.state['clientIPsError'][i].status}
-                                                help={this.state['clientIPsError'][i].help}
+                                    <section key="ip-input-4" className={`fs-ip-input-member ${this.state.activeInputMember === 4 ? 'active' : ''}`} onClick={this.changeActiveInputMember.bind(this, 4)}>
+                                        <div className="fs-ip-input-title">
+                                            <Popover
+                                                {...buttonPopoverConf}
+                                                content={lang('客户端允许配置0至N个', 'Allow 0 to N clients to be configured')}
                                             >
-                                                <Input
-                                                    className="fs-ip-input"
-                                                    size="small"
-                                                    placeholder={lang('请输入IP', 'please enter IP')}
-                                                    value={ip}
-                                                    onChange={({target: {value}}) => {
-                                                        this.setIP.bind(this, 'clientIPs', i, value)();
-                                                        this.validateIP.bind(this, 'clientIPs', i, value)();
-                                                    }}
-                                                />
-                                                {i !== 0 &&
-                                                <Icon
-                                                    className="fs-ip-minus"
-                                                    title={lang('移除', 'remove')}
-                                                    type="minus"
-                                                    onClick={this.removeIP.bind(this, 'clientIPs', i)}
-                                                />
-                                                }
-                                            </Form.Item>)
-                                        }
-                                    </QueueAnim>
-                                </section>
+                                                <span>{lang('客户端', 'Clients')}</span>
+                                            </Popover>
+                                            <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'clientIPs')} />
+                                        </div>
+                                        <QueueAnim type={['right', 'left']}>
+                                            {this.props.clientIPs.map((ip, i) =>
+                                                <Form.Item
+                                                    className="fs-ip-input-item"
+                                                    key={`clients-${i}`}
+                                                    validateStatus={this.state['clientIPsError'][i].status}
+                                                    help={this.state['clientIPsError'][i].help}
+                                                >
+                                                    <Input
+                                                        className="fs-ip-input"
+                                                        size="small"
+                                                        placeholder={lang('请输入IP', 'please enter IP')}
+                                                        value={ip}
+                                                        onChange={({target: {value}}) => {
+                                                            this.setIP.bind(this, 'clientIPs', i, value)();
+                                                            this.validateIP.bind(this, 'clientIPs', i, value)();
+                                                        }}
+                                                    />
+                                                    {i !== 0 &&
+                                                        <Icon
+                                                            className="fs-ip-minus"
+                                                            title={lang('移除', 'remove')}
+                                                            type="minus"
+                                                            onClick={this.removeIP.bind(this, 'clientIPs', i)}
+                                                        />
+                                                    }
+                                                </Form.Item>)
+                                            }
+                                        </QueueAnim>
+                                    </section>
                                 }
                             </div>
                         </div>

@@ -11,12 +11,6 @@ export const timeUnitMilliSecond = {
     'Minute': 60
 };
 
-export const timeInterval = [
-    {name: '小时', value: 3600},
-    {name: '天', value: 3600 * 24},
-    {name: '周', value: 3600 * 24 * 7}
-];
-
 export const metadataStaticsItems = [
     'userOrClientName', 'sum', 'ack', 'close', 'entInf',
     'nodeInf', 'fndOwn', 'Ink', 'mkdir', 'create',

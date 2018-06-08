@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Icon, Input, message, Modal, Popover, Switch, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Icon, Input, message, Modal, Popover, Switch, Table} from 'antd';
 import CreateSnapshotSchedule from './CreateSnapshotSchedule';
 import EditSnapshotSchedule from './EditSnapshotSchedule';
-import lang from "../../components/Language/lang";
-import {timeLeftFormat, timeFormat} from "../../services/index";
+import lang from '../../components/Language/lang';
+import {timeLeftFormat, timeFormat} from '../../services/index';
 import httpRequests from '../../http/requests';
 
 class SnapshotSchedule extends Component {
@@ -95,7 +95,7 @@ class SnapshotSchedule extends Component {
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除定时快照计划 ${schedule.name} 的操作。`, `You are about to delete timed snapshot schedule ${schedule.name}.`)}</p>
                 <p>{lang(`该操作将会从系统中删除该计划。并且如果该计划已启用，删除它可能会导致当前的定时创建快照功能失效。`, `This operation will delete this schedule from the system. If this schedule is enabled, delete it will make the time create snapshot function lose its effectiveness.`)}</p>
-                <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即启用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule and it's no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right schedule and it's no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
@@ -125,7 +125,7 @@ class SnapshotSchedule extends Component {
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个定时快照计划的操作。`, `You are about to delete these ${batchDeleteNames.length} timed snapshot schedule(s).`)}</p>
                 <p>{lang(`该操作将会从系统中删除这些定时快照计划。`, `This operation will delete the schedule(s) from the system. `)}</p>
-                <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。为保证数据安全，请在删除该计划后，立即执行用另外一个计划。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它们已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
             okType: 'danger',

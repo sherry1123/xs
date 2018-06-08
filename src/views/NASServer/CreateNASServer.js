@@ -72,10 +72,14 @@ class CreateNASServer extends Component {
         let {ip, path} = this.state.NASServerData;
         if (key === 'ip') {
             if (!ip) {
-                this.validationUpdateState('path', {cn: '请选择要运行该NAS服务器的客户端IP', en: 'Please select the client IP for running on'}, false);
+                this.validationUpdateState('ip', {cn: '请选择要运行该NAS服务器的客户端IP', en: 'Please select the client IP for running on'}, false);
             }
             if (!validateIpv4(ip)){
-                this.validationUpdateState('path', {cn: '该IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
+                this.validationUpdateState('ip', {cn: '该IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
+            }
+            let NASServerIPDuplicated = this.props.NASServerList.some(NASServer => NASServer.ip === ip);
+            if (NASServerIPDuplicated){
+                this.validationUpdateState('ip', {cn: '该IP已被一个已存在的NAS服务器使用', en: 'This IP has been used by a existing NAS server'}, false);
             }
         }
 
@@ -83,8 +87,8 @@ class CreateNASServer extends Component {
             if (!path){
                 this.validationUpdateState('path', {cn: '请选择NAS服务器要管理的目录路径', en: 'Please select the catalog path that NAS server manage'}, false);
             }
-            let NASServerPaths = this.props.NASServerList.map(NASServer => NASServer.path);
-            if (NASServerPaths.includes(path)){
+            let NASServerPathDuplicated = this.props.NASServerList.some(NASServer => NASServer.path === path);
+            if (NASServerPathDuplicated){
                 this.validationUpdateState('path', {cn: '该路径已被其他NAS服务器管理', en: 'This path has been managed by another NAS server'}, false);
             }
         }

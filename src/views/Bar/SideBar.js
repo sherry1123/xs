@@ -65,10 +65,13 @@ class SideBar extends Component {
                     onOpenChange={this.openMenu.bind(this)}
                 >
                     <Menu.Item key={routerPath.Dashboard}>
-                        <Icon type="dashboard" /><span className="fs-sidebar-menu-text">{lang('仪表盘', 'Dashboard')}</span>
+                        <Icon type="dashboard" />{lang('仪表盘', 'Dashboard')}
                     </Menu.Item>
                     <Menu.Item key={routerPath.DataNode}>
-                        <Icon type="database" /><span className="fs-sidebar-menu-text">{lang('数据节点', 'Data Node')}</span>
+                        <Icon type="database" />{lang('数据节点', 'Data Node')}
+                    </Menu.Item>
+                    <Menu.Item key={routerPath.ServiceAndClient}>
+                        <Icon type="desktop" />{lang('服务与客户端', 'Service And Client')}
                     </Menu.Item>
                     <Menu.SubMenu
                         key="Snapshot"
@@ -105,9 +108,6 @@ class SideBar extends Component {
                             <Icon type="folder" />{lang('CIFS', 'CIFS')}
                         </Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.Item key={routerPath.ServiceAndClient}>
-                        <Icon type="desktop" />{lang('服务与客户端', 'Service And Client')}
-                    </Menu.Item>
                     <Menu.SubMenu
                         key="UserAndGroup"
                         title={

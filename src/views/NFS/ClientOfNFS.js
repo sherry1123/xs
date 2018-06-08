@@ -71,7 +71,7 @@ class ClientOfNFS extends Component {
             onOk: async () => {
                 try {
                     client = Object.assign({}, client, {path: this.state.path});
-                    await httpRequests.deleteClient(client);
+                    await httpRequests.deleteClientInNFSShare(client);
                     let clientListOfNFS = Object.assign([], this.state.clientListOfNFS);
                     clientListOfNFS.splice(index, 1);
                     this.setState({clientListOfNFS});
@@ -113,9 +113,9 @@ class ClientOfNFS extends Component {
             host: lang('主机或IP', 'host or IP')
         };
         let permissionMap = {
-            'read-only': lang('只读', 'Readonly'),
-            'read-write-n': lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)'),
-            'read-write': lang('读写', 'Read-write')
+            'readonly': lang('只读', 'Readonly'),
+            'read_and_write_n': lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)'),
+            'read_and_write': lang('读写', 'Read-write')
         };
         let tableProps = {
             size: 'small',
