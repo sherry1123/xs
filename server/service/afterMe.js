@@ -202,6 +202,24 @@ const model = {
     async createBuddyGroup(param) {
         let token = await model.getToken();
         return await request.post(config.api.orcafs.createbuddymirror, param, token, true);
+    },
+    async getClient(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getclientlist, param, token, true, { data: [] });
+    },
+    async getNasServer(param) {
+        param.opt = 'nasQuery';
+        let token = await model.getToken();
+        let res = await request.post(config.api.orcafs.nasmanager, param, token, true);
+        if (!res.errorId) {
+            res.data = res.data || [];
+        }
+        return res;
+    },
+    async createNasServer(param) {
+        param.opt = 'nasAdd';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasmanager, param, token, true);
     }
 };
 module.exports = model;

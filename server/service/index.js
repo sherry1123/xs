@@ -1126,9 +1126,15 @@ const model = {
         let { ip: server, path, description } = param;
         let result = {};
         try {
-            await database.addNasServer({ ip: server, path, description });
-            result = handler.response(0, 'create NAS server successfully');
-            await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
+            let res = await afterMe.createNasServer({ nasServerList: [{ clientIp: server, nasRoot: path }] });
+            if (!res.errorId) {
+                await database.addNasServer({ ip: server, path, description });
+                result = handler.response(0, 'create NAS server successfully');
+                await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
+            } else {
+                result = handler.response(173, 'create NAS server failed');
+                await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(173, error, param);
             await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
@@ -1208,17 +1214,10 @@ const model = {
     async getClient(param) {
         let result = {};
         try {
-            let clientList = [
-                { hostname: 'client1', ip: '192.168.100.11' },
-                { hostname: 'client2', ip: '192.168.100.12' },
-                { hostname: 'client3', ip: '192.168.100.13' },
-                { hostname: 'client4', ip: '192.168.100.14' },
-                { hostname: 'client5', ip: '192.168.100.15' }
-
-            ];
+            let clientList = Object.assign(await afterMe.getClient(param)).data || [];
             let nasServerList = await database.getNasServer();
             let nasServerIpList = nasServerList.map(server => (server.ip));
-            let data = clientList.map(client => ({ hostname: client.hostname, ip: client.ip, isUsed: nasServerIpList.includes(client.ip) }));
+            let data = clientList.map(client => ({ hostname: client.name, ip: client.ip, isUsed: nasServerIpList.includes(client.ip) }));
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);

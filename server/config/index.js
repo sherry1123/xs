@@ -70,7 +70,9 @@ exports.api = {
         getphysicresource: 'http://localhost:9090/cluster/getphysicresource',
         addstoragetarget: 'http://localhost:9090/cluster/addstoragetarget',
         listmirrorgroup: 'http://localhost:9090/cluster/listmirrorgroup',
-        createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror'
+        createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror',
+        getclientlist: 'http://localhost:9090/cluster/getclientlist',
+        nasmanager: 'http://localhost:9090/cluster/nasmanager'
     }
 };
 exports.key = {
