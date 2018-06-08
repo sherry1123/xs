@@ -72,7 +72,8 @@ exports.api = {
         listmirrorgroup: 'http://localhost:9090/cluster/listmirrorgroup',
         createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror',
         getclientlist: 'http://localhost:9090/cluster/getclientlist',
-        nasmanager: 'http://localhost:9090/cluster/nasmanager'
+        nasmanager: 'http://localhost:9090/cluster/nasmanager',
+        nasusermanager: 'http://localhost:9090/cluster/nasusermanager'
     }
 };
 exports.key = {

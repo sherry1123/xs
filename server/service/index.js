@@ -752,9 +752,15 @@ const model = {
         let { name, description } = param;
         let result = {};
         try {
-            await database.addLocalAuthUserGroup({ name, description });
-            result = handler.response(0, 'create local authentication user group successfully');
-            await log.audit({ user, desc: `create local authentication user group '${name}' successfully`, ip });
+            let res = await afterMe.addLocalAuthUserGroup({ userInfo: { localGroupList: [{ groupName: name, desc: description }] } });
+            if (!res.errorId) {
+                await database.addLocalAuthUserGroup({ name, description });
+                result = handler.response(0, 'create local authentication user group successfully');
+                await log.audit({ user, desc: `create local authentication user group '${name}' successfully`, ip });
+            } else {
+                result = handler.response(53, res.message, param);
+                await log.audit({ user, desc: `create local authentication user group '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(53, error, param);
             await log.audit({ user, desc: `create local authentication user group '${name}' failed`, ip });
@@ -765,9 +771,15 @@ const model = {
         let { name, description } = param;
         let result = {};
         try {
-            await database.updateLocalAuthUserGroup({ name }, { description });
-            result = handler.response(0, 'update local authentication user group successfully');
-            await log.audit({ user, desc: `update local authentication user group '${name}' successfully`, ip });
+            let res = await afterMe.updateLocalAuthUserGroup({ userInfo: { localGroupList: [{ groupName: name, desc: description }] } });
+            if (!res.errorId) {
+                await database.updateLocalAuthUserGroup({ name }, { description });
+                result = handler.response(0, 'update local authentication user group successfully');
+                await log.audit({ user, desc: `update local authentication user group '${name}' successfully`, ip });
+            } else {
+                result = handler.response(54, res.message, param);
+                await log.audit({ user, desc: `update local authentication user group '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(54, error, param);
             await log.audit({ user, desc: `update local authentication user group '${name}' failed`, ip });
@@ -778,9 +790,15 @@ const model = {
         let { name } = param;
         let result = {};
         try {
-            await database.deleteLocalAuthUserGroup({ name });
-            result = handler.response(0, 'delete local authentication user group successfully');
-            await log.audit({ user, desc: `delete local authentication user group '${name}' successfully`, ip });
+            let res = await afterMe.deleteLocalAuthUserGroup({ userInfo: { localGroupList: [{ groupName: name }] } });
+            if (!res.errorId) {
+                await database.deleteLocalAuthUserGroup({ name });
+                result = handler.response(0, 'delete local authentication user group successfully');
+                await log.audit({ user, desc: `delete local authentication user group '${name}' successfully`, ip });
+            } else {
+                result = handler.response(55, res.message, param);
+                await log.audit({ user, desc: `delete local authentication user group '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `delete local authentication user group '${name}' failed`, ip });
@@ -801,7 +819,10 @@ const model = {
         let { names, groupName } = param;
         let result = {};
         try {
-            await database.addLocalAuthUserToGroup(param);
+            for (let name of names) {
+                let res = await afterMe.addLocalAuthUserToGroup({ userInfo: { localUserList: [{ userName: name, secondaryGroup: [groupName] }] } });
+                !res.errorId && await database.addLocalAuthUserToGroup({ name, groupName });
+            }
             result = handler.response(0, 'add local authentication user to user group successfully');
             await log.audit({ user, desc: `add ${names.length} local authentication user(s) '${String(handler.bypass(names))}' to local authentication user group '${groupName}' successfully`, ip });
         } catch (error) {
@@ -814,9 +835,15 @@ const model = {
         let { name, groupName } = param;
         let result = {};
         try {
-            await database.removeLocalAuthUserFromGroup(param);
-            result = handler.response(0, 'remove local authentication user from user group successfully');
-            await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}' successfully`, ip });
+            let res = await afterMe.removeLocalAuthUserFromGroup({ userInfo: { localUserList: [{ userName: name, secondaryGroup: [groupName] }] } });
+            if (!res.errorId) {
+                await database.removeLocalAuthUserFromGroup(param);
+                result = handler.response(0, 'remove local authentication user from user group successfully');
+                await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}' successfully`, ip });
+            } else {
+                result = handler.response(55, res.message, param);
+                await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}'failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}'failed`, ip });
@@ -837,9 +864,15 @@ const model = {
         let { name, password, primaryGroup, secondaryGroup = [], description } = param;
         let result = {};
         try {
-            await database.addLocalAuthUser({ name, password, primaryGroup, secondaryGroup, description });
-            result = handler.response(0, 'create local authentication user successfully');
-            await log.audit({ user, desc: `create local authentication user '${name}' successfully`, ip });
+            let res = await afterMe.addLocalAuthUser({ userInfo: { localUserList: [{ userName: name, passWord: password, desc: description, primaryGroup, secondaryGroup }] } });
+            if (!res.errorId) {
+                await database.addLocalAuthUser({ name, password, primaryGroup, secondaryGroup, description });
+                result = handler.response(0, 'create local authentication user successfully');
+                await log.audit({ user, desc: `create local authentication user '${name}' successfully`, ip });
+            } else {
+                result = handler.response(53, res.message, param);
+                await log.audit({ user, desc: `create local authentication user '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(53, error, param);
             await log.audit({ user, desc: `create local authentication user '${name}' failed`, ip });
@@ -850,9 +883,15 @@ const model = {
         let { name, changePassword, password, primaryGroup, description } = param;
         let result = {};
         try {
-            changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description });
-            result = handler.response(0, 'update local authentication user successfully');
-            await log.audit({ user, desc: `update local authentication user '${name}' successfully`, ip });
+            let res = await afterMe.updateLocalAuthUser({ userInfo: { localUserList: [{ userName: name, passWord: password, desc: description, primaryGroup }] } });
+            if (!res.errorId) {
+                changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description });
+                result = handler.response(0, 'update local authentication user successfully');
+                await log.audit({ user, desc: `update local authentication user '${name}' successfully`, ip });
+            } else {
+                result = handler.response(54, res.message, param);
+                await log.audit({ user, desc: `update local authentication user '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(54, error, param);
             await log.audit({ user, desc: `update local authentication user '${name}' failed`, ip });
@@ -863,9 +902,15 @@ const model = {
         let { name } = param;
         let result = {};
         try {
-            await database.deleteLocalAuthUser({ name });
-            result = handler.response(0, 'delete local authentication user successfully');
-            await log.audit({ user, desc: `delete local authentication user '${name}' successfully`, ip });
+            let res = await afterMe.deleteLocalAuthUser({ userInfo: { localUserList: [{ userName: name }] } });
+            if (!res.errorId) {
+                await database.deleteLocalAuthUser({ name });
+                result = handler.response(0, 'delete local authentication user successfully');
+                await log.audit({ user, desc: `delete local authentication user '${name}' successfully`, ip });
+            } else {
+                result = handler.response(55, res.message, param);
+                await log.audit({ user, desc: `delete local authentication user '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `delete local authentication user '${name}' failed`, ip });
@@ -877,7 +922,8 @@ const model = {
         let result = {};
         try {
             for (let name of names) {
-                await database.deleteLocalAuthUser({ name });
+                let res = await afterMe.deleteLocalAuthUser({ userInfo: { localUserList: [{ userName: name }] } });
+                !res.errorId && await database.deleteLocalAuthUser({ name });
             }
             result = handler.response(0, 'batch delete local authentication user successfully');
             await log.audit({ user, desc: `batch delete ${names.length} local authentication user(s) '${String(handler.bypass(names))}' successfully`, ip });
@@ -1132,7 +1178,7 @@ const model = {
                 result = handler.response(0, 'create NAS server successfully');
                 await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
             } else {
-                result = handler.response(173, 'create NAS server failed');
+                result = handler.response(173, res.message, param);
                 await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
             }
         } catch (error) {

@@ -176,12 +176,10 @@ const model = {
         return userInGroup;
     },
     async addLocalAuthUserToGroup(param) {
-        let { names, groupName } = param;
-        for (let name of names) {
-            let { secondaryGroup } = await dao.findOne(localAuthUser, { name });
-            secondaryGroup = secondaryGroup.concat(groupName);
-            await dao.updateOne(localAuthUser, { name }, { secondaryGroup });
-        }
+        let { name, groupName } = param;
+        let { secondaryGroup } = await dao.findOne(localAuthUser, { name });
+        secondaryGroup = secondaryGroup.concat(groupName);
+        await dao.updateOne(localAuthUser, { name }, { secondaryGroup });
     },
     async removeLocalAuthUserFromGroup(param) {
         let { name, groupName } = param;

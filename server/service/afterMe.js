@@ -220,6 +220,56 @@ const model = {
         param.opt = 'nasAdd';
         let token = await model.getToken();
         return await request.post(config.api.orcafs.nasmanager, param, token, true);
+    },
+    async getLocalAuthUserGroup(param) {
+        param.opt = 'localgroupquery';
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async addLocalAuthUserGroup(param) {
+        param.opt = 'localgroupadd';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async updateLocalAuthUserGroup(param) {
+        param.opt = 'localgroupchange';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async deleteLocalAuthUserGroup(param) {
+        param.opt = 'localgroupdelete';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async getLocalAuthUser(param) {
+        param.opt = 'localuserquery';
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async addLocalAuthUser(param) {
+        param.opt = 'localuseradd';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async updateLocalAuthUser(param) {
+        param.opt = 'localuserchange';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async deleteLocalAuthUser(param) {
+        param.opt = 'localuserdelete';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async addLocalAuthUserToGroup(param) {
+        param.opt = 'localgroupadduser';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
+    },
+    async removeLocalAuthUserFromGroup(param) {
+        param.opt = 'localgroupremoveuser';
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nasusermanager, param, token, true);
     }
 };
 module.exports = model;
