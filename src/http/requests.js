@@ -1,4 +1,4 @@
-import {fetchGet, fetchPost, /*fetchMock*/} from './fetch';
+import {fetchGet, fetchPost} from './fetch';
 import {lsGet} from '../services';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
@@ -191,7 +191,7 @@ export default  {
         });
     },
 
-    getClusterServiceRoleIPs (){
+    getClusterServiceAndClientIPs (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getinitparam');
             !!data && store.dispatch(dashboardAction.setClusterServiceRoleIPs(data));
@@ -265,6 +265,23 @@ export default  {
             let data = await fetchGet('/api/getauditlog');
             !!data && store.dispatch(systemLogAction.setSystemAuditLogs(data));
         });
+    },
+
+    // service and client
+    async createMetadataServiceToCluster (service){
+        await fetch('/api/createmetadataservicetocluster', service);
+    },
+
+    async createStorageServiceToCluster (service){
+        await fetch('/api/createstorageservicetocluster', service);
+    },
+
+    async createManagementServiceToCluster (service){
+        await fetch('/api/createmanagementservicetocluster', service);
+    },
+
+    async createClientToCluster (client){
+        await fetch('/api/createclienttocluster', client);
     },
 
     // snapshot
@@ -413,18 +430,17 @@ export default  {
         });
     },
 
-    async createClient (client){
+    async createClientInNFSShare (client){
         await fetchPost('/api/createclientinnfsshare', client);
     },
 
-    async updateClient (client){
+    async updateClientInNFSShare (client){
         await fetchPost('/api/updateclientinnfsshare', client);
     },
 
-    async deleteClient (client){
+    async deleteClientInNFSShare (client){
         await fetchPost('/api/deleteclientinnfsshare', client);
     },
-
 
     // CIFS share
     async getCIFSShareList (){
@@ -446,8 +462,8 @@ export default  {
         await fetchPost('/api/deletecifsshare', shareData);
     },
 
-    async deleteCIFSShareInBatch (names){
-        await fetchPost('/api/batchdeletecifsshare', {names});
+    async deleteCIFSShareInBatch (shares){
+        await fetchPost('/api/batchdeletecifsshare', {shares});
     },
 
     async getLocalAuthUserOrGroupListByCIFSShareName (shareName){
@@ -457,8 +473,8 @@ export default  {
         });
     },
 
-    async addLocalAuthUserOrGroupToCIFSShare (shareName, items){
-        await fetchPost('/api/adduserorgrouptocifsshare', {shareName, items});
+    async addLocalAuthUserOrGroupToCIFSShare (shareName, sharePath, items){
+        await fetchPost('/api/adduserorgrouptocifsshare', {shareName, sharePath, items});
     },
 
     async updateLocalAuthUserOrGroupInCIFSShare (item){

@@ -1,12 +1,12 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Form, Icon, Input, message, Modal, Popover, Select, Switch, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Form, Icon, Input, message, Modal, Popover, Select, Switch, Table} from 'antd';
 import CatalogTree from '../../components/CatalogTree/CatalogTree';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
-import lang from "../../components/Language/lang";
-import {validateFsName} from "../../services";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import {validateFsName} from '../../services';
+import httpRequests from '../../http/requests';
 
 class CreateCIFS extends Component {
     constructor (props){
@@ -30,13 +30,13 @@ class CreateCIFS extends Component {
                 name: {status: '', help: '', valid: false},
             },
             typeMap: {
-                'localAuthenticationUser': lang('本地认证用户', 'Local Authentication User'),
-                'localAuthenticationUserGroup': lang('本地认证用户组', 'Local Authentication User Group'),
+                'local_user': lang('本地认证用户', 'Local Authentication User'),
+                'local_group': lang('本地认证用户组', 'Local Authentication User Group'),
             },
             permissionMap: {
                 'full-control': lang('完全控制', 'Full control'),
-                'read-write': lang('读写', 'Read and write'),
-                'read-only': lang('只读', 'Readonly'),
+                'read_and_write': lang('读写', 'Read and write'),
+                'readonly': lang('只读', 'Readonly'),
                 'forbidden': lang('禁止', 'Forbidden'),
             },
         };
@@ -76,10 +76,13 @@ class CreateCIFS extends Component {
             if (!path){
                 this.validationUpdateState('path', {cn: '请选择需要做CIFS共享的目录路径', en: 'Please select the CIFS share catalog path'}, false);
             }
+            // one path can be shared by different CIFSs
+            /*
             let isPathDuplicated = this.props.CIFSList.some(CIFS => CIFS.path === path);
             if (isPathDuplicated){
                 this.validationUpdateState('path', {cn: '已有CIFS共享使用此路径，请重新选择', en: 'This path has been used by another CIFS share, please change it'}, false);
             }
+            */
         }
         if (key === 'name'){
             if (!validateFsName(name)){
@@ -107,7 +110,6 @@ class CreateCIFS extends Component {
     }
 
     async selectPath (path){
-        console.info(path);
         let shareData = Object.assign(this.state.shareData, {path});
         await this.setState({shareData});
         this.validateForm('path');
@@ -115,18 +117,20 @@ class CreateCIFS extends Component {
 
     showAddUser (){
         let {userOrGroupList} = this.state.shareData;
-        let localAuthUserListOfCIFS = userOrGroupList.filter(item => item.type === 'localAuthenticationUser');
+        let localAuthUserListOfCIFS = userOrGroupList.filter(item => item.type === 'local_user');
         this.addLocalAuthUserToCIFSWrapper.getWrappedInstance().show({
             localAuthUserListOfCIFS,
+            share: this.state.shareData,
             notDirectlyCreate: true
         });
     }
 
     showAddGroup (){
         let {userOrGroupList} = this.state.shareData;
-        let localAuthUserGroupListOfCIFS = userOrGroupList.filter(item => item.type === 'localAuthenticationUserGroup');
+        let localAuthUserGroupListOfCIFS = userOrGroupList.filter(item => item.type === 'local_group');
         this.addLocalAuthUserGroupToCIFSWrapper.getWrappedInstance().show({
             localAuthUserGroupListOfCIFS,
+            share: this.state.shareData,
             notDirectlyCreate: true
         });
     }
@@ -402,7 +406,7 @@ class CreateCIFS extends Component {
                                 onClick={this.showAddGroup.bind(this)}
                             >
                                 {lang('添加用户组', 'Add User Group')}
-                            </span> /
+                            </span>
                             <span
                                 style={{float: 'right', marginRight: 10, fontSize: 12, color: '#1890ff', cursor: 'pointer', userSelect: 'none'}}
                                 onClick={this.showAddUser.bind(this)}

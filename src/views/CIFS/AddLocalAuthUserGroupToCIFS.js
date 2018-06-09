@@ -12,9 +12,9 @@ class AddLocalAuthUserGroupToCIFS extends Component {
             visible: false,
             notDirectlyCreate: false,
             formSubmitting: false,
-            shareName: '',
+            share: {},
             localAuthUserGroupListOfCIFS: [],
-            permission: 'read-only',
+            permission: 'readonly',
             selectedLocalAuthUserGroups: [],
             localAuthUserGroupList,
             localAuthUserGroupListBackup: localAuthUserGroupList,
@@ -51,18 +51,18 @@ class AddLocalAuthUserGroupToCIFS extends Component {
     }
 
     async add (){
-        let {notDirectlyCreate, selectedLocalAuthUserGroups, permission, shareName} = this.state;
+        let {notDirectlyCreate, selectedLocalAuthUserGroups, permission, share: {name: shareName, path: sharePath}} = this.state;
         if (notDirectlyCreate){
             // 创建CIFS的时候不直接添加进去
-            selectedLocalAuthUserGroups = selectedLocalAuthUserGroups.map(user => ({type: 'localAuthenticationUserGroup', name: user, permission,}));
+            selectedLocalAuthUserGroups = selectedLocalAuthUserGroups.map(user => ({type: 'local_group', name: user, permission, shareName, sharePath}));
             !!this.props.onAdd && this.props.onAdd(selectedLocalAuthUserGroups);
             this.hide();
         } else {
             // CIFS所属用户/用户组列表点击添加的时候直接添加进该CIFS
             this.setState({formSubmitting: true});
             try {
-                let localAuthUsers = selectedLocalAuthUserGroups.map(name => ({type: 'localAuthenticationUserGroup', name, permission, shareName}));
-                await httpRequests.addLocalAuthUserOrGroupToCIFSShare(shareName, localAuthUsers);
+                let localAuthUsers = selectedLocalAuthUserGroups.map(name => ({type: 'local_group', name, permission, shareName}));
+                await httpRequests.addLocalAuthUserOrGroupToCIFSShare(shareName, sharePath, localAuthUsers);
                 httpRequests.getLocalAuthUserOrGroupListByCIFSShareName(shareName);
                 await this.hide();
                 message.success(lang(`为CIFS共享 ${shareName} 添加本地认证用户组成功!`, `Add local authentication user group for CIFS share ${shareName} successfully!`));
@@ -73,7 +73,7 @@ class AddLocalAuthUserGroupToCIFS extends Component {
         }
     }
 
-    async show ({notDirectlyCreate, shareName, localAuthUserGroupListOfCIFS}){
+    async show ({notDirectlyCreate, share, localAuthUserGroupListOfCIFS}){
         let {localAuthUserGroupList} = this.props;
         if (!localAuthUserGroupList.length){
             httpRequests.getLocalAuthUserGroupList();
@@ -83,10 +83,10 @@ class AddLocalAuthUserGroupToCIFS extends Component {
             visible: true,
             notDirectlyCreate,
             formSubmitting: false,
-            shareName,
+            share,
             localAuthUserGroupListOfCIFS,
             selectedLocalAuthUserGroups: [],
-            permission: 'read-only',
+            permission: 'readonly',
             localAuthUserGroupList,
             localAuthUserGroupListBackup: localAuthUserGroupList,
         });
@@ -138,9 +138,9 @@ class AddLocalAuthUserGroupToCIFS extends Component {
                                 this.setState({permission: value});
                             }}
                         >
-                            <Select.Option value="full-control">{lang('完全控制', 'Full control')}</Select.Option>
-                            <Select.Option value="read-write">{lang('读写', 'Read and write')}</Select.Option>
-                            <Select.Option value="read-only">{lang('只读', 'Readonly')}</Select.Option>
+                            {/*<Select.Option value="full-control">{lang('完全控制', 'Full control')}</Select.Option>*/}
+                            <Select.Option value="read_and_write">{lang('读写', 'Read and write')}</Select.Option>
+                            <Select.Option value="readonly">{lang('只读', 'Readonly')}</Select.Option>
                             <Select.Option value="forbidden">{lang('禁止', 'Forbidden')}</Select.Option>
                         </Select>
                         <Popover

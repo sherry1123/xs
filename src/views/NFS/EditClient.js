@@ -15,7 +15,7 @@ class EditClient extends Component {
                 path: '',
                 type: 'host',
                 ip: '',
-                permission: 'read-only',
+                permission: 'readonly',
                 writeMode: 'synchronous',
                 permissionConstraint: 'all_squash',
                 rootPermissionConstraint: 'root_squash'
@@ -36,7 +36,7 @@ class EditClient extends Component {
         let clientData = Object.assign({}, this.state.clientData);
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.updateClient(clientData);
+            await httpRequests.updateClientInNFSShare(clientData);
             httpRequests.getClientListByNFSSharePath(clientData.path);
             await this.hide();
             message.success(lang('编辑客户端成功!', 'Edit Client successfully!'));
@@ -115,9 +115,9 @@ class EditClient extends Component {
                                 this.formValueChange.bind(this, 'permission')(value);
                             }}
                         >
-                            <Select.Option value="read-only">{lang('只读', 'Read-only')}</Select.Option>
+                            <Select.Option value="readonly">{lang('只读', 'Readonly')}</Select.Option>
                             {/*<Select.Option value="read-write-n">{lang('读写(不支持删除和重命名)', 'Read-write(not support delete and rename)')}</Select.Option>*/}
-                            <Select.Option value="read-write">{lang('读写', 'Read-write')}</Select.Option>
+                            <Select.Option value="read_and_write">{lang('读写', 'Read-write')}</Select.Option>
                         </Select>
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('写入模式', 'Write Mode')}>

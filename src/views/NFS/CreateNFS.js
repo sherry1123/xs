@@ -59,8 +59,8 @@ class CreateNFS extends Component {
             if (!path){
                 this.validationUpdateState('path', {cn: '请选择需要做NFS共享的目录路径', en: 'Please select the NFS share catalog path'}, false);
             }
-            let NFSPaths = this.props.NFSList.map(NFS => NFS.path);
-            if (NFSPaths.includes(path)){
+            let isPathDuplicated = this.props.NFSList.some(NFS => NFS.path === path);
+            if (isPathDuplicated){
                 this.validationUpdateState('path', {cn: '已有NFS共享使用此路径，请重新选择', en: 'This path has been used by another NFS share, please change it'}, false);
             }
         }
@@ -115,7 +115,7 @@ class CreateNFS extends Component {
             await httpRequests.createNFSShare(shareData);
             httpRequests.getNFSShareList();
             await this.hide();
-            message.success(lang(`创建NFS共享 ${shareData.path}成功!`, `Create NFS share ${shareData.path} successfully!`));
+            message.success(lang(`创建NFS共享 ${shareData.path} 成功!`, `Create NFS share ${shareData.path} successfully!`));
         } catch ({msg}){
             message.error(lang(`创建NFS共 ${shareData.path} 失败, 原因: `, `Create NFS share ${shareData.path} failed, reason: `) + msg);
         }
@@ -159,8 +159,8 @@ class CreateNFS extends Component {
         };
         let permissionMap = {
             'full-control': lang('完全控制', 'Full control'),
-            'read-write': lang('读写', 'Read and write'),
-            'read-only': lang('只读', 'Readonly'),
+            'read_and_write': lang('读写', 'Read and write'),
+            'readonly': lang('只读', 'Readonly'),
             'forbidden': lang('禁止', 'Forbidden'),
         };
         let tableProps = {

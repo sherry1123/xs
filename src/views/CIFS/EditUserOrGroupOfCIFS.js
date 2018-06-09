@@ -1,8 +1,8 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Form, message, Modal, Select} from "antd";
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Form, message, Modal, Select} from 'antd';
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class EditUserOrGroupOfCIFS extends Component {
     constructor (props){
@@ -11,18 +11,18 @@ class EditUserOrGroupOfCIFS extends Component {
             visible: false,
             formValid: true,
             formSubmitting: false,
-            shareName: '',
+            share: {},
             itemData: {},
         };
     }
 
     async edit (){
-        let itemData = Object.assign({}, this.state.itemData);
-        itemData.shareName = this.state.shareName;
+        let {share: {name: shareName, path: sharePath}} = this.state;
+        let itemData = Object.assign({}, this.state.itemData, {shareName, sharePath});
         this.setState({formSubmitting: true});
         try {
             await httpRequests.updateLocalAuthUserOrGroupInCIFSShare(itemData);
-            httpRequests.getLocalAuthUserOrGroupListByCIFSShareName(this.state.shareName);
+            httpRequests.getLocalAuthUserOrGroupListByCIFSShareName(this.state.share.name);
             await this.hide();
             message.success(lang(`编辑本地认证用户 ${itemData.name} 成功!`, `Edit local authentication user ${itemData.name} successfully!`));
         } catch ({msg}){
@@ -31,12 +31,12 @@ class EditUserOrGroupOfCIFS extends Component {
         this.setState({formSubmitting: false});
     }
 
-    show ({shareName, itemData}){
+    show ({share, itemData}){
         this.setState({
             visible: true,
             formValid: true,
             formSubmitting: false,
-            shareName,
+            share,
             itemData,
         });
     }
@@ -102,9 +102,9 @@ class EditUserOrGroupOfCIFS extends Component {
                                 this.setState({itemData});
                             }}
                         >
-                            <Select.Option value="full-control">{lang('完全控制', 'Full control')}</Select.Option>
-                            <Select.Option value="read-write">{lang('读写', 'Read and write')}</Select.Option>
-                            <Select.Option value="read-only">{lang('只读', 'Readonly')}</Select.Option>
+                            {/*<Select.Option value="full-control">{lang('完全控制', 'Full control')}</Select.Option>*/}
+                            <Select.Option value="read_and_write">{lang('读写', 'Read and write')}</Select.Option>
+                            <Select.Option value="readonly">{lang('只读', 'Readonly')}</Select.Option>
                             <Select.Option value="forbidden">{lang('禁止', 'Forbidden')}</Select.Option>
                         </Select>
                     </Form.Item>

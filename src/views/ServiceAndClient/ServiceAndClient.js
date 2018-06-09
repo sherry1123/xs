@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon} from 'antd';
+import {Icon, message} from 'antd';
+import CreateClient from './CreateClient';
+import CreateManagementService from './CreateManagementService';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 
 class ServiceAndClient extends Component {
     componentDidMount (){
-        httpRequests.getClusterServiceRoleIPs();
+        httpRequests.getClusterServiceAndClientIPs();
     }
 
     createMetadataService (){
@@ -18,11 +20,22 @@ class ServiceAndClient extends Component {
     }
 
     createManagementService (){
-
+        let {managementServerIPs} = this.props;
+        // Policy:
+        // 1. If there is already a management service existing, prompt user whether to create a new one,
+        //    if is, should enable the HA feature, and a additional float IP and two heart beat IPs are demanded.
+        // 2. If there are already two management services existing, should not create any more.
+        if (managementServerIPs.length >= 2){
+            return message.warning(lang('当前已有2个管理服务，不能再创建了。', 'There are already two management services existing, can not create any more.'));
+        }
+        if (managementServerIPs.length >= 1){
+            return this.createManagementServiceWrapper.getWrappedInstance().show(true);
+        }
     }
 
-    createClient (){
 
+    createClient (){
+        this.createClientWrapper.getWrappedInstance().show();
     }
 
     render () {
@@ -111,6 +124,8 @@ class ServiceAndClient extends Component {
                         </div>
                     </div>
                 </section>
+                <CreateClient ref={ref => this.createClientWrapper = ref} />
+                <CreateManagementService ref={ref => this.createManagementServiceWrapper = ref} />
             </section>
         );
     }

@@ -57,6 +57,12 @@ class CreateLocalAuthUserGroup extends Component {
                     cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位或末尾位）的组合，长度3-30位',
                     en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30.'
                 }, false);
+            } else if (name === 'everyone'){
+                // 'everyone' is reserved group name in system
+                await this.validationUpdateState('name', {
+                    cn: '"everyone"是系统的认证用户组保留名字',
+                    en: '"everyone" is the reversed group name in system'
+                }, false);
             } else {
                 let isNameDuplicated = this.props.localAuthUserGroupList.some(group => group.name === name);
                 if (isNameDuplicated){

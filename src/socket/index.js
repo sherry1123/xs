@@ -1,24 +1,33 @@
 import io from 'socket.io-client';
-import {notification} from 'antd';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
+import {notification} from 'antd';
 import {lsGet, lsSet, lsRemove, lsClearAll, ckRemove} from '../services';
 import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './conf';
 import httpRequests from '../http/requests';
 import lang from '../components/Language/lang';
 import routerPath from '../views/routerPath';
 
+// Consider to the http load balancing policy provided by node.js cluster module on server side,
+// we don't wanna socket.io client to do handshake here, just let it establish a single and pure ws
+// connection with server, and don't use protocol upgrade. Because the load balancing http requests
+// in handshake steps will be dispatch to different http server process to handle without a unified
+// session management. When socket.io using the token received from the first http server to try to
+// establish connection with another server assigned by load balancing policy will be failed absolutely.
+// Further:
+// Out of consideration for communication security, we can do handshake by ourselves by some special ways.
 const socket = io({transports: ['websocket']});
-const {
-    snapshot, snapshotRollBackStart, snapshotRollBackFinish,
-    deInitializationStart, deInitializationEnd,
-} = eventCodeForEventChannel;
-let waitForServerUpTimeThreshold = 1000 * 60 * 5;
-let requestServerUpInterval = 1000 * 2;
 
-// initialization
+// some pre-configs
+const {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd,} = eventCodeForEventChannel;
+const waitForServerUpTimeThreshold = 1000 * 60 * 5;
+const requestServerUpInterval = 1000 * 2;
+
+// initialization message
 socket.on('init status', initStatus => {
-    console.info('ws init: ', initStatus);
+    if (process.env.NODE_ENV === 'development'){
+        console.info('%c ws message(init status): ', 'color: #f6b93f', initStatus);
+    }
     store.dispatch(initializeAction.setInitStatus(initStatus));
     if (!initStatus.status){
         if (!lsGet('initStep')){
@@ -33,9 +42,11 @@ socket.on('init status', initStatus => {
     }
 });
 
-// business operations after initialization and login
+// business operations message after initialization and login
 socket.on('event status', ({channel, code, target, result, notify}) => {
-    console.info('ws event status: ', channel, code, target, result, notify);
+    if (process.env.NODE_ENV === 'development'){
+        console.info('%c ws message(event status): ', 'color: #00cc00', channel, code, target, result, notify);
+    }
     let {language} = store.getState();
     if (notify){
         notification[result ? 'success' : 'warning']({
@@ -45,7 +56,9 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
     }
 
     /*
-     *   special codes handlers
+     * Special Codes Handlers
+     * Sometimes we receive a websocket message from server, and notification isn't the only thing
+     * we need to do. There are some other important logic we should execute depend on the message code.
      */
 
     // snapshot

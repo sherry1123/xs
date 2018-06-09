@@ -55,7 +55,7 @@ class CIFS extends Component {
     }
 
     userOrGroup (CIFSShare){
-        this.userOrGroupOfCIFSWrapper.getWrappedInstance().show(CIFSShare.name);
+        this.userOrGroupOfCIFSWrapper.getWrappedInstance().show(CIFSShare);
     }
 
     delete (shareData, index){
@@ -89,7 +89,8 @@ class CIFS extends Component {
     }
 
     batchDelete (){
-        let {batchDeleteNames} = this.state;
+        let {batchDeleteNames, CIFSList} = this.state;
+        let shares = CIFSList.reduce((prev, curr) => {batchDeleteNames.includes(curr) && prev.push(curr); return prev;}, []);
         Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
@@ -103,7 +104,7 @@ class CIFS extends Component {
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
-                    await httpRequests.deleteCIFSShareInBatch(batchDeleteNames);
+                    await httpRequests.deleteCIFSShareInBatch(shares);
                     httpRequests.getCIFSShareList();
                     message.success(lang('批量删除CIFS共享成功！', 'Delete CIFS shares in batch successfully!'));
                 } catch ({msg}){

@@ -105,7 +105,7 @@ class CreateTarget extends Component {
             currentServiceIP: metadataServerIPs[0] || '',
             enableCustomRAID: false,
         };
-        httpRequests.getClusterServiceRoleIPs();
+        httpRequests.getClusterServiceAndClientIPs();
     }
 
     hide (){

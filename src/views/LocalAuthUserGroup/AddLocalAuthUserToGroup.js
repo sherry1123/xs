@@ -98,7 +98,7 @@ class AddLocalAuthUserToGroup extends Component {
                 emptyText: lang('暂无本地认证用户，请先到本地认证用户页面进行创建', 'No local authentication user, please go that page to create')
             },
             rowSelection: {
-                columnWidth: '2%',
+                columnWidth: '5%',
                 selectedRowKeys: selectedLocalAuthUsers,
                 onChange: selectedRowKeys => this.setState({selectedLocalAuthUsers: selectedRowKeys}),
             },
