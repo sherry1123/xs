@@ -84,7 +84,7 @@ const model = {
         return await dao.deleteOne(snapshotSchedule, param);
     },
     async getCIFSShare(param) {
-        return await dao.findAll(cifsShare, param, { userOrGroupList: 0 });
+        return await dao.findAll(cifsShare, param);
     },
     async addCIFSShare(param) {
         return await dao.createOne(cifsShare, param);

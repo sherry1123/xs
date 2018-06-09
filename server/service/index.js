@@ -538,6 +538,8 @@ const model = {
                     } else {
                         await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList: [] });
                     }
+                } else {
+                    await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList: [] });
                 }
                 result = handler.response(0, 'create CIFS share successfully');
                 await log.audit({ user, desc: `create CIFS share '${name}' successfully`, ip });
@@ -557,7 +559,7 @@ const model = {
         try {
             let nasServerList = await database.getNasServer();
             let serverIp = nasServerList.filter(server => (handler.checkRoot(path, server.path)))[0].ip;
-            let res = await afterMe.updateUserOrGroupInCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name, desc: description, oplock, notify, cacheMode: offlineCacheMode }] } });
+            let res = await afterMe.updateCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name, desc: description, oplock, notify, cacheMode: offlineCacheMode }] } });
             if (!res.errorId) {
                 await database.updateCIFSShare({ name, path }, { description, oplock, notify, offlineCacheMode });
                 result = handler.response(0, 'update CIFS share successfully');
@@ -595,6 +597,7 @@ const model = {
     },
     async batchDeleteCIFSShare(param, user, ip) {
         let { shares } = param;
+        let names = shares.map(share => (share.name));
         let result = {};
         try {
             let success = 0;
