@@ -1125,6 +1125,7 @@ const model = {
             if (node.errorId) {
                 clusterStatus = { status: false, total: 0, normal: 0, abnormal: 0 };
             } else {
+                node.data = node.data.filter(i => (!i.service.includes('client')));
                 let total = node.data.length;
                 let normal = node.data.filter(i => (i.status)).length;
                 let status = total === normal ? true : false;
@@ -1184,7 +1185,7 @@ const model = {
         try {
             let res = await afterMe.getNodeList(param);
             if (!res.errorId) {
-                result = handler.response(0, res.data);
+                result = handler.response(0, res.data.filter(i => (!i.service.includes('client'))));
             } else {
                 result = handler.response(173, res.message, param);
             }
