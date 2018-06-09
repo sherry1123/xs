@@ -119,7 +119,7 @@ const model = {
         return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
     async getNFSShare(param) {
-        return await dao.findAll(nfsShare, param, { clientList: 0 });
+        return await dao.findAll(nfsShare, param);
     },
     async addNFSShare(param) {
         return await dao.createOne(nfsShare, param);
