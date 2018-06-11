@@ -70,7 +70,19 @@ exports.api = {
         getphysicresource: 'http://localhost:9090/cluster/getphysicresource',
         addstoragetarget: 'http://localhost:9090/cluster/addstoragetarget',
         listmirrorgroup: 'http://localhost:9090/cluster/listmirrorgroup',
-        createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror'
+        createbuddymirror: 'http://localhost:9090/cluster/createbuddymirror',
+        getclientlist: 'http://localhost:9090/cluster/getclientlist',
+        nasmanager: 'http://localhost:9090/cluster/nasmanager',
+        nasusermanager: 'http://localhost:9090/cluster/nasusermanager',
+        nascifssharemanager: 'http://localhost:9090/cluster/nascifssharemanager',
+        getshareinfo: 'http://localhost:9090/cluster/getshareinfo',
+        addshareinfo: 'http://localhost:9090/cluster/addshareinfo',
+        nfsmodifyshare: 'http://localhost:9090/cluster/nfsmodifyshare',
+        nfsdeleteshare: 'http://localhost:9090/cluster/nfsdeleteshare',
+        getclientinfo: 'http://localhost:9090/cluster/getclientinfo',
+        addclientinfo: 'http://localhost:9090/cluster/addclientinfo',
+        modifyclientinfo: 'http://localhost:9090/cluster/modifyclientinfo',
+        nfsdeleteclient: 'http://localhost:9090/cluster/nfsdeleteclient'
     }
 };
 exports.key = {

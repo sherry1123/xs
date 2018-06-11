@@ -84,7 +84,7 @@ const model = {
         return await dao.deleteOne(snapshotSchedule, param);
     },
     async getCIFSShare(param) {
-        return await dao.findAll(cifsShare, param, { userOrGroupList: 0 });
+        return await dao.findAll(cifsShare, param);
     },
     async addCIFSShare(param) {
         return await dao.createOne(cifsShare, param);
@@ -101,9 +101,9 @@ const model = {
         return userOrGroupList;
     },
     async addUserOrGroupToCIFSShare(param) {
-        let { items, shareName } = param;
+        let { type, name, permission, shareName } = param;
         let userOrGroupList = await model.getUserOrGroupFromCIFSShare({ shareName });
-        userOrGroupList = userOrGroupList.concat(items);
+        userOrGroupList = userOrGroupList.concat([{ type, name, permission }]);
         return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
     async updateUserOrGroupInCIFSShare(param) {
@@ -119,7 +119,7 @@ const model = {
         return await dao.updateOne(cifsShare, { name: shareName }, { userOrGroupList });
     },
     async getNFSShare(param) {
-        return await dao.findAll(nfsShare, param, { clientList: 0 });
+        return await dao.findAll(nfsShare, param);
     },
     async addNFSShare(param) {
         return await dao.createOne(nfsShare, param);
@@ -136,11 +136,9 @@ const model = {
         return clientList;
     },
     async addClientInNFSShare(param) {
-        let { type, ips, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
+        let { type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
         let clientList = await model.getClientInNFSShare({ path });
-        for (let ip of ips.split(';')) {
-            clientList.push({ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint });
-        }
+        clientList = clientList.concat([{ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint }]);
         return await dao.updateOne(nfsShare, { path }, { clientList });
     },
     async updateClientInNFSShare(param) {
@@ -176,12 +174,10 @@ const model = {
         return userInGroup;
     },
     async addLocalAuthUserToGroup(param) {
-        let { names, groupName } = param;
-        for (let name of names) {
-            let { secondaryGroup } = await dao.findOne(localAuthUser, { name });
-            secondaryGroup = secondaryGroup.concat(groupName);
-            await dao.updateOne(localAuthUser, { name }, { secondaryGroup });
-        }
+        let { name, groupName } = param;
+        let { secondaryGroup } = await dao.findOne(localAuthUser, { name });
+        secondaryGroup = secondaryGroup.concat(groupName);
+        await dao.updateOne(localAuthUser, { name }, { secondaryGroup });
     },
     async removeLocalAuthUserFromGroup(param) {
         let { name, groupName } = param;

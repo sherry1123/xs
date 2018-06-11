@@ -525,9 +525,28 @@ const model = {
         let { path, name, description, oplock, notify, offlineCacheMode, userOrGroupList } = param;
         let result = {};
         try {
-            await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList });
-            result = handler.response(0, 'create CIFS share successfully');
-            await log.audit({ user, desc: `create CIFS share '${name}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let serverIp = nasServerList.filter(server => (handler.checkRoot(path, server.path)))[0].ip;
+            let create = await afterMe.createCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ path, name, desc: description, oplock, notify, cacheMode: offlineCacheMode }] } });
+            if (!create.errorId) {
+                if (userOrGroupList.length) {
+                    userOrGroupList = userOrGroupList.map(item => ({ type: item.type, name: item.name, permission: item.permission }));
+                    let userList = userOrGroupList.map(item => ({ clientType: item.type, name: item.name, permission: item.permission }));
+                    let add = await afterMe.addUserOrGroupToCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name, userList }] } });
+                    if (!add.errorId) {
+                        await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList });
+                    } else {
+                        await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList: [] });
+                    }
+                } else {
+                    await database.addCIFSShare({ path, name, description, oplock, notify, offlineCacheMode, userOrGroupList: [] });
+                }
+                result = handler.response(0, 'create CIFS share successfully');
+                await log.audit({ user, desc: `create CIFS share '${name}' successfully`, ip });
+            } else {
+                result = handler.response(152, create.message, param);
+                await log.audit({ user, desc: `create CIFS share '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(152, error, param);
             await log.audit({ user, desc: `create CIFS share '${name}' failed`, ip });
@@ -535,12 +554,20 @@ const model = {
         return result;
     },
     async updateCIFSShare(param, user, ip) {
-        let { name, description, oplock, notify, offlineCacheMode } = param;
+        let { name, path, description, oplock, notify, offlineCacheMode } = param;
         let result = {};
         try {
-            await database.updateCIFSShare({ name }, { description, oplock, notify, offlineCacheMode });
-            result = handler.response(0, 'update CIFS share successfully');
-            await log.audit({ user, desc: `update CIFS share '${name}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let serverIp = nasServerList.filter(server => (handler.checkRoot(path, server.path)))[0].ip;
+            let res = await afterMe.updateCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name, desc: description, oplock, notify, cacheMode: offlineCacheMode }] } });
+            if (!res.errorId) {
+                await database.updateCIFSShare({ name, path }, { description, oplock, notify, offlineCacheMode });
+                result = handler.response(0, 'update CIFS share successfully');
+                await log.audit({ user, desc: `update CIFS share '${name}' successfully`, ip });
+            } else {
+                result = handler.response(153, res.message, param);
+                await log.audit({ user, desc: `update CIFS share '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(153, error, param);
             await log.audit({ user, desc: `update CIFS share '${name}' failed`, ip });
@@ -548,12 +575,20 @@ const model = {
         return result;
     },
     async deleteCIFSShare(param, user, ip) {
-        let { name } = param;
+        let { name, path } = param;
         let result = {};
         try {
-            await database.deleteCIFSShare({ name });
-            result = handler.response(0, 'delete CIFS share successfully');
-            await log.audit({ user, desc: `delete CIFS share '${name}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let serverIp = nasServerList.filter(server => (handler.checkRoot(path, server.path)))[0].ip;
+            let res = await afterMe.deleteCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name }] } });
+            if (!res.errorId) {
+                await database.deleteCIFSShare({ name, path });
+                result = handler.response(0, 'delete CIFS share successfully');
+                await log.audit({ user, desc: `delete CIFS share '${name}' successfully`, ip });
+            } else {
+                result = handler.response(154, res.message, param);
+                await log.audit({ user, desc: `delete CIFS share '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `delete CIFS share '${name}' failed`, ip });
@@ -561,14 +596,28 @@ const model = {
         return result;
     },
     async batchDeleteCIFSShare(param, user, ip) {
-        let { names } = param;
+        let { shares } = param;
+        let names = shares.map(share => (share.name));
         let result = {};
         try {
-            for (let name of names) {
-                await database.deleteCIFSShare({ name });
+            let success = 0;
+            let nasServerList = await database.getNasServer();
+            for (let share of shares) {
+                let { name, path } = share;
+                let serverIp = nasServerList.filter(server => (handler.checkRoot(path, server.path)))[0].ip;
+                let res = await afterMe.deleteCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name }] } });
+                if (!res.errorId) {
+                    await database.deleteCIFSShare({ name });
+                    success += 1;
+                }
             }
-            result = handler.response(0, 'batch delete CIFS share successfully');
-            await log.audit({ user, desc: `batch delete ${names.length} CIFS share(s) '${String(handler.bypass(names))}' successfully`, ip });
+            if (success === shares.length) {
+                result = handler.response(0, 'batch delete CIFS share successfully');
+                await log.audit({ user, desc: `batch delete ${names.length} CIFS share(s) '${String(handler.bypass(names))}' successfully`, ip });
+            } else {
+                result = handler.response(154, 'batch delete CIFS share failed', param);
+                await log.audit({ user, desc: `batch delete ${names.length} CIFS share(s) '${String(handler.bypass(names))}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `batch delete ${names.length} CIFS share(s) '${String(handler.bypass(names))}' failed`, ip });
@@ -586,42 +635,78 @@ const model = {
         return result;
     },
     async addUserOrGroupToCIFSShare(param, user, ip) {
-        let { items, shareName } = param;
+        let { items, shareName, sharePath } = param;
         let names = items.map(item => (item.name));
         let result = {};
         try {
-            await database.addUserOrGroupToCIFSShare(param);
-            result = handler.response(0, 'add user or group to CIFS share successfully');
-            await log.audit({ user, desc: `add ${names.length} user${items[0].type === 'localAuthenticationUser' ? '(s)' : ' group(s)'} '${String(handler.bypass(names))}' to CIFS share '${shareName}' successfully`, ip });
+            let success = 0;
+            let nasServerList = await database.getNasServer();
+            let serverIp = nasServerList.filter(server => (handler.checkRoot(sharePath, server.path)))[0].ip;
+            for (let item of items) {
+                let { type, name, permission } = item;
+                let userList = [{ clientType: type, name, permission }];
+                logger.info(userList);
+                let res = await afterMe.addUserOrGroupToCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name: shareName, userList }] } });
+                if (!res.errorId) {
+                    await database.addUserOrGroupToCIFSShare({ type, name, permission, shareName });
+                    success += 1;
+                }
+                logger.info(res.message);
+            }
+            if (success === items.length) {
+                result = handler.response(0, 'add user or group to CIFS share successfully');
+                await log.audit({ user, desc: `add ${names.length} user${items[0].type === 'local_user' ? '(s)' : ' group(s)'} '${String(handler.bypass(names))}' to CIFS share '${shareName}' successfully`, ip });
+            } else {
+                result = handler.response(152, 'add user or group to CIFS share failed', param);
+                await log.audit({ user, desc: `add ${names.length} user${items[0].type === 'local_user' ? '(s)' : ' group(s)'} '${String(handler.bypass(names))}' to CIFS share '${shareName}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(152, error, param);
-            await log.audit({ user, desc: `add ${names.length} user${items[0].type === 'localAuthenticationUser' ? '(s)' : ' group(s)'} '${String(handler.bypass(names))}' to CIFS share '${shareName}' failed`, ip });
+            await log.audit({ user, desc: `add ${names.length} user${items[0].type === 'local_user' ? '(s)' : ' group(s)'} '${String(handler.bypass(names))}' to CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },
     async updateUserOrGroupInCIFSShare(param, user, ip) {
-        let { name, type, shareName } = param;
+        let { name, type, permission, shareName, sharePath } = param;
         let result = {};
         try {
-            await database.updateUserOrGroupInCIFSShare(param);
-            result = handler.response(0, 'update user or group in CIFS share successfully');
-            await log.audit({ user, desc: `update user${type === 'localAuthenticationUser' ? '' : ' group'} '${name}' in CIFS share '${shareName}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let serverIp = nasServerList.filter(server => (handler.checkRoot(sharePath, server.path)))[0].ip;
+            let userList = [{ clientType: type, name, permission }];
+            let res = await afterMe.updateUserOrGroupInCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name: shareName, userList }] } });
+            if (!res.errorId) {
+                await database.updateUserOrGroupInCIFSShare(param);
+                result = handler.response(0, 'update user or group in CIFS share successfully');
+                await log.audit({ user, desc: `update user${type === 'local_user' ? '' : ' group'} '${name}' in CIFS share '${shareName}' successfully`, ip });
+            } else {
+                result = handler.response(153, res.message, param);
+                await log.audit({ user, desc: `update user${type === 'local_user' ? '' : ' group'} '${name}' in CIFS share '${shareName}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(153, error, param);
-            await log.audit({ user, desc: `update user${type === 'localAuthenticationUser' ? '' : ' group'} '${name}' in CIFS share '${shareName}' failed`, ip });
+            await log.audit({ user, desc: `update user${type === 'local_user' ? '' : ' group'} '${name}' in CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },
     async removeUserOrGroupFromCIFSShare(param, user, ip) {
-        let { name, type, shareName } = param;
+        let { name, type, shareName, sharePath } = param;
         let result = {};
         try {
-            await database.removeUserOrGroupFromCIFSShare(param);
-            result = handler.response(0, 'remove user or group from CIFS share successfully');
-            await log.audit({ user, desc: `remove user${type === 'localAuthenticationUser' ? '' : ' group'} '${name}' from CIFS share '${shareName}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let serverIp = nasServerList.filter(server => (handler.checkRoot(sharePath, server.path)))[0].ip;
+            let userList = [{ clientType: type, name }];
+            let res = await afterMe.removeUserOrGroupFromCIFSShare({ clientCifsInfo: { serverIp, cifsShareList: [{ name: shareName, userList }] } });
+            if (!res.errorId) {
+                await database.removeUserOrGroupFromCIFSShare(param);
+                result = handler.response(0, 'remove user or group from CIFS share successfully');
+                await log.audit({ user, desc: `remove user${type === 'local_user' ? '' : ' group'} '${name}' from CIFS share '${shareName}' successfully`, ip });
+            } else {
+                result = handler.response(154, res.message, param);
+                await log.audit({ user, desc: `remove user${type === 'local_user' ? '' : ' group'} '${name}' from CIFS share '${shareName}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
-            await log.audit({ user, desc: `remove user${type === 'localAuthenticationUser' ? '' : ' group'} '${name}' from CIFS share '${shareName}' failed`, ip });
+            await log.audit({ user, desc: `remove user${type === 'local_user' ? '' : ' group'} '${name}' from CIFS share '${shareName}' failed`, ip });
         }
         return result;
     },
@@ -639,9 +724,17 @@ const model = {
         let { path, description, clientList } = param;
         let result = {};
         try {
-            await database.addNFSShare({ path, description, clientList });
-            result = handler.response(0, 'create NFS share successfully');
-            await log.audit({ user, desc: `create NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.createNFSShare({ server, path, description, clientList });
+            if (!res.errorId) {
+                await database.addNFSShare({ path, description, clientList });
+                result = handler.response(0, 'create NFS share successfully');
+                await log.audit({ user, desc: `create NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(152, res.message, param);
+                await log.audit({ user, desc: `create NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(152, error, param);
             await log.audit({ user, desc: `create NFS share '${path}' failed`, ip });
@@ -649,12 +742,20 @@ const model = {
         return result;
     },
     async updateNFSShare(param, user, ip) {
-        let { path, description, clientList } = param;
+        let { path, description } = param;
         let result = {};
         try {
-            await database.updateNFSShare({ path }, { description, clientList });
-            result = handler.response(0, 'update NFS share successfully');
-            await log.audit({ user, desc: `update NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.updateNFSShare({ server, path, description });
+            if (!res.errorId) {
+                await database.updateNFSShare({ path }, { description });
+                result = handler.response(0, 'update NFS share successfully');
+                await log.audit({ user, desc: `update NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(153, res.message, param);
+                await log.audit({ user, desc: `update NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(153, error, param);
             await log.audit({ user, desc: `update NFS share '${path}' failed`, ip });
@@ -665,9 +766,17 @@ const model = {
         let { path } = param;
         let result = {};
         try {
-            await database.deleteNFSShare({ path });
-            result = handler.response(0, 'delete NFS share successfully');
-            await log.audit({ user, desc: `delete NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.deleteNFSShare({ shareList: [{ server, path }] });
+            if (!res.errorId) {
+                await database.deleteNFSShare({ path });
+                result = handler.response(0, 'delete NFS share successfully');
+                await log.audit({ user, desc: `delete NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(154, res.message, param);
+                await log.audit({ user, desc: `delete NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `delete NFS share '${path}' failed`, ip });
@@ -678,11 +787,23 @@ const model = {
         let { paths } = param;
         let result = {};
         try {
+            let success = 0;
+            let nasServerList = await database.getNasServer();
             for (let path of paths) {
-                await database.deleteNFSShare({ path });
+                let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+                let res = await afterMe.deleteNFSShare({ shareList: [{ server, path }] });
+                if (!res.errorId) {
+                    await database.deleteNFSShare({ path });
+                    success += 1;
+                }
             }
-            result = handler.response(0, 'batch delete NFS share successfully');
-            await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' successfully`, ip });
+            if (success === paths.length) {
+                result = handler.response(0, 'batch delete NFS share successfully');
+                await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' successfully`, ip });
+            } else {
+                result = handler.response(154, 'batch delete NFS share failed', param);
+                await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' failed`, ip });
@@ -700,25 +821,48 @@ const model = {
         return result;
     },
     async createClientInNFSShare(param, user, ip) {
-        let { ips, path } = param;
+        let { type, ips, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
+        ips = ips.split(';');
         let result = {};
         try {
-            let data = database.addClientInNFSShare(param);
-            result = handler.response(0, 'add NFS share client successfully');
-            await log.audit({ user, desc: `add ${ips.split(';').length} client(s) '${String(handler.bypass(ips.split(';')))}' to NFS share '${path}' successfully`, ip });
+            let success = 0;
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            for (let ip of ips) {
+                let res = await afterMe.createClientInNFSShare({ server, path, clientList: [{ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint }] });
+                if (!res.errorId) {
+                    database.addClientInNFSShare({ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path });
+                    success += 1;
+                }
+            }
+            if (success === ips.length) {
+                result = handler.response(0, 'add NFS share client successfully');
+                await log.audit({ user, desc: `add ${ips.length} client(s) '${String(handler.bypass(ips))}' to NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(152, 'add NFS share client failed', param);
+                await log.audit({ user, desc: `add ${ips.length} client(s) '${String(handler.bypass(ips))}' to NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(152, error, param);
-            await log.audit({ user, desc: `add ${ips.split(';').length} client(s) '${String(handler.bypass(ips.split(';')))}' to NFS share '${path}' failed`, ip });
+            await log.audit({ user, desc: `add ${ips.length} client(s) '${String(handler.bypass(ips))}' to NFS share '${path}' failed`, ip });
         }
         return result;
     },
     async updateClientInNFSShare(param, user, ip) {
-        let { path } = param;
+        let { type, ip: client, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
         let result = {};
         try {
-            await database.updateClientInNFSShare(param);
-            result = handler.response(0, 'update NFS share client successfully');
-            await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.updateClientInNFSShare({ server, path, clientList: [{ type, ip: client, permission, writeMode, permissionConstraint, rootPermissionConstraint }] });
+            if (!res.errorId) {
+                await database.updateClientInNFSShare(param);
+                result = handler.response(0, 'update NFS share client successfully');
+                await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(153, res.message, param);
+                await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(153, error, param);
             await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' failed`, ip });
@@ -729,9 +873,17 @@ const model = {
         let { path } = param;
         let result = {};
         try {
-            await database.deleteClientInNFSShare(param);
-            result = handler.response(0, 'remove NFS share client successfully');
-            await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.deleteClientInNFSShare({ server, path, clientList: [param.ip] });
+            if (!res.errorId) {
+                await database.deleteClientInNFSShare(param);
+                result = handler.response(0, 'remove NFS share client successfully');
+                await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(154, res.message, param);
+                await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' failed`, ip });
@@ -752,9 +904,15 @@ const model = {
         let { name, description } = param;
         let result = {};
         try {
-            await database.addLocalAuthUserGroup({ name, description });
-            result = handler.response(0, 'create local authentication user group successfully');
-            await log.audit({ user, desc: `create local authentication user group '${name}' successfully`, ip });
+            let res = await afterMe.addLocalAuthUserGroup({ userInfo: { localGroupList: [{ groupName: name, desc: description }] } });
+            if (!res.errorId) {
+                await database.addLocalAuthUserGroup({ name, description });
+                result = handler.response(0, 'create local authentication user group successfully');
+                await log.audit({ user, desc: `create local authentication user group '${name}' successfully`, ip });
+            } else {
+                result = handler.response(53, res.message, param);
+                await log.audit({ user, desc: `create local authentication user group '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(53, error, param);
             await log.audit({ user, desc: `create local authentication user group '${name}' failed`, ip });
@@ -765,9 +923,15 @@ const model = {
         let { name, description } = param;
         let result = {};
         try {
-            await database.updateLocalAuthUserGroup({ name }, { description });
-            result = handler.response(0, 'update local authentication user group successfully');
-            await log.audit({ user, desc: `update local authentication user group '${name}' successfully`, ip });
+            let res = await afterMe.updateLocalAuthUserGroup({ userInfo: { localGroupList: [{ groupName: name, desc: description }] } });
+            if (!res.errorId) {
+                await database.updateLocalAuthUserGroup({ name }, { description });
+                result = handler.response(0, 'update local authentication user group successfully');
+                await log.audit({ user, desc: `update local authentication user group '${name}' successfully`, ip });
+            } else {
+                result = handler.response(54, res.message, param);
+                await log.audit({ user, desc: `update local authentication user group '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(54, error, param);
             await log.audit({ user, desc: `update local authentication user group '${name}' failed`, ip });
@@ -778,9 +942,15 @@ const model = {
         let { name } = param;
         let result = {};
         try {
-            await database.deleteLocalAuthUserGroup({ name });
-            result = handler.response(0, 'delete local authentication user group successfully');
-            await log.audit({ user, desc: `delete local authentication user group '${name}' successfully`, ip });
+            let res = await afterMe.deleteLocalAuthUserGroup({ userInfo: { localGroupList: [{ groupName: name }] } });
+            if (!res.errorId) {
+                await database.deleteLocalAuthUserGroup({ name });
+                result = handler.response(0, 'delete local authentication user group successfully');
+                await log.audit({ user, desc: `delete local authentication user group '${name}' successfully`, ip });
+            } else {
+                result = handler.response(55, res.message, param);
+                await log.audit({ user, desc: `delete local authentication user group '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `delete local authentication user group '${name}' failed`, ip });
@@ -801,9 +971,21 @@ const model = {
         let { names, groupName } = param;
         let result = {};
         try {
-            await database.addLocalAuthUserToGroup(param);
-            result = handler.response(0, 'add local authentication user to user group successfully');
-            await log.audit({ user, desc: `add ${names.length} local authentication user(s) '${String(handler.bypass(names))}' to local authentication user group '${groupName}' successfully`, ip });
+            let success = 0;
+            for (let name of names) {
+                let res = await afterMe.addLocalAuthUserToGroup({ userInfo: { localUserList: [{ userName: name, secondaryGroup: [groupName] }] } });
+                if (!res.errorId) {
+                    await database.addLocalAuthUserToGroup({ name, groupName });
+                    success += 1;
+                }
+            }
+            if (success === names.length) {
+                result = handler.response(0, 'add local authentication user to user group successfully');
+                await log.audit({ user, desc: `add ${names.length} local authentication user(s) '${String(handler.bypass(names))}' to local authentication user group '${groupName}' successfully`, ip });
+            } else {
+                result = handler.response(53, 'add local authentication user to user group failed', param);
+                await log.audit({ user, desc: `add ${names.length} local authentication user(s) '${String(handler.bypass(names))}' to local authentication user group '${groupName}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(53, error, param);
             await log.audit({ user, desc: `add ${names.length} local authentication user(s) '${String(handler.bypass(names))}' to local authentication user group '${groupName}' failed`, ip });
@@ -814,9 +996,15 @@ const model = {
         let { name, groupName } = param;
         let result = {};
         try {
-            await database.removeLocalAuthUserFromGroup(param);
-            result = handler.response(0, 'remove local authentication user from user group successfully');
-            await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}' successfully`, ip });
+            let res = await afterMe.removeLocalAuthUserFromGroup({ userInfo: { localUserList: [{ userName: name, secondaryGroup: [groupName] }] } });
+            if (!res.errorId) {
+                await database.removeLocalAuthUserFromGroup(param);
+                result = handler.response(0, 'remove local authentication user from user group successfully');
+                await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}' successfully`, ip });
+            } else {
+                result = handler.response(55, res.message, param);
+                await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}'failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `remove local authentication user '${name}' from local authentication user group '${groupName}'failed`, ip });
@@ -837,9 +1025,15 @@ const model = {
         let { name, password, primaryGroup, secondaryGroup = [], description } = param;
         let result = {};
         try {
-            await database.addLocalAuthUser({ name, password, primaryGroup, secondaryGroup, description });
-            result = handler.response(0, 'create local authentication user successfully');
-            await log.audit({ user, desc: `create local authentication user '${name}' successfully`, ip });
+            let res = await afterMe.addLocalAuthUser({ userInfo: { localUserList: [{ userName: name, passWord: password, desc: description, primaryGroup, secondaryGroup }] } });
+            if (!res.errorId) {
+                await database.addLocalAuthUser({ name, password, primaryGroup, secondaryGroup, description });
+                result = handler.response(0, 'create local authentication user successfully');
+                await log.audit({ user, desc: `create local authentication user '${name}' successfully`, ip });
+            } else {
+                result = handler.response(53, res.message, param);
+                await log.audit({ user, desc: `create local authentication user '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(53, error, param);
             await log.audit({ user, desc: `create local authentication user '${name}' failed`, ip });
@@ -850,9 +1044,15 @@ const model = {
         let { name, changePassword, password, primaryGroup, description } = param;
         let result = {};
         try {
-            changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description });
-            result = handler.response(0, 'update local authentication user successfully');
-            await log.audit({ user, desc: `update local authentication user '${name}' successfully`, ip });
+            let res = await afterMe.updateLocalAuthUser({ userInfo: { localUserList: [{ userName: name, passWord: password, desc: description, primaryGroup }] } });
+            if (!res.errorId) {
+                changePassword ? await database.updateLocalAuthUser({ name }, { password, primaryGroup, description }) : await database.updateLocalAuthUser({ name }, { primaryGroup, description });
+                result = handler.response(0, 'update local authentication user successfully');
+                await log.audit({ user, desc: `update local authentication user '${name}' successfully`, ip });
+            } else {
+                result = handler.response(54, res.message, param);
+                await log.audit({ user, desc: `update local authentication user '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(54, error, param);
             await log.audit({ user, desc: `update local authentication user '${name}' failed`, ip });
@@ -863,9 +1063,15 @@ const model = {
         let { name } = param;
         let result = {};
         try {
-            await database.deleteLocalAuthUser({ name });
-            result = handler.response(0, 'delete local authentication user successfully');
-            await log.audit({ user, desc: `delete local authentication user '${name}' successfully`, ip });
+            let res = await afterMe.deleteLocalAuthUser({ userInfo: { localUserList: [{ userName: name }] } });
+            if (!res.errorId) {
+                await database.deleteLocalAuthUser({ name });
+                result = handler.response(0, 'delete local authentication user successfully');
+                await log.audit({ user, desc: `delete local authentication user '${name}' successfully`, ip });
+            } else {
+                result = handler.response(55, res.message, param);
+                await log.audit({ user, desc: `delete local authentication user '${name}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `delete local authentication user '${name}' failed`, ip });
@@ -876,11 +1082,21 @@ const model = {
         let { names } = param;
         let result = {};
         try {
+            let sucess = 0;
             for (let name of names) {
-                await database.deleteLocalAuthUser({ name });
+                let res = await afterMe.deleteLocalAuthUser({ userInfo: { localUserList: [{ userName: name }] } });
+                if (!res.errorId) {
+                    await database.deleteLocalAuthUser({ name });
+                    sucess += 1;
+                }
             }
-            result = handler.response(0, 'batch delete local authentication user successfully');
-            await log.audit({ user, desc: `batch delete ${names.length} local authentication user(s) '${String(handler.bypass(names))}' successfully`, ip });
+            if (sucess === names.length) {
+                result = handler.response(0, 'batch delete local authentication user successfully');
+                await log.audit({ user, desc: `batch delete ${names.length} local authentication user(s) '${String(handler.bypass(names))}' successfully`, ip });
+            } else {
+                result = handler.response(55, 'batch delete local authentication user failed', param);
+                await log.audit({ user, desc: `batch delete ${names.length} local authentication user(s) '${String(handler.bypass(names))}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(55, error, param);
             await log.audit({ user, desc: `batch delete ${names.length} local authentication user(s) '${String(handler.bypass(names))}' failed`, ip });
@@ -976,6 +1192,7 @@ const model = {
             if (node.errorId) {
                 clusterStatus = { status: false, total: 0, normal: 0, abnormal: 0 };
             } else {
+                node.data = node.data.filter(i => (!i.service.includes('client')));
                 let total = node.data.length;
                 let normal = node.data.filter(i => (i.status)).length;
                 let status = total === normal ? true : false;
@@ -1035,7 +1252,7 @@ const model = {
         try {
             let res = await afterMe.getNodeList(param);
             if (!res.errorId) {
-                result = handler.response(0, res.data);
+                result = handler.response(0, res.data.filter(i => (!i.service.includes('client'))));
             } else {
                 result = handler.response(173, res.message, param);
             }
@@ -1126,9 +1343,15 @@ const model = {
         let { ip: server, path, description } = param;
         let result = {};
         try {
-            await database.addNasServer({ ip: server, path, description });
-            result = handler.response(0, 'create NAS server successfully');
-            await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
+            let res = await afterMe.createNasServer({ nasServerList: [{ clientIp: server, nasRoot: path }] });
+            if (!res.errorId) {
+                await database.addNasServer({ ip: server, path, description });
+                result = handler.response(0, 'create NAS server successfully');
+                await log.audit({ user, desc: `create NAS server '${server}' successfully`, ip });
+            } else {
+                result = handler.response(173, res.message, param);
+                await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(173, error, param);
             await log.audit({ user, desc: `create NAS server '${server}' failed`, ip });
@@ -1208,17 +1431,10 @@ const model = {
     async getClient(param) {
         let result = {};
         try {
-            let clientList = [
-                { hostname: 'client1', ip: '192.168.100.11' },
-                { hostname: 'client2', ip: '192.168.100.12' },
-                { hostname: 'client3', ip: '192.168.100.13' },
-                { hostname: 'client4', ip: '192.168.100.14' },
-                { hostname: 'client5', ip: '192.168.100.15' }
-
-            ];
+            let clientList = Object.assign(await afterMe.getClient(param)).data || [];
             let nasServerList = await database.getNasServer();
             let nasServerIpList = nasServerList.map(server => (server.ip));
-            let data = clientList.map(client => ({ hostname: client.hostname, ip: client.ip, isUsed: nasServerIpList.includes(client.ip) }));
+            let data = clientList.map(client => ({ hostname: client.name, ip: client.ip, isUsed: nasServerIpList.includes(client.ip) }));
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);

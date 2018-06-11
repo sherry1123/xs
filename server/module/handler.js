@@ -52,6 +52,9 @@ const model = {
             array.push('...');
         }
         return array;
+    },
+    checkRoot(path, root) {
+        return path.split('/')[1] === root.split('/')[1];
     }
 };
 module.exports = model;
