@@ -29,7 +29,7 @@ class ServiceAndClient extends Component {
             return message.warning(lang('当前已有2个管理服务，不能再创建了。', 'There are already two management services existing, can not create any more.'));
         }
         if (managementServerIPs.length >= 1){
-            return this.createManagementServiceWrapper.getWrappedInstance().show(true);
+            return this.createManagementServiceWrapper.getWrappedInstance().show();
         }
     }
 
@@ -84,11 +84,7 @@ class ServiceAndClient extends Component {
                             <Icon type="profile" />{lang('元数据服务', 'Metadata Service')}
                             <Icon type="plus" onClick={this.createMetadataService.bind(this)} />
                         </header>
-                        <div>
-                            {
-                                metadataServerIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)
-                            }
-                        </div>
+                        <div>{metadataServerIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)}</div>
                     </div>
                     <div className="fs-service-and-client-content">
                         <header className="fs-service-and-client-title">
@@ -96,32 +92,22 @@ class ServiceAndClient extends Component {
                             <Icon type="plus" onClick={this.createStorageService.bind(this)} />
                         </header>
                         <div>
-                            {
-                                storageServerIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)
-                            }
+                            {storageServerIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)}
                         </div>
                     </div>
                     <div className="fs-service-and-client-content">
                         <header className="fs-service-and-client-title">
-                            <Icon type="appstore-o" />{lang('管理服务', 'Management Service')}
-                            <Icon type="plus" onClick={this.createManagementService.bind(this)} />
+                            <Icon type="appstore-o" />{lang('管理服务', 'Management Service')}{managementServerIPs.length === 2 ? lang(' - 已开启HA', ' - HA Enabled') : ''}
+                            {managementServerIPs.length < 2 && <Icon type="plus" onClick={this.createManagementService.bind(this)} />}
                         </header>
-                        <div>
-                            {
-                                managementServerIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)
-                            }
-                        </div>
+                        <div>{managementServerIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)}</div>
                     </div>
                     <div className="fs-service-and-client-content">
                         <header className="fs-service-and-client-title">
                             <Icon type="laptop" />{lang('客户端', 'Client')}
                             <Icon type="plus" onClick={this.createClient.bind(this)} />
                         </header>
-                        <div>
-                            {
-                                clientIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)
-                            }
-                        </div>
+                        <div>{clientIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)}</div>
                     </div>
                 </section>
                 <CreateClient ref={ref => this.createClientWrapper = ref} />

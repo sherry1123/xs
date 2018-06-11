@@ -59,7 +59,10 @@ class NFS extends Component {
     }
 
     delete (shareData, index){
-        let {path} = shareData;
+        let {path, clientList} = shareData;
+        if (!!clientList.length){
+            return message.warning(lang('该NFS共享存在有客户端，无法删除！', 'This NFS share includes client(s), it can not be deleted!'));
+        }
         Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
@@ -89,7 +92,16 @@ class NFS extends Component {
     }
 
     batchDelete (){
-        let {batchDeleteNames} = this.state;
+        let {NFSList, batchDeleteNames} = this.state;
+        let shares = NFSList.reduce((prev, curr) => {
+            batchDeleteNames.includes(curr.name) && prev.push(curr);
+            return prev;
+        }, []);
+        let hasUsersOrUserGroupsShares = shares.filter(share => !!share.clientList.length);
+        if (!!hasUsersOrUserGroupsShares.length){
+            let shareNames = hasUsersOrUserGroupsShares.map(share => share.name).toString();
+            return message.warning(lang(`NFS共享 ${shareNames} 存在有客户端，无法删除！`, `NFS share(s) ${shareNames} include(s) client(s), can not be deleted.`));
+        }
         Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>

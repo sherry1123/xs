@@ -4,8 +4,8 @@ import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateCIFS from './CreateCIFS';
 import EditCIFS from './EditCIFS';
 import UserOrGroupOfCIFS from './UserOrGroupOfCIFS';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class CIFS extends Component {
     constructor (props){
@@ -59,7 +59,10 @@ class CIFS extends Component {
     }
 
     delete (shareData, index){
-        let {name} = shareData;
+        let {name, userOrGroupList} = shareData;
+        if (!!userOrGroupList.length){
+            return message.warning(lang('该CIFS共享存在有用户或用户组，无法删除！', 'This CFIS share includes user(s) or user group(s), it can not be deleted!'));
+        }
         Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
@@ -89,8 +92,16 @@ class CIFS extends Component {
     }
 
     batchDelete (){
-        let {batchDeleteNames, CIFSList} = this.state;
-        let shares = CIFSList.reduce((prev, curr) => {batchDeleteNames.includes(curr) && prev.push(curr); return prev;}, []);
+        let {CIFSList, batchDeleteNames} = this.state;
+        let shares = CIFSList.reduce((prev, curr) => {
+            batchDeleteNames.includes(curr.name) && prev.push(curr);
+            return prev;
+        }, []);
+        let hasUsersOrUserGroupsShares = shares.filter(share => !!share.userOrGroupList.length);
+        if (!!hasUsersOrUserGroupsShares.length){
+            let shareNames = hasUsersOrUserGroupsShares.map(share => share.name).toString();
+            return message.warning(lang(`CIFS共享 ${shareNames} 存在有用户或用户组，无法删除！`, `CIFS share(s) ${shareNames} include(s) user(s) or user group(s), can not be deleted.`));
+        }
         Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>

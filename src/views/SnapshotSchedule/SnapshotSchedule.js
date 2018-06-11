@@ -225,7 +225,7 @@ class SnapshotSchedule extends Component {
                 <div className="fs-table-operation-wrapper">
                     <Input.Search
                         size="small"
-                        placeholder={lang('定时快照计划名称', 'Time snapshot schedule name')}
+                        placeholder={lang('定时快照计划名称', 'Timed Snapshot Schedule Name')}
                         value={this.state.query}
                         onChange={this.queryChange.bind(this)}
                         onSearch={this.searchInTable.bind(this)}

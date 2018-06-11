@@ -22,7 +22,7 @@ import {lsGet} from './services';
     // 4. login
     try {
         // await httpRequests.syncUpSystemStatus();
-        NODE_ENV === 'development' && console.log('%c System status in browser cookie has been synchronized with http server!', 'color: #00cc00');
+        NODE_ENV === 'development' && console.info('%c System status recorded by cookie in browser has been synchronized up to the http server successfully.', 'color: #52a7fe');
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }
