@@ -1,3 +1,4 @@
+const config = require('../config');
 const dao = require('../module/dao');
 const user = require('../model/user');
 const setting = require('../model/setting');
@@ -154,7 +155,13 @@ const model = {
         return await dao.updateOne(nfsShare, { path }, { clientList });
     },
     async getLocalAuthUserGroup(param) {
-        return await dao.findAll(localAuthUserGroup, param);
+        let groupList = await dao.findAll(localAuthUserGroup, param);
+        groupList = await Promise.all(groupList.map(async group => {
+            let { name, description } = group;
+            let userList = await model.getLocalAuthUserFromGroup({ groupName: name });
+            return { name, description, userList };
+        }));
+        return groupList;
     },
     async addLocalAuthUserGroup(param) {
         return await dao.createOne(localAuthUserGroup, param);
@@ -263,6 +270,12 @@ const model = {
     },
     async updateNasServer(query, param) {
         return await dao.updateOne(nasServer, query, param);
+    },
+    async addClientToCluster(param) {
+        let { ip } = param;
+        let initParam = await model.getSetting({ key: config.setting.initParam });
+        initParam.clientIPs = initParam.clientIPs.concat([ip]);
+        return await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
     }
 };
 module.exports = model;

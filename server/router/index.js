@@ -99,5 +99,5 @@ router.all('/api/createtarget', controller['/api/createtarget']);
 router.all('/api/getbuddygroup', controller['/api/getbuddygroup']);
 router.all('/api/createbuddygroup', controller['/api/createbuddygroup']);
 router.all('/api/getclient', controller['/api/getclient']);
-
+router.all('/api/addclienttocluster', controller['/api/addclienttocluster']);
 module.exports = router;

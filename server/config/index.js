@@ -82,7 +82,8 @@ exports.api = {
         getclientinfo: 'http://localhost:9090/cluster/getclientinfo',
         addclientinfo: 'http://localhost:9090/cluster/addclientinfo',
         modifyclientinfo: 'http://localhost:9090/cluster/modifyclientinfo',
-        nfsdeleteclient: 'http://localhost:9090/cluster/nfsdeleteclient'
+        nfsdeleteclient: 'http://localhost:9090/cluster/nfsdeleteclient',
+        addclientnode: 'http://localhost:9090/cluster/addclientnode'
     }
 };
 exports.key = {

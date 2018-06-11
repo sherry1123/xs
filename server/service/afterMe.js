@@ -337,6 +337,10 @@ const model = {
     async deleteClientInNFSShare(param) {
         let token = await model.getToken();
         return await request.post(config.api.orcafs.nfsdeleteclient, param, token, true);
+    },
+    async addClientToCluster(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.addclientnode, param, token, true);
     }
 };
 module.exports = model;

@@ -1440,6 +1440,24 @@ const model = {
             result = handler.response(173, error, param);
         }
         return result;
+    },
+    async addClientToCluster(param, user, ip) {
+        let result = {};
+        try {
+            let res = await afterMe.addClientToCluster({ ip: param.ip });
+            if (!res.errorId) {
+                await database.addClientToCluster({ ip: param.ip });
+                result = handler.response(0, 'add client successfully');
+                await log.audit({ user, desc: `add client ${param.ip} successfully`, ip });
+            } else {
+                result = handler.response(173, res.message, param);
+                await log.audit({ user, desc: `add client ${param.ip} failed`, ip });
+            }
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `add client ${param.ip} failed`, ip });
+        }
+        return result;
     }
 };
 module.exports = model;

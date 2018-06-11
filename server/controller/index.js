@@ -296,6 +296,9 @@ const model = {
     },
     '/api/getclient': async ctx => {
         ctx.body = await service.getClient(ctx.param);
+    },
+    '/api/addclienttocluster': async ctx => {
+        ctx.body = await service.addClientToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     }
 };
 module.exports = model;
