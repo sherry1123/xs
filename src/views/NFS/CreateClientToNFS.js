@@ -56,16 +56,17 @@ class CreateClientToNFS extends Component {
             }
             ips = ips.split(';').filter(ip => !!ip.trim());
             let isIPPatternError = !ips.some(ip => {
+                // currently only allow user to enter IPV4 IPs, network segment and hostname are not allowed
                 if (validateIpv4(ip)){
                     // it's a IPV4 IP
                     return true;
                 } /*else if (validateIpv4Segment(ip)){
                     // it's a IPV4 segment
                     return true;
-                } */else if (!!ip){
+                } else if (!!ip){
                     // it's a hostname
                     return true
-                } else {
+                } */else {
                     // it's a meaningless value
                     return false;
                 }
@@ -210,6 +211,21 @@ class CreateClientToNFS extends Component {
                             style={{width: isChinese ? 300 : 300}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             maxLength={255}
+                            placeholder={lang('支持输入多个IPv4格式的IP，用应为分号";"隔开。', 'You can enter multiple client IP addressed with IPV4 pattern, split by ";"')}
+                            value={this.state.clientData.ips}
+                            onChange={({target: {value}}) => {
+                                this.formValueChange.bind(this, 'ips')(value);
+                            }}
+                            onBlur={({target: {value}}) => {
+                                this.validateForm.bind(this, 'ips')(value);
+                            }}
+                        />
+                        {/*
+                        // currently only allow user to enter IP
+                        <Input.TextArea
+                            style={{width: isChinese ? 300 : 300}} size="small"
+                            autosize={{minRows: 4, maxRows: 6}}
+                            maxLength={255}
                             placeholder={lang('支持输入多个hostname、IP地址或网段，用英文分号隔开。IP地址和网段输入仅支持IPV4地址格式。', 'You can enter multiple hostname, IP addresses and segments of clients, separated by semicolon. IP address and segment only supports IPv4 address pattern.')}
                             value={this.state.clientData.ips}
                             onChange={({target: {value}}) => {
@@ -219,6 +235,7 @@ class CreateClientToNFS extends Component {
                                 this.validateForm.bind(this, 'ips')(value);
                             }}
                         />
+                        */}
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('权限', 'Permission')}>
                         <Select

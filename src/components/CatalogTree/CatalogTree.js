@@ -26,7 +26,14 @@ class CatalogTree extends Component {
                 if (levels.length !== 1){
                     message.warning(lang(
                         'NAS服务器管理的目录只能是根目录的直接子目录，请正确选择！',
-                        'The path that managed by NAS server must be the direct sub-catalog of root path, please select correctly.'
+                        'The catalog path that managed by NAS server must be the direct sub-catalog of root path, please select correctly.'
+                    ));
+                    checkOk = false;
+                } else if (this.props.NASServerList.some(NASServer => NASServer.path === '/' + levels[0])){
+                    // this catalog is already used by a existing NAS server
+                    message.warning(lang(
+                        '该目录已被某NAS服务器管理，请重新选择！',
+                        'This catalog path is already used by another existing NAS server, please select another one.'
                     ));
                     checkOk = false;
                 }
@@ -36,6 +43,13 @@ class CatalogTree extends Component {
                     message.warning(lang(
                         '共享的目录必须是NAS服务器所管理目录的子目录，请正确选择！',
                         'The share catalog must be the sub-catalog that managed by NAS server, please select correctly.'
+                    ));
+                    checkOk = false;
+                } else if (!this.props.NASServerList.some(NASServer => NASServer.path === '/' + levels[0])){
+                    // this catalog's ancestor catalog is managed by a NAS server
+                    message.warning(lang(
+                        '该目录无法做共享，因为其所属的顶层父级目录未被任何NAS服务器管理，请重新选择！',
+                        'This catalog path can not be used for sharing, because of it\' top level parent path is not managed by any NAS server, please select another one. '
                     ));
                     checkOk = false;
                 }
@@ -201,8 +215,8 @@ class CatalogTree extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
+    const {language, main: {share: {NASServerList}}} = state;
+    return {language, NASServerList};
 };
 
 const mapDispatchToProps = [];

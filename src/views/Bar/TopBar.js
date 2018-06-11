@@ -33,14 +33,17 @@ class TopBar extends Component {
         let menuExpand = !this.props.menuExpand;
         this.props.changeMenuExpand(menuExpand);
         lsSet('menuExpand', menuExpand);
-        // trigger a window resize event to let some components know it's the time to resize itself,
-        // such as charts
-        let event = document.createEvent('Event');
-        event.initEvent('resize', true, true);
-        window.dispatchEvent(event);
-        // since the sidebar do expand and un-expand actions will fire an animation, so we should trigger
-        // this event a more time after the animation is done to ensure components' resize actions work properly
-        setTimeout(() => window.dispatchEvent(event), 300)
+        // trigger a window resize event to let some components know it's the time to resize itself, such as charts
+        if ('onresize' in  window){
+            let event = document.createEvent('Event');
+            event.initEvent('resize', true, true);
+            // since the sidebar do expand and un-expand actions will fire an animation, so we should trigger
+            // this event a more time after the animation is done to ensure components' resize actions work properly
+            dispatchEvent(event) && setTimeout(() => {
+                window.dispatchEvent(event);
+                event = null;
+            }, 400);
+        }
     }
 
     switchScrollDirection (direction){
