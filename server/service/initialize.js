@@ -133,6 +133,7 @@ const model = {
             await database.addSetting({ key: config.setting[i], value: param[i] });
         }
         await database.addUser({ username: 'admin', password: '123456' });
+        await database.addLocalAuthUserGroup({ name: 'everyone', description: 'everyone' });
         await database.addSetting({ key: config.setting.snapshotSetting, value: config.snapshot });
     },
     async antiInitMongoDB(ipList) {
