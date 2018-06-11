@@ -99,13 +99,13 @@ class SideBar extends Component {
                         }
                     >
                         <Menu.Item key={routerPath.NASServer}>
-                            <Icon type="desktop" />{lang('NAS服务器', 'NAS Server')}
+                            <Icon type="desktop" />{lang('NAS 服务器', 'NAS Server')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.NFS}>
-                            <Icon type="laptop" />{lang('NFS', 'NFS')}
+                            <Icon type="laptop" />{lang('NFS 共享', 'NFS Share')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.CIFS}>
-                            <Icon type="folder" />{lang('CIFS', 'CIFS')}
+                            <Icon type="folder" />{lang('CIFS 共享', 'CIFS Share')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu
@@ -140,11 +140,11 @@ class SideBar extends Component {
                             <Icon type="api" />{lang('伙伴组', 'Buddy Group')}
                         </Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.Item key={routerPath.SystemLog}>
-                        <Icon type="file-text" />{lang('系统日志', 'System Log')}
-                    </Menu.Item>
                     <Menu.Item key={routerPath.FSOperation}>
                         <Icon type="setting" />{lang('文件系统操作', 'FS Operation')}
+                    </Menu.Item>
+                    <Menu.Item key={routerPath.SystemLog}>
+                        <Icon type="file-text" />{lang('系统日志', 'System Log')}
                     </Menu.Item>
                 </Menu>
             </aside>

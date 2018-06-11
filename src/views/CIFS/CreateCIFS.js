@@ -233,7 +233,7 @@ class CreateCIFS extends Component {
         };
         return (
             <Modal
-                title={lang('创建CIFS共享', 'Create CIFS Share')}
+                title={lang(`创建CIFS共享 ${this.state.formStep === 1 ? '- 步骤1: 设置基础配置' : '- 步骤2: 添加用户/用户组'}`, `Create CIFS Share ${this.state.formStep === 1 ? '- Step 1: Setting Basic Configuration' : '- Step 2: Add User/User Group'}`)}
                 width={450}
                 closable={false}
                 maskClosable={false}

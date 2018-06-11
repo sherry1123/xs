@@ -114,7 +114,7 @@ class LocalAuthUserGroup extends Component {
                 },
                 {title: lang('操作', 'Operations'), width: 80,
                     render: (text, record, index) => {
-                        return <div>
+                        return record.name !== 'everyone' ? <div>
                             <Popover {...buttonPopoverConf} content={lang('本地认证用户', 'Local Authentication User')}>
                                 <Button
                                     {...buttonConf}
@@ -136,7 +136,8 @@ class LocalAuthUserGroup extends Component {
                                     icon="delete"
                                 />
                             </Popover>
-                        </div>;
+                        </div> :
+                        '--';
                     }
                 }
             ],

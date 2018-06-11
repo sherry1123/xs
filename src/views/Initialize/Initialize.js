@@ -240,7 +240,7 @@ class Initialize extends Component {
                 if (!!this.state[category + 'Error'][i].status){
                     await this.setErrorArr(category, i, {status: '', help: ''});
                     // if it's mgmt server IP and need to do HA validation
-                    if (category === 'managementServerIPs' && this.props.enableHA){
+                    if ((category === 'managementServerIPs' || category === 'hbIPs')&& this.props.enableHA){
                         await this.validateIPForHA();
                         await this.validateNetworkSegmentForMgmtAndHAIPs();
                     }
@@ -251,8 +251,8 @@ class Initialize extends Component {
 
     async validateIPForHA (){
         // once enabled HA for management server, management server IPs shouldn't be the same with any of metadata, storage or client server IPs
-        let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs} = this.props;
-        let errorHelp = lang('为管理服务器启用HA后，管理服务器IP不能与任何元数据、存储服务器或客户端IP相同', 'once enabled HA for mgmt server, mgmt server IPs shouldn\'t be the same with any of metadata, storage server or client IPs');
+        let {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs,} = this.props;
+        let errorHelp = lang('为管理服务启用HA后，管理服务器IP不能与任何元数据、存储服务或客户端的IP相同', 'once enabled HA for management service, management services\' IPs shouldn\'t be the same with any of metadata, storage server or client IPs');
         for (let i = 0; i < managementServerIPs.length; i ++){
             let managementServerIP = managementServerIPs[i];
             if (managementServerIP){
@@ -272,14 +272,14 @@ class Initialize extends Component {
     }
 
     async validateNetworkSegmentForMgmtAndHAIPs (){
-        if (this.state.managementServerIPsError[0].status || this.state.managementServerIPsError[1].status){
+        if (!!this.state.managementServerIPsError[0].status || !!this.state.managementServerIPsError[1].status){
             // management server IPs haven't pass the basic validation
             return;
         }
         // a more graceful way to validate network segment is using net mask to do binary '&' operations,
         // but currently it hasn't been provided yet or let customers to enter, so there's no way to get it
         let {managementServerIPs: [mgmtIP1, mgmtIP2], hbIPs: [hbIP1, hbIP2]} = this.props;
-        let errorHelp = lang('管理服务器IP不能与和它对应的集群服务管理IP处于相同网段', 'Management Server IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP');
+        let errorHelp = lang('管理服务IP不能与和它对应的连接检测IP处于相同网段', 'Management Service IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP');
         let [mgmtIP1_1, mgmtIP1_2, mgmtIP1_3] = mgmtIP1.split('.');
         let [hbIP1_1, hbIP1_2, hbIP1_3] = hbIP1.split('.');
         if (!(mgmtIP1_1 !== hbIP1_1 || mgmtIP1_2 !== hbIP1_2 || mgmtIP1_3 !== hbIP1_3)){
@@ -294,7 +294,7 @@ class Initialize extends Component {
         if (!(mgmtIP2_1 !== hbIP2_1 || mgmtIP2_2 !== hbIP2_2 || mgmtIP2_3 !== hbIP2_3)){
             await this.setErrorArr('managementServerIPs', 1, {status: 'error', help: errorHelp});
         } else {
-            if (!!mgmtIP1){
+            if (!!mgmtIP2){
                 await this.setErrorArr('managementServerIPs', 1, {status: '', help: ''});
             }
         }
@@ -709,14 +709,14 @@ class Initialize extends Component {
                                                 <Form.Item
                                                     className="fs-ip-input-item"
                                                     key={`float-${i}`}
-                                                    label={i === 0 ? lang('存储集群服务管理IP', 'Cluster Service Mgmt IP') : null}
+                                                    label={i === 0 ? lang('存储集群服务管理IP', 'Service Management IP') : null}
                                                     validateStatus={this.state['floatIPsError'][i].status}
                                                     help={this.state['floatIPsError'][i].help}
                                                 >
                                                     <Input
                                                         className="fs-ip-input no-margin"
                                                         size="small"
-                                                        placeholder={lang('请输入存储服务器集群管理IP', 'please enter cluster service management IP')}
+                                                        placeholder={lang('请输入存储服务集群管理IP', 'please enter service mgmt IP')}
                                                         addonAfter={
                                                             <Popover
                                                                 {...buttonPopoverConf}
@@ -862,7 +862,7 @@ class Initialize extends Component {
                                         />
                                 }
                                 <section className="fs-buddy-group-wrapper">
-                                    {lang('Buddy Group', 'Buddy Group')}
+                                    {lang('伙伴组', 'Buddy Group')}
                                     <Switch
                                         style={{margin: '0 15px'}}
                                         size="small"
@@ -873,8 +873,8 @@ class Initialize extends Component {
                                     <Popover
                                         {...buttonPopoverConf}
                                         content={lang(
-                                            '如果您在这里不开启创建Buddy Group，在系统初始化期间将不会创建Buddy Group。您可以在系统初始化成功后登录到业务界面再进行创建。',
-                                            'If you don\'t enable create Buddy Group here, it will not create Buddy Group during system initialization. And you can login to the business page to do create Buddy Group operation after the system is initialized successfully.')
+                                            '伙伴组是在跨节点间保证集群各同类型服务的数据安全的功能。伙伴组的生效需要各类型的服务数量为偶数个。如果您在这里不开启创建伙伴组，在系统初始化期间将不会创建伙伴组。您可以在系统初始化成功后登录到业务界面再进行创建。',
+                                            'Buddy group is the feature that ensure the data security of the various same types of services cross nodes. Should make various types of services\' number is even to ensure buddy group(s) take(s) effect. If you don\'t enable create Buddy Group here, it will not create Buddy Group during system initialization. And you can login to the business page to do create Buddy Group operation after the system is initialized successfully.')
                                         }
                                     >
                                         <Icon type="question-circle-o" className="fs-info-icon m-l" />

@@ -1,9 +1,9 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Form, Icon, Input, Radio, Select, message, Modal} from "antd";
-import lang from "../../components/Language/lang";
-import {validateIpv4, validateIpv4Segment} from '../../services';
-import httpRequests from "../../http/requests";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Form, Icon, Input, Radio, Select, message, Modal} from 'antd';
+import lang from '../../components/Language/lang';
+import {validateIpv4, /*validateIpv4Segment*/} from '../../services';
+import httpRequests from '../../http/requests';
 
 class CreateClientToNFS extends Component {
     constructor (props){
@@ -59,10 +59,10 @@ class CreateClientToNFS extends Component {
                 if (validateIpv4(ip)){
                     // it's a IPV4 IP
                     return true;
-                } else if (validateIpv4Segment(ip)){
+                } /*else if (validateIpv4Segment(ip)){
                     // it's a IPV4 segment
                     return true;
-                } else if (!!ip){
+                } */else if (!!ip){
                     // it's a hostname
                     return true
                 } else {

@@ -95,7 +95,7 @@ class CreateTarget extends Component {
 
     async show (){
         let {metadataServerIPs = [], storageServerIPs = []} = this.props;
-        this.state = {
+        this.setState({
             visible: true,
             formSubmitting: false,
             metadataServerIPs,
@@ -104,7 +104,7 @@ class CreateTarget extends Component {
             currentServiceIPList: metadataServerIPs,
             currentServiceIP: metadataServerIPs[0] || '',
             enableCustomRAID: false,
-        };
+        });
         httpRequests.getClusterServiceAndClientIPs();
     }
 
@@ -113,14 +113,14 @@ class CreateTarget extends Component {
     }
 
     render (){
-        let {formSubmitting, currentServiceIPList} = this.state;
+        let {visible, formSubmitting, currentServiceIPList} = this.state;
         return (
             <Modal
                 title={lang(`创建存储目标`, `Create Storage Target`)}
                 width={1248}
                 closable={false}
                 maskClosable={false}
-                visible={this.state.visible}
+                visible={visible}
                 afterClose={this.close}
                 footer={
                     <div>

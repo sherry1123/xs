@@ -120,7 +120,7 @@ class UserOrGroupOfCIFS extends Component {
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
-        let {shareName, loadingList, localAuthUserOrGroupListOfCIFS} = this.state;
+        let {share, loadingList, localAuthUserOrGroupListOfCIFS} = this.state;
         let typeMap = {
             'local_user': lang('本地认证用户', 'Local Authentication User'),
             'local_group': lang('本地认证用户组', 'Local Authentication User Group'),
@@ -208,7 +208,7 @@ class UserOrGroupOfCIFS extends Component {
         };
         return (
             <Modal
-                title={lang(`CIFS共享 ${shareName} 的用户/用户组信息`, `User/User Group Of CIFS Share ${shareName}`)}
+                title={lang(`CIFS共享 ${share.name} 的用户/用户组信息`, `User/User Group Of CIFS Share ${share.name}`)}
                 width={600}
                 closable={false}
                 maskClosable={false}

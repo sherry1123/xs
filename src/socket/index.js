@@ -26,7 +26,7 @@ const requestServerUpInterval = 1000 * 2;
 // initialization message
 socket.on('init status', initStatus => {
     if (process.env.NODE_ENV === 'development'){
-        console.info('%c ws message(init status): ', 'color: #f6b93f', initStatus);
+        console.info('%c ws message(init status): ', 'color: #f6b93f', 'init status:', initStatus);
     }
     store.dispatch(initializeAction.setInitStatus(initStatus));
     if (!initStatus.status){
@@ -45,7 +45,7 @@ socket.on('init status', initStatus => {
 // business operations message after initialization and login
 socket.on('event status', ({channel, code, target, result, notify}) => {
     if (process.env.NODE_ENV === 'development'){
-        console.info('%c ws message(event status): ', 'color: #00cc00', channel, code, target, result, notify);
+        console.info('%c ws message(event status): ', 'color: #00cc00', 'channel:', channel, 'code:', code, 'target',target, 'result', result, 'notify', notify);
     }
     let {language} = store.getState();
     if (notify){
