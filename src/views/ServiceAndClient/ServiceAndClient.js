@@ -21,9 +21,9 @@ class ServiceAndClient extends Component {
 
     createManagementService (){
         let {managementServerIPs} = this.props;
-        // Policy:
-        // 1. If there is already a management service existing, prompt user whether to create a new one,
-        //    if is, should enable the HA feature, and a additional float IP and two heart beat IPs are demanded.
+        // Management service creation policy:
+        // 1. If there is already a existing management service, prompt user that create a new one should
+        //    enable the HA feature, and a additional float IP and two heartbeat IPs are demanded.
         // 2. If there are already two management services existing, should not create any more.
         if (managementServerIPs.length >= 2){
             return message.warning(lang('当前已有2个管理服务，不能再创建了。', 'There are already two management services existing, can not create any more.'));
@@ -118,7 +118,7 @@ class ServiceAndClient extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterServiceRoleIPs: {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs}}}} = state;
+    const {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs}}}} = state;
     return {language, metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs};
 };
 

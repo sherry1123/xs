@@ -4,7 +4,7 @@ import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
 import SetSnapshot from './SetSnapshot';
-import lang from "../../components/Language/lang";
+import lang from '../../components/Language/lang';
 import {timeFormat} from '../../services';
 import httpRequests from '../../http/requests';
 

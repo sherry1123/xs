@@ -340,7 +340,7 @@ class CreateManagementService extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {dashboard: {clusterServiceRoleIPs: {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs}}}} = state;
+    let {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs}}}} = state;
     return {language, metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs};
 };
 

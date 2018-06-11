@@ -16,9 +16,9 @@ class CreateTarget extends Component {
             formSubmitting: false,
             metadataServerIPs,
             storageServerIPs,
-            currentServiceRole: 'metadata',
-            currentServiceIPList: metadataServerIPs,
-            currentServiceIP: metadataServerIPs[0] || '',
+            currentServiceRole: 'storage',
+            currentServiceIPList: storageServerIPs,
+            currentServiceIP: storageServerIPs[0] || '',
             enableCustomRAID: false,
         };
     }
@@ -30,13 +30,16 @@ class CreateTarget extends Component {
         this.setState({
             metadataServerIPs,
             storageServerIPs,
-            currentServiceIPList
+            currentServiceIPList,
+            currentServiceIP: currentServiceIPList[0]
         });
     }
 
+    /*
     serviceRoleChange (currentServiceRole){
         this.setState({currentServiceRole});
     }
+    */
 
     serviceIPChange (currentServiceIP){
         let metadataServerIPs = [];
@@ -100,9 +103,9 @@ class CreateTarget extends Component {
             formSubmitting: false,
             metadataServerIPs,
             storageServerIPs,
-            currentServiceRole: 'metadata',
-            currentServiceIPList: metadataServerIPs,
-            currentServiceIP: metadataServerIPs[0] || '',
+            currentServiceRole: 'storage',
+            currentServiceIPList: storageServerIPs,
+            currentServiceIP: storageServerIPs[0] || '',
             enableCustomRAID: false,
         });
         httpRequests.getClusterServiceAndClientIPs();
@@ -150,6 +153,9 @@ class CreateTarget extends Component {
                     </div>
                     <div className="fs-target-create-node-service-select">
                         <span>{lang('服务角色:', 'Service Role:')}</span>
+                        <span>{lang('存储服务' , 'Storage Service')}</span>
+                        {/*
+                        // currently, we can only create targets on storage services
                         <Select
                             size="small"
                             style={{width: 100, marginRight: 15}}
@@ -159,6 +165,7 @@ class CreateTarget extends Component {
                             <Select.Option value="metadata">{lang('元数据服务', 'Metadata')}</Select.Option>
                             <Select.Option value="storage">{lang('存储服务', 'Storage')}</Select.Option>
                         </Select>
+                        */}
                         <span>{lang('节点:', 'Node:')}</span>
                         <Select
                             style={{width: 150}}
@@ -188,7 +195,7 @@ class CreateTarget extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterPhysicalNodeList, clusterServiceRoleIPs: {metadataServerIPs, storageServerIPs}}}} = state;
+    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterPhysicalNodeList, clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}}} = state;
     return {language, recommendedRAID, customRAID, clusterPhysicalNodeList, metadataServerIPs, storageServerIPs};
 };
 

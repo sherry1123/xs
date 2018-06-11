@@ -193,8 +193,8 @@ export default  {
 
     getClusterServiceAndClientIPs (){
         requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getinitparam');
-            !!data && store.dispatch(dashboardAction.setClusterServiceRoleIPs(data));
+            let data = await fetchGet('/api/getclusterserviceandclientip');
+            !!data && store.dispatch(dashboardAction.setClusterServiceAndClientIPs(data));
         });
     },
 
@@ -269,19 +269,19 @@ export default  {
 
     // service and client
     async createMetadataServiceToCluster (service){
-        await fetch('/api/createmetadataservicetocluster', service);
+        await fetchPost('/api/addmetadatatocluster', service);
     },
 
     async createStorageServiceToCluster (service){
-        await fetch('/api/createstorageservicetocluster', service);
+        await fetchPost('/api/addstoragetocluster', service);
     },
 
     async createManagementServiceToCluster (service){
-        await fetch('/api/createmanagementservicetocluster', service);
+        await fetchPost('/api/addmanagementtocluster', service);
     },
 
     async createClientToCluster (client){
-        await fetch('/api/createclienttocluster', client);
+        await fetchPost('/api/addclienttocluster', client);
     },
 
     // snapshot

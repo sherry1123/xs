@@ -158,7 +158,7 @@ class CreateClient extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {dashboard: {clusterServiceRoleIPs: {clientIPs}}}} = state;
+    let {language, main: {dashboard: {clusterServiceAndClientIPs: {clientIPs}}}} = state;
     return {language, clientIPs};
 };
 

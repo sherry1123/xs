@@ -133,7 +133,7 @@ export default {
                 },
             }
         },
-        // dashboard
+        // dashboard or common data of the entire cluster
         dashboard: {
             clusterStatus: {status: true, total: 0, normal: 0, abnormal: 0},
             clusterCapacity: {total: 0, used: 0, free: 0, usage: '--'},
@@ -141,9 +141,9 @@ export default {
             clusterTPS: {total: [], time: []},
             clusterIOPS: {total: [], time: []},
             clusterPhysicalNodeList: [],
-            clusterServiceRoleIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], clientIPs: []}
+            clusterServiceAndClientIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], clientIPs: []}
         },
-        // data node
+        // data node, informations on a physical node
         dataNode: {
             currentPhysicalNode: {},
             physicalNodeInfo: {status: true, service: {metadata: 0, storage: 0}},
@@ -153,36 +153,36 @@ export default {
             physicalNodeTPS: {read: [], write: [], time: []},
             physicalNodeIOPS: {total: [], time: []},
         },
-        // snapshot
+        // snapshot, timed snapshot schedule and setting
         snapshot: {
+            snapshotSetting: {total: 0, auto: 0, manual: 0,},
             snapshotList: [],
             snapshotScheduleList: [],
-            snapshotSetting: {total: 0, auto: 0, manual: 0,}
         },
-        // NAS server, NFS and CIFS share
+        // NAS server, NFS share and client, CIFS share
         share: {
-            clientListForNASServer: [],
             NASServerList: [],
+            clientListForNASServer: [],
             NFSList: [],
             clientListOfNFS: [],
             CIFSList: [],
             localAuthUserOrGroupListOfCIFS: [],
-        },
-        // system log
-        systemLog: {
-            eventLogs: [],
-            auditLogs: [],
-        },
-        // target and buddy group
-        target: {
-            targetList: [],
-            buddyGroupList: [],
         },
         // local authentication user and group for CIFS share
         localAuthUser: {
             localAuthUserList: [],
             localAuthUserGroupList: [],
             localAuthUserListOfGroup: [],
+        },
+        // target and buddy group
+        target: {
+            targetList: [],
+            buddyGroupList: [],
+        },
+        // system log, event logs contains only error actions, audit logs contains all actions
+        systemLog: {
+            eventLogs: [],
+            auditLogs: [],
         },
     }
 }

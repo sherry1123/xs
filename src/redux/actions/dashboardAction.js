@@ -33,8 +33,8 @@ export default {
         clusterPhysicalNodeList
     }),
 
-    setClusterServiceRoleIPs: clusterServiceRoleIPs => ({
+    setClusterServiceAndClientIPs: clusterServiceAndClientIPs => ({
         type: dashboardActionTypes.SET_CLUSTER_SERVICE_ROLE_IPS,
-        clusterServiceRoleIPs
+        clusterServiceAndClientIPs
     }),
 };
