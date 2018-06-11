@@ -82,7 +82,11 @@ exports.api = {
         getclientinfo: 'http://localhost:9090/cluster/getclientinfo',
         addclientinfo: 'http://localhost:9090/cluster/addclientinfo',
         modifyclientinfo: 'http://localhost:9090/cluster/modifyclientinfo',
-        nfsdeleteclient: 'http://localhost:9090/cluster/nfsdeleteclient'
+        nfsdeleteclient: 'http://localhost:9090/cluster/nfsdeleteclient',
+        addclientnode: 'http://localhost:9090/cluster/addclientnode',
+        addmetanode: 'http://localhost:9090/cluster/addmetanode',
+        addstoragenode: 'http://localhost:9090/cluster/addstoragenode',
+        addmgmtnode: 'http://localhost:9090/cluster/addmgmtnode'
     }
 };
 exports.key = {
@@ -208,5 +212,9 @@ exports.i18n = {
     pattern: '条带',
     or: '或者',
     server: '服务器',
-    buddy: '伙伴'
+    buddy: '伙伴',
+    cluster: '集群',
+    metadata: '元数据',
+    storage: '存储',
+    management: '管理'
 };
