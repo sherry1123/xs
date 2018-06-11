@@ -8,7 +8,7 @@ import './styleSheets/index.less';
 import './socket';
 import './http/cronJob';
 import {lsGet} from './services';
-// import httpRequests from "./http/requests";
+import httpRequests from "./http/requests";
 
 (async () => {
     const NODE_ENV = process.env.NODE_ENV;
@@ -21,8 +21,8 @@ import {lsGet} from './services';
     // 3. init
     // 4. login
     try {
-        // await httpRequests.syncUpSystemStatus();
-        NODE_ENV === 'development' && console.info('%c System status recorded by cookie in browser has been synchronized up to the http server successfully.', 'color: #52a7fe');
+        await httpRequests.syncUpSystemStatus();
+        NODE_ENV === 'development' && console.info('%c System status recorded by cookie in browser has been synchronized up with the corresponding status on server side successfully!', 'color: #52a7fe');
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }
@@ -42,6 +42,7 @@ import {lsGet} from './services';
     render(App);
 
     if (module.hot){
+        // hot replace the APP when the modifications of component occur
         module.hot.accept('./views/App', () => render(App));
     }
 

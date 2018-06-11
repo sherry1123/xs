@@ -43,10 +43,15 @@ class RecommendedRAID extends Component {
         (typeof enableCustomRAID === 'function') && enableCustomRAID();
         notification.warning({
             message: lang('自定义RAID', 'Custom RAID'),
-            description: lang(
-                '您已开启了自定义RAID，请给所有节点上的元数据和存储服务配置RAID。',
-                'You have enabled custom RAID, please configure RAID for all nodes that metadata and storage services run on.'
-            )
+            description: this.props.notInit ?
+                lang(
+                    '您已开启了自定义RAID，请给当前服务配置RAID。',
+                    'You have enabled custom RAID, please configure RAID for current service.'
+                ) :
+                lang(
+                    '您已开启了自定义RAID，请给所有节点上的元数据和存储服务配置RAID。',
+                    'You have enabled custom RAID, please configure RAID for all nodes that metadata and storage services run on.'
+                )
         });
     }
 
@@ -65,9 +70,20 @@ class RecommendedRAID extends Component {
                         <span className="fs-raid-custom">
                             <span onClick={this.enableCustomRAID.bind(this)}>{lang('自定义', 'Custom')}</span>
                             <Popover
-                                content={lang(
-                                    '将允许您自定义所有元数据和存储服务节点的RAID配置。如果您非专业人士，建议您直接使用推荐配置。这是我们针对您的系统给出的在安全、性能和容量利用率等方面的最优方案。',
-                                    'Will allow you to custom the RAID configurations for all nodes that metadata and storage services run on. If you are not professional, we suggest you to use the recommended configuration by default. It\'s the optimal scheme we give out consider to security, performance, and capacity usage rate, etc sides based on your system.')
+                                content={
+                                    (this.props.notInit ?
+                                        lang(
+                                            '将允许您自定义该服务节点的RAID配置。',
+                                            'Will allow you to custom the RAID configurations for all nodes that metadata and storage services run on.'
+                                        ) :
+                                        lang(
+                                            '将允许您自定义所有元数据和存储服务节点的RAID配置。',
+                                            'Will allow you to custom this service node\'s RAID configurations.'
+                                        )
+                                    ) + lang(
+                                        '如果您非专业人士，建议您直接使用推荐配置。这是我们针对您的系统给出的在安全、性能和容量利用率等方面的最优方案。',
+                                        ' If you are not professional, we suggest you to use the recommended configuration by default. It\'s the optimal scheme we give out consider to security, performance, and capacity usage rate, etc sides based on your system.'
+                                    )
                                 }
                             >
                                 <Icon type="question-circle-o" className="fs-info-icon m-l" />

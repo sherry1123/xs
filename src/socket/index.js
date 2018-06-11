@@ -45,7 +45,7 @@ socket.on('init status', initStatus => {
 // business operations message after initialization and login
 socket.on('event status', ({channel, code, target, result, notify}) => {
     if (process.env.NODE_ENV === 'development'){
-        console.info('%c ws message(event status): ', 'color: #00cc00', 'channel:', channel, 'code:', code, 'target',target, 'result', result, 'notify', notify);
+        console.info('%c ws message(event status): ', 'color: #00cc00', 'channel:', channel, ', code:', code, ', target:',target, ', result:', result, ', notify:', notify);
     }
     let {language} = store.getState();
     if (notify){

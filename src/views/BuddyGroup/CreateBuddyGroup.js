@@ -144,6 +144,7 @@ class CreateBuddyGroup extends Component {
                         <Button
                             size="small"
                             type="primary"
+                            disabled={!preConfigs.length}
                             loading={formSubmitting}
                             onClick={this.create.bind(this)}
                         >
@@ -212,7 +213,7 @@ class CreateBuddyGroup extends Component {
                                     disabled={this.state.selectedTargets.length !== 2}
                                     type="primary"
                                     shape="circle"
-                                    icon="link"
+                                    icon="right"
                                     onClick={this.addPreConfig.bind(this)}
                                 />
                             </Popover>

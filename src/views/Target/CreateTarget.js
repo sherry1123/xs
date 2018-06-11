@@ -89,11 +89,21 @@ class CreateTarget extends Component {
             await httpRequests.createTarget(RAIDConf);
             httpRequests.getTargetList();
             await this.hide();
+            this.clearConfigs();
             message.success(lang(`创建存储目标成功!`, `Create storage target(s) successfully!`));
         } catch ({msg}){
             message.error(lang(`创建存储目标失败, 原因: `, `Create storage target(s) failed, reason: `) + msg);
         }
         this.setState({formSubmitting: false});
+    }
+
+    clearConfigs (delayTime = 500){
+        // clear configs in redux
+        setTimeout(() => {
+            let {setRecommendedRAID, setCustomRAID} = this.props;
+            setRecommendedRAID([]);
+            setCustomRAID([]);
+        }, delayTime);
     }
 
     async show (){
@@ -113,10 +123,11 @@ class CreateTarget extends Component {
 
     hide (){
         this.setState({visible: false,});
+        this.clearConfigs();
     }
 
     render (){
-        let {visible, formSubmitting, currentServiceIPList} = this.state;
+        let {visible, formSubmitting, currentServiceIPList, enableCustomRAID} = this.state;
         return (
             <Modal
                 title={lang(`创建存储目标`, `Create Storage Target`)}
@@ -168,7 +179,7 @@ class CreateTarget extends Component {
                         */}
                         <span>{lang('节点:', 'Node:')}</span>
                         <Select
-                            style={{width: 150}}
+                            style={{width: 125}}
                             size="small"
                             value={this.state.currentServiceIP}
                             onChange={this.serviceIPChange.bind(this)}
@@ -179,8 +190,9 @@ class CreateTarget extends Component {
                         </Select>
                     </div>
                     {
-                        !this.state.enableCustomRAID ?
+                        !enableCustomRAID?
                             <RecommendedRAID
+                                notInit
                                 ref={ref => this.recommendedRAIDWrapper = ref}
                                 enableCustomRAID={this.enableCustomRAID.bind(this)}
                             /> :

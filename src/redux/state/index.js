@@ -37,14 +37,14 @@ export default {
                     {
                         raidLevel: 5,
                         diskList: [
-                            { diskName: '/dev/nvme8n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme9n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme10n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme11n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme12n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme13n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme14n1', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme15n1', totalSpace: 1024 * 1024 * 1024 * 400 }
+                            { diskName: '/dev/nvme8n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme9n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme10n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme11n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme12n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme13n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme14n1', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/nvme15n1', space: 1024 * 1024 * 1024 * 400 }
                         ],
                         totalSpace: 1024 * 1024 * 1024 * 400 * 8,
                         stripeSize: 1024 * 8,
@@ -57,8 +57,8 @@ export default {
                     {
                         raidLevel: 1,
                         diskList: [
-                            { diskName: '/dev/sdb', totalSpace: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/sdc', totalSpace: 1024 * 1024 * 1024 * 400 }
+                            { diskName: '/dev/sdb', space: 1024 * 1024 * 1024 * 400 },
+                            { diskName: '/dev/sdc', space: 1024 * 1024 * 1024 * 400 }
                         ],
                         totalSpace: 1024 * 1024 * 1024 * 400 * 2,
                         stripeSize: 1024 * 8,

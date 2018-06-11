@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, message} from 'antd';
-import CreateClient from './CreateClient';
+import CreateMetadataOrStorageService from './CreateMetadataOrStorageService';
 import CreateManagementService from './CreateManagementService';
+import CreateClient from './CreateClient';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 
@@ -12,11 +13,11 @@ class ServiceAndClient extends Component {
     }
 
     createMetadataService (){
-
+        this.createMetadataOrStorageServiceWrapper.getWrappedInstance().show('metadata');
     }
 
     createStorageService (){
-
+        this.createMetadataOrStorageServiceWrapper.getWrappedInstance().show('storage');
     }
 
     createManagementService (){
@@ -110,8 +111,9 @@ class ServiceAndClient extends Component {
                         <div>{clientIPs.map(ip => <div className="fs-service-and-client-item" key={ip}>{ip}</div>)}</div>
                     </div>
                 </section>
-                <CreateClient ref={ref => this.createClientWrapper = ref} />
+                <CreateMetadataOrStorageService ref={ref => this.createMetadataOrStorageServiceWrapper = ref} />
                 <CreateManagementService ref={ref => this.createManagementServiceWrapper = ref} />
+                <CreateClient ref={ref => this.createClientWrapper = ref} />
             </section>
         );
     }
