@@ -136,11 +136,9 @@ const model = {
         return clientList;
     },
     async addClientInNFSShare(param) {
-        let { type, ips, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
+        let { type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
         let clientList = await model.getClientInNFSShare({ path });
-        for (let ip of ips.split(';')) {
-            clientList.push({ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint });
-        }
+        clientList = clientList.concat([{ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint }]);
         return await dao.updateOne(nfsShare, { path }, { clientList });
     },
     async updateClientInNFSShare(param) {

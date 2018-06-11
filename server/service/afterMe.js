@@ -305,6 +305,38 @@ const model = {
         param.opt = 'cifsdeleteclient';
         let token = await model.getToken();
         return await request.post(config.api.orcafs.nascifssharemanager, param, token, true);
+    },
+    async getNFSShare(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getshareinfo, param, token, true, { data: [] });
+    },
+    async createNFSShare(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.addshareinfo, param, token, true);
+    },
+    async updateNFSShare(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nfsmodifyshare, param, token, true);
+    },
+    async deleteNFSShare(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nfsdeleteshare, param, token, true);
+    },
+    async getClientInNFSShare(param) {
+        let token = await model.getToken();
+        return await request.get(config.api.orcafs.getclientinfo, param, token, true, { data: [] });
+    },
+    async createClientInNFSShare(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.addclientinfo, param, token, true);
+    },
+    async updateClientInNFSShare(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.modifyclientinfo, param, token, true);
+    },
+    async deleteClientInNFSShare(param) {
+        let token = await model.getToken();
+        return await request.post(config.api.orcafs.nfsdeleteclient, param, token, true);
     }
 };
 module.exports = model;

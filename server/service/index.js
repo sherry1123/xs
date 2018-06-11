@@ -724,9 +724,17 @@ const model = {
         let { path, description, clientList } = param;
         let result = {};
         try {
-            await database.addNFSShare({ path, description, clientList });
-            result = handler.response(0, 'create NFS share successfully');
-            await log.audit({ user, desc: `create NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.createNFSShare({ server, path, description, clientList });
+            if (!res.errorId) {
+                await database.addNFSShare({ path, description, clientList });
+                result = handler.response(0, 'create NFS share successfully');
+                await log.audit({ user, desc: `create NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(152, res.message, param);
+                await log.audit({ user, desc: `create NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(152, error, param);
             await log.audit({ user, desc: `create NFS share '${path}' failed`, ip });
@@ -734,12 +742,20 @@ const model = {
         return result;
     },
     async updateNFSShare(param, user, ip) {
-        let { path, description, clientList } = param;
+        let { path, description } = param;
         let result = {};
         try {
-            await database.updateNFSShare({ path }, { description, clientList });
-            result = handler.response(0, 'update NFS share successfully');
-            await log.audit({ user, desc: `update NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.updateNFSShare({ server, path, description });
+            if (!res.errorId) {
+                await database.updateNFSShare({ path }, { description });
+                result = handler.response(0, 'update NFS share successfully');
+                await log.audit({ user, desc: `update NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(153, res.message, param);
+                await log.audit({ user, desc: `update NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(153, error, param);
             await log.audit({ user, desc: `update NFS share '${path}' failed`, ip });
@@ -750,9 +766,17 @@ const model = {
         let { path } = param;
         let result = {};
         try {
-            await database.deleteNFSShare({ path });
-            result = handler.response(0, 'delete NFS share successfully');
-            await log.audit({ user, desc: `delete NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.deleteNFSShare({ shareList: [{ server, path }] });
+            if (!res.errorId) {
+                await database.deleteNFSShare({ path });
+                result = handler.response(0, 'delete NFS share successfully');
+                await log.audit({ user, desc: `delete NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(154, res.message, param);
+                await log.audit({ user, desc: `delete NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `delete NFS share '${path}' failed`, ip });
@@ -763,11 +787,23 @@ const model = {
         let { paths } = param;
         let result = {};
         try {
+            let success = 0;
+            let nasServerList = await database.getNasServer();
             for (let path of paths) {
-                await database.deleteNFSShare({ path });
+                let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+                let res = await afterMe.deleteNFSShare({ shareList: [{ server, path }] });
+                if (!res.errorId) {
+                    await database.deleteNFSShare({ path });
+                    success += 1;
+                }
             }
-            result = handler.response(0, 'batch delete NFS share successfully');
-            await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' successfully`, ip });
+            if (success === paths.length) {
+                result = handler.response(0, 'batch delete NFS share successfully');
+                await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' successfully`, ip });
+            } else {
+                result = handler.response(154, 'batch delete NFS share failed', param);
+                await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `batch delete ${paths.length} NFS share(s) '${String(handler.bypass(paths))}' failed`, ip });
@@ -785,25 +821,48 @@ const model = {
         return result;
     },
     async createClientInNFSShare(param, user, ip) {
-        let { ips, path } = param;
+        let { type, ips, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
+        ips = ips.split(';');
         let result = {};
         try {
-            let data = database.addClientInNFSShare(param);
-            result = handler.response(0, 'add NFS share client successfully');
-            await log.audit({ user, desc: `add ${ips.split(';').length} client(s) '${String(handler.bypass(ips.split(';')))}' to NFS share '${path}' successfully`, ip });
+            let success = 0;
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            for (let ip of ips) {
+                let res = await afterMe.createClientInNFSShare({ server, path, clientList: [{ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint }] });
+                if (!res.errorId) {
+                    database.addClientInNFSShare({ type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path });
+                    success += 1;
+                }
+            }
+            if (success === ips.length) {
+                result = handler.response(0, 'add NFS share client successfully');
+                await log.audit({ user, desc: `add ${ips.length} client(s) '${String(handler.bypass(ips))}' to NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(152, 'add NFS share client failed', param);
+                await log.audit({ user, desc: `add ${ips.length} client(s) '${String(handler.bypass(ips))}' to NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(152, error, param);
-            await log.audit({ user, desc: `add ${ips.split(';').length} client(s) '${String(handler.bypass(ips.split(';')))}' to NFS share '${path}' failed`, ip });
+            await log.audit({ user, desc: `add ${ips.length} client(s) '${String(handler.bypass(ips))}' to NFS share '${path}' failed`, ip });
         }
         return result;
     },
     async updateClientInNFSShare(param, user, ip) {
-        let { path } = param;
+        let { type, ip: client, permission, writeMode, permissionConstraint, rootPermissionConstraint, path } = param;
         let result = {};
         try {
-            await database.updateClientInNFSShare(param);
-            result = handler.response(0, 'update NFS share client successfully');
-            await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.updateClientInNFSShare({ server, path, clientList: [{ type, ip: client, permission, writeMode, permissionConstraint, rootPermissionConstraint }] });
+            if (!res.errorId) {
+                await database.updateClientInNFSShare(param);
+                result = handler.response(0, 'update NFS share client successfully');
+                await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(153, res.message, param);
+                await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(153, error, param);
             await log.audit({ user, desc: `update client '${param.ip}' in NFS share '${path}' failed`, ip });
@@ -814,9 +873,17 @@ const model = {
         let { path } = param;
         let result = {};
         try {
-            await database.deleteClientInNFSShare(param);
-            result = handler.response(0, 'remove NFS share client successfully');
-            await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' successfully`, ip });
+            let nasServerList = await database.getNasServer();
+            let server = nasServerList.filter(nas => (handler.checkRoot(path, nas.path)))[0].ip;
+            let res = await afterMe.deleteClientInNFSShare({ server, path, clientList: [param.ip] });
+            if (!res.errorId) {
+                await database.deleteClientInNFSShare(param);
+                result = handler.response(0, 'remove NFS share client successfully');
+                await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' successfully`, ip });
+            } else {
+                result = handler.response(154, res.message, param);
+                await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' failed`, ip });
+            }
         } catch (error) {
             result = handler.response(154, error, param);
             await log.audit({ user, desc: `remove client '${param.ip}' from NFS share '${path}' failed`, ip });
