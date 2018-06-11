@@ -282,8 +282,8 @@ const model = {
     '/api/updatenasserver': async ctx => {
         ctx.body = await service.updateNasServer(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/getinitparam': async ctx => {
-        ctx.body = await service.getInitParam(ctx.param);
+    '/api/getclusterserviceandclientip': async ctx => {
+        ctx.body = await service.getServiceAndClientFromCluster(ctx.param);
     },
     '/api/createtarget': async ctx => {
         ctx.body = await service.createTarget(ctx.param, handler.user(ctx), handler.clientIP(ctx));
@@ -299,6 +299,15 @@ const model = {
     },
     '/api/addclienttocluster': async ctx => {
         ctx.body = await service.addClientToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/addmetadatatocluster': async ctx => {
+        ctx.body = await service.addMetadataToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/addstoragetocluster': async ctx => {
+        ctx.body = await service.addStorageToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    },
+    '/api/addmanagementtocluster': async ctx => {
+        ctx.body = await service.addManagementToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     }
 };
 module.exports = model;

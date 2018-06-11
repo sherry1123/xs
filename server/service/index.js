@@ -1371,10 +1371,10 @@ const model = {
         }
         return result;
     },
-    async getInitParam(param) {
+    async getServiceAndClientFromCluster(param) {
         let result = {};
         try {
-            let data = await database.getSetting({ key: config.setting.initParam });
+            let data = await database.getServiceAndClientFromCluster();
             result = handler.response(0, data);
         } catch (error) {
             result = handler.response(173, error, param);
@@ -1456,6 +1456,60 @@ const model = {
         } catch (error) {
             result = handler.response(173, error, param);
             await log.audit({ user, desc: `add client ${param.ip} failed`, ip });
+        }
+        return result;
+    },
+    async addMetadataToCluster(param, user, ip) {
+        let result = {};
+        try {
+            let res = await afterMe.addMetadataToCluster(param);
+            if (!res.errorId) {
+                await database.addMetadataToCluster({ ip: param.ip });
+                result = handler.response(0, 'add metadata service to cluster successfully');
+                await log.audit({ user, desc: `add metadata service ${param.ip} to cluster successfully`, ip });
+            } else {
+                result = handler.response(173, res.message, param);
+                await log.audit({ user, desc: `add metadata service ${param.ip} to cluster failed`, ip });
+            }
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `add metadata service ${param.ip} to cluster failed`, ip });
+        }
+        return result;
+    },
+    async addStorageToCluster(param, user, ip) {
+        let result = {};
+        try {
+            let res = await afterMe.addStorageToCluster(param);
+            if (!res.errorId) {
+                await database.addStorageToCluster({ ip: param.ip });
+                result = handler.response(0, 'add storage service to cluster successfully');
+                await log.audit({ user, desc: `add storage service ${param.ip} to cluster successfully`, ip });
+            } else {
+                result = handler.response(173, res.message, param);
+                await log.audit({ user, desc: `add storage service ${param.ip} to cluster failed`, ip });
+            }
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `add storage service ${param.ip} to cluster failed`, ip });
+        }
+        return result;
+    },
+    async addManagementToCluster(param, user, ip) {
+        let result = {};
+        try {
+            let res = await afterMe.addManagementToCluster(param);
+            if (!res.errorId) {
+                await database.addManagementToCluster({ ip: param.ip });
+                result = handler.response(0, 'add management service to cluster successfully');
+                await log.audit({ user, desc: `add management service ${param.ip} to cluster successfully`, ip });
+            } else {
+                result = handler.response(173, res.message, param);
+                await log.audit({ user, desc: `add management service ${param.ip} to cluster failed`, ip });
+            }
+        } catch (error) {
+            result = handler.response(173, error, param);
+            await log.audit({ user, desc: `add management service ${param.ip} to cluster failed`, ip });
         }
         return result;
     }
