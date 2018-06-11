@@ -36,26 +36,48 @@ const model = {
     async getRaidRecommendedConfiguration(param) {
         let { metadataServerIPs, storageServerIPs } = param;
         let ipList = Array.from(new Set(metadataServerIPs.concat(storageServerIPs)));
-        let diskGroup = await Promise.all(ipList.map(async ip => ({ ip, diskList: Object.assign(await afterMe.getDiskList({ ip })).data })));
+        // let diskGroup = await Promise.all(ipList.map(async ip => ({ ip, diskList: Object.assign(await afterMe.getDiskList({ ip })).data })));
+        let diskGroup = ipList.map(ip => ({
+            ip,
+            diskList: Array.from({ length: 28 }).map((value, index) => ({ diskName: `/dev/nvme${index}n1`, totalSpace: 11489037516 }))
+        }));
         let metadataList = {};
         let storageList = {};
+        const getConfiguration = (diskList, serviceType) => {
+            let containerList = Array.from({ length: serviceType === 'metadata' ? (diskList.length > 1 ? 1 : 0) : Math.floor(diskList.length / 8) });
+            let raidLevel = serviceType === 'metadata' ? 1 : 5;
+            let stripeSize = 1024 * 8;
+            let diskType = 'ssd';
+            return containerList.map(() => {
+                let disks = serviceType === 'metadata' ? diskList.splice(0, 2) : diskList.splice(0, 8);
+                let totalSpace = disks.map(disk => (disk.space)).reduce((prev, next) => (prev + next));
+                return { raidLevel, diskList: disks, totalSpace, stripeSize, diskType };
+            });
+        };
         diskGroup.forEach(item => {
             let { ip, diskList } = item;
-            diskList = diskList.map(disk => ({ diskName: disk.diskName, diskType: disk.diskName.includes('nvme') ? 'ssd' : 'hdd' }));
-            let ssdList = diskList.filter(disk => (disk.diskType === 'ssd'));
-            let hddList = diskList.filter(disk => (disk.diskType === 'hdd'));
-            if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
-                if (ssdList.length) {
-                    metadataList[ip] = [{ raidLevel: 1, diskList: ssdList.slice(0, 2).map(ssd => (ssd.diskName)), diskType: 'ssd' }];
-                    storageList[ip] = [{ raidLevel: 1, diskList: ssdList.slice(2, 4).map(ssd => (ssd.diskName)), diskType: 'ssd' }];
+            diskList = diskList.filter(disk => (disk.diskName.includes('nvme'))).map(disk => ({ diskName: disk.diskName, space: disk.totalSpace }));
+            if (diskList.length) {
+                if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
+                    metadataList[ip] = getConfiguration(diskList, 'metadata');
+                    storageList[ip] = getConfiguration(diskList, 'storage');
+                } else if (metadataServerIPs.includes(ip)) {
+                    metadataList[ip] = getConfiguration(diskList, 'metadata');
+                } else if (storageServerIPs.includes(ip)) {
+                    storageList[ip] = getConfiguration(diskList, 'storage');
                 }
-            } else if (metadataServerIPs.includes(ip)) {
-
-            } else if (storageServerIPs.includes(ip)) {
-
+            } else {
+                if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
+                    metadataList[ip] = [];
+                    storageList[ip] = [];
+                } else if (metadataServerIPs.includes(ip)) {
+                    metadataList[ip] = [];
+                } else if (storageServerIPs.includes(ip)) {
+                    storageList[ip] = [];
+                }
             }
         });
-        return { metadataServerIPs: metadataList, storageServerIPs: storageList, diskGroup };
+        return { metadataServerIPs: metadataList, storageServerIPs: storageList };
     },
     handleInitParam(param) {
         let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
