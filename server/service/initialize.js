@@ -58,32 +58,20 @@ const model = {
         diskGroup.forEach(item => {
             let { ip, diskList } = item;
             diskList = diskList.filter(disk => (disk.diskName.includes('nvme'))).map(disk => ({ diskName: disk.diskName, space: disk.totalSpace }));
-            if (diskList.length) {
-                if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
-                    metadataList[ip] = getConfiguration(diskList, 'metadata');
-                    storageList[ip] = getConfiguration(diskList, 'storage');
-                } else if (metadataServerIPs.includes(ip)) {
-                    metadataList[ip] = getConfiguration(diskList, 'metadata');
-                } else if (storageServerIPs.includes(ip)) {
-                    storageList[ip] = getConfiguration(diskList, 'storage');
-                }
-            } else {
-                if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
-                    metadataList[ip] = [];
-                    storageList[ip] = [];
-                } else if (metadataServerIPs.includes(ip)) {
-                    metadataList[ip] = [];
-                } else if (storageServerIPs.includes(ip)) {
-                    storageList[ip] = [];
-                }
+            if (metadataServerIPs.includes(ip) && storageServerIPs.includes(ip)) {
+                metadataList[ip] = diskList.length ? getConfiguration(diskList, 'metadata') : [];
+                storageList[ip] = diskList.length ? getConfiguration(diskList, 'storage') : [];
+            } else if (metadataServerIPs.includes(ip)) {
+                metadataList[ip] = diskList.length ? getConfiguration(diskList, 'metadata') : [];
+            } else if (storageServerIPs.includes(ip)) {
+                storageList[ip] = diskList.length ? getConfiguration(diskList, 'storage') : [];
             }
         });
         return { metadataServerIPs: metadataList, storageServerIPs: storageList };
     },
     handleInitParam(param) {
         let { metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs, enableHA, floatIPs, hbIPs, enableCustomRAID, recommendedRAID, customRAID, enableCreateBuddyGroup } = param;
-        let mongodbParam = {};
-        let orcafsParam = [];
+        let mongodbParam = { ipList: managementServerIPs.concat(metadataServerIPs.slice(0, 1)), replicaSet: enableHA ? true : false };
         let nodeList = Array.from(new Set(managementServerIPs.concat(metadataServerIPs, storageServerIPs)));
         const handleServiceParam = (RAIDConfig, serviceType) => {
             let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs : RAIDConfig.storageServerIPs;
@@ -92,35 +80,22 @@ const model = {
                 param.push({ ip, diskGroup: serviceRaidConfig[ip].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` })) });
             }
             return param;
-        }
-        if (enableHA) {
-            mongodbParam = { primary: managementServerIPs[0], secondary: managementServerIPs[1], arbiter: metadataServerIPs[0], replicaSet: true };
-        } else {
-            mongodbParam = { primary: managementServerIPs[0], replicaSet: true };
-
-        }
-        if (enableCustomRAID) {
-            orcafsParam.push({ type: 'meta', hosts: handleServiceParam(customRAID, 'metadata') });
-            orcafsParam.push({ type: 'storage', hosts: handleServiceParam(customRAID, 'storage') });
-            orcafsParam.push({ type: 'mgmt', hosts: managementServerIPs.map((ip, index) => ({ ip, heartBeatIp: enableHA ? hbIPs[index] : '' })), floatIp: enableHA ? floatIPs[0] : '' });
-            orcafsParam.push({ type: 'client', hosts: clientIPs.map(ip => ({ ip })) });
-        } else {
-            orcafsParam.push({ type: 'meta', hosts: handleServiceParam(recommendedRAID, 'metadata') });
-            orcafsParam.push({ type: 'storage', hosts: handleServiceParam(recommendedRAID, 'storage') });
-            orcafsParam.push({ type: 'mgmt', hosts: managementServerIPs.map((ip, index) => ({ ip, heartBeatIp: enableHA ? hbIPs[index] : '' })), floatIp: enableHA ? floatIPs[0] : '' });
-            orcafsParam.push({ type: 'client', hosts: clientIPs.map(ip => ({ ip })) });
-        }
+        };
+        let metadata = { type: 'meta', hosts: handleServiceParam(enableCustomRAID ? customRAID : recommendedRAID, 'metadata') };
+        let storage = { type: 'storage', hosts: handleServiceParam(enableCustomRAID ? customRAID : recommendedRAID, 'storage') };
+        let mgmt = { type: 'mgmt', hosts: managementServerIPs.map((ip, index) => ({ ip, heartBeatIp: enableHA ? hbIPs[index] : '' })), floatIp: enableHA ? floatIPs[0] : '' };
+        let client = { type: 'client', hosts: clientIPs.map(ip => ({ ip })) };
+        let orcafsParam = [metadata, storage, mgmt, client];
         return { mongodbParam, orcafsParam, nodeList, enableCreateBuddyGroup };
     },
     async initMongoDB(param) {
-        let { primary, secondary, arbiter, replicaSet } = param;
+        let { ipList, replicaSet } = param;
         if (!replicaSet) {
             let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --fork`;
             await promise.runCommandInPromise(command);
             await promise.runCommandInPromise(`sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
         } else {
             let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --bind_ip_all --fork`;
-            let ipList = [primary, secondary, arbiter];
             let conf = { _id: config.database.replicaSet, members: [] };
             for (let i = 0; i < ipList.length; i++) {
                 i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
