@@ -1391,20 +1391,29 @@ const model = {
         return result;
     },
     async createTarget(param, user, ip) {
-        let { ip: server } = param;
+        let { storageServerIPs } = param;
+        let serviceList = Object.keys(storageServerIPs);
         let result = {};
         try {
-            let res = await afterMe.createTarget(param);
-            if (!res.errorId) {
-                result = handler.response(0, data);
-                await log.audit({ user, desc: `create target in '${server}' successfully`, ip });
+            let success = 0;
+            for (let service of serviceList) {
+                let ip = service;
+                let diskGroup = storageServerIPs[service].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+                let res = await afterMe.createTarget({ ip, diskGroup });
+                if (!res.errorId) {
+                    success += 1;
+                }
+            }
+            if (success === serviceList.length) {
+                result = handler.response(0, 'create target successfully');
+                await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' successfully`, ip });
             } else {
-                result = handler.response(173, error, param);
-                await log.audit({ user, desc: `create target in '${server}' failed`, ip });
+                result = handler.response(173, 'create target failed', param);
+                await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `create target in '${server}' failed`, ip });
+            await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' failed`, ip });
         }
         return result;
     },
@@ -1428,7 +1437,7 @@ const model = {
                 result = handler.response(0, data);
                 await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) successfully`, ip });
             } else {
-                result = handler.response(173, error, param);
+                result = handler.response(173, res.message, param);
                 await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) failed`, ip });
             }
         } catch (error) {
