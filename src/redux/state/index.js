@@ -17,6 +17,7 @@ export default {
         enableCustomRAID: false,
         recommendedRAID:  {
             metadataServerIPs: {
+                /*
                 '192.168.100.48': [
                     {
                         raidLevel: 5,
@@ -51,8 +52,10 @@ export default {
                         diskType: 'ssd'
                     }
                 ],
+                */
             },
             storageServerIPs: {
+                /*
                 '192.168.100.49': [
                     {
                         raidLevel: 1,
@@ -65,6 +68,7 @@ export default {
                         diskType: 'hdd'
                     }
                 ]
+                */
             }
         },
         customRAID: {},
@@ -133,7 +137,7 @@ export default {
                 },
             }
         },
-        // dashboard or common data of the entire cluster
+        // dashboard and services, common data of the entire cluster
         dashboard: {
             clusterStatus: {status: true, total: 0, normal: 0, abnormal: 0},
             clusterCapacity: {total: 0, used: 0, free: 0, usage: '--'},
@@ -141,7 +145,9 @@ export default {
             clusterTPS: {total: [], time: []},
             clusterIOPS: {total: [], time: []},
             clusterPhysicalNodeList: [],
-            clusterServiceAndClientIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], clientIPs: []}
+            clusterServiceAndClientIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], clientIPs: []},
+            // for add metadata or storage service
+            customRAIDList: [],
         },
         // data node, informations on a physical node
         dataNode: {

@@ -18,7 +18,7 @@ class CreateTarget extends Component {
             storageServerIPs,
             currentServiceRole: 'storage',
             currentServiceIPList: storageServerIPs,
-            currentServiceIP: storageServerIPs[0] || '',
+            currentServiceIP: '',
             enableCustomRAID: false,
         };
     }
@@ -31,7 +31,6 @@ class CreateTarget extends Component {
             metadataServerIPs,
             storageServerIPs,
             currentServiceIPList,
-            currentServiceIP: currentServiceIPList[0]
         });
     }
 
@@ -41,55 +40,98 @@ class CreateTarget extends Component {
     }
     */
 
-    serviceIPChange (currentServiceIP){
-        let metadataServerIPs = [];
-        let storageServerIPs = [];
-        if (this.state.currentServiceRole === 'metadata'){
-            metadataServerIPs = [currentServiceIP];
-        } else {
-            storageServerIPs = [currentServiceIP];
-        }
-        httpRequests.getRecommendedRIAD(metadataServerIPs, storageServerIPs);
+    serviceIPChange (currentServiceIP, option){
         this.setState({currentServiceIP});
+        let currentServiceNode = Object.assign({}, option.props.option, {type: 'storage'});
+        if (!this.state.enableCustomRAID){
+            httpRequests.getRecommendedRIAD.apply(null, this.state.currentServiceRole === 'metadata' ? [[currentServiceIP], []] : [[], [currentServiceIP]]);
+            this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
+        } else {
+            this.customRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
+        }
     }
 
-    enableCustomRAID (){
+    async enableCustomRAID (){
         // switch to custom RAID mode
+        let {currentServiceIP} = this.state;
+        let i = this.findIPIndexInList(currentServiceIP);
         let currentServiceNode = {
-            type: 'metadata',
-            ip: this.props.metadataServerIPs[0], // the first one
+            type: 'storage',
+            ip: currentServiceIP,
+            i,
         };
-        this.setState({
+        await this.setState({
             enableCustomRAID: true,
-            currentServiceType: 'metadata',
+            currentServiceType: 'storage',
             currentServiceNode,
         });
+        this.customRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
     }
 
     async enableRecommendedRAID (){
         // switch to recommended RAID mode
+        let {currentServiceIP} = this.state;
+        let i = this.findIPIndexInList(currentServiceIP);
         let currentServiceNode = {
-            type: 'metadata',
-            ip: this.props.metadataServerIPs[0], // the first one
+            type: 'storage',
+            ip: currentServiceIP,
+            i,
         };
         await this.setState({
             enableCustomRAID: false,
-            currentServiceType: 'metadata',
+            currentServiceType: 'storage',
             currentServiceNode,
         });
         this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
+        httpRequests.getRecommendedRIAD.apply(null, this.state.currentServiceRole === 'metadata' ? [[this.state.currentServiceIP], []] : [[], [this.state.currentServiceIP]]);
     }
 
+    checkCustomRAID (){
+
+        // Only need to check storage services, if no RAID conf has selectedDisks, it means this no custom RAID conf
+        let {currentServiceRole} = this.state;
+        let {customRAID} = this.props;
+        let currentServiceRoleCustomRAID = customRAID[currentServiceRole + 'Nodes'];
+        let isCheckOK = !currentServiceRoleCustomRAID.reduce((prev, curr) => prev && curr.raidList.every(raid => !raid.selectedDisks.length), true);
+        // console.info(currentCustomRAID, isCheckOK);
+        return isCheckOK;
+    }
+
+    findIPIndexInList (currentServiceIP){
+        return this.state.currentServiceIPList.findIndex(ip => ip === currentServiceIP);
+    }
 
     async create (){
+        if (this.state.enableCustomRAID && !this.checkCustomRAID()){
+            return message.warning(lang(
+                '您已开始自定义RAID配置，请为该服务节点正确配置RAID，否则请选择使用推荐RAID配置。',
+                'You have enabled custom RAID configuration, please configure the RAID correctly for this service node. Otherwise please select the recommended RAID configuration.')
+            );
+        }
         let {recommendedRAID, customRAID} = this.props;
-        let RAIDConf = this.state.enableCustomRAID ? customRAID : recommendedRAID;
+        let RAIDConf = [];
+        if (!this.state.enableCustomRAID){
+            RAIDConf = recommendedRAID;
+            RAIDConf['enableCustomRAID'] = false;
+        } else {
+            // only need the nodes which has valid RAID conf, should drop the RAIDConf which has no selectedDisks in ,
+            // raidList, and drop the node which has no raid in raidList
+            RAIDConf = customRAID[this.state.currentServiceRole + 'Nodes'].map(node => {
+                node.raidList = node.raidList.filter(raid => !!raid.selectedDisks.length);
+                return node;
+            }).filter(node => !!node.raidList.length);
+            RAIDConf = {storageServerIPs: RAIDConf};
+            RAIDConf['enableCustomRAID'] = true;
+        }
         this.setState({formSubmitting: true});
         try {
             await httpRequests.createTarget(RAIDConf);
             httpRequests.getTargetList();
             await this.hide();
             this.clearConfigs();
+            if (!this.state.enableCustomRAID){
+                this.recommendedRAIDWrapper.getWrappedInstance().clearRAIDConf();
+            }
             message.success(lang(`创建存储目标成功!`, `Create storage target(s) successfully!`));
         } catch ({msg}){
             message.error(lang(`创建存储目标失败, 原因: `, `Create storage target(s) failed, reason: `) + msg);
@@ -101,7 +143,7 @@ class CreateTarget extends Component {
         // clear configs in redux
         setTimeout(() => {
             let {setRecommendedRAID, setCustomRAID} = this.props;
-            setRecommendedRAID([]);
+            setRecommendedRAID({metadataServerIPs: {}, storageServerIPs: {}});
             setCustomRAID([]);
         }, delayTime);
     }
@@ -115,15 +157,18 @@ class CreateTarget extends Component {
             storageServerIPs,
             currentServiceRole: 'storage',
             currentServiceIPList: storageServerIPs,
-            currentServiceIP: storageServerIPs[0] || '',
+            currentServiceIP: '',
             enableCustomRAID: false,
         });
-        httpRequests.getClusterServiceAndClientIPs();
+        // httpRequests.getRecommendedRIAD([], [storageServerIPs[0]]);
     }
 
     hide (){
         this.setState({visible: false,});
         this.clearConfigs();
+        if (!this.state.enableCustomRAID){
+            this.recommendedRAIDWrapper.getWrappedInstance().clearRAIDConf();
+        }
     }
 
     render (){
@@ -185,20 +230,21 @@ class CreateTarget extends Component {
                             onChange={this.serviceIPChange.bind(this)}
                         >
                             {
-                                currentServiceIPList.map((ip, i) => <Select.Option key={i} value={ip}>{ip}</Select.Option>)
+                                currentServiceIPList.map((ip, i) => <Select.Option key={i} value={ip} option={{ip, i}}>{ip}</Select.Option>)
                             }
                         </Select>
                     </div>
                     {
-                        !enableCustomRAID?
-                            <RecommendedRAID
-                                notInit
-                                ref={ref => this.recommendedRAIDWrapper = ref}
-                                enableCustomRAID={this.enableCustomRAID.bind(this)}
-                            /> :
-                            <CustomRAID
-                                enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
-                            />
+                        !enableCustomRAID ? <RecommendedRAID
+                            notInit
+                            ref={ref => this.recommendedRAIDWrapper = ref}
+                            enableCustomRAID={this.enableCustomRAID.bind(this)}
+                        /> :
+                        <CustomRAID
+                            notInit
+                            ref={ref => this.customRAIDWrapper = ref}
+                            enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
+                        />
                     }
                 </div>
             </Modal>

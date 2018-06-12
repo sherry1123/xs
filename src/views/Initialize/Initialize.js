@@ -435,7 +435,7 @@ class Initialize extends Component {
                 break;
             case 2:
                 if (this.state.enableCustomRAID && !this.checkCustomRAID()){
-                    message.error(lang(
+                    message.warning(lang(
                         '您已开始自定义RAID配置，请正确配置所有元数据和存储服务所在节点的RAID，否则请选择使用推荐RAID配置。',
                         'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the recommended RAID configuration.')
                     );

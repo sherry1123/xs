@@ -112,6 +112,7 @@ if (isInitialized === 'true'){
 
     // request immediately
     if (isLogin === 'true'){
-        httpRequests.getFiles('/');
+        // for target, service and client page
+        httpRequests.getClusterServiceAndClientIPs();
     }
 }
