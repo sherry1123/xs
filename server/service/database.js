@@ -230,7 +230,7 @@ const model = {
         let data = await dao.findAll(nodeCpuAndMemory, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let total = data.map(item => (index === -1 ? 0 : item.dataList[index].cpu)).reverse();
+        let total = data.map(item => (item.dataList[index] ? item.dataList[index].cpu : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
     },
@@ -239,7 +239,7 @@ const model = {
         let data = await dao.findAll(nodeCpuAndMemory, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let total = data.map(item => (index === -1 ? 0 : item.dataList[index].memory)).reverse();
+        let total = data.map(item => (item.dataList[index] ? item.dataList[index].memory : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
     },
@@ -248,8 +248,8 @@ const model = {
         let data = await dao.findAll(nodeThroughputAndIops, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let read = data.map(item => (index === -1 ? 0 : item.dataList[index].throughput.read)).reverse();
-        let write = data.map(item => (index === -1 ? 0 : item.dataList[index].throughput.write)).reverse();
+        let read = data.map(item => (item.dataList[index] ? item.dataList[index].throughput.read : 0)).reverse();
+        let write = data.map(item => (item.dataList[index] ? item.dataList[index].throughput.write : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { read, write, time };
     },
@@ -258,7 +258,7 @@ const model = {
         let data = await dao.findAll(nodeThroughputAndIops, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let total = data.map(item => (index === -1 ? 0 : item.dataList[index].iops)).reverse();
+        let total = data.map(item => (item.dataList[index] ? item.dataList[index].iops : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
     },
