@@ -1432,9 +1432,10 @@ const model = {
         let { buddyGroups } = param;
         let result = {};
         try {
-            let res = await afterMe.createBuddyGroup(buddyGroups);
+            let groupList = buddyGroups.map(group => ({ type: group.serviceRole === 'metadata' ? 'meta' : 'storage', primaryId: group.selectedTargets[0].targetId, secondaryId: group.selectedTargets[1].targetId }));
+            let res = await afterMe.createBuddyGroup(groupList);
             if (!res.errorId) {
-                result = handler.response(0, data);
+                result = handler.response(0, 'create buddy group successfully');
                 await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) successfully`, ip });
             } else {
                 result = handler.response(173, res.message, param);
