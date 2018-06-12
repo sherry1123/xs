@@ -81,41 +81,36 @@ const model = {
         return { metadataServerIPs: metadataList, storageServerIPs: storageList };
     },
     handleInitParam(param) {
-        let { metadataServerIPs: meta, storageServerIPs: storage, clientIPs: client, managementServerIPs: mgmt, enableHA: HA, floatIPs: floatIP, hbIPs: heartbeatIP } = param;
+        let { metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs, enableHA, floatIPs, hbIPs, enableCustomRAID, recommendedRAID, customRAID, enableCreateBuddyGroup } = param;
         let mongodbParam = {};
         let orcafsParam = [];
-        let nodeList = Array.from(new Set(mgmt.concat(meta, storage)));
-        if (HA) {
-            mongodbParam = { primary: mgmt[0], secondary: mgmt[1], arbiter: meta[0], replicaSet: true };
-        } else {
-            mongodbParam = { primary: mgmt[0], replicaSet: false };
-            orcafsParam = [
-                {
-                    type: 'meta',
-                    hosts: meta.map(ip => ({ ip })),
-                    diskGroup: [
-                        { diskList: ['/dev/sdb'] }
-                    ]
-                },
-                {
-                    type: 'storage',
-                    hosts: storage.map(ip => ({ ip })),
-                    diskGroup: [
-                        { diskList: ['/dev/sdc'] },
-                        { diskList: ['/dev/sdd'] }
-                    ]
-                },
-                {
-                    type: 'client',
-                    hosts: client.map(ip => ({ ip }))
-                },
-                {
-                    type: 'mgmt',
-                    hosts: mgmt.map(ip => ({ ip }))
-                }
-            ]
+        let nodeList = Array.from(new Set(managementServerIPs.concat(metadataServerIPs, storageServerIPs)));
+        const handleServiceParam = (RAIDConfig, serviceType) => {
+            let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs : RAIDConfig.storageServerIPs;
+            let param = [];
+            for (let ip of Object.keys(serviceRaidConfig)) {
+                param.push({ ip, diskGroup: serviceRaidConfig[ip].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` })) });
+            }
+            return param;
         }
-        return { mongodbParam, orcafsParam, nodeList };
+        if (enableHA) {
+            mongodbParam = { primary: managementServerIPs[0], secondary: managementServerIPs[1], arbiter: metadataServerIPs[0], replicaSet: true };
+        } else {
+            mongodbParam = { primary: managementServerIPs[0], replicaSet: true };
+
+        }
+        if (enableCustomRAID) {
+            orcafsParam.push({ type: 'meta', hosts: handleServiceParam(customRAID, 'metadata') });
+            orcafsParam.push({ type: 'storage', hosts: handleServiceParam(customRAID, 'storage') });
+            orcafsParam.push({ type: 'mgmt', hosts: managementServerIPs.map((ip, index) => ({ ip, heartBeatIp: enableHA ? hbIPs[index] : '' })), floatIp: enableHA ? floatIPs[0] : '' });
+            orcafsParam.push({ type: 'client', hosts: clientIPs.map(ip => ({ ip })) });
+        } else {
+            orcafsParam.push({ type: 'meta', hosts: handleServiceParam(recommendedRAID, 'metadata') });
+            orcafsParam.push({ type: 'storage', hosts: handleServiceParam(recommendedRAID, 'storage') });
+            orcafsParam.push({ type: 'mgmt', hosts: managementServerIPs.map((ip, index) => ({ ip, heartBeatIp: enableHA ? hbIPs[index] : '' })), floatIp: enableHA ? floatIPs[0] : '' });
+            orcafsParam.push({ type: 'client', hosts: clientIPs.map(ip => ({ ip })) });
+        }
+        return { mongodbParam, orcafsParam, nodeList, enableCreateBuddyGroup };
     },
     async initMongoDB(param) {
         let { primary, secondary, arbiter, replicaSet } = param;
@@ -126,10 +121,7 @@ const model = {
         } else {
             let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --bind_ip_all --fork`;
             let ipList = [primary, secondary, arbiter];
-            let conf = {
-                _id: config.database.replicaSet,
-                members: []
-            };
+            let conf = { _id: config.database.replicaSet, members: [] };
             for (let i = 0; i < ipList.length; i++) {
                 i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
                 conf.members.push(i === 2 ? { _id: i, host: ipList[i], arbiterOnly: true } : { _id: i, host: ipList[i], priority: 2 - i });

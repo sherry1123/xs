@@ -47,7 +47,7 @@ const model = {
     async initCluster(param) {
         let current = 0, total = 8;
         try {
-            let { mongodbParam, orcafsParam, nodeList } = init.handleInitParam(param);
+            let { mongodbParam, orcafsParam, nodeList, enableCreateBuddyGroup } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
             if (!res.errorId) {
                 let getInitProgress = setInterval(async () => {
@@ -61,6 +61,9 @@ const model = {
                             socket.postInitStatus(currentStep, status, total);
                         } else if (describle.includes('finish')) {
                             clearInterval(getInitProgress);
+                            if (enableCreateBuddyGroup) {
+                                await afterMe.createBuddyGroup({});
+                            }
                             current = 5;
                             socket.postInitStatus(current, 0, total);
                             await init.initMongoDB(mongodbParam);
