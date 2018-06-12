@@ -1479,38 +1479,42 @@ const model = {
         return result;
     },
     async addMetadataToCluster(param, user, ip) {
+        let { ip: server, RAIDList } = param;
         let result = {};
         try {
-            let res = await afterMe.addMetadataToCluster(param);
+            let diskGroup = RAIDList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            let res = await afterMe.addMetadataToCluster({ ip: server, diskGroup });
             if (!res.errorId) {
-                await database.addMetadataToCluster({ ip: param.ip });
+                await database.addMetadataToCluster({ ip: server });
                 result = handler.response(0, 'add metadata service to cluster successfully');
-                await log.audit({ user, desc: `add metadata service ${param.ip} to cluster successfully`, ip });
+                await log.audit({ user, desc: `add metadata service ${server} to cluster successfully`, ip });
             } else {
                 result = handler.response(173, res.message, param);
-                await log.audit({ user, desc: `add metadata service ${param.ip} to cluster failed`, ip });
+                await log.audit({ user, desc: `add metadata service ${server} to cluster failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `add metadata service ${param.ip} to cluster failed`, ip });
+            await log.audit({ user, desc: `add metadata service ${server} to cluster failed`, ip });
         }
         return result;
     },
     async addStorageToCluster(param, user, ip) {
+        let { ip: server, RAIDList } = param;
         let result = {};
         try {
-            let res = await afterMe.addStorageToCluster(param);
+            let diskGroup = RAIDList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            let res = await afterMe.addStorageToCluster({ ip: server, diskGroup });
             if (!res.errorId) {
-                await database.addStorageToCluster({ ip: param.ip });
+                await database.addStorageToCluster({ ip: server });
                 result = handler.response(0, 'add storage service to cluster successfully');
-                await log.audit({ user, desc: `add storage service ${param.ip} to cluster successfully`, ip });
+                await log.audit({ user, desc: `add storage service ${server} to cluster successfully`, ip });
             } else {
                 result = handler.response(173, res.message, param);
-                await log.audit({ user, desc: `add storage service ${param.ip} to cluster failed`, ip });
+                await log.audit({ user, desc: `add storage service ${server} to cluster failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `add storage service ${param.ip} to cluster failed`, ip });
+            await log.audit({ user, desc: `add storage service ${server} to cluster failed`, ip });
         }
         return result;
     },
