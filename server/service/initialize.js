@@ -1,6 +1,7 @@
 const config = require('../config');
 const promise = require('../module/promise');
 const request = require('../module/request');
+const handler = require('../module/handler');
 const afterMe = require('../service/afterMe');
 const mongoose = require('../module/mongoose');
 const database = require('../service/database');
@@ -154,7 +155,7 @@ const model = {
         for (let i of Object.keys(param)) {
             await database.addSetting({ key: config.setting[i], value: param[i] });
         }
-        await database.addUser({ username: 'admin', password: '123456' });
+        await database.addUser({ username: 'admin', password: handler.md5('123456') });
         await database.addLocalAuthUserGroup({ name: 'everyone', description: 'everyone' });
         await database.addSetting({ key: config.setting.snapshotSetting, value: config.snapshot });
     },

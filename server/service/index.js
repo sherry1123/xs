@@ -150,6 +150,15 @@ const model = {
         await log.audit({ user: username, desc: 'logout successfully', ip });
         return result;
     },
+    getDefaultUser(param) {
+        let result = {};
+        try {
+            result = handler.response(0, { username: 'admin', password: '123456' });
+        } catch (error) {
+            result = handler.response(52, error, param);
+        }
+        return result;
+    },
     async getUser(param) {
         let result = {};
         try {

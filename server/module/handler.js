@@ -1,3 +1,4 @@
+const jsMd5 = require('js-md5');
 const logger = require('./logger');
 const config = require('../config');
 const model = {
@@ -55,6 +56,9 @@ const model = {
     },
     checkRoot(path, root) {
         return path.split('/')[1] === root.split('/')[1];
+    },
+    md5(text) {
+        return jsMd5(text);
     }
 };
 module.exports = model;
