@@ -38,10 +38,7 @@ const model = {
         let { metadataServerIPs, storageServerIPs } = param;
         let ipList = Array.from(new Set(metadataServerIPs.concat(storageServerIPs)));
         // let diskGroup = await Promise.all(ipList.map(async ip => ({ ip, diskList: Object.assign(await afterMe.getDiskList({ ip })).data })));
-        let diskGroup = ipList.map(ip => ({
-            ip,
-            diskList: Array.from({ length: 28 }).map((value, index) => ({ diskName: `/dev/nvme${index}n1`, totalSpace: 11489037516 }))
-        }));
+        let diskGroup = ipList.map(ip => ({ ip, diskList: Array.from({ length: 28 }).map((value, index) => ({ diskName: `/dev/nvme${index}n1`, totalSpace: 11489037516 })) }));
         let metadataList = {};
         let storageList = {};
         const getConfiguration = (diskList, serviceType) => {
