@@ -181,6 +181,19 @@ const model = {
         for (let i = 0; i < nodeList.length; i++) {
             i === nodeList.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodeList[i], command);
         }
+    },
+    async reInitMongoDB(nodeList) {
+        await promise.runCommandInPromise('killall mongod');
+        let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --bind_ip_all --fork`;
+        let conf = { _id: config.database.replicaSet, members: nodeList.map((node, index) => ({ _id: index, host: node, priority: index ? 3 - index : index })) };
+        for (let node of nodeList) {
+            await promise.runCommandInRemoteNodeInPromise(node, command);
+        }
+        await promise.writeFileInPromise('/tmp/.initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
+        for (let node of nodeList) {
+            await promise.runCommandInRemoteNodeInPromise(node, `sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
+        }
+        await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
     }
 };
 module.exports = model;
