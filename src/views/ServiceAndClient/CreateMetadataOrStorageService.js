@@ -42,12 +42,10 @@ class CreateMetadataOrStorageService extends Component {
         if (!validateIpv4(currentServiceIP)){
             return this.setState({currentServiceIPValidation: {status: 'error', help: lang('IP格式错误', 'IP pattern is incorrect'), valid: false}});
         }
-        /*
         let currentServiceIPList = this.props[this.state.currentServiceRole + 'ServerIPs'];
         if (currentServiceIPList.some(ip => ip === currentServiceIP)){
             return this.setState({currentServiceIPValidation: {status: 'error', help: lang('IP已运行有同类型的服务', 'A same type of service is already running on this IP'), valid: false}})
         }
-        */
         this.setState({currentServiceIPValidation: {status: '', help: '', valid: true}});
         // get recommended RAID and change node
         if (!this.state.enableCustomRAID){

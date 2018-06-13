@@ -22,35 +22,14 @@ export default {
                     {
                         raidLevel: 5,
                         diskList: [
-                            { diskName: '/dev/nvme0n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme1n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme2n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme3n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme4n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme5n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme6n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme7n1', space: 1024 * 1024 * 1024 * 400 }
+                            {diskName: '/dev/nvme0n1', space: 1024 * 1024 * 1024 * 400},
+                            {diskName: '/dev/nvme1n1', space: 1024 * 1024 * 1024 * 400},
+                            {diskName: '/dev/nvme2n1', space: 1024 * 1024 * 1024 * 400},
                         ],
                         totalSpace: 1024 * 1024 * 1024 * 400 * 8,
                         stripeSize: 1024 * 8,
                         diskType: 'ssd'
                     },
-                    {
-                        raidLevel: 5,
-                        diskList: [
-                            { diskName: '/dev/nvme8n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme9n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme10n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme11n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme12n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme13n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme14n1', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/nvme15n1', space: 1024 * 1024 * 1024 * 400 }
-                        ],
-                        totalSpace: 1024 * 1024 * 1024 * 400 * 8,
-                        stripeSize: 1024 * 8,
-                        diskType: 'ssd'
-                    }
                 ],
                 */
             },
@@ -60,8 +39,8 @@ export default {
                     {
                         raidLevel: 1,
                         diskList: [
-                            { diskName: '/dev/sdb', space: 1024 * 1024 * 1024 * 400 },
-                            { diskName: '/dev/sdc', space: 1024 * 1024 * 1024 * 400 }
+                            {diskName: '/dev/sdb', space: 1024 * 1024 * 1024 * 400},
+                            {diskName: '/dev/sdc', space: 1024 * 1024 * 1024 * 400}
                         ],
                         totalSpace: 1024 * 1024 * 1024 * 400 * 2,
                         stripeSize: 1024 * 8,
@@ -71,7 +50,27 @@ export default {
                 */
             }
         },
-        customRAID: {},
+        customRAID: {
+            /*
+            storageNodes: [
+                {
+                    type: 'storage',
+                    ip: '192.168.100.47',
+                    raidList: [
+                        {
+                            arrayLevel: {name: 'RAID 5'}, rule: '3|-1|-1',
+                            arrayStripeSize: '8 KB',
+                            selectedDisks: [
+                                {diskName: "/dev/sdc", isUsed: false, totalSpace: 11489037516, checked: false},
+                                {diskName: "/dev/sdd", isUsed: false, totalSpace: 11489037516, checked: false},
+                                {diskName: "/dev/sdb", isUsed: false, totalSpace: 11489037516, checked: false}
+                            ]
+                        }
+                    ]
+                }
+            ]
+            */
+        },
         enableCreateBuddyGroup: false,
         // start initialization
         initStatus: {current: 0, total: 0, status: 0},
@@ -95,47 +94,11 @@ export default {
             activeMenu: [],
             activePage: '',
             menuExpand: true,
-            knownProblems: [
-                {type: '', node: '', reason: ''},
-            ]
         },
-        // metadata nodes
-        metadataNode: {
-            overview: {
-                nodeList: [],
-                // general: [],
-                statics: []
-            },
-            detail: {
-                // general: [],
-                statics: []
-            }
-        },
-        // storage nodes
-        storageNode: {
-            overview: {
-                nodeList: [],
-                diskSpace: {
-                    total: 0,
-                    used: 0,
-                    free: 0,
-                },
-                overviewThroughput: {
-                    read: [],
-                    write: [],
-                    total: [],
-                    time: [] // for x-axis
-                },
-            },
-            detail: {
-                storageTargets: [],
-                detailThroughput: {
-                    read: [],
-                    write: [],
-                    total: [],
-                    time: [] // for x-axis
-                },
-            }
+        // services detail info and status
+        service: {
+            metadataServiceList: [],
+            storageServiceList: []
         },
         // dashboard and services, common data of the entire cluster
         dashboard: {
@@ -147,7 +110,19 @@ export default {
             clusterPhysicalNodeList: [],
             clusterServiceAndClientIPs: {metadataServerIPs: [], storageServerIPs: [], managementServerIPs: [], clientIPs: []},
             // for add metadata or storage service
-            customRAIDList: [],
+            customRAIDList: [
+                /*
+                {
+                    arrayLevel: {name: 'RAID 5', rule: '3|-1|-1'},
+                    arrayStripeSize: "8 KB",
+                    selectedDisks: [
+                        {diskName: '/dev/sdc', isUsed: false, totalSpace: 11489037516, checked: false},
+                        {diskName: '/dev/sdd', isUsed: false, totalSpace: 11489037516, checked: false},
+                        {diskName: '/dev/sdb', isUsed: false, totalSpace: 11489037516, checked: false}
+                    ]
+                }
+                */
+            ],
         },
         // data node, informations on a physical node
         dataNode: {

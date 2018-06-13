@@ -113,6 +113,7 @@ class CreateTarget extends Component {
         if (!this.state.enableCustomRAID){
             RAIDConf = recommendedRAID;
             RAIDConf['enableCustomRAID'] = false;
+            // console.info(RAIDConf);
         } else {
             // only need the nodes which has valid RAID conf, should drop the RAIDConf which has no selectedDisks in ,
             // raidList, and drop the node which has no raid in raidList
@@ -122,6 +123,7 @@ class CreateTarget extends Component {
             }).filter(node => !!node.raidList.length);
             RAIDConf = {storageServerIPs: RAIDConf};
             RAIDConf['enableCustomRAID'] = true;
+            // console.info(RAIDConf);
         }
         this.setState({formSubmitting: true});
         try {

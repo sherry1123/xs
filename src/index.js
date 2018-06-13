@@ -8,11 +8,11 @@ import './styleSheets/index.less';
 import './socket';
 import './http/cronJob';
 import {lsGet} from './services';
-import httpRequests from "./http/requests";
+import httpRequests from './http/requests';
 
 (async () => {
     const NODE_ENV = process.env.NODE_ENV;
-    // each time when user accesses should firstly fetch 'syncUpSystemStatus' api to sync up
+    // each time when user accesses the page should firstly fetch 'syncUpSystemStatus' api to sync up
     // rollback, initialization and login status recorded in browser cookie with http server before
     // react app created, it will help react components to do exact system status verifications.
     // currently, there're four interceptions on system status check from cookie, ranking by weight:

@@ -4,29 +4,15 @@ import routerPath from '../views/routerPath';
 import {ckGet} from '../services';
 
 const fetchDataPer15s = () => {
-    let routerHash = window.location.hash;
-    const main = routerPath.Main;
+    const routerHash = window.location.hash;
+    const main = routerPath.Main; // as '/'
 
     // main
     if (routerHash.match(main)){
         httpRequests.getClusterInfo();
-        // httpRequests.getKnownProblems();
+        // we use theses APIs below for checking service status and prompt user if there is any change on them
         httpRequests.getMetadataNodes();
         httpRequests.getStorageNodes();
-    }
-
-    // metadata node
-    if (routerHash.match(main + routerPath.MetadataNodes)){
-        httpRequests.getMetadataNodesStatics();
-        httpRequests.getMetadataNodeDetailStatics();
-    }
-
-    // storage node
-    if (routerHash.match(main + routerPath.StorageNodes)){
-        httpRequests.getStorageNodesThroughput();
-        httpRequests.getStorageNodeDiskStatus();
-        httpRequests.getStorageNodeTargets();
-        httpRequests.getStorageNodeDetailThroughput();
     }
 
     // dashboard
@@ -101,8 +87,8 @@ const fetchDataPer15s = () => {
 };
 
 // get current system and login status
-let isInitialized = ckGet('init');
-let isLogin = ckGet('login');
+const isInitialized = ckGet('init');
+const isLogin = ckGet('login');
 
 if (isInitialized === 'true'){
     // request every 15 seconds
@@ -112,7 +98,7 @@ if (isInitialized === 'true'){
 
     // request immediately
     if (isLogin === 'true'){
-        // for target, service and client page
+        // for target, service and client pages, them need the services and client in cluster immediately
         httpRequests.getClusterServiceAndClientIPs();
     }
 }
