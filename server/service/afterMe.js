@@ -38,7 +38,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service, isUsed } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace * 100).toFixed(2)}%` } };
             }
         }
         return res;
@@ -80,7 +80,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { targetId, nodeId, totalSpace, usedSpace, freeSpace, mountPath, hostname, service, isUsed } = res.data[i];
-                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace).toFixed(2)}%` } };
+                res.data[i] = { targetId, mountPath, node: hostname, service: service === 'meta' ? 'metadata' : service, isUsed, nodeId, space: { total: totalSpace, used: usedSpace, free: freeSpace, usage: `${(usedSpace / totalSpace * 100).toFixed(2)}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
         }
