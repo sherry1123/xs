@@ -8,26 +8,52 @@ import {formatStorageSize} from '../../services/index';
 class RecommendedRAID extends Component {
     constructor (props){
         super(props);
-        let {recommendedRAID} = this.props;
-        let currentServiceNode = {
-            ip: Object.keys(recommendedRAID.metadataServerIPs)[0],
-            type: 'metadata',
-            i: 0
-        };
-        let currentRAIDConfList = recommendedRAID.metadataServerIPs[currentServiceNode.ip];
-        let currentRAIDConf = currentRAIDConfList[0];
-        this.state = {
-            currentServiceNode,
-            currentRAIDConfList,
-            currentRAIDConf: Object.assign({}, currentRAIDConf, {i: 0}) // {i: -1, raidLevel: 0, diskList: [], totalSpace: 0, stripeSize: 0, diskType: 'ssd'},
-        };
+        let {notInit, recommendedRAID} = this.props;
+        if (notInit){
+            this.state = {
+                currentServiceNode: {},
+                currentRAIDConfList: [],
+                currentRAIDConf: {},
+            };
+        } else {
+            // initialization
+            let currentServiceNode = {
+                ip: Object.keys(recommendedRAID.metadataServerIPs)[0],
+                type: 'metadata',
+                i: 0
+            };
+            let currentRAIDConfList = recommendedRAID.metadataServerIPs[currentServiceNode.ip] || [];
+            let currentRAIDConf = currentRAIDConfList[0];
+            currentRAIDConf = !!currentRAIDConf ? Object.assign({}, currentRAIDConf, {i: 0}) : {};
+            this.state = {
+                currentServiceNode,
+                currentRAIDConfList,
+                currentRAIDConf, // {i: -1, raidLevel: 0, diskList: [], totalSpace: 0, stripeSize: 0, diskType: 'ssd'},
+            };
+        }
+    }
+
+    componentWillReceiveProps (nextProps){
+        let {recommendedRAID} = nextProps;
+        let {currentServiceNode} = this.state;
+        if (currentServiceNode.type && currentServiceNode.ip){
+            let currentRAIDConfList = recommendedRAID[currentServiceNode.type + 'ServerIPs'][currentServiceNode.ip] || [];
+            let currentRAIDConf = currentRAIDConfList[0];
+            currentRAIDConf = !!currentRAIDConf ? Object.assign({}, currentRAIDConf, {i: 0}) : {};
+            this.setState({currentRAIDConfList, currentRAIDConf});
+            // console.info(recommendedRAID, currentServiceNode, currentRAIDConfList);
+        }
     }
 
     changeServiceIP (currentServiceNode){
         let currentRAIDConfList = this.props.recommendedRAID[currentServiceNode.type + 'ServerIPs'][currentServiceNode.ip];
-        let currentRAIDConf = currentRAIDConfList[0];
-        currentRAIDConf['i'] = 0;
-        this.setState({currentServiceNode, currentRAIDConfList, currentRAIDConf});
+        if (!!currentRAIDConfList){
+            let currentRAIDConf = currentRAIDConfList[0];
+            currentRAIDConf['i'] = 0;
+            this.setState({currentServiceNode, currentRAIDConfList, currentRAIDConf});
+        } else {
+            this.setState({currentServiceNode});
+        }
     }
 
     changeRAIDConf (conf, i){
@@ -55,6 +81,22 @@ class RecommendedRAID extends Component {
         });
     }
 
+    clearRAIDConf (){
+        this.setState({
+            currentServiceNode: {},
+            currentRAIDConfList: [],
+            currentRAIDConf: {},
+        });
+        // call twice
+        setTimeout(() => {
+            this.setState({
+                currentServiceNode: {},
+                currentRAIDConfList: [],
+                currentRAIDConf: {},
+            });
+        }, 500)
+    }
+
     render (){
         let {currentServiceNode, currentRAIDConfList, currentRAIDConf} = this.state;
         let serviceRoleMap = {
@@ -68,7 +110,10 @@ class RecommendedRAID extends Component {
                     <div className="fs-raid-list-title">
                         {lang('推荐的RAID配置', 'Recommended RAID')}
                         <span className="fs-raid-custom">
-                            <span onClick={this.enableCustomRAID.bind(this)}>{lang('自定义', 'Custom')}</span>
+                            {
+                                currentServiceNode.ip && currentServiceNode.type &&
+                                <span onClick={this.enableCustomRAID.bind(this)}>{lang('自定义', 'Custom')}</span>
+                            }
                             <Popover
                                 content={
                                     (this.props.notInit ?
@@ -114,10 +159,10 @@ class RecommendedRAID extends Component {
                         {
                             currentRAIDConf.i !== -1 && <div>
                                 <span className="fs-raid-info-item">RAID {lang('配置信息: ', 'Configuration Info: ')}</span>
-                                <span className="fs-raid-info-item">{lang('级别', 'Level')}: RAID {currentRAIDConf.raidLevel}</span>
-                                <span className="fs-raid-info-item">{lang('磁盘数量', 'Disk Number')}: {currentRAIDConf.diskList.length}</span>
-                                <span className="fs-raid-info-item">{lang('总容量', 'Total Capacity')}: {formatStorageSize(currentRAIDConf.totalSpace)}</span>
-                                <span className="fs-raid-info-item">{lang('条带大小', 'Stripe Size')}: {formatStorageSize(currentRAIDConf.stripeSize)}</span>
+                                <span className="fs-raid-info-item">{lang('级别', 'Level')}: RAID {currentRAIDConf.raidLevel || '--'}</span>
+                                <span className="fs-raid-info-item">{lang('磁盘数量', 'Disk Number')}: {(currentRAIDConf.diskList || []).length}</span>
+                                <span className="fs-raid-info-item">{lang('总容量', 'Total Capacity')}: {formatStorageSize(currentRAIDConf.totalSpace || '--')}</span>
+                                <span className="fs-raid-info-item">{lang('条带大小', 'Stripe Size')}: {formatStorageSize(currentRAIDConf.stripeSize || '--')}</span>
                             </div>
                         }
                     </div>
@@ -128,7 +173,7 @@ class RecommendedRAID extends Component {
                             </div>
                         }
                         {
-                            currentRAIDConf.diskList.map((disk, i) => (
+                            (currentRAIDConf.diskList || []).map((disk, i) => (
                                 <div className="fs-raid-disk-item" key={i}>
                                     <Icon type="hdd" /><span>{disk.diskName}</span><span>{formatStorageSize(disk.space)}</span>
                                 </div>

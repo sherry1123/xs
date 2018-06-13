@@ -4,46 +4,19 @@ import {Button, Icon, Popover, Select, message} from 'antd';
 import FSTransfer from '../FSTransfer/FSTransfer';
 import RAIDImage from '../../images/raid.png';
 import lang from '../Language/lang';
-import initializeAction from '../../redux/actions/initializeAction';
+import dashboardAction from '../../redux/actions/dashboardAction';
 import httpRequests from '../../http/requests';
 import {formatStorageSize} from '../../services/index';
 
-class CustomRAID extends Component {
+class CustomRAIDForService extends Component {
     constructor (props){
         super(props);
         this.defaultRAIDLevel = {name: 'RAID 5', rule: '3|-1|-1'};
-        let {msIPs, ssIPs, msIPsNotInit, ssIPsNotInit} = props;
-        let metadataServerIPs, storageServerIPs;
-        if (!this.props.notInit){
-            metadataServerIPs = msIPs;
-            storageServerIPs = ssIPs;
-        } else {
-            metadataServerIPs = msIPsNotInit;
-            storageServerIPs = ssIPsNotInit;
-        }
-        let metadataNodes = this.convertNodes('metadata', metadataServerIPs);
-        let storageNodes = this.convertNodes('storage', storageServerIPs);
-        let RAIDList = [];
-        let currentServiceNode = {};
-        if (!this.props.notInit){
-            // initialization
-            RAIDList = metadataNodes[0].raidList;
-            currentServiceNode = {i: 0, type: 'metadata', ip: metadataServerIPs[0], raidList: []};
-        } else {
-            currentServiceNode = {};
-        }
         // node disks group by node ip
         this.nodeDisksMap = {};
         // used node disks group by node ip
         this.usedDiskNamesGroupByNodeIP = {};
         this.state = {
-            // current node contains type and ip
-            currentServiceNode,
-            // current RAID conf in current node's RAID list
-            currentRAIDConf: {i: -1, arrayLevel: {}, arrayStripeSize: '', selectedDisks: [],},
-            // all node
-            metadataNodes,
-            storageNodes,
             // RAID level for drop down selection
             // rule example: 'at least disks|at most disks|even or odd disks', '-1' means no need to validate this item
             RAIDLevels: [
@@ -55,8 +28,12 @@ class CustomRAID extends Component {
             ],
             // stripe size for drop down selection
             stripeSize: ['2 KB', '4 KB', '8 KB', '16 KB', '32 KB', '64 KB', '128 KB', '256 KB'],
+            // current node contains type and ip
+            currentServiceNode: {},
+            // current RAID conf in current node's RAID list
+            currentRAIDConf: {i: -1, arrayLevel: {}, arrayStripeSize: '', selectedDisks: [],},
             // RAID configuration list of current node
-            RAIDList,
+            RAIDList: [],
             // already selected disks in current RAID
             selectedDisks: [],
             // current RAID level, contains level text and rule
@@ -68,65 +45,28 @@ class CustomRAID extends Component {
             // if can apply this RAID configuration for the node, must pass the RAID rule validation
             enableApplyButton: true,
         };
-        this.props.setCustomRAID({
-            metadataNodes: [...metadataNodes],
-            storageNodes: [...storageNodes],
-        });
-    }
-
-    /*
-    componentWillReceiveProps (nextProps){
-       let {metadataServerIPs, storageServerIPs} = nextProps;
-       let metadataNodes = this.convertNodes('metadata', metadataServerIPs);
-       let storageNodes = this.convertNodes('storage', storageServerIPs);
-       this.setState({metadataNodes, storageNodes});
-    }
-    */
-
-    convertNodes (type, nodes) {
-        return nodes.map(node => (node.hasOwnProperty('type') ? node : {
-            type,
-            ip: node,
-            raidList: [{i: 0, arrayLevel: this.defaultRAIDLevel, arrayStripeSize: '8 KB', selectedDisks: []}], // provide an un-finished RAID conf
-        }));
     }
 
     async changeServiceIP (currentServiceNode){
-        console.info(currentServiceNode, this.state[currentServiceNode.type + 'Nodes']);
-        let {raidList} = this.state[currentServiceNode.type + 'Nodes'].filter(node => node.ip === currentServiceNode.ip)[0];
-        currentServiceNode.raidList = raidList;
-        this.setState({currentServiceNode});
-        let {type, ip} = currentServiceNode;
-        let nodes = this.state[type + 'Nodes'];
-        let RAIDList = nodes.filter(node => node.ip === ip)[0].raidList;
-        await this.setState({RAIDList});
-        await this.switchRAID(raidList[0], 0);
+        console.info(currentServiceNode);
+        this.setState({currentServiceNode, RAIDList: []});
     }
 
     addRAID (){
-        let currentServiceNode = Object.assign({}, this.state.currentServiceNode);
-        console.info(currentServiceNode);
-        let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
-        let newRAIDIndex = nodes[currentServiceNode.i].raidList.length;
-        currentServiceNode.raidList.push({
-            i: newRAIDIndex, arrayLevel: this.defaultRAIDLevel, arrayStripeSize: '8 KB', selectedDisks: []
+        let {RAIDList} = this.state;
+        RAIDList.push({
+            i: RAIDList.length, arrayLevel: this.defaultRAIDLevel, arrayStripeSize: '8 KB', selectedDisks: []
         });
-        nodes[currentServiceNode.i].raidList = currentServiceNode.raidList;
-        this.setState({
-            currentServiceNode,
-            [currentServiceNode.type + 'Nodes']: nodes,
-            RAIDList: currentServiceNode.raidList,
-        });
+        this.setState({RAIDList});
     }
 
     async removeRAID (conf, i){
-        let currentServiceNode = this.state.currentServiceNode;
-        currentServiceNode.raidList.splice(i, 1);
-        let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
-        nodes[currentServiceNode.i].raidList = currentServiceNode.raidList;
-        await this.setState({[currentServiceNode.type + 'Nodes']: nodes});
+        let {currentServiceNode, RAIDList} = this.state;
+        RAIDList = [...RAIDList];
+        RAIDList.splice(i, 1);
+        await this.setState({RAIDList});
         // reset the used disks record
-        this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = nodes[currentServiceNode.i].raidList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
+        this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = RAIDList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
     }
 
     async switchRAID (conf, i){
@@ -188,16 +128,6 @@ class CustomRAID extends Component {
         } else {
             return this.nodeDisksMap[ip];
         }
-        /*
-        return [
-            {diskName: "/dev/nvme0n1", totalSpace: 429604103782, key: '/dev/nvme0n1'},
-            {diskName: "/dev/nvme1n1", totalSpace: 429604103782, key: '/dev/nvme1n1'},
-            {diskName: "/dev/nvme2n1", totalSpace: 429604103782, key: '/dev/nvme2n1'},
-            {diskName: "/dev/nvme3n1", totalSpace: 429604103782, key: '/dev/nvme3n1'},
-            {diskName: "/dev/nvme4n1", totalSpace: 429604103782, key: '/dev/nvme4n1'},
-            {diskName: "/dev/nvme5n1", totalSpace: 429604103782, key: '/dev/nvme5n1'}
-        ];
-        */
     }
 
     switchRAIDLevel (value, option){
@@ -253,23 +183,18 @@ class CustomRAID extends Component {
 
     async applyConfForNode (){
         if (this.checkRAID()){
-            let currentServiceNode = this.state.currentServiceNode;
+            let {currentServiceNode, RAIDList} = this.state;
             let currentRAIDConf = this.state.currentRAIDConf;
             currentRAIDConf.selectedDisks = [...this.state.selectedDisks];
             currentRAIDConf.arrayLevel = Object.assign({}, this.state.arrayLevel);
             currentRAIDConf.arrayStripeSize = this.state.arrayStripeSize;
-            let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
-            console.info(nodes, currentServiceNode.i);
-            nodes[currentServiceNode.i].raidList[currentRAIDConf.i] = currentRAIDConf;
-            await this.setState({[currentServiceNode.type + 'Nodes' ]: nodes});
+            RAIDList = [...RAIDList];
+            RAIDList.push(currentServiceNode);
+            await this.setState({RAIDList});
             // reset the used disks record
-            this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = nodes[currentServiceNode.i].raidList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
+            this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = RAIDList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
             message.success(lang('应用RAID配置成功!', 'Apply RAID configuration successfully!'));
-            let {metadataNodes, storageNodes} = this.state;
-            this.props.setCustomRAID({
-                metadataNodes: [...metadataNodes],
-                storageNodes: [...storageNodes],
-            });
+            this.props.setCustomRAIDList(RAIDList);
         } else {
             // Give some tips out according to current RAID level rule, and let user to
             // correct selected selectedDisks depend on the requirement of this RAID level.
@@ -458,13 +383,13 @@ class CustomRAID extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs: msIPs, storageServerIPs: ssIPs, customRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs: msIPsNotInit, storageServerIPs: ssIPsNotInit}}}} = state;
-    return {language, msIPs, ssIPs, customRAID, msIPsNotInit, ssIPsNotInit};
+    const {language, main: {dashboard: {customRAIDList}}} = state;
+    return {language, customRAIDList};
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        setCustomRAID: customRAID => dispatch(initializeAction.setCustomRAID(customRAID)),
+        setCustomRAIDList: customRAIDList => dispatch(dashboardAction.setCustomRAIDList(customRAIDList)),
     };
 };
 
@@ -474,4 +399,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CustomRAID);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CustomRAIDForService);

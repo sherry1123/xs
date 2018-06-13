@@ -7,6 +7,7 @@ import lang from '../../components/Language/lang';
 import routerPath from '../routerPath';
 import {ckGet} from '../../services';
 import httpRequests from '../../http/requests';
+import jsMD5 from 'js-md5';
 
 class Login extends Component {
     constructor (props){
@@ -90,7 +91,7 @@ class Login extends Component {
         let {usernameStatus, passwordStatus} = this.state;
         if (!usernameStatus && !passwordStatus){
             await this.setState({doingLogin: true});
-            // request login http interface
+            password = jsMD5(password);
             try {
                 let user = await httpRequests.login({username, password});
                 this.props.setUser(user);

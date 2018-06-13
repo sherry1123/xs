@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import httpRequests from '../../http/requests';
-import lang from "../Language/lang";
-import {validatePassword} from "../../services";
+import lang from '../Language/lang';
+import {validatePassword} from '../../services';
+import jsMD5 from 'js-md5';
 
 class ChangePassword  extends Component {
     constructor (props){
@@ -93,7 +94,7 @@ class ChangePassword  extends Component {
         let {password} = this.state.formData;
         await this.setState({formSubmitting: true});
         try {
-            await httpRequests.updateUser({username, password});
+            await httpRequests.updateUser({username, password: jsMD5(password)});
             await this.hide();
             this.logout();
             message.success(lang(`用户 ${username} 密码修改成功，请使用新密码重新登录！`, `The password of user ${username} has been changed successfully, please use the new password to do re-login!`));

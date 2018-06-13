@@ -18,8 +18,9 @@ class Target extends Component {
         };
     }
 
-    componentDidMount (){
+    async componentDidMount (){
         httpRequests.getTargetList();
+        httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
     }
 
     async componentWillReceiveProps (nextProps){
@@ -134,8 +135,8 @@ class Target extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {target: {targetList}}} = state;
-    return {language, targetList};
+    const {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}, target: {targetList}}} = state;
+    return {language, metadataServerIPs, storageServerIPs, targetList};
 };
 
 export default connect(mapStateToProps)(Target);

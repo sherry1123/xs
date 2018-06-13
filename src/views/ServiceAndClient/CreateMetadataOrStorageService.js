@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover} from 'antd';
 import RecommendedRAID from '../../components/DiskConfiguration/RecommendedRAID';
-import CustomRAID from '../../components/DiskConfiguration/CustomRAID';
+import CustomRAIDForService from '../../components/DiskConfiguration/CustomRAIDForService';
 import initializeAction from '../../redux/actions/initializeAction';
+import dashboardAction from '../../redux/actions/dashboardAction';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 import {validateIpv4} from '../../services';
@@ -41,13 +42,23 @@ class CreateMetadataOrStorageService extends Component {
         if (!validateIpv4(currentServiceIP)){
             return this.setState({currentServiceIPValidation: {status: 'error', help: lang('IP格式错误', 'IP pattern is incorrect'), valid: false}});
         }
+        /*
         let currentServiceIPList = this.props[this.state.currentServiceRole + 'ServerIPs'];
         if (currentServiceIPList.some(ip => ip === currentServiceIP)){
-            return this.setState({currentServiceIPValidation: {status: 'error', help: lang('IP已被同类型的服务使用', 'IP is already used by one of the same type of services'), valid: false}})
+            return this.setState({currentServiceIPValidation: {status: 'error', help: lang('IP已运行有同类型的服务', 'A same type of service is already running on this IP'), valid: false}})
         }
+        */
         this.setState({currentServiceIPValidation: {status: '', help: '', valid: true}});
+        // get recommended RAID and change node
+        if (!this.state.enableCustomRAID){
+            httpRequests.getRecommendedRIAD.apply(null, this.state.currentServiceRole === 'metadata' ? [[currentServiceIP], []] : [[], [currentServiceIP]]);
+            let currentServiceNode = {type: this.state.currentServiceRole, ip: currentServiceIP, i: 0};
+            this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
+        } else {
+            let currentServiceNode = {type: this.state.currentServiceRole, ip: currentServiceIP, i: -1};
+            this.customRAIDForServiceWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
+        }
     }
-
 
     getRecommendedRAID ({target: {value: ip}}){
         setTimeout(() => {
@@ -63,24 +74,29 @@ class CreateMetadataOrStorageService extends Component {
         }, 500);
     }
 
-    enableCustomRAID (){
+    async enableCustomRAID (){
         // switch to custom RAID mode
+        let {currentServiceIP} = this.state;
         let currentServiceNode = {
             type: 'metadata',
-            ip: this.props.metadataServerIPs[0], // the first one
+            ip: currentServiceIP,
+            i: 0,
         };
-        this.setState({
+        await this.setState({
             enableCustomRAID: true,
             currentServiceType: 'metadata',
             currentServiceNode,
         });
+        this.customRAIDForServiceWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
     }
 
     async enableRecommendedRAID (){
         // switch to recommended RAID mode
+        let {currentServiceIP} = this.state;
         let currentServiceNode = {
             type: 'metadata',
-            ip: this.props.metadataServerIPs[0], // the first one
+            ip: currentServiceIP,
+            i: -1
         };
         await this.setState({
             enableCustomRAID: false,
@@ -90,20 +106,43 @@ class CreateMetadataOrStorageService extends Component {
         this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
     }
 
+    checkCustomRAID (){
+        // Only need to check storage services, if no RAID conf has selectedDisks, it means this no custom RAID conf
+        let {currentServiceRole, currentServiceIP} = this.state;
+        console.info(currentServiceRole);
+        let {customRAID} = this.props;
+        let currentServiceRoleCustomRAID = customRAID[currentServiceRole + 'Nodes'];
+        let currentIPCustomRAID = currentServiceRoleCustomRAID.filter(role => role.ip === currentServiceIP);
+        console.info(currentIPCustomRAID, currentServiceIP);
+        let isCheckOK = currentIPCustomRAID.reduce((prev, curr) => prev && !curr.raidList.some(raid => !raid.selectedDisks.length), true);
+        // console.info(currentCustomRAID, isCheckOK);
+        // console.info(isCheckOK);
+        return isCheckOK;
+    }
 
     async create (){
-        let {recommendedRAID, customRAID} = this.props;
+        if (this.state.enableCustomRAID && !this.checkCustomRAID()){
+            return message.warning(lang(
+                '您已开始自定义RAID配置，请为该服务节点正确配置RAID，否则请选择使用推荐RAID配置。',
+                'You have enabled custom RAID configuration, please configure the RAID correctly for this service node. Otherwise please select the recommended RAID configuration.')
+            );
+        }
+        let {recommendedRAID, customRAIDList} = this.props;
         let {currentServiceRole, currentServiceIP, enableCustomRAID} = this.state;
-        let RAIDConf = enableCustomRAID ? customRAID : recommendedRAID;
-        let RAIDList = RAIDConf[currentServiceRole][currentServiceIP];
+        let RAIDConf = !enableCustomRAID ? recommendedRAID[currentServiceRole + 'ServerIPs'] : customRAIDList;
+        let raidList = !enableCustomRAID ? RAIDConf[currentServiceIP] : RAIDConf;
+        // console.info(RAIDConf, raidList);
         this.setState({formSubmitting: true});
         try {
             currentServiceRole === 'metadata' ?
-                await httpRequests.createMetadataServiceToCluster({ip: currentServiceIP, RAIDList}) :
-                await httpRequests.createStorageServiceToCluster({ip: currentServiceIP, RAIDList});
+                await httpRequests.createMetadataServiceToCluster({ip: currentServiceIP, raidList, enableCustomRAID}) :
+                await httpRequests.createStorageServiceToCluster({ip: currentServiceIP, raidList, enableCustomRAID});
             httpRequests.getClusterServiceAndClientIPs();
             await this.hide();
             this.clearConfigs();
+            if (!this.state.enableCustomRAID){
+                this.recommendedRAIDWrapper.getWrappedInstance().clearRAIDConf();
+            }
             message.success(lang(`创建${currentServiceRole === 'metadata' ? '元数据' : '存储'}服务成功!`, `Create ${currentServiceRole === 'metadata' ? 'metadata' : 'storage'} service successfully!`));
         } catch ({msg}){
             message.error(lang(`创建${currentServiceRole === 'metadata' ? '元数据' : '存储'}服务失败, 原因: `, `Create ${currentServiceRole === 'metadata' ? 'metadata' : 'storage'} service failed, reason: `) + msg);
@@ -114,13 +153,13 @@ class CreateMetadataOrStorageService extends Component {
     clearConfigs (delayTime = 500){
         // clear configs in redux
         setTimeout(() => {
-            let {setRecommendedRAID, setCustomRAID} = this.props;
-            setRecommendedRAID([]);
-            setCustomRAID([]);
+            let {setRecommendedRAID, setCustomRAIDList} = this.props;
+            setRecommendedRAID({metadataServerIPs: {}, storageServerIPs: {}});
+            setCustomRAIDList([]);
         }, delayTime);
     }
 
-    async show (currentServiceRole = 'metadata'){
+    async show (currentServiceRole){
         let {metadataServerIPs = [], storageServerIPs = []} = this.props;
         this.setState({
             visible: true,
@@ -137,7 +176,10 @@ class CreateMetadataOrStorageService extends Component {
 
     hide (){
         this.setState({visible: false,});
-        this.clearConfigs()
+        this.clearConfigs();
+        if (!this.state.enableCustomRAID){
+            this.recommendedRAIDWrapper.getWrappedInstance().clearRAIDConf();
+        }
     }
 
     render (){
@@ -217,7 +259,8 @@ class CreateMetadataOrStorageService extends Component {
                                 ref={ref => this.recommendedRAIDWrapper = ref}
                                 enableCustomRAID={this.enableCustomRAID.bind(this)}
                             /> :
-                            <CustomRAID
+                            <CustomRAIDForService
+                                ref={ref => this.customRAIDForServiceWrapper = ref}
                                 enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
                             />
                     }
@@ -228,14 +271,14 @@ class CreateMetadataOrStorageService extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}}} = state;
-    return {language, recommendedRAID, customRAID, metadataServerIPs, storageServerIPs};
+    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}, customRAIDList}}} = state;
+    return {language, recommendedRAID, customRAID, metadataServerIPs, storageServerIPs, customRAIDList};
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
-        setCustomRAID: customRAID => dispatch(initializeAction.setCustomRAID(customRAID)),
+        setCustomRAIDList: customRAIDList => dispatch(dashboardAction.setCustomRAIDList(customRAIDList)),
     };
 };
 

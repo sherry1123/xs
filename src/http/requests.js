@@ -51,8 +51,8 @@ export default  {
 
     getDefaultUser (){
         requestMiddleWare(async () => {
-            let data = await fetchPost('/api/getuser');
-            !!data && store.dispatch(initializeAction.setDefaultUser(data[0]));
+            let data = await fetchPost('/api/getdefaultuser');
+            !!data && store.dispatch(initializeAction.setDefaultUser(data));
         });
     },
 
@@ -63,7 +63,7 @@ export default  {
     getRecommendedRIAD (metadataServerIPs, storageServerIPs){
         requestMiddleWare(async () => {
             let data = await fetchPost('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
-            console.info('recommended RAID config', data);
+            // console.info('recommended RAID config', data);
             !!data && store.dispatch(initializeAction.setRecommendedRAID(data));
         });
     },
@@ -552,8 +552,8 @@ export default  {
         });
     },
 
-    async createTarget (target){
-        await fetchPost('/api/createtarget', {target});
+    async createTarget (RAIDConf){
+        await fetchPost('/api/createtarget', RAIDConf);
     },
 
     async getBuddyGroupList (){
