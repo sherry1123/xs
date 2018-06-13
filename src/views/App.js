@@ -20,9 +20,12 @@ export default class App extends Component {
         super(props);
         let defaultPath = '';
         let isDeInit = ckGet('deinit');
+        let isReInit = ckGet('reinit');
         let isInitialized = ckGet('init');
         if (isDeInit === 'true' && isInitialized === 'true'){
             defaultPath = `${routerPath.DeInitializing}`;
+        } else if (isReInit === 'true' && isInitialized === 'true'){
+            defaultPath = `${routerPath.ReInitializing}`;
         } else {
             let isRollingBack = ckGet('rollbacking');
             if (isRollingBack  === 'true' && isInitialized === 'true'){

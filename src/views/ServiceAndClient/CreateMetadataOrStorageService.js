@@ -33,7 +33,7 @@ class CreateMetadataOrStorageService extends Component {
         });
     }
 
-    async serviceIPChange ({target: {value: currentServiceIP}}){
+    async serviceIPChange (currentServiceIP){
         await this.setState({currentServiceIP});
         // validate IP
         if (!currentServiceIP){
@@ -58,7 +58,7 @@ class CreateMetadataOrStorageService extends Component {
         }
     }
 
-    getRecommendedRAID ({target: {value: ip}}){
+    getRecommendedRAID (ip){
         setTimeout(() => {
             if (this.state.currentServiceIPValidation.valid && !!ip){
                 try {
@@ -230,8 +230,8 @@ class CreateMetadataOrStorageService extends Component {
                                 size="small"
                                 placeholder={lang('请输入服务所在节点的IP', 'Please enter IP of the node of service')}
                                 value={this.state.currentServiceIP}
-                                onChange={this.serviceIPChange.bind(this)}
-                                onBlur={this.getRecommendedRAID.bind(this)}
+                                onChange={({target: {value}}) => this.serviceIPChange.bind(this, value)()}
+                                onBlur={({target: {value}}) => !!value && this.getRecommendedRAID.bind(this, value)()}
                             />
                         </Form.Item>
                         {

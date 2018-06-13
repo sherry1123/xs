@@ -50,9 +50,12 @@ export default class Main extends Component {
     componentWillMount (){
         // see router interceptor rule in routerPath.js
         let isDeInit = ckGet('deinit');
+        let isReInit = ckGet('reinit');
         let isInitialized = ckGet('init');
         if (isDeInit === 'true' && isInitialized === 'true'){
             this.props.history.replace(routerPath.DeInitializing);
+        } else if (isReInit === 'true' && isInitialized === 'true'){
+            this.props.history.replace(routerPath.ReInitializing);
         } else {
             let isRollingBack = ckGet('rollbacking');
             if (isRollingBack === 'true' && isInitialized === 'true'){

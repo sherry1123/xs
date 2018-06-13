@@ -178,8 +178,8 @@ class SnapshotSchedule extends Component {
                 {title: lang('自动删除', 'Auto Delete'), dataIndex: 'deleteRound', width: 100,
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
-                {title: lang('开始时间', 'Start Time'), dataIndex: 'startTime', width: 180,
-                    render: (text, record) => record.isRunning ? timeFormat(text) : '--'
+                {title: lang('执行时间', 'Execute Time'), dataIndex: 'startTime', width: 180,
+                    render: (text, record) => record.isRunning ? timeFormat(text) : lang('还未执行', 'Not Executed')
                 },
                 {title: lang('间隔时间', 'Interval Time'), dataIndex: 'interval', width: 120,
                     render: text => timeLeftFormat(text)

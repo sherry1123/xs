@@ -63,10 +63,10 @@ class CreateClientToNFS extends Component {
                 } /*else if (validateIpv4Segment(ip)){
                     // it's a IPV4 segment
                     return true;
-                } else if (!!ip){
+                }*/ else if (!!ip){
                     // it's a hostname
                     return true
-                } */else {
+                } else {
                     // it's a meaningless value
                     return false;
                 }

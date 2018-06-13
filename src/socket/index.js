@@ -19,7 +19,7 @@ import routerPath from '../views/routerPath';
 const socket = io({transports: ['websocket']});
 
 // some pre-configs
-const {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd,} = eventCodeForEventChannel;
+const {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd, reInitializationStart, reInitializationEnd} = eventCodeForEventChannel;
 const waitForServerUpTimeThreshold = 1000 * 60 * 5;
 const requestServerUpInterval = 1000 * 2;
 
@@ -61,6 +61,8 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
      * we need to do. There are some other important logic we should execute depend on the message code.
      */
 
+    /*** snapshot channel ***/
+
     // snapshot
     if (snapshot.includes(code)){
         // snapshot
@@ -76,11 +78,13 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
         setTimeout(() => window.location.href = '/#' + routerPath.Main + routerPath.Snapshot, 2000);
     }
 
-    // channel de-initialization
-    if (deInitializationStart.includes(code)){
+    /*** system channel ***/
+
+    // de-initialization or re-initialization
+    if (deInitializationStart.includes(code) || reInitializationStart.includes(code)){
         window.location.href = routerPath.Root;
     }
-    if (deInitializationEnd.includes(code)){
+    if (deInitializationEnd.includes(code) || reInitializationEnd.includes(code)){
         // wait for server restart, and create a interval timer to request server status,
         // once server is up, do page jumping operation
         let timer = setInterval(async () => {

@@ -13,13 +13,15 @@ class CreateManagementService extends Component {
             formValid: false,
             formSubmitting: false,
             serviceData: {
-                managementServerIP: '',
+                mgmtIP1: '',
+                mgmtIP2: '',
                 floatIP: '',
                 hbIP1: '',
                 hbIP2: '',
             },
             validation: {
-                managementServerIP: {status: '', help: '', valid: false},
+                mgmtIP1: {status: '', help: '', valid: false},
+                mgmtIP2: {status: '', help: '', valid: false},
                 floatIP: {status: '', help: '', valid: false},
                 hbIP1: {status: '', help: '', valid: false},
                 hbIP2: {status: '', help: '', valid: false},
@@ -65,10 +67,10 @@ class CreateManagementService extends Component {
             this.validationUpdateState(key, {cn: 'IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
         }
 
-        if (key === 'managementServerIP'){
-            let managementServerIPDuplicated = this.props.managementServerIPs.includes(ip);
-            if (managementServerIPDuplicated){
-                this.validationUpdateState('managementServerIP', {cn: '该IP已被一个已存在的管理服务使用', en: 'This IP has been used by a existing management service'}, false);
+        if (key === 'mgmtIP2'){
+            let mgmtIP2Duplicated = this.props.managementServerIPs.includes(ip);
+            if (mgmtIP2Duplicated){
+                this.validationUpdateState('mgmtIP2', {cn: '该IP已被一个已存在的管理服务使用', en: 'This IP has been used by a existing management service'}, false);
             }
         }
 
@@ -101,17 +103,17 @@ class CreateManagementService extends Component {
     async validateIPForHA (){
         // once enabled HA for management server, management server IPs shouldn't be the same with any of metadata, storage or client server IPs
         let {metadataServerIPs, storageServerIPs, clientIPs} = this.props;
-        let {serviceData: {managementServerIP}} = this.state;
+        let {serviceData: {mgmtIP2}} = this.state;
         let errorHelp = {cn: '为管理服务启用HA后，管理服务器IP不能与任何元数据、存储服务或客户端的IP相同', en: 'once enabled HA for management service, management services IPs\' shouldn\'t be the same with any of metadata, storage server or client IPs'};
-        if (managementServerIP){
-            if (metadataServerIPs.includes(managementServerIP) ||
-                storageServerIPs.includes(managementServerIP) ||
-                clientIPs.includes(managementServerIP)
+        if (mgmtIP2){
+            if (metadataServerIPs.includes(mgmtIP2) ||
+                storageServerIPs.includes(mgmtIP2) ||
+                clientIPs.includes(mgmtIP2)
             ){
-                await this.validationUpdateState('managementServerIP', errorHelp, false);
+                await this.validationUpdateState('mgmtIP2', errorHelp, false);
             } else {
-                if (!!this.state.validation.managementServerIP.status){
-                    await this.validationUpdateState('managementServerIP', {cn: '', en: ''}, true);
+                if (!!this.state.validation.mgmtIP2.status){
+                    await this.validationUpdateState('mgmtIP2', {cn: '', en: ''}, true);
                 }
             }
         }
@@ -119,9 +121,9 @@ class CreateManagementService extends Component {
 
     async validateNetworkSegmentForMgmtAndHAIPs (){
         // firstly should pass the basic validation
-        if (!this.state.validation.managementServerIP.status){
+        if (!this.state.validation.mgmtIP2.status){
             let mgmtIP1 = this.props.metadataServerIPs[0];
-            let {serviceData: {managementServerIP: mgmtIP2, hbIP1, hbIP2}} = this.state;
+            let {serviceData: {mgmtIP2, hbIP1, hbIP2}} = this.state;
             let errorHelp = {cn: '管理服务器IP不能与和它对应的连接检测IP处于相同网段', en: 'Management Server IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP'};
             let [mgmtIP1_1, mgmtIP1_2, mgmtIP1_3] = mgmtIP1.split('.');
             let [hbIP1_1, hbIP1_2, hbIP1_3] = hbIP1.split('.');
@@ -145,32 +147,55 @@ class CreateManagementService extends Component {
     }
 
     async create (){
-        let serviceData = Object.assign({}, this.state.serviceData);
-        this.setState({formSubmitting: true});
-        try {
-            await httpRequests.createManagementServiceToCluster(serviceData);
-            httpRequests.getClusterServiceAndClientIPs();
-            await this.hide();
-            message.success(lang(`创建管理服务 ${serviceData.ip} 成功!`, `Create management service ${serviceData.ip} successfully!`));
-        } catch ({msg}){
-            message.error(lang(`创建管理服务 ${serviceData.ip} 失败, 原因: `, `Create management service ${serviceData.ip} failed, reason: `) + msg);
-        }
-        this.setState({formSubmitting: false});
+        Modal.confirm({
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行创建管理服务并开启HA功能的操作。`, `You are about to create management service and enable HA feature.`)}</p>
+                <p>{lang(`该操作将会在集群架构上做一些调整，在这一过程中无法任何其他其他操作。这需要一定时间才能完成。`, `This operation will make some adjustments on cluster architecture. Can't do anything in this process. This will take some time to finish it.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保无其他用户或者业务正在使用或运行在系统上。`, `A suggestion: before executing this operation, ensure that the there is no user and service is using or running on the system.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okType: 'danger',
+            okText: lang('创建', 'Create'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                let serviceData = Object.assign({}, this.state.serviceData);
+                this.setState({formSubmitting: true});
+                try {
+                    await httpRequests.createManagementServiceToCluster(serviceData);
+                    httpRequests.getClusterServiceAndClientIPs();
+                    // await this.hide();
+                    // message.success(lang(`创建管理服务 ${serviceData.ip} 成功!`, `Create management service ${serviceData.ip} successfully!`));
+                } catch ({msg}){
+                    message.error(lang(`创建管理服务 ${serviceData.ip} 失败, 原因: `, `Create management service ${serviceData.ip} failed, reason: `) + msg);
+                }
+                this.setState({formSubmitting: false});
+            },
+            onCancel: () => {
+
+            }
+        });
     }
 
     show (){
+        let {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs} = this.props;
+        let mgmtIP1 = managementServerIPs[0];
+        let mgmtIP1Usability = !(metadataServerIPs.includes(mgmtIP1) || storageServerIPs.includes(mgmtIP1) || clientIPs.includes(mgmtIP1));
         this.setState({
             visible: true,
             formValid: false,
             formSubmitting: false,
             serviceData: {
-                managementServerIP: '',
+                mgmtIP1Usability,
+                mgmtIP1: mgmtIP1Usability ? mgmtIP1 : '',
+                mgmtIP2: '',
                 floatIP: '',
                 hbIP1: '',
                 hbIP2: ''
             },
             validation: {
-                managementServerIP: {status: '', help: '', valid: false},
+                mgmtIP1: {status: '', help: '', valid: mgmtIP1Usability},
+                mgmtIP2: {status: '', help: '', valid: false},
                 floatIP: {status: '', help: '', valid: false},
                 hbIP1: {status: '', help: '', valid: false},
                 hbIP2: {status: '', help: '', valid: false},
@@ -195,7 +220,6 @@ class CreateManagementService extends Component {
                 sm: {span: isChinese ? 16 : 14},
             }
         };
-        let {managementServerIPs} = this.props;
         return (
             <Modal
                 title={lang('创建管理服务', 'Create Management Service')}
@@ -226,35 +250,58 @@ class CreateManagementService extends Component {
             >
                 <Form>
                     <div style={{margin: '-24px -24px 20px', padding: '14px', fontSize: 12, background: '#f3f3f3'}}>
-                        {lang(
-                            '鉴于当前已经存在有1个管理服务，您本次添加管理服务将直接启用HA功能。',
-                            'Consider to that there is already 1 existing management service currently, this time you add management service will enable HA feature directly.')
+                        {this.state.mgmtIP1Usability ?
+                            lang(
+                                '当前已经存在有1个可用的管理服务，再添加1个新的管理服务就能启用HA功能。',
+                                'There is already 1 existing and usable management service currently, add a new management service will enable HA feature.'
+                            ) :
+                            lang(
+                                '在初始时添加的管理服务所在的节点上还运行有其他服务，因此不能被用户开启HA功能。需要输入2个未运行其他任何服务的节点的IP，新的2个管理服务将分别运行在这2个节点上。',
+                                'The node that management service IP added in initialization has some other services run on, so it can not be used for enabling HA feature. There are 2 node IPs need with no other services run on, the new 2 management services will run on them respectively.'
+                            )
                         }
                     </div>
+                    {
+                        this.state.mgmtIP1Usability ? <Form.Item
+                            {...formItemLayout}
+                            label={lang('已存在的管理服务IP', 'Existing Service IP')}
+                        >
+                            <Input
+                                style={{width: isChinese ? 255 : 225}}
+                                size="small"
+                                readOnly
+                                value={this.state.serviceData.mgmtIP1}
+                            />
+                        </Form.Item> :
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('管理服务IP 1', 'Management Service IP 1')}
+                            validateStatus={this.state.validation.mgmtIP1.status}
+                            help={this.state.validation.mgmtIP1.help}
+                        >
+                            <Input
+                                style={{width: isChinese ? 255 : 225}}
+                                size="small"
+                                placeholder={lang('请输入需要新增的管理服务的IP 1', 'The new management service IP 1')}
+                                value={this.state.serviceData.mgmtIP1}
+                                onChange={({target: {value}}) => this.formValueChange.bind(this, 'mgmtIP1', value)()}
+                                onBlur={({target: {value}}) => !!value && this.validateForm.bind(this, 'mgmtIP1')()}
+                            />
+                        </Form.Item>
+                    }
                     <Form.Item
                         {...formItemLayout}
-                        label={lang('已存在的管理服务IP', 'Existing Service IP')}
+                        label={lang('管理服务IP', 'Management Service IP') + (this.state.mgmtIP1Usability ? '' : ' 2')}
+                        validateStatus={this.state.validation.mgmtIP2.status}
+                        help={this.state.validation.mgmtIP2.help}
                     >
                         <Input
                             style={{width: isChinese ? 255 : 225}}
                             size="small"
-                            readOnly
-                            value={managementServerIPs[0]}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('新的管理服务IP', 'New Service IP')}
-                        validateStatus={this.state.validation.managementServerIP.status}
-                        help={this.state.validation.managementServerIP.help}
-                    >
-                        <Input
-                            style={{width: isChinese ? 255 : 225}}
-                            size="small"
-                            placeholder={lang('请输入需要新增的管理服务的IP', 'please enter the new management service IP')}
-                            value={this.state.serviceData.managementServerIP}
-                            onChange={({target: {value}}) => this.formValueChange.bind(this, 'managementServerIP', value)()}
-                            onBlur={() => this.validateForm.bind(this, 'managementServerIP')()}
+                            placeholder={lang('请输入需要新增的管理服务的IP', 'The new management service IP') + (this.state.mgmtIP1Usability ? '' : ' 2')}
+                            value={this.state.serviceData.mgmtIP2}
+                            onChange={({target: {value}}) => this.formValueChange.bind(this, 'mgmtIP2', value)()}
+                            onBlur={({target: {value}}) => !!value && this.validateForm.bind(this, 'mgmtIP2')()}
                         />
                     </Form.Item>
                     <Divider dashed style={{margin: '10px 0'}} />
@@ -269,10 +316,10 @@ class CreateManagementService extends Component {
                         <Input
                             style={{width: isChinese ? 230 : 200}}
                             size="small"
-                            placeholder={lang('请输入集群服务管理IP', 'please enter cluster service management IP')}
+                            placeholder={lang('请输入集群服务管理IP', 'Cluster service management IP')}
                             value={this.state.serviceData.floatIP}
                             onChange={({target: {value}}) => this.formValueChange.bind(this, 'floatIP', value)()}
-                            onBlur={() => this.validateForm.bind(this, 'floatIP')()}
+                            onBlur={({target: {value}}) => !!value && this.validateForm.bind(this, 'floatIP')()}
                         />
                         <Popover
                             {...buttonPopoverConf}
@@ -290,10 +337,10 @@ class CreateManagementService extends Component {
                         <Input
                             style={{width: isChinese ? 230 : 200}}
                             size="small"
-                            placeholder={lang('请输入连接有效性检测IP 1', 'please enter heart beat IP 1')}
+                            placeholder={lang('请输入连接有效性检测IP 1', 'Connection validity check IP 1')}
                             value={this.state.serviceData.hbIP1}
                             onChange={({target: {value}}) => this.formValueChange.bind(this, 'hbIP1', value)()}
-                            onBlur={() => this.validateForm.bind(this, 'hbIP1')()}
+                            onBlur={({target: {value}}) => !!value && this.validateForm.bind(this, 'hbIP1')()}
                         />
                         <Popover
                             {...buttonPopoverConf}
@@ -316,10 +363,10 @@ class CreateManagementService extends Component {
                         <Input
                             style={{width: isChinese ? 230 : 200}}
                             size="small"
-                            placeholder={lang('请输入连接有效性检测IP 2', 'please enter heart beat IP 2')}
+                            placeholder={lang('请输入连接有效性检测IP 2', 'Connection validity check IP 2')}
                             value={this.state.serviceData.hbIP2}
                             onChange={({target: {value}}) => this.formValueChange.bind(this, 'hbIP2', value)()}
-                            onBlur={() => this.validateForm.bind(this, 'hbIP2')()}
+                            onBlur={({target: {value}}) => !!value && this.validateForm.bind(this, 'hbIP2')()}
                         />
                         <Popover
                             {...buttonPopoverConf}

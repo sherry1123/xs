@@ -5,9 +5,9 @@ import lang from '../../components/Language/lang';
 import {ckGet} from '../../services';
 import routerPath from '../routerPath';
 
-class DeInitializing extends PureComponent {
+class ReInitializing extends PureComponent {
     componentWillMount (){
-        let isDeInit = ckGet('deinit');
+        let isDeInit = ckGet('reinit');
         let isInitialized = ckGet('init');
         if (isDeInit !== 'true' || isInitialized !== 'true'){
             this.props.history.replace(routerPath.Root);
@@ -43,7 +43,7 @@ class DeInitializing extends PureComponent {
                         <i className="fs-de-initializing-gear-small" />
                     </div>
                     <div className="fs-de-initializing-tip-wrapper">
-                        {lang('集群正在反初始化中，请稍候 ', 'Cluster is de-initializing, please wait ')}<i>.</i><i>.</i><i>.</i>
+                        {lang('集群架构正在调整中，请稍候 ', 'Cluster architecture is being adjusted, please wait ')}<i>.</i><i>.</i><i>.</i>
                     </div>
                 </section>
             </div>
@@ -56,4 +56,4 @@ const mapStateToProps = state => {
     return {language};
 };
 
-export default connect(mapStateToProps)(DeInitializing);
+export default connect(mapStateToProps)(ReInitializing);

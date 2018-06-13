@@ -16,18 +16,25 @@ export const socketEventChannel = {
 };
 
 export const eventCodeForEventChannel = {
+    // socket event codes group by different business channels
+
+    // system channel
     deInitializationStart: [1],
     deInitializationEnd: [2],
+    reInitializationStart: [3],
+    reInitializationEnd: [4],
 
+    // snapshot channel
     snapshot: [11, 12, 13, 14, 15, 16],
     snapshotRollBackStart: [17],
     snapshotRollBackFinish: [18],
 
+    // user channel
     user: [21],
 };
 
 export const socketEventCode = {
-    // code 1-10 for system de-initialization channel
+    // code 1-10 for system channel
     1: ()=> ({
         chinese: () => `系统开始反初始化！`,
         english: () => `System starts de-initializing！`

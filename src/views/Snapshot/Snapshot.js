@@ -75,7 +75,7 @@ class Snapshot extends Component {
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行回滚快照 ${snapshot.name} 的操作。`, `You are about to rollback snapshot ${snapshot.name}.`)}</p>
-                <p>{lang(`该操作将会将系统恢复至创建该快照的那个时间点的状态，在回滚期间内无法做任何操作。也请您`, `This operation will recover system to the time point that create this snapshot at. Can't do any operations during rolling back.`)}</p>
+                <p>{lang(`该操作将会将系统恢复至创建该快照的那个时间点的状态，在这一过程中无法做任何操作。这需要一定时间才能完成。`, `This operation will recover system to the time point that create this snapshot at. Can't do anything in this process. This will take some time to finish it.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照的创建时间是否是想要恢复到的时间点，并确保已无业务运行在系统上。`, `A suggestion: before executing this operation, ensure that the selected snapshot's create time is what you want the system to recover to, and ensure that there's no service is running on the system.`)}</p>
             </div>,
             iconType: 'exclamation-circle-o',
