@@ -34,6 +34,7 @@ class CustomRAIDForService extends Component {
             currentRAIDConf: {i: -1, arrayLevel: {}, arrayStripeSize: '', selectedDisks: [],},
             // RAID configuration list of current node
             RAIDList: [],
+            // current RAID conf index
             // already selected disks in current RAID
             selectedDisks: [],
             // current RAID level, contains level text and rule
@@ -48,7 +49,6 @@ class CustomRAIDForService extends Component {
     }
 
     async changeServiceIP (currentServiceNode){
-        console.info(currentServiceNode);
         this.setState({currentServiceNode, RAIDList: []});
     }
 
@@ -183,13 +183,12 @@ class CustomRAIDForService extends Component {
 
     async applyConfForNode (){
         if (this.checkRAID()){
-            let {currentServiceNode, RAIDList} = this.state;
-            let currentRAIDConf = this.state.currentRAIDConf;
-            currentRAIDConf.selectedDisks = [...this.state.selectedDisks];
+            let {currentServiceNode, currentRAIDConf, selectedDisks, RAIDList} = this.state;
+            currentRAIDConf.selectedDisks = [...selectedDisks];
             currentRAIDConf.arrayLevel = Object.assign({}, this.state.arrayLevel);
             currentRAIDConf.arrayStripeSize = this.state.arrayStripeSize;
             RAIDList = [...RAIDList];
-            RAIDList.push(currentServiceNode);
+            RAIDList.splice(currentRAIDConf.i, 1, currentRAIDConf);
             await this.setState({RAIDList});
             // reset the used disks record
             this.usedDiskNamesGroupByNodeIP[currentServiceNode.ip] = RAIDList.reduce((prev, curr) => prev.concat(curr.selectedDisks.map(disk => disk)), []);
@@ -206,6 +205,21 @@ class CustomRAIDForService extends Component {
     enableRecommendedRAID (){
         let {enableRecommendedRAID} = this.props;
         (typeof enableRecommendedRAID === 'function') && enableRecommendedRAID();
+    }
+
+    clearRAIDConf (){
+        this.nodeDisksMap = {};
+        this.usedDiskNamesGroupByNodeIP = {};
+        this.setState({
+            currentServiceNode: {},
+            currentRAIDConf: {i: -1, arrayLevel: {}, arrayStripeSize: '', selectedDisks: [],},
+            RAIDList: [],
+            selectedDisks: [],
+            arrayLevel: {name: 'RAID 5', rule: '3|-1|-1'},
+            arrayStripeSize: '8 KB',
+            arrayCapacity: 0,
+            enableApplyButton: true,
+        });
     }
 
     render (){
@@ -267,7 +281,7 @@ class CustomRAIDForService extends Component {
                                     }
                                     {
                                         !!conf.selectedDisks.length && <Popover
-                                            content={lang('该RAID配置完成', 'This RAID is configurated')}
+                                            content={lang('该RAID配置完成', 'This RAID is configured')}
                                         >
                                             <Icon
                                                 className="fs-raid-conf-ok"
