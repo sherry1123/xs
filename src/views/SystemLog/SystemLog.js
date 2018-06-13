@@ -72,8 +72,8 @@ class SystemLog extends Component {
                 {width: '2%', align: 'center', dataIndex: 'level', key: 'level_circle',
                     render: text => <i className={`fs-log-level-circle level-${text}`} />
                 },
-                {width: '17%', title: lang('用户名称', 'Username'), dataIndex: 'user', key: 'user',},
-                {width: '8%', title: lang('用户类型', 'User Type'), dataIndex: 'group', key: 'group',
+                {width: '15%', title: lang('用户名称', 'Username'), dataIndex: 'user', key: 'user',},
+                {width: '10%', title: lang('用户类型', 'User Type'), dataIndex: 'group', key: 'group',
                     render: text => text[language]
                 },
                 {width: '10%', title: lang('用户登录地址', 'User Login IP'), dataIndex: 'ip', key: 'ip',},

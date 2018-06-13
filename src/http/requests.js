@@ -22,31 +22,31 @@ const requestMiddleWare = fn => {
 };
 
 export default  {
+    /*** system status preparation ***/
+
     // synchronized up system status recorded by cookie in browser with server side
     async syncUpSystemStatus (){
         await fetchPost('/api/syncsystemstatus');
     },
 
-    // initialize
+    /*** initialize ***/
+
+    // get disks of a node
     getNodeDisksByNodeIP (ip){
         return requestMiddleWare(async () => await fetchGet('/api/getdisklist', {ip}));
     },
 
+    // start initializing
     startInitialization (config){
         requestMiddleWare(async () => await fetchPost('/api/init', config));
     },
 
-    getDefaultUser (){
-        requestMiddleWare(async () => {
-            let data = await fetchPost('/api/getdefaultuser');
-            !!data && store.dispatch(initializeAction.setDefaultUser(data));
-        });
-    },
-
+    // check service and client IPs' usability
     checkIPs (IPs){
         return requestMiddleWare(async () => await fetchPost('/api/checkclusterenv', IPs));
     },
 
+    // get recommended RAID of a node
     getRecommendedRIAD (metadataServerIPs, storageServerIPs){
         requestMiddleWare(async () => {
             let data = await fetchPost('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
@@ -55,20 +55,34 @@ export default  {
         });
     },
 
-    // user login, logout, update
+    // get the default user account and password of the system when initialization done
+    getDefaultUser (){
+        requestMiddleWare(async () => {
+            let data = await fetchPost('/api/getdefaultuser');
+            !!data && store.dispatch(initializeAction.setDefaultUser(data));
+        });
+    },
+
+    /*** user actions ***/
+
+    // user login
     async login (user){
         return await fetchPost('/api/login', user);
     },
 
+    // user log out
     async logout (user){
         return await fetchPost('/api/logout', user);
     },
 
+    // change user info
     async updateUser (user){
         await fetchPost('/api/updateuser', user);
     },
 
-    // main
+    /*** main ***/
+
+    // services
     getMetadataNodes (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getmetanodestatus');

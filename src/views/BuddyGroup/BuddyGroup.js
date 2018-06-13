@@ -68,10 +68,10 @@ class BuddyGroup extends Component {
             columns: [
                 {title: lang('组ID', 'Group ID'), width: 100, dataIndex: 'groupId',},
                 {title: lang('服务角色', 'Service Role'), width: 100, dataIndex: 'nodeType',},
-                {title: lang('主目标ID', 'Primary Target ID'), width: 100, dataIndex: 'primaryID',},
-                {title: lang('主目标路径', 'Primary Target Path'), width: 200, dataIndex: 'primaryPath',},
-                {title: lang('从目标ID', 'Secondary Target ID'), width: 100, dataIndex: 'secondaryID',},
-                {title: lang('从目标路径', 'Secondary Target Path'), width: 200, dataIndex: 'secondaryPath',},
+                {title: lang('主目标ID', 'Primary Target ID'), width: 80, dataIndex: 'primaryID',},
+                {title: lang('主目标路径', 'Primary Target Path'), width: 220, dataIndex: 'primaryPath',},
+                {title: lang('从目标ID', 'Secondary Target ID'), width: 80, dataIndex: 'secondaryID',},
+                {title: lang('从目标路径', 'Secondary Target Path'), width: 220, dataIndex: 'secondaryPath',},
             ],
         };
         return (

@@ -73,13 +73,13 @@ class Target extends Component {
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('目标ID', 'Target ID'), width: 100, dataIndex: 'targetId',},
-                {title: lang('挂载路径', 'Mount Path'), width: 200, dataIndex: 'mountPath',},
-                {title: lang('所属节点', 'Node'), width: 200, dataIndex: 'node',},
-                {title: lang('服务角色', 'Service Role'), width: 200, dataIndex: 'service',
+                {title: lang('挂载路径', 'Mount Path'), width: 220, dataIndex: 'mountPath',},
+                {title: lang('所属节点', 'Node'), width: 160, dataIndex: 'node',},
+                {title: lang('服务角色', 'Service Role'), width: 180, dataIndex: 'service',
                     render: text => serviceRoleMap[text]
                 },
                 {title: lang('服务ID', 'Service ID'), width: 100, dataIndex: 'nodeId',},
-                {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
+                {title: lang('容量', 'Capacity'), width: 170, dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
                         <Popover
                             placement="top"
