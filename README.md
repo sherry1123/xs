@@ -67,33 +67,30 @@ This framework supplies a series of design principles, practical patterns and hi
 
 #### Multi-process Model
 ```
-  master       agentd        job         task 
+  master       server      schedule
     | 
-    | fork agentd                               
+    | fork server                               
     |———————————>|                              master: manage status    
-    |<———————————|                              agentd: monitor hardware
-    |agentd ready|  fork job                    job: handle http request
-    |————————————|———————————>|                 task: timing tasks
-    |<———————————|————————————|                 
-    | job ready  |            |  fork task      not initialized: master, agentd, job
-    |————————————|————————————|———————————>|    initialized & master: all
-    |<———————————|————————————|————————————|    initialized & not master: master, agentd
-    | task ready |            |            |
+    |<———————————|                              server: handle http request
+    |server ready|fork schedule                 schedule: timing tasks
+    |————————————|———————————>|
+    |<———————————|————————————|   
+    |  schedule  |   ready    |
+    |            |            |
 ```
 #### Folder Directory Structure
 ```
 - server.js    entrance(master)
 - server
-  |- agentd    monitor hardware(agentd)
   |- config
   |- controller
   |- middleware
   |- model
   |- module
   |- router
-  |- schedule  timing tasks(task)
+  |- schedule  timing tasks(schedule)
   |- service
-  |- index.js  handle http request(job)
+  |- index.js  handle http request(server)
 ```
 #### Deployment Method
 
