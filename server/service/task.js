@@ -1,4 +1,3 @@
-const email = require('./email');
 const status = require('./status');
 const config = require('../config');
 const afterMe = require('./afterMe');
@@ -7,18 +6,11 @@ const snapshot = require('./snapshot');
 const promise = require('../module/promise');
 const handler = require('../module/handler');
 const model = {
-    async sendMail() {
-        try {
-            await email.sendMail();
-        } catch (error) {
-            handler.error(62, error);
-        }
-    },
     async createSnapshot() {
         try {
             await snapshot.runSnapshotSchedule();
         } catch (error) {
-            handler.error(148, error);
+            handler.error(211, error);
         }
     },
     async sendChangePasswordMessage() {
@@ -26,7 +18,7 @@ const model = {
             let [{ password }] = await database.getUser({ username: 'admin' });
             password === handler.md5('123456') && await status.sendEvent('user', 21, { username: 'admin', password: '123456' }, false, true);
         } catch (error) {
-            handler.error(52, error);
+            handler.error(212, error);
         }
     },
     async getClusterThroughputAndIops() {

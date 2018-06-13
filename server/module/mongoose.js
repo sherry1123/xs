@@ -21,7 +21,7 @@ const getMongoDBReplSetConfig = async () => {
             }
         }
     } catch (error) {
-        handler.error(23, error);
+        handler.error(22, error);
     }
 })();
 module.exports = mongoose;
