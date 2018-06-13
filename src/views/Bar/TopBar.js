@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import generalAction from '../../redux/actions/generalAction';
 import {Affix, Icon, Popover, notification} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
-// import WarningPopover from './WarningPopover';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import {lsGet, lsSet} from '../../services';
@@ -17,15 +16,16 @@ class TopBar extends Component {
     }
 
     componentDidMount (){
-        let abnormalNodes = lsGet('abnormalNodes');
-        if (!abnormalNodes){
-            lsSet('abnormalNodes', []);
+        let abnormalServices = lsGet('abnormalServices');
+        if (!abnormalServices){
+            lsSet('abnormalServices', []);
         }
+        // firstly remove the event to void prompt user for more than once
+        window.removeEventListener('offline', this.browserOffline);
+        window.removeEventListener('online', this.browserOnline);
         // bind browser switch from online/offline status event
-        window.removeEventListener('offline', this.offline);
-        window.addEventListener('offline', this.offline);
-        window.removeEventListener('online', this.online);
-        window.addEventListener('online', this.online);
+        window.addEventListener('offline', this.browserOffline);
+        window.addEventListener('online', this.browserOnline);
     }
 
     changeMenuExpand (){
@@ -33,13 +33,13 @@ class TopBar extends Component {
         let menuExpand = !this.props.menuExpand;
         this.props.changeMenuExpand(menuExpand);
         lsSet('menuExpand', menuExpand);
-        // trigger a window resize event to let some components know it's the time to resize itself, such as charts
+        // simulate trigger a window resize event to let some components know it's the time to resize itself, such as charts
         if ('onresize' in  window){
             let event = document.createEvent('Event');
             event.initEvent('resize', true, true);
             // since the sidebar do expand and un-expand actions will fire an animation, so we should trigger
             // this event a more time after the animation is done to ensure components' resize actions work properly
-            dispatchEvent(event) && setTimeout(() => {
+            window.dispatchEvent(event) && setTimeout(() => {
                 window.dispatchEvent(event);
                 event = null;
             }, 400);
@@ -50,14 +50,14 @@ class TopBar extends Component {
         this.setState({direction});
     }
 
-    offline (){
+    browserOffline (){
         notification.warning({
             message: lang('网络异常', 'Network Abnormally'),
             description: lang(`浏览器处于离线状态，强检查网络连接！`, `Browser is offline, please check network connection!`)
         });
     }
 
-    online (){
+    browserOnline (){
         notification.success({
             message: lang('网络恢复', 'Network Recovery'),
             description: lang(`浏览器处于在线状态，网络已恢复正常！`, `Browser is online, network has recovered to normal status!`)
@@ -65,36 +65,36 @@ class TopBar extends Component {
     }
 
     componentWillReceiveProps (nextProps){
-        let abnormalNodes = lsGet('abnormalNodes') || [];
-        let {metadataNodes, storageNodes} = nextProps;
-        let nodes = metadataNodes.concat(storageNodes);
+        let abnormalServices = lsGet('abnormalServices') || [];
+        let {metadataServiceList, storageServiceList} = nextProps;
+        let services = metadataServiceList.concat(storageServiceList);
         // In consideration of that a metadata service and a storage service can run on a same node,
         // so their 'hostname' may be the same. Consider to this case, it demands another key 'type'
         // to collaborate with key 'hostname' for distinguishing different services precisely.
-        nodes.forEach(node => {
+        services.forEach(node => {
             if (node.status){
-                let removeNodes = [];
-                abnormalNodes.forEach(abnormalNode => {
+                let removeServices = [];
+                abnormalServices.forEach(abnormalNode => {
                     if (`${node.type}-${node.hostname}` === abnormalNode){
                         notification.open({
                             message: lang('服务恢复', 'Service Recovery'),
                             description: lang(`运行在节点 ${node.hostname} 上的 ${node.type === 'metadata' ? '元数据服务' : '存储服务' }(ID: ${node.nodeId}) 的状态已恢复正常!`, `The status of ${node.type} service(ID: ${node.nodeId}) which runs on ${node.hostname} has recovered to normal!`)
                         });
-                        removeNodes.push(abnormalNode);
+                        removeServices.push(abnormalNode);
                     }
                 });
-                if (!!removeNodes.length){
-                    abnormalNodes = abnormalNodes.filter(abnormalNode => !removeNodes.includes(abnormalNode));
-                    lsSet('abnormalNodes', abnormalNodes);
+                if (!!removeServices.length){
+                    abnormalServices = abnormalServices.filter(abnormalNode => !removeServices.includes(abnormalNode));
+                    lsSet('abnormalServices', abnormalServices);
                 }
             } else {
-                if (!abnormalNodes.includes(`${node.type}-${node.hostname}`)){
+                if (!abnormalServices.includes(`${node.type}-${node.hostname}`)){
                     notification.open({
                         message: lang('服务异常', 'Service Abnormally'),
                         description: lang(`运行在节点 ${node.hostname} 上的 ${node.type === 'metadata' ? '元数据服务' : '存储服务' }(ID: ${node.nodeId}) 现处于异常状态!`, `The ${node.type} service(ID: ${node.nodeId}) which runs on ${node.hostname} is abnormal now!`)
                     });
-                    abnormalNodes.push(`${node.type}-${node.hostname}`);
-                    lsSet('abnormalNodes', abnormalNodes);
+                    abnormalServices.push(`${node.type}-${node.hostname}`);
+                    lsSet('abnormalServices', abnormalServices);
                 }
             }
         });
@@ -138,8 +138,8 @@ class TopBar extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {general: {version, menuExpand, user, knownProblems}, metadataNode: {overview: {nodeList: metadataNodes}}, storageNode: {overview: {nodeList: storageNodes}}}} = state;
-    return {language, version, menuExpand, user, knownProblems, metadataNodes, storageNodes};
+    let {language, main: {general: {version, menuExpand, user}, service: {metadataServiceList, storageServiceList}}} = state;
+    return {language, version, menuExpand, user, metadataServiceList, storageServiceList};
 };
 
 const mapDispatchToProps = dispatch => {

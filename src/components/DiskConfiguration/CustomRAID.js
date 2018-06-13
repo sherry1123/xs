@@ -92,7 +92,7 @@ class CustomRAID extends Component {
     }
 
     async changeServiceIP (currentServiceNode){
-        console.info(currentServiceNode, this.state[currentServiceNode.type + 'Nodes']);
+        // console.info(currentServiceNode, this.state[currentServiceNode.type + 'Nodes']);
         let {raidList} = this.state[currentServiceNode.type + 'Nodes'].filter(node => node.ip === currentServiceNode.ip)[0];
         currentServiceNode.raidList = raidList;
         this.setState({currentServiceNode});
@@ -259,7 +259,7 @@ class CustomRAID extends Component {
             currentRAIDConf.arrayLevel = Object.assign({}, this.state.arrayLevel);
             currentRAIDConf.arrayStripeSize = this.state.arrayStripeSize;
             let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
-            console.info(nodes, currentServiceNode.i);
+            // console.info(nodes, currentServiceNode.i);
             nodes[currentServiceNode.i].raidList[currentRAIDConf.i] = currentRAIDConf;
             await this.setState({[currentServiceNode.type + 'Nodes' ]: nodes});
             // reset the used disks record

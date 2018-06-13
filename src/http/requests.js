@@ -3,8 +3,7 @@ import {lsGet} from '../services';
 import store from '../redux';
 import initializeAction from '../redux/actions/initializeAction';
 import generalAction from '../redux/actions/generalAction';
-import metadataNodeAction from '../redux/actions/metadataNodeAction';
-import storageNodeAction from '../redux/actions/storageNodeAction';
+import serviceAction from '../redux/actions/serviceAction';
 import dashboardAction from '../redux/actions/dashboardAction';
 import dataNodeAction from '../redux/actions/dataNodeAction';
 import systemLogAction from '../redux/actions/systemLogAction';
@@ -23,19 +22,7 @@ const requestMiddleWare = fn => {
 };
 
 export default  {
-    // redux store check
-    checkStoreIsReady (){
-        return new Promise(resolve => {
-            let timer = setInterval(() => {
-                if (store){
-                    clearInterval(timer);
-                    resolve();
-                }
-            }, 1000);
-        });
-    },
-
-    // synchronized system status browser cookie with http server
+    // synchronized up system status recorded by cookie in browser with server side
     async syncUpSystemStatus (){
         await fetchPost('/api/syncsystemstatus');
     },
@@ -82,74 +69,18 @@ export default  {
     },
 
     // main
-    // known problems
-    getKnownProblems (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getknownproblems');
-            !!data && store.dispatch(generalAction.setKnownProblems(data));
-        });
-    },
-
-    // metadata node
     getMetadataNodes (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getmetanodestatus');
-            !!data && store.dispatch(metadataNodeAction.setMetadataNodes(data));
+            !!data && store.dispatch(serviceAction.setMetadataServiceLiSt(data));
         });
     },
 
-    getMetadataNodesStatics (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getusermetastats', {nodeId: 0});
-            !!data && store.dispatch(metadataNodeAction.setMetadataNodeOverviewUserOperationStatics(data));
-        });
-    },
-
-    getMetadataNodeDetailStatics ({nodeId} = (lsGet('currentMetadataNode') || {})){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getusermetastats', {nodeId});
-            !!data && store.dispatch(metadataNodeAction.setMetadataNodeDetailUserOperationStatics(data));
-        });
-    },
-
-    // storage node
     getStorageNodes (){
         requestMiddleWare(async () => {
             let data = await fetchGet('/api/getstoragenodestatus');
-            !!data && store.dispatch(storageNodeAction.setStorageNodes(data));
+            !!data && store.dispatch(serviceAction.setStorageServiceLiSt(data));
         });
-    },
-
-    getStorageNodeDiskStatus (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getstoragediskspace');
-            !!data && store.dispatch(storageNodeAction.setStorageNodeDiskStatus(data));
-        });
-    },
-
-    getStorageNodesThroughput (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getstoragethroughput', {nodeId: 0});
-            !!data && store.dispatch(storageNodeAction.setStorageNodeOverviewThroughput(data));
-        });
-    },
-
-    getStorageNodeTargets ({nodeId} = (lsGet('currentStorageNode') || {})){
-        if (!!nodeId){
-            requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getstoragetarget', {nodeId});
-                !!data && store.dispatch(storageNodeAction.setStorageNodeDetailTargets(data));
-            });
-        }
-    },
-
-    getStorageNodeDetailThroughput ({nodeId} = (lsGet('currentStorageNode') || {})){
-        if (!!nodeId){
-            requestMiddleWare(async () => {
-                let data = await fetchGet('/api/getstoragethroughput', {nodeId});
-                !!data && store.dispatch(storageNodeAction.setStorageNodeDetailThroughput(data));
-            });
-        }
     },
 
     // dashboard and cluster info
@@ -252,21 +183,6 @@ export default  {
         }
     },
 
-    // system log
-    getEventLogs (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/geteventlog');
-            !!data && store.dispatch(systemLogAction.setSystemEventLogs(data));
-        });
-    },
-
-    getAuditLogs (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getauditlog');
-            !!data && store.dispatch(systemLogAction.setSystemAuditLogs(data));
-        });
-    },
-
     // service and client
     async createMetadataServiceToCluster (service){
         await fetchPost('/api/addmetadatatocluster', service);
@@ -353,26 +269,6 @@ export default  {
 
     async deleteSnapshotSchedulesInBatch (names){
         await fetchPost('/api/batchdeletesnapshotschedule', {names});
-    },
-
-    // share
-    getShareList (){
-        requestMiddleWare(async () => {
-            let data = await fetchGet('/api/getnasexport');
-            !!data && store.dispatch(shareAction.setShareList(data));
-        });
-    },
-
-    async createShare (nasExport){
-        await fetchPost('/api/createnasexport', nasExport);
-    },
-
-    async updateShare (nasExport){
-        await fetchPost('/api/updatenasexport', nasExport);
-    },
-
-    async deleteShare (nasExport){
-        await fetchPost('/api/deletenasexport', nasExport);
     },
 
     // NAS server
@@ -580,4 +476,18 @@ export default  {
         await fetchPost('/api/setpattern', data)
     },
 
+    // system log
+    getEventLogs (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/geteventlog');
+            !!data && store.dispatch(systemLogAction.setSystemEventLogs(data));
+        });
+    },
+
+    getAuditLogs (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getauditlog');
+            !!data && store.dispatch(systemLogAction.setSystemAuditLogs(data));
+        });
+    },
 };

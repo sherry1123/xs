@@ -4,8 +4,7 @@ import {lsGet} from '../../services';
 import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';
-import metadataNodeReducer from './metadataNodeReducer';
-import storageNodeReducer from './storageNodeReducer';
+import serviceReducer from './serviceReducer';
 import dashboardReducer from './dashboardReducer';
 import dataNodeReducer from './dataNodeReducer';
 import systemLogReducer from './systemLogReducer';
@@ -42,12 +41,8 @@ export default combineReducers({
                     state[key] = generalReducer(main[key], action);
                     break;
 
-                case 'metadataNode':
-                    state[key] = metadataNodeReducer(main[key], action);
-                    break;
-
-                case 'storageNode':
-                    state[key] = storageNodeReducer(main[key], action);
+                case 'service':
+                    state[key] = serviceReducer(main[key], action);
                     break;
 
                 case 'dashboard':
