@@ -1394,29 +1394,42 @@ const model = {
         return result;
     },
     async createTarget(param, user, ip) {
-        let { storageServerIPs } = param;
-        let serviceList = Object.keys(storageServerIPs);
+        let { storageServerIPs, enableCustomRAID } = param;
+        let serviceList = [];
         let result = {};
         try {
             let success = 0;
-            for (let service of serviceList) {
-                let ip = service;
-                let diskGroup = storageServerIPs[service].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
-                let res = await afterMe.createTarget({ ip, diskGroup });
-                if (!res.errorId) {
-                    success += 1;
+            if (enableCustomRAID) {
+                serviceList = storageServerIPs.map(server => (server.ip));
+                for (let server of storageServerIPs) {
+                    let { ip, raidList } = server;
+                    let diskGroup = raidList.map(raid => ({ diskList: raid.selectedDisks.map(disk => (disk.diskName)), raidLevel: raid.arrayLevel.name.toLowerCase().replace(' ', ''), stripeSize: raid.arrayStripeSize.replace(' ', '').replace('B', '').toLowerCase() }));
+                    let res = await afterMe.createTarget({ ip, diskGroup });
+                    if (!res.errorId) {
+                        success += 1;
+                    }
+                }
+            } else {
+                serviceList = Object.keys(storageServerIPs);
+                for (let service of serviceList) {
+                    let ip = service;
+                    let diskGroup = storageServerIPs[service].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+                    let res = await afterMe.createTarget({ ip, diskGroup });
+                    if (!res.errorId) {
+                        success += 1;
+                    }
                 }
             }
             if (success === serviceList.length) {
-                result = handler.response(0, 'create target successfully');
-                await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' successfully`, ip });
+                result = handler.response(0, 'create storage target successfully');
+                await log.audit({ user, desc: `create storage target in '${handler.bypass(serviceList)}' successfully`, ip });
             } else {
-                result = handler.response(173, 'create target failed', param);
-                await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' failed`, ip });
+                result = handler.response(173, 'create storage target failed', param);
+                await log.audit({ user, desc: `create storage target in '${handler.bypass(serviceList)}' failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' failed`, ip });
+            await log.audit({ user, desc: `create storage target in '${handler.bypass(serviceList)}' failed`, ip });
         }
         return result;
     },
@@ -1482,10 +1495,15 @@ const model = {
         return result;
     },
     async addMetadataToCluster(param, user, ip) {
-        let { ip: server, RAIDList } = param;
+        let { ip: server, raidList, enableCustomRAID } = param;
         let result = {};
+        let diskGroup = [];
         try {
-            let diskGroup = RAIDList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            if (enableCustomRAID) {
+                diskGroup = raidList.map(raid => ({ diskList: raid.selectedDisks.map(disk => (disk.diskName)), raidLevel: raid.arrayLevel.name.toLowerCase().replace(' ', ''), stripeSize: raid.arrayStripeSize.replace(' ', '').replace('B', '').toLowerCase() }));
+            } else {
+                diskGroup = raidList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            }
             let res = await afterMe.addMetadataToCluster({ ip: server, diskGroup });
             if (!res.errorId) {
                 await database.addMetadataToCluster({ ip: server });
@@ -1502,10 +1520,15 @@ const model = {
         return result;
     },
     async addStorageToCluster(param, user, ip) {
-        let { ip: server, RAIDList } = param;
+        let { ip: server, raidList, enableCustomRAID } = param;
         let result = {};
+        let diskGroup = [];
         try {
-            let diskGroup = RAIDList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            if (enableCustomRAID) {
+                diskGroup = raidList.map(raid => ({ diskList: raid.selectedDisks.map(disk => (disk.diskName)), raidLevel: raid.arrayLevel.name.toLowerCase().replace(' ', ''), stripeSize: raid.arrayStripeSize.replace(' ', '').replace('B', '').toLowerCase() }));
+            } else {
+                diskGroup = raidList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            }
             let res = await afterMe.addStorageToCluster({ ip: server, diskGroup });
             if (!res.errorId) {
                 await database.addStorageToCluster({ ip: server });

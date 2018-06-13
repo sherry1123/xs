@@ -212,6 +212,7 @@ exports.i18n = {
     pattern: '条带',
     or: '或者',
     server: '服务器',
+    target: '目标',
     buddy: '伙伴',
     cluster: '集群',
     metadata: '元数据',

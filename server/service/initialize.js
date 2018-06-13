@@ -73,8 +73,14 @@ const model = {
         const handleServiceParam = (RAIDConfig, serviceType) => {
             let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs : RAIDConfig.storageServerIPs;
             let param = [];
-            for (let ip of Object.keys(serviceRaidConfig)) {
-                param.push({ ip, diskGroup: serviceRaidConfig[ip].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` })) });
+            if (enableCustomRAID) {
+                for (let service of serviceRaidConfig) {
+                    param.push({ ip: service.ip, diskGroup: service.raidList.map(raid => ({ diskList: raid.selectedDisks.map(disk => (disk.diskName)), raidLevel: raid.arrayLevel.name.toLowerCase().replace(' ', ''), stripeSize: raid.arrayStripeSize.replace(' ', '').replace('B', '').toLowerCase() })) });
+                }
+            } else {
+                for (let service of Object.keys(serviceRaidConfig)) {
+                    param.push({ ip: service, diskGroup: serviceRaidConfig[service].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` })) });
+                }
             }
             return param;
         };
