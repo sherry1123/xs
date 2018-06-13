@@ -144,7 +144,7 @@ const model = {
         if (!res.errorId) {
             for (let i of Object.keys(res.data)) {
                 let { hostname, ip, service, cpuUsage, memUsage, spaceUsage, spaceTotal, spaceUsed, spaceFree, status } = res.data[i];
-                res.data[i] = { hostname, ip, service: service.map(i => (i === 'meta' ? 'metadata' : i)), isPureMgmt: service.length === 1 && service.includes('mgmt'), status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${(spaceUsed / spaceTotal * 100).toFixed(2)}%` } };
+                res.data[i] = { hostname, ip, service: service.filter(i => (i !== 'client')).map(i => (i === 'meta' ? 'metadata' : i)), isPureMgmt: service.length === 1 && service.includes('mgmt'), status, cpuUsage: `${cpuUsage.toFixed(2)}%`, memoryUsage: `${memUsage.toFixed(2)}%`, space: { total: spaceTotal, used: spaceUsed, free: spaceFree, usage: `${spaceTotal ? (spaceUsed / spaceTotal * 100).toFixed(2) : 0}%` } };
             }
             res.data = res.data.sort((prev, next) => (prev.hostname > next.hostname));
         }
