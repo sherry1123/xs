@@ -242,5 +242,6 @@ exports.i18n = {
     cluster: '集群',
     metadata: '元数据',
     storage: '存储',
-    management: '管理'
+    management: '管理',
+    service: '服务'
 };
