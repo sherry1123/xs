@@ -4,7 +4,7 @@ import echarts from 'echarts';
 export default class FSPieChart extends Component {
     constructor (props) {
         super(props);
-        let {option: {width = '100%', height = '100%', title, tooltip, legend = {}, series,}} = this.props;
+        let {option: {width = '100%', height = '100%', title, tooltip, legend = {}, series, resizeDelay = 400}} = this.props;
         this.state = {
             width,
             height,
@@ -12,7 +12,25 @@ export default class FSPieChart extends Component {
             tooltip,
             legend,
             series: this.makeSeries(series, this.props),
+            resizeDelay,
         };
+    }
+
+    componentDidMount (){
+        this.renderChart();
+        window.addEventListener('resize', this.resizeChart.bind(this));
+    }
+
+    componentWillUnmount (){
+        window.removeEventListener('resize', this.resizeChart.bind(this));
+    }
+
+    async componentWillReceiveProps(nextProps){
+        let {option: {series}} = nextProps;
+        await this.setState({
+            series: this.makeSeries(series, nextProps)
+        });
+        this.updateChart(this.state);
     }
 
     makeSeries (series, props){
@@ -48,23 +66,6 @@ export default class FSPieChart extends Component {
         });
     }
 
-    componentDidMount (){
-        this.renderChart();
-        window.addEventListener('resize', this.resizeChart.bind(this));
-    }
-
-    componentWillUnmount (){
-        window.removeEventListener('resize', this.resizeChart.bind(this));
-    }
-
-    async componentWillReceiveProps(nextProps){
-        let {option: {series}} = nextProps;
-        await this.setState({
-            series: this.makeSeries(series, nextProps)
-        });
-        this.updateChart(this.state);
-    }
-
     generateOption ({title, legend, tooltip}){
         return {
             title,
@@ -90,7 +91,9 @@ export default class FSPieChart extends Component {
 
     resizeChart (){
         this.timer && clearTimeout(this.timer);
-        this.timer = setTimeout(this._chartInstance.resize, 300);
+        let {resizeDelay} = this.state;
+        // should do it after all animations that will affect the width calculation are done
+        this.timer = setTimeout(this._chartInstance.resize, resizeDelay);
     }
 
     render (){
@@ -100,8 +103,7 @@ export default class FSPieChart extends Component {
                 style={{width: this.state.width, height: this.state.height + 'px'}}
                 ref={chartWrapper => this.chartWrapper = chartWrapper}
             >
-                Sorry, your browser does not support canvas,
-                so please replace it with modern browsers that support HTML5 standards.
+                Sorry, your browser does not support canvas, so please replace it with modern browsers that support HTML5 standards.
             </div>
         );
     }

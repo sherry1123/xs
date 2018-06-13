@@ -243,7 +243,7 @@ class Initialize extends Component {
                 if (!!this.state[category + 'Error'][i].status){
                     await this.setErrorArr(category, i, {status: '', help: ''});
                     // if it's mgmt server IP and need to do HA validation
-                    if ((category === 'managementServerIPs' || category === 'hbIPs')&& this.props.enableHA){
+                    if ((category === 'managementServerIPs' || category === 'hbIPs') && this.props.enableHA){
                         await this.validateIPForHA();
                         await this.validateNetworkSegmentForMgmtAndHAIPs();
                     }
@@ -255,7 +255,7 @@ class Initialize extends Component {
     async validateIPForHA (){
         // once enabled HA for management server, management server IPs shouldn't be the same with any of metadata, storage or client server IPs
         let {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs,} = this.props;
-        let errorHelp = lang('为管理服务启用HA后，管理服务器IP不能与任何元数据、存储服务或客户端的IP相同', 'once enabled HA for management service, management services\' IPs shouldn\'t be the same with any of metadata, storage server or client IPs');
+        let errorHelp = lang('为管理服务启用HA后，管理服务IP不能与任何元数据、存储服务或客户端的IP相同', 'Once enabled HA for management service, management services\' IPs shouldn\'t be the same with any of metadata, storage server or client IPs');
         for (let i = 0; i < managementServerIPs.length; i ++){
             let managementServerIP = managementServerIPs[i];
             if (managementServerIP){

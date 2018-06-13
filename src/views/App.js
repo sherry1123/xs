@@ -13,6 +13,7 @@ const Login = asyncLoad(() => import('./Login/Login'));
 const Main = asyncLoad(() => import('./Main/Main'));
 const RollingBack = asyncLoad(() => import('./RollingBack/RollingBack'));
 const DeInitializing = asyncLoad(() => import('./DeInitializing/DeInitializing'));
+const ReInitializing = asyncLoad(() => import('./ReInitializing/ReInitializing'));
 const Error = asyncLoad(() => import('./Error/Error'));
 
 export default class App extends Component {
@@ -45,7 +46,6 @@ export default class App extends Component {
             }
         }
 
-
         this.state = {
             defaultPath
         };
@@ -57,6 +57,7 @@ export default class App extends Component {
                 <LocaleProvider locale={lang(zhCN, enUS)}>
                     <Switch>
                         <Route path={routerPath.DeInitializing} component={DeInitializing} />
+                        <Route path={routerPath.ReInitializing} component={ReInitializing} />
                         <Route path={routerPath.RollingBack} component={RollingBack} />
                         <Route path={routerPath.Init} component={Initialize} />
                         <Route path={routerPath.Login} component={Login} />

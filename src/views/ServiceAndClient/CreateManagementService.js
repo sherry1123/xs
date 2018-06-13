@@ -51,7 +51,7 @@ class CreateManagementService extends Component {
                 valid
             }
         };
-        validation = Object.assign(this.state.validation, validation);
+        validation = Object.assign({}, this.state.validation, validation);
         await this.setState({validation});
     }
 
@@ -60,41 +60,65 @@ class CreateManagementService extends Component {
         let {serviceData} = this.state;
         let ip = serviceData[key];
 
-        // for all
-        if (!ip){
-            this.validationUpdateState(key, {cn: '请输入IP', en: 'Please select the IP'}, false);
-        } else if (!validateIpv4(ip)){
-            this.validationUpdateState(key, {cn: 'IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
-        }
-
-        if (key === 'mgmtIP2'){
+        if (key === 'mgmtIP1' || key === 'mgmtIP2'){
+            if (!validateIpv4(ip)){
+                await this.validationUpdateState(key, {cn: 'IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
+            }
             let mgmtIP2Duplicated = this.props.managementServerIPs.includes(ip);
             if (mgmtIP2Duplicated){
-                this.validationUpdateState('mgmtIP2', {cn: '该IP已被一个已存在的管理服务使用', en: 'This IP has been used by a existing management service'}, false);
+                await this.validationUpdateState(key, {cn: '该IP已被一个已存在的管理服务使用', en: 'This IP has been used by a existing management service'}, false);
+            }
+            let anotherMgmtIP = '';
+            if (key === 'mgmtIP1'){
+                anotherMgmtIP = this.state.serviceData.mgmtIP2;
+            } else {
+                anotherMgmtIP = this.state.serviceData.mgmtIP1;
+            }
+            if (anotherMgmtIP === ip){
+                await this.validationUpdateState('mgmtIP1', {cn: '两个管理服务IP不能相同', en: 'The two management service IPs can not be the same'}, false);
+                await this.validationUpdateState('mgmtIP2', {cn: '两个管理服务IP不能相同', en: 'The two management service IPs can not be the same'}, false);
+            }
+        }
+
+        if (key === 'floatIP'){
+            if (!validateIpv4(ip)){
+                await this.validationUpdateState('floatIP', {cn: 'IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
             }
         }
 
         if (key === 'hbIP1'){
+            if (!validateIpv4(ip)){
+                await this.validationUpdateState('hbIP1', {cn: 'IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
+            }
             let hbIP2 = this.state.serviceData.hbIP2;
             if (!!ip && ip === hbIP2){
-                this.validationUpdateState('hbIP1', {cn: '同类型IP不能重复', en: 'The IPs in one type can\'t be the same with each other'}, false);
+                await this.validationUpdateState('hbIP1', {cn: '同类型IP不能重复', en: 'The IPs in one type can\'t be the same with each other'}, false);
             }
         }
 
         if (key === 'hbIP2'){
+            if (!validateIpv4(ip)){
+                await this.validationUpdateState('hbIP2', {cn: 'IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
+            }
             let hbIP1 = this.state.serviceData.hbIP1;
             if (!!ip && ip === hbIP1){
-                this.validationUpdateState('hbIP1', {cn: '同类型IP不能重复', en: 'The IPs in one type can\'t be the same with each other'}, false);
+                await this.validationUpdateState('hbIP2', {cn: '同类型IP不能重复', en: 'The IPs in one type can\'t be the same with each other'}, false);
             }
         }
 
-        // do some advanced validation
-        await this.validateIPForHA();
-        await this.validateNetworkSegmentForMgmtAndHAIPs();
+        if (key === 'mgmtIP1' || key === 'mgmtIP2' || key === 'hbIP1' || key === 'hbIP2'){
+            if (this.state.validation[key].valid){
+                console.info(this.state.validation[key].valid);
+                // do some advanced validations for mgmtIP and hbIP
+                await this.validateIPForHA();
+                await this.validateNetworkSegmentForMgmtAndHAIPs();
+            }
+        }
 
         // calculate whole form validation
         let formValid = true;
         Object.keys(this.state.validation).forEach(key => {
+            console.info(key, this.state.validation[key].valid);
             formValid = formValid && this.state.validation[key].valid;
         });
         this.setState({formValid});
@@ -103,17 +127,20 @@ class CreateManagementService extends Component {
     async validateIPForHA (){
         // once enabled HA for management server, management server IPs shouldn't be the same with any of metadata, storage or client server IPs
         let {metadataServerIPs, storageServerIPs, clientIPs} = this.props;
-        let {serviceData: {mgmtIP2}} = this.state;
+        let {serviceData} = this.state;
         let errorHelp = {cn: '为管理服务启用HA后，管理服务器IP不能与任何元数据、存储服务或客户端的IP相同', en: 'once enabled HA for management service, management services IPs\' shouldn\'t be the same with any of metadata, storage server or client IPs'};
-        if (mgmtIP2){
-            if (metadataServerIPs.includes(mgmtIP2) ||
-                storageServerIPs.includes(mgmtIP2) ||
-                clientIPs.includes(mgmtIP2)
+        let mgmtIPs = ['mgmtIP1', 'mgmtIP2'];
+        for (let i = 0; i < mgmtIPs.length; i ++){
+            let key = mgmtIPs[i];
+            let mgmtIP = serviceData[key];
+            if (metadataServerIPs.includes(mgmtIP) ||
+                storageServerIPs.includes(mgmtIP) ||
+                clientIPs.includes(mgmtIP)
             ){
-                await this.validationUpdateState('mgmtIP2', errorHelp, false);
+                await this.validationUpdateState(key, errorHelp, false);
             } else {
-                if (!!this.state.validation.mgmtIP2.status){
-                    await this.validationUpdateState('mgmtIP2', {cn: '', en: ''}, true);
+                if (!!this.state.validation[key].status){
+                    await this.validationUpdateState(key, {cn: '', en: ''}, true);
                 }
             }
         }
@@ -121,27 +148,28 @@ class CreateManagementService extends Component {
 
     async validateNetworkSegmentForMgmtAndHAIPs (){
         // firstly should pass the basic validation
-        if (!this.state.validation.mgmtIP2.status){
-            let mgmtIP1 = this.props.metadataServerIPs[0];
-            let {serviceData: {mgmtIP2, hbIP1, hbIP2}} = this.state;
-            let errorHelp = {cn: '管理服务器IP不能与和它对应的连接检测IP处于相同网段', en: 'Management Server IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP'};
-            let [mgmtIP1_1, mgmtIP1_2, mgmtIP1_3] = mgmtIP1.split('.');
-            let [hbIP1_1, hbIP1_2, hbIP1_3] = hbIP1.split('.');
-            if (!(mgmtIP1_1 !== hbIP1_1 || mgmtIP1_2 !== hbIP1_2 || mgmtIP1_3 !== hbIP1_3)){
-                await this.validationUpdateState('hbIP1', errorHelp, false);
-            } else {
-                if (!!mgmtIP1){
-                    await this.validationUpdateState('hbIP1', {cn: '', en: ''}, true);
-                }
+        if (!!this.state.validation.mgmtIP1.status|| !!this.state.validation.mgmtIP2.status){
+            // management server IPs haven't pass the basic validation
+            return;
+        }
+        let {serviceData: {mgmtIP1, mgmtIP2, hbIP1, hbIP2}} = this.state;
+        let errorHelp = {cn: '管理服务器IP不能与和它对应的连接检测IP处于相同网段', en: 'Management Server IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP'};
+        let [mgmtIP1_1, mgmtIP1_2, mgmtIP1_3] = mgmtIP1.split('.');
+        let [hbIP1_1, hbIP1_2, hbIP1_3] = hbIP1.split('.');
+        if (!(mgmtIP1_1 !== hbIP1_1 || mgmtIP1_2 !== hbIP1_2 || mgmtIP1_3 !== hbIP1_3)){
+            await this.validationUpdateState('mgmtIP1', errorHelp, false);
+        } else {
+            if (!!mgmtIP1){
+                await this.validationUpdateState('mgmtIP1', {cn: '', en: ''}, true);
             }
-            let [mgmtIP2_1, mgmtIP2_2, mgmtIP2_3] = mgmtIP2.split('.');
-            let [hbIP2_1, hbIP2_2, hbIP2_3] = hbIP2.split('.');
-            if (!(mgmtIP2_1 !== hbIP2_1 || mgmtIP2_2 !== hbIP2_2 || mgmtIP2_3 !== hbIP2_3)){
-                await this.validationUpdateState('hbIP2', errorHelp, false);
-            } else {
-                if (!!mgmtIP2){
-                    await this.validationUpdateState('hbIP2', {cn: '', en: ''}, true);
-                }
+        }
+        let [mgmtIP2_1, mgmtIP2_2, mgmtIP2_3] = mgmtIP2.split('.');
+        let [hbIP2_1, hbIP2_2, hbIP2_3] = hbIP2.split('.');
+        if (!(mgmtIP2_1 !== hbIP2_1 || mgmtIP2_2 !== hbIP2_2 || mgmtIP2_3 !== hbIP2_3)){
+            await this.validationUpdateState('mgmtIP2', errorHelp, false);
+        } else {
+            if (!!mgmtIP2){
+                await this.validationUpdateState('mgmtIP2', {cn: '', en: ''}, true);
             }
         }
     }
@@ -346,8 +374,8 @@ class CreateManagementService extends Component {
                             {...buttonPopoverConf}
                             content={
                                 lang(
-                                    `对应管理服务1，不能与管理服务所在节点处于同一网段`,
-                                    `Corresponding with management service 1, can't be in the same network segment with management services`
+                                    `对应管理服务2，并不能与它的IP处于同一网段`,
+                                    `It is corresponding to management service 2, and can't be in the same its IP`
                                 )
                             }
                         >
@@ -372,8 +400,8 @@ class CreateManagementService extends Component {
                             {...buttonPopoverConf}
                             content={
                                 lang(
-                                    `对应管理服务2，不能与管理服务所在节点处于同一网段`,
-                                    `Corresponding with management service 2, can't be in the same network segment with management services`
+                                    `对应管理服务2，并不能与它的IP处于同一网段`,
+                                    `It is corresponding to management service 2, and can't be in the same its IP`
                                 )
                             }
                         >

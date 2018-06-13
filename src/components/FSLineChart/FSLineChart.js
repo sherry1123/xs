@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import echarts from 'echarts';
 import moment from 'moment';
 
 class FSLineChart extends Component {
     constructor (props){
         super(props);
-        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, tooltipFormatter = '', yAxisLabelFormatter = '', legend = [], label = [], series}} = this.props;
+        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, tooltipFormatter = '', yAxisLabelFormatter = '', legend = [], label = [], series, resizeDelay = 400}} = this.props;
         this.state = {
             menuExpand,
             title,
@@ -24,30 +24,8 @@ class FSLineChart extends Component {
             label: label.map(label => {
                 return moment(new Date(label)).format('HH:mm:ss');
             }),
-            series: series.map(series => {
-                if (series.type === 'line'){
-                    // curve smoothing
-                    series['smooth'] = true;
-                    // show all symbol
-                    series['showAllSymbol'] = false;
-                    series['symbolSize'] = 0;
-                    if (!!series.area){
-                        series['areaStyle'] = {
-                            normal: {
-                                color: new echarts.graphic.LinearGradient(
-                                    0, 0, 0, 1,
-                                    [
-                                        {offset: 0, color: series.area[0]},
-                                        {offset: 1, color: series.area[1]}
-                                    ],
-                                    false
-                                )
-                            }
-                        }
-                    }
-                }
-                return series;
-            })
+            series: this.makeSeries(series),
+            resizeDelay,
         };
     }
 
@@ -85,6 +63,33 @@ class FSLineChart extends Component {
             this.resizeChart();
         }
         this.setState({menuExpand});
+    }
+
+    makeSeries (series){
+        return series.map(series => {
+            if (series.type === 'line'){
+                // curve smoothing
+                series['smooth'] = true;
+                // show all symbol
+                series['showAllSymbol'] = false;
+                series['symbolSize'] = 0;
+                if (!!series.area){
+                    series['areaStyle'] = {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(
+                                0, 0, 0, 1,
+                                [
+                                    {offset: 0, color: series.area[0]},
+                                    {offset: 1, color: series.area[1]}
+                                ],
+                                false
+                            )
+                        }
+                    }
+                }
+            }
+            return series;
+        })
     }
 
     generateOption ({title, label, x, y, tooltipFormatter, yAxisLabelFormatter, yAxisUnit, yMin, yMax, legend}){
@@ -189,15 +194,19 @@ class FSLineChart extends Component {
 
     resizeChart (){
         this.timer && clearTimeout(this.timer);
-        this.timer = setTimeout(this._chartInstance.resize, 300);
+        let {resizeDelay} = this.state;
+        // should do it after all animations that will affect the width calculation are done
+        this.timer = setTimeout(this._chartInstance.resize, resizeDelay);
     }
 
     render() {
         return (
-            <div className="fs-chart-content" style={{width: this.state.width, height: this.state.height, marginTop: 15}}
-                 ref={chartWrapper => this.chartWrapper = chartWrapper}>
-                Sorry, your browser does not support canvas,
-                so please replace it with modern browsers that support HTML5 standards.
+            <div
+                className="fs-chart-content"
+                style={{width: this.state.width, height: this.state.height, marginTop: 15}}
+                ref={chartWrapper => this.chartWrapper = chartWrapper}
+            >
+                Sorry, your browser does not support canvas, so please replace it with modern browsers that support HTML5 standards.
             </div>
         );
     }

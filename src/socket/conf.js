@@ -36,12 +36,20 @@ export const eventCodeForEventChannel = {
 export const socketEventCode = {
     // code 1-10 for system channel
     1: ()=> ({
-        chinese: () => `系统开始反初始化！`,
-        english: () => `System starts de-initializing！`
+        chinese: () => `集群开始反初始化！`,
+        english: () => `Cluster is de-initializing！`
     }),
     2: ()=> ({
-        chinese: (target, result) => `系统反初始化${result ? '成功' : '失败'}！`,
-        english: (target, result) => `System de-initialization ${result ? 'successfully' : 'failed'}!`
+        chinese: (target, result) => `集群反初始化${result ? '成功' : '失败'}！`,
+        english: (target, result) => `Cluster de-initialization ${result ? 'successfully' : 'failed'}!`
+    }),
+    3: ()=> ({
+        chinese: () => `集群正在创建管理服务并开启高可用功能！`,
+        english: () => `Cluster is creating management service and enable the high availability feature！`
+    }),
+    4: ()=> ({
+        chinese: (target, result) => `集群创建管理服务并开启高可用功能${result ? '成功' : '失败'}！`,
+        english: (target, result) => `Cluster create management service and enable the high availability feature ${result ? 'successfully' : 'failed'}!`
     }),
 
     // code 11-20 for snapshot channel

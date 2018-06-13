@@ -39,7 +39,7 @@ class CreateClientToNFS extends Component {
                 valid
             }
         };
-        validation = Object.assign(this.state.validation, validation);
+        validation = Object.assign({}, this.state.validation, validation);
         await this.setState({validation});
     }
 

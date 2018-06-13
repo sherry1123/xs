@@ -80,7 +80,7 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
 
     /*** system channel ***/
 
-    // de-initialization or re-initialization
+    // cluster de-initialization, re-initialization
     if (deInitializationStart.includes(code) || reInitializationStart.includes(code)){
         window.location.href = routerPath.Root;
     }

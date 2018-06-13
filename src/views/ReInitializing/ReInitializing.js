@@ -43,7 +43,7 @@ class ReInitializing extends PureComponent {
                         <i className="fs-de-initializing-gear-small" />
                     </div>
                     <div className="fs-de-initializing-tip-wrapper">
-                        {lang('集群架构正在调整中，请稍候 ', 'Cluster architecture is being adjusted, please wait ')}<i>.</i><i>.</i><i>.</i>
+                        {lang('集群正在创建管理服务并开启高可用功能，请稍候 ', 'Cluster is creating management service and enable the high availability feature, please wait ')}<i>.</i><i>.</i><i>.</i>
                     </div>
                 </section>
             </div>
