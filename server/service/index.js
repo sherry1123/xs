@@ -47,7 +47,7 @@ const model = {
     async initCluster(param) {
         let current = 0, total = 8;
         try {
-            let { mongodbParam, orcafsParam, nodeList } = init.handleInitParam(param);
+            let { mongodbParam, orcafsParam, nodeList, enableCreateBuddyGroup } = init.handleInitParam(param);
             let res = await init.initOrcaFS(orcafsParam);
             if (!res.errorId) {
                 let getInitProgress = setInterval(async () => {
@@ -61,6 +61,9 @@ const model = {
                             socket.postInitStatus(currentStep, status, total);
                         } else if (describle.includes('finish')) {
                             clearInterval(getInitProgress);
+                            if (enableCreateBuddyGroup) {
+                                await afterMe.createBuddyGroup({});
+                            }
                             current = 5;
                             socket.postInitStatus(current, 0, total);
                             await init.initMongoDB(mongodbParam);
@@ -148,6 +151,15 @@ const model = {
         let { username } = param;
         let result = handler.response(0, 'logout successfully');
         await log.audit({ user: username, desc: 'logout successfully', ip });
+        return result;
+    },
+    getDefaultUser(param) {
+        let result = {};
+        try {
+            result = handler.response(0, { username: 'admin', password: '123456' });
+        } catch (error) {
+            result = handler.response(52, error, param);
+        }
         return result;
     },
     async getUser(param) {
@@ -1382,20 +1394,29 @@ const model = {
         return result;
     },
     async createTarget(param, user, ip) {
-        let { ip: server } = param;
+        let { storageServerIPs } = param;
+        let serviceList = Object.keys(storageServerIPs);
         let result = {};
         try {
-            let res = await afterMe.createTarget(param);
-            if (!res.errorId) {
-                result = handler.response(0, data);
-                await log.audit({ user, desc: `create target in '${server}' successfully`, ip });
+            let success = 0;
+            for (let service of serviceList) {
+                let ip = service;
+                let diskGroup = storageServerIPs[service].map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+                let res = await afterMe.createTarget({ ip, diskGroup });
+                if (!res.errorId) {
+                    success += 1;
+                }
+            }
+            if (success === serviceList.length) {
+                result = handler.response(0, 'create target successfully');
+                await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' successfully`, ip });
             } else {
-                result = handler.response(173, error, param);
-                await log.audit({ user, desc: `create target in '${server}' failed`, ip });
+                result = handler.response(173, 'create target failed', param);
+                await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `create target in '${server}' failed`, ip });
+            await log.audit({ user, desc: `create target in '${handler.bypass(serviceList)}' failed`, ip });
         }
         return result;
     },
@@ -1414,12 +1435,13 @@ const model = {
         let { buddyGroups } = param;
         let result = {};
         try {
-            let res = await afterMe.createBuddyGroup(buddyGroups);
+            let groupList = buddyGroups.map(group => ({ type: group.serviceRole === 'metadata' ? 'meta' : 'storage', primaryId: group.selectedTargets[0].targetId, secondaryId: group.selectedTargets[1].targetId }));
+            let res = await afterMe.createBuddyGroup(groupList);
             if (!res.errorId) {
-                result = handler.response(0, data);
+                result = handler.response(0, 'create buddy group successfully');
                 await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) successfully`, ip });
             } else {
-                result = handler.response(173, error, param);
+                result = handler.response(173, res.message, param);
                 await log.audit({ user, desc: `create ${buddyGroups.length} buddy group(s) failed`, ip });
             }
         } catch (error) {
@@ -1460,38 +1482,42 @@ const model = {
         return result;
     },
     async addMetadataToCluster(param, user, ip) {
+        let { ip: server, RAIDList } = param;
         let result = {};
         try {
-            let res = await afterMe.addMetadataToCluster(param);
+            let diskGroup = RAIDList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            let res = await afterMe.addMetadataToCluster({ ip: server, diskGroup });
             if (!res.errorId) {
-                await database.addMetadataToCluster({ ip: param.ip });
+                await database.addMetadataToCluster({ ip: server });
                 result = handler.response(0, 'add metadata service to cluster successfully');
-                await log.audit({ user, desc: `add metadata service ${param.ip} to cluster successfully`, ip });
+                await log.audit({ user, desc: `add metadata service ${server} to cluster successfully`, ip });
             } else {
                 result = handler.response(173, res.message, param);
-                await log.audit({ user, desc: `add metadata service ${param.ip} to cluster failed`, ip });
+                await log.audit({ user, desc: `add metadata service ${server} to cluster failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `add metadata service ${param.ip} to cluster failed`, ip });
+            await log.audit({ user, desc: `add metadata service ${server} to cluster failed`, ip });
         }
         return result;
     },
     async addStorageToCluster(param, user, ip) {
+        let { ip: server, RAIDList } = param;
         let result = {};
         try {
-            let res = await afterMe.addStorageToCluster(param);
+            let diskGroup = RAIDList.map(raid => ({ diskList: raid.diskList.map(disk => (disk.diskName)), raidLevel: `raid${raid.raidLevel}`, stripeSize: `${raid.stripeSize / 1024}k` }));
+            let res = await afterMe.addStorageToCluster({ ip: server, diskGroup });
             if (!res.errorId) {
-                await database.addStorageToCluster({ ip: param.ip });
+                await database.addStorageToCluster({ ip: server });
                 result = handler.response(0, 'add storage service to cluster successfully');
-                await log.audit({ user, desc: `add storage service ${param.ip} to cluster successfully`, ip });
+                await log.audit({ user, desc: `add storage service ${server} to cluster successfully`, ip });
             } else {
                 result = handler.response(173, res.message, param);
-                await log.audit({ user, desc: `add storage service ${param.ip} to cluster failed`, ip });
+                await log.audit({ user, desc: `add storage service ${server} to cluster failed`, ip });
             }
         } catch (error) {
             result = handler.response(173, error, param);
-            await log.audit({ user, desc: `add storage service ${param.ip} to cluster failed`, ip });
+            await log.audit({ user, desc: `add storage service ${server} to cluster failed`, ip });
         }
         return result;
     },

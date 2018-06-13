@@ -230,7 +230,7 @@ const model = {
         let data = await dao.findAll(nodeCpuAndMemory, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let total = data.map(item => (item.dataList[index].cpu)).reverse();
+        let total = data.map(item => (item.dataList[index] ? item.dataList[index].cpu : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
     },
@@ -239,7 +239,7 @@ const model = {
         let data = await dao.findAll(nodeCpuAndMemory, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let total = data.map(item => (item.dataList[index].memory)).reverse();
+        let total = data.map(item => (item.dataList[index] ? item.dataList[index].memory : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
     },
@@ -248,8 +248,8 @@ const model = {
         let data = await dao.findAll(nodeThroughputAndIops, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let read = data.map(item => (item.dataList[index].throughput.read)).reverse();
-        let write = data.map(item => (item.dataList[index].throughput.write)).reverse();
+        let read = data.map(item => (item.dataList[index] ? item.dataList[index].throughput.read : 0)).reverse();
+        let write = data.map(item => (item.dataList[index] ? item.dataList[index].throughput.write : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { read, write, time };
     },
@@ -258,7 +258,7 @@ const model = {
         let data = await dao.findAll(nodeThroughputAndIops, {}, {}, { sort: { time: -1 }, limit: 60 });
         let hostList = data[0].hostList;
         let index = hostList.indexOf(hostname);
-        let total = data.map(item => (item.dataList[index].iops)).reverse();
+        let total = data.map(item => (item.dataList[index] ? item.dataList[index].iops : 0)).reverse();
         let time = data.map(item => (item.time)).reverse();
         return { total, time };
     },
@@ -278,26 +278,35 @@ const model = {
     async addClientToCluster(param) {
         let { ip } = param;
         let initParam = await model.getSetting({ key: config.setting.initParam });
-        initParam.clientIPs = initParam.clientIPs.concat([ip]);
+        initParam.clientIPs = Array.from(new Set(initParam.clientIPs.concat([ip])));
         return await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
     },
     async addMetadataToCluster(param) {
         let { ip } = param;
         let initParam = await model.getSetting({ key: config.setting.initParam });
+        let nodeList = await model.getSetting({ key: config.setting.nodeList });
         initParam.metadataServerIPs = Array.from(new Set(initParam.metadataServerIPs.concat([ip])));
-        return await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
+        nodeList = Array.from(new Set(nodeList.concat([ip])));
+        await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
+        await model.updateSetting({ key: config.setting.nodeList }, { value: nodeList });
     },
     async addStorageToCluster(param) {
         let { ip } = param;
         let initParam = await model.getSetting({ key: config.setting.initParam });
+        let nodeList = await model.getSetting({ key: config.setting.nodeList });
         initParam.storageServerIPs = Array.from(new Set(initParam.storageServerIPs.concat([ip])));
-        return await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
+        nodeList = Array.from(new Set(nodeList.concat([ip])));
+        await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
+        await model.updateSetting({ key: config.setting.nodeList }, { value: nodeList });
     },
     async addManagementToCluster(param) {
         let { ip } = param;
         let initParam = await model.getSetting({ key: config.setting.initParam });
+        let nodeList = await model.getSetting({ key: config.setting.nodeList });
         initParam.managementServerIPs = Array.from(new Set(initParam.managementServerIPs.concat([ip])));
-        return await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
+        nodeList = Array.from(new Set(nodeList.concat([ip])));
+        await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
+        await model.updateSetting({ key: config.setting.nodeList }, { value: nodeList });
     }
 };
 module.exports = model;

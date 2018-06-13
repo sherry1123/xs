@@ -41,6 +41,9 @@ const model = {
         ctx.cookies.set('login', 'false', config.cookie);
         ctx.cookies.set('user', '', config.cookie);
     },
+    '/api/getdefaultuser': ctx => {
+        ctx.body = service.getDefaultUser();
+    },
     '/api/getuser': async ctx => {
         ctx.body = await service.getUser(ctx.param);
     },
