@@ -266,7 +266,7 @@ const model = {
         try {
             let res = await afterMe.getClusterTarget(param);
             if (!res.errorId) {
-                if (ranking) {
+                if (String(ranking) === 'true') {
                     res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
                 } else {
                     res.data = res.data.sort((prev, next) => (prev.targetId > next.targetId));
