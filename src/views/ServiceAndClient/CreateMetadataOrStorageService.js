@@ -55,7 +55,7 @@ class CreateMetadataOrStorageService extends Component {
             let currentServiceNode = {type: this.state.currentServiceRole, ip: currentServiceIP, i: 0};
             this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
         } else {
-            let currentServiceNode = {type: this.state.currentServiceRole, ip: currentServiceIP, i: -1};
+            let currentServiceNode = {type: this.state.currentServiceRole, ip: currentServiceIP, i: 0};
             this.customRAIDForServiceWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
         }
     }
@@ -107,17 +107,8 @@ class CreateMetadataOrStorageService extends Component {
     }
 
     checkCustomRAID (){
-        // Only need to check storage services, if no RAID conf has selectedDisks, it means this no custom RAID conf
-        let {currentServiceRole, currentServiceIP} = this.state;
-        console.info(currentServiceRole);
-        let {customRAID} = this.props;
-        let currentServiceRoleCustomRAID = customRAID[currentServiceRole + 'Nodes'];
-        let currentIPCustomRAID = currentServiceRoleCustomRAID.filter(role => role.ip === currentServiceIP);
-        console.info(currentIPCustomRAID, currentServiceIP);
-        let isCheckOK = currentIPCustomRAID.reduce((prev, curr) => prev && !curr.raidList.some(raid => !raid.selectedDisks.length), true);
-        // console.info(currentCustomRAID, isCheckOK);
-        // console.info(isCheckOK);
-        return isCheckOK;
+        let {customRAIDList} = this.props;
+        return !customRAIDList.some(conf => !conf.selectedDisks.length);
     }
 
     async create (){
@@ -142,6 +133,8 @@ class CreateMetadataOrStorageService extends Component {
             this.clearConfigs();
             if (!this.state.enableCustomRAID){
                 this.recommendedRAIDWrapper.getWrappedInstance().clearRAIDConf();
+            } else {
+                this.customRAIDForServiceWrapper.getWrappedInstance().clearRAIDConf();
             }
             message.success(lang(`创建${currentServiceRole === 'metadata' ? '元数据' : '存储'}服务成功!`, `Create ${currentServiceRole === 'metadata' ? 'metadata' : 'storage'} service successfully!`));
         } catch ({msg}){
@@ -179,6 +172,8 @@ class CreateMetadataOrStorageService extends Component {
         this.clearConfigs();
         if (!this.state.enableCustomRAID){
             this.recommendedRAIDWrapper.getWrappedInstance().clearRAIDConf();
+        } else {
+            this.customRAIDForServiceWrapper.getWrappedInstance().clearRAIDConf();
         }
     }
 
@@ -271,8 +266,8 @@ class CreateMetadataOrStorageService extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}, customRAIDList}}} = state;
-    return {language, recommendedRAID, customRAID, metadataServerIPs, storageServerIPs, customRAIDList};
+    let {language, initialize: {recommendedRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}, customRAIDList}}} = state;
+    return {language, recommendedRAID, metadataServerIPs, storageServerIPs, customRAIDList};
 };
 
 const mapDispatchToProps = dispatch => {
