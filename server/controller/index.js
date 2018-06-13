@@ -104,8 +104,9 @@ const model = {
     '/api/addstoragetocluster': async ctx => {
         ctx.body = await service.addStorageToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
-    '/api/addmanagementtocluster': async ctx => {
-        ctx.body = await service.addManagementToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
+    '/api/addmanagementtocluster': ctx => {
+        ctx.body = { code: 0, data: 'start to re-initialize cluster' };
+        service.addManagementToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));
     },
     '/api/addclienttocluster': async ctx => {
         ctx.body = await service.addClientToCluster(ctx.param, handler.user(ctx), handler.clientIP(ctx));

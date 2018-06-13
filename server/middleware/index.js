@@ -12,6 +12,7 @@ const model = {
 				cookie: {
 					init: handler.cookie(ctx.cookies.get('init')),
 					deinit: handler.cookie(ctx.cookies.get('deinit')),
+					reinit: handler.cookie(ctx.cookies.get('reinit')),
 					rollbacking: handler.cookie(ctx.cookies.get('rollbacking')),
 					login: handler.cookie(ctx.cookies.get('login'))
 				},
@@ -19,6 +20,7 @@ const model = {
 				status: {
 					init: status.getInitStatus(),
 					deinit: status.getDeinitStatus(),
+					reinit: status.getReinitStatus(),
 					rollbacking: status.getRollbackStatus()
 				}
 			};
@@ -34,21 +36,22 @@ const model = {
 	syncStatus() {
 		return async (ctx, next) => {
 			await next();
-			let { cookie: { init: initCookie, deinit: deinitCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, deinit: deinitStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let { cookie: { init: initCookie, deinit: deinitCookie, reinit: reinitCookie, rollbacking: rollbackCookie, login: loginCookie }, status: { init: initStatus, deinit: deinitStatus, reinit: reinitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			(initCookie !== initStatus) && ctx.cookies.set('init', String(initStatus), config.cookie);
 			(deinitCookie !== deinitStatus) && ctx.cookies.set('deinit', String(deinitStatus), config.cookie);
+			(reinitCookie !== reinitStatus) && ctx.cookies.set('reinit', String(reinitStatus), config.cookie);
 			(rollbackCookie !== rollbackStatus) && ctx.cookies.set('rollbacking', String(rollbackStatus), config.cookie);
 			!initStatus && loginCookie && ctx.cookies.set('login', 'false', config.cookie) && ctx.cookies.set('user', '', config.cookie);
 		}
 	},
 	filterRequest() {
 		return async (ctx, next) => {
-			let { api, status: { init: initStatus, deinit: deinitStatus, rollbacking: rollbackStatus } } = ctx.state;
+			let { api, status: { init: initStatus, deinit: deinitStatus, reinit: reinitStatus, rollbacking: rollbackStatus } } = ctx.state;
 			let syncAPI = 'syncsystemstatus';
 			let raidAPI = 'getraidrecommendedconfiguration';
 			let diskAPI = 'getdisklist';
 			let initApiList = ['checkclusterenv', 'init'];
-			(api === syncAPI || api === raidAPI || api === diskAPI) || (!initStatus === initApiList.includes(api) && !rollbackStatus && !deinitStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !deinitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
+			(api === syncAPI || api === raidAPI || api === diskAPI) || (!initStatus === initApiList.includes(api) && !deinitStatus && !reinitStatus && !rollbackStatus) ? await next() : ctx.body = !initStatus ? handler.responseWithoutLog(1) : !deinitStatus ? !reinitStatus ? !rollbackStatus ? handler.responseWithoutLog(2) : handler.responseWithoutLog(0, 2) : handler.responseWithoutLog(0, 1) : handler.responseWithoutLog(0, 0);
 		}
 	},
 	compressResponse() {

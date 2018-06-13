@@ -91,7 +91,7 @@ exports.key = {
     testapi: 'c40b0c360f3d4959b53b103b25759542'
 };
 exports.error = {
-    0: ['the cluster is anti-initializing', 'the cluster is rollbacking'],
+    0: ['the cluster is de-initializing', 'the cluster is re-initializing', 'the cluster is rollbacking'],
     1: 'the cluster is not initialized',
     2: 'the cluster has been initialized',
     11: 'no key or wrong key',
@@ -194,6 +194,8 @@ exports.error = {
 exports.event = {
     1: 'de-initialize cluster start',
     2: 'de-initialize cluster end',
+    3: 're-initialize cluster start',
+    4: 're-initialize cluster end',
     11: 'create snapshot start',
     12: 'create snapshot end',
     13: 'delete snapshot successfully',
@@ -202,7 +204,7 @@ exports.event = {
     16: 'batch delete snapshot failed',
     17: 'rollback snapshot start',
     18: 'rollback snapshot end',
-    21: 'change admin password',
+    21: 'change admin password'
 };
 exports.i18n = {
     admin: '管理员',

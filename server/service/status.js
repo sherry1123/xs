@@ -21,6 +21,12 @@ const model = {
     setDeinitStatus(status) {
         process.env.DEINITIALIZE = status;
     },
+    getReinitStatus() {
+        return process.env.REINITIALIZE === 'true';
+    },
+    setReinitStatus(status) {
+        process.env.REINITIALIZE = status;
+    },
     getRollbackStatus() {
         return process.env.ROLLBACK === 'true';
     },

@@ -1,7 +1,7 @@
 const cluster = require('cluster');
 const config = require('./server/config');
 const status = require('./server/service/status');
-const setNewWorker = (id, initialize, mgmt, master) => ({ NAME: config.process.name[id], INITIALIZE: initialize, MGMT: mgmt, MASTER: master, DEINITIALIZE: false, ROLLBACK: false });
+const setNewWorker = (id, initialize, mgmt, master) => ({ NAME: config.process.name[id], INITIALIZE: initialize, MGMT: mgmt, MASTER: master, DEINITIALIZE: false, REINITIALIZE: false, ROLLBACK: false });
 const startNewWorker = id => {
 	let { initialize, mgmt, master } = cluster.settings;
 	cluster.fork(setNewWorker(id, initialize, mgmt, master));
@@ -35,6 +35,12 @@ const workerMessageHandler = msg => {
 			break;
 		case 'de-initialize end':
 			status.setDeinitStatus(false);
+			break;
+		case 're-initialize start':
+			status.setReinitStatus(true);
+			break;
+		case 're-initialize end':
+			status.setReinitStatus(false);
 			break;
 		case 'rollback start':
 			status.setRollbackStatus(true);

@@ -99,16 +99,15 @@ const model = {
             await promise.runCommandInPromise(`sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
         } else {
             let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --bind_ip_all --fork`;
-            let conf = { _id: config.database.replicaSet, members: [] };
-            for (let i = 0; i < ipList.length; i++) {
-                i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], command) : await promise.runCommandInPromise(command);
-                conf.members.push(i === 2 ? { _id: i, host: ipList[i], arbiterOnly: true } : { _id: i, host: ipList[i], priority: 2 - i });
-            }
+            let conf = { _id: config.database.replicaSet, members: ipList.map((ip, index) => ({ _id: index, host: ip, priority: 2 - index })) };
             await promise.writeFileInPromise('/tmp/.initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
-            for (let i = 0; i < ipList.length; i++) {
-                i ? await promise.runCommandInRemoteNodeInPromise(ipList[i], `sed -i "/MongoDB/ a ${command}" /etc/rc.local`) : await promise.runCommandInPromise(`sed -i '/MongoDB/ a ${command}' /etc/rc.local`);
+            for (let ip of ipList) {
+                await promise.runCommandInRemoteNodeInPromise(ip, command);
+                await promise.runCommandInRemoteNodeInPromise(ip, `sed -i "/mongod/d" /etc/rc.local`);
+                await promise.runCommandInRemoteNodeInPromise(ip, `sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
             }
             await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
+            await promise.runCommandInPromise('sleep 20');
         }
     },
     async initOrcaFS(param) {
@@ -120,7 +119,6 @@ const model = {
         return await request.get(config.api.orcafs.createstatus, {}, token, true);
     },
     async saveInitInfo(param) {
-        await promise.runCommandInPromise('sleep 20');
         await mongoose.connect(`mongodb://localhost/${config.database.name}`);
         for (let i of Object.keys(param)) {
             await database.addSetting({ key: config.setting[i], value: param[i] });
@@ -145,25 +143,25 @@ const model = {
         let token = await afterMe.getToken();
         return await request.post(config.api.orcafs.destroycluster, {}, token, true);
     },
-    async restartServer(nodeList) {
+    async restartServer(ipList) {
         let command = 'service orcafs-gui restart';
-        nodeList = nodeList.reverse();
-        for (let i = 0; i < nodeList.length; i++) {
-            i === nodeList.length - 1 ? await promise.runCommandInPromise(command) : await promise.runCommandInRemoteNodeInPromise(nodeList[i], command);
+        for (let ip of ipList.reverse()) {
+            await promise.runCommandInRemoteNodeInPromise(ip, command);
         }
     },
-    async reInitMongoDB(nodeList) {
+    async reInitMongoDB(ipList) {
         await promise.runCommandInPromise('killall mongod');
         let command = `${config.database.bin}/mongod --dbpath ${config.database.dbpath} --logpath ${config.database.logpath} --replSet ${config.database.replicaSet} --bind_ip_all --fork`;
-        let conf = { _id: config.database.replicaSet, members: nodeList.map((node, index) => ({ _id: index, host: node, priority: index ? 3 - index : index })) };
-        for (let node of nodeList) {
-            await promise.runCommandInRemoteNodeInPromise(node, command);
-        }
+        let conf = { _id: config.database.replicaSet, members: ipList.map((ip, index) => ({ _id: index, host: ip, priority: 2 - index })) };
         await promise.writeFileInPromise('/tmp/.initiatedb.js', `rs.initiate(${JSON.stringify(conf)})`);
-        for (let node of nodeList) {
-            await promise.runCommandInRemoteNodeInPromise(node, `sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
+        for (let ip of ipList) {
+            await promise.runCommandInRemoteNodeInPromise(ip, command);
+            await promise.runCommandInRemoteNodeInPromise(ip, `sed -i "/mongod/d" /etc/rc.local`);
+            await promise.runCommandInRemoteNodeInPromise(ip, `sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
         }
         await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
+        await promise.runCommandInPromise('sleep 20');
+        await mongoose.connect(`mongodb://localhost/${config.database.name}`);
     }
 };
 module.exports = model;
