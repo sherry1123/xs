@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, Modal} from 'antd';
+import {Button, Icon, Modal, Popover} from 'antd';
 import TargetList from '../../components/TargetList/TargetList';
 import lang from "../../components/Language/lang";
 
@@ -27,7 +27,15 @@ class ClusterTargetsRanking extends Component {
             <div className="fs-target-ranking-wrapper">
                 <header>
                     <Icon type="hdd" />{lang('存储目标使用率排行', 'Target Usage Rate Ranking')}
-                    <span className="fs-target-view-all" onClick={this.showAllTargets.bind(this)}>{lang('查看所有 >>>', 'View All >>>')}</span>
+                    <Popover
+                        content={lang('查看所有', 'View All')}
+                    >
+                        <Icon
+                            className="fs-target-view-all"
+                            type="bars"
+                            onClick={this.showAllTargets.bind(this)}
+                        />
+                    </Popover>
                 </header>
                 <TargetList targets={rankingTargets} />
                 <Modal

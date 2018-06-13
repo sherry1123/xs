@@ -24,7 +24,7 @@ class ClusterBasicInfo extends Component {
                 trigger: 'item',
                 formatter: '{b}: {d}%'
             },
-            formatter: `${lang('使用率', 'Usage Rate')} \n ${usage}`,
+            formatter: `${lang('使用率', 'Usage Rate')} \n\n ${usage}`,
             series: [{
                 name: lang('集群容量状态', 'Cluster Capacity Status'),
                 type: 'pie',
@@ -41,13 +41,13 @@ class ClusterBasicInfo extends Component {
 
         return (
             <div className="fs-cluster-information-wrapper">
-                <header><Icon type="bars" />{lang('集群基本信息', 'Cluster Basic Information')}</header>
+                <header><Icon type="profile" />{lang('集群基本信息', 'Cluster Basic Information')}</header>
                 <div className="fs-cluster-information-content">
                     <div className="fs-cluster-machine-image-wrapper">
                         <img alt={lang('集群', 'Cluster')} src={ClusterImage} />
                     </div>
                     <div className="fs-cluster-node-information-wrapper">
-                        <header>{lang('集群节点信息', 'Node Information')}</header>
+                        <header>{lang('集群节点', 'Cluster Nodes')}</header>
                         <div className="fs-cluster-info-item">
                             {lang('集群状态:', 'Status:')}
                             <span className="fs-cluster-info-value">
@@ -74,7 +74,7 @@ class ClusterBasicInfo extends Component {
                         </div>
                     </div>
                     <div className="fs-cluster-storage-wrapper">
-                        <header>{lang('集群容量信息', 'Capacity')}</header>
+                        <header>{lang('集群容量', 'Cluster Capacity')}</header>
                         <div className="fs-cluster-info-item need-icon total">
                             {lang('总容量:', 'Total:')}
                             <span className="fs-cluster-info-value">

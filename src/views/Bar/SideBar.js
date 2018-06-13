@@ -118,10 +118,10 @@ class SideBar extends Component {
                         }
                     >
                         <Menu.Item key={routerPath.LocalAuthUser}>
-                            <Icon type="user-add" />{lang('本地认证用户', 'Local Auth. User')}
+                            <Icon type="user" />{lang('本地认证用户', 'Local Auth. User')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.LocalAuthUserGroup}>
-                            <Icon type="usergroup-add" />{lang('本地认证用户组', 'Local Auth. Group')}
+                            <Icon type="team" />{lang('本地认证用户组', 'Local Auth. Group')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu

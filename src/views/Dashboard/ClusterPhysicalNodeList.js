@@ -35,8 +35,8 @@ class ClusterPhysicalNodeList extends Component {
                         text :
                         <a onClick={this.forwardDataNodePage.bind(this, record)}>{text}</a>
                 },
-                {title: lang('节点IP', 'Node IP'), width: 60, dataIndex: 'ip'},
-                {title: lang('服务角色', 'Service Role'), width: 100, dataIndex: 'service',
+                {title: lang('节点IP', 'Node IP'), width: 70, dataIndex: 'ip'},
+                {title: lang('服务角色', 'Service Role'), width: 120, dataIndex: 'service',
                     render: text => text.map(role => serviceRoleMap[role]).join(', ')
                 },
                 {title: lang('节点状态', 'Node Status'), width: 60, dataIndex: 'status',
@@ -44,9 +44,9 @@ class ClusterPhysicalNodeList extends Component {
                         <span className="fs-physical-node-normal">{lang('正常', 'Normal')}</span> :
                         <span className="fs-physical-node-abnormal">{lang('异常', 'Abnormal')}</span>
                 },
-                {title: lang('CPU使用率', 'CPU Usage Rate'), width: 80, dataIndex: 'cpuUsage'},
-                {title: lang('内存使用率', 'DRAM Usage Rate'), width: 80, dataIndex: 'memoryUsage'},
-                {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
+                {title: lang('CPU使用率', 'CPU'), width: 70, dataIndex: 'cpuUsage'},
+                {title: lang('内存使用率', 'DRAM'), width: 70, dataIndex: 'memoryUsage'},
+                {title: lang('容量', 'Capacity'), width: 120, dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
                         <Popover
                             placement="top"

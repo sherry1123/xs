@@ -174,8 +174,8 @@ class SnapshotSchedule extends Component {
             title: () => (<span className="fs-table-title"><Icon type="schedule" />{lang('定时快照计划', 'Timed snapshot schedule')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
-                {title: lang('名称', 'Name'), dataIndex: 'name', width: 150,},
-                {title: lang('自动删除', 'Automatically Delete'), dataIndex: 'deleteRound', width: 100,
+                {title: lang('名称', 'Name'), dataIndex: 'name', width: 180,},
+                {title: lang('自动删除', 'Auto Delete'), dataIndex: 'deleteRound', width: 100,
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('开始时间', 'Start Time'), dataIndex: 'startTime', width: 180,
@@ -184,13 +184,13 @@ class SnapshotSchedule extends Component {
                 {title: lang('间隔时间', 'Interval Time'), dataIndex: 'interval', width: 120,
                     render: text => timeLeftFormat(text)
                 },
-                {title: lang('延时关闭时间', 'Delay Disable Time'), dataIndex: 'autoDisableTime', width: 100,
-                    render: text => text !== 0 ? timeLeftFormat(text) : '--'
+                {title: lang('延时关闭', 'Delay Disable'), dataIndex: 'autoDisableTime', width: 100,
+                    render: text => text !== 0 ? timeLeftFormat(text) : lang('永不', 'Never')
                 },
                 {title: lang('描述', 'Description'), width: 200, dataIndex: 'description',
                     render: text => text || '--'
                 },
-                {title: lang('创建时间', 'Create Time'), dataIndex: 'createTime', width: 180,
+                {title: lang('创建时间', 'Create Time'), dataIndex: 'createTime', width: 150,
                     render: text => timeFormat(text)
                 },
                 {title: lang('操作', 'Operations'), width: 120,

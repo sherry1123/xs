@@ -7,7 +7,8 @@ import lang from '../Language/lang';
 class TargetUsageRateRanking extends Component {
     render (){
         let buttonPopoverConf = {trigger: 'click', placement: 'bottom'};
-        let {targets, className} = this.props;
+        let {language, targets, className} = this.props;
+        let isChinese = language === 'chinese';
         let serviceRoleMap = {
             metadata: lang('元数据服务', 'Metadata Service'),
             storage: lang('存储服务', 'Storage Service'),
@@ -35,8 +36,8 @@ class TargetUsageRateRanking extends Component {
                         >
                             <section className="fs-target-item-wrapper">
                                 <header>
-                                    <span>{lang('目标ID', 'Target ID')}: {target.targetId}</span>
-                                    <span>{serviceRoleMap[target.service]}</span>
+                                    <span style={{marginRight: isChinese ? 30 : 10}}>{lang('目标ID', 'Target ID')}: {target.targetId}</span>
+                                    <span style={{marginRight: isChinese ? 30 : 10}}>{serviceRoleMap[target.service]}</span>
                                     <span>{formatStorageSize(target.space.total)}</span>
                                 </header>
                                 <div className="fs-capacity-bar">

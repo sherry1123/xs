@@ -15,9 +15,9 @@ class StripeSetting extends Component {
         };
     }
 
-    entryInfoFormChange (key, value){
+    formValueChange (key, value){
         let entryInfo = Object.assign({}, this.state.entryInfo);
-        if (key === 'stripeMode'){
+        if (key === 'buddyMirror'){
             value = (value === 'buddyMirror') ? 1 : 0;
         }
         entryInfo[key] = value;
@@ -112,9 +112,7 @@ class StripeSetting extends Component {
                                 size="small"
                                 placeholder={lang('请输入默认目标数', 'enter default targets number')}
                                 value={entryInfo.numTargets}
-                                onChange={({target: {value}}) => {
-                                    this.entryInfoFormChange.bind(this, 'numTargets', value)();
-                                }}
+                                onChange={({target: {value}}) => this.formValueChange.bind(this, 'numTargets', value)()}
                             />
                         </Form.Item>
                         <Form.Item {...formItemLayout} label={lang('块大小', 'Block Size')}>
@@ -123,9 +121,7 @@ class StripeSetting extends Component {
                                 size="small"
                                 placeholder={lang('请输入块大小', 'enter block size')}
                                 value={entryInfo.chunkSize}
-                                onChange={({target: {value}}) => {
-                                    this.entryInfoFormChange.bind(this, 'chunkSize', value)();
-                                }}
+                                onChange={({target: {value}}) => this.formValueChange.bind(this, 'chunkSize', value)()}
                             /><span style={{marginLeft: 12}}>Byte</span>
                             <Popover
                                 placement="right"
@@ -139,12 +135,11 @@ class StripeSetting extends Component {
                         </Form.Item>
                         <Form.Item {...formItemLayout} label={lang('条带模式', 'Stripe Mode')}>
                             <Select
-                                style={{width: 140}} size="small"
+                                style={{width: 140}}
+                                size="small"
                                 placeholder={lang('请选择条带模式', 'select stripe mode')}
                                 value={entryInfo.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
-                                onChange={value => {
-                                    this.entryInfoFormChange.bind(this, 'buddyMirror', value)();
-                                }}
+                                onChange={value => this.formValueChange.bind(this, 'buddyMirror', value)()}
                             >
                                 <Select.Option value="raid0">RAID 0</Select.Option>
                                 <Select.Option value="buddyMirror">BuddyMirror</Select.Option>
@@ -153,9 +148,7 @@ class StripeSetting extends Component {
                         {/*
                         <Form.Item {...formItemLayout} label={lang('元数据镜像', 'Metadata Image')}>
                             <Checkbox checked={stripe.isMetadataImage}
-                                onChange={({target: {checked}}) => {
-                                    this.entryInfoFormChange.bind(this, 'isMetadataImage', checked)();
-                                }}
+                                onChange={({target: {checked}}) => this.formValueChange.bind(this, 'isMetadataImage', checked)()}
                             />
                         </Form.Item>
                         */}
