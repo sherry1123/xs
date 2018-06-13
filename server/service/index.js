@@ -266,7 +266,7 @@ const model = {
         try {
             let res = await afterMe.getClusterTarget(param);
             if (!res.errorId) {
-                if (ranking) {
+                if (String(ranking) === 'true') {
                     res.data = res.data.sort((prev, next) => (prev.space.usage < next.space.usage));
                 } else {
                     res.data = res.data.sort((prev, next) => (prev.targetId > next.targetId));
@@ -443,22 +443,32 @@ const model = {
         return result;
     },
     async addManagementToCluster(param, user, ip) {
-        let result = {};
+        let { mgmtIP1, mgmtIP2, floatIP, hbIP1, hbIP2 } = param;
         try {
-            let res = await afterMe.addManagementToCluster(param);
+            process.send('re-initialize start');
+            socket.postEventStatus('cluster', 3, 'cluster', true, true);
+            let res = await afterMe.addManagementToCluster({ hosts: [{ ip: mgmtIP1, heartBeatIp: hbIP1 }, { ip: mgmtIP2, heartBeatIp: hbIP2 }], floatIp: floatIP });
             if (!res.errorId) {
-                await database.addManagementToCluster({ ip: param.ip });
-                result = handler.response(0, 'add management service to cluster successfully');
+                let { managementServerIPs, metadataServerIPs } = await database.getSetting({ key: config.setting.initParam });
+                await database.addManagementToCluster({ ipList: [mgmtIP1, mgmtIP2] });
+                let ipList = [mgmtIP1, mgmtIP2, managementServerIPs.includes(mgmtIP1) ? metadataServerIPs[0] : managementServerIPs[0]];
+                await init.reInitMongoDB(ipList);
                 await log.audit({ user, desc: `add management service ${param.ip} to cluster successfully`, ip });
+                process.send('re-initialize end');
+                socket.postEventStatus('cluster', 4, 'cluster', true, true);
+                await init.restartServer(managementServerIPs.includes(mgmtIP1) ? ipList : ipList.reverse());
             } else {
-                result = handler.response(84, res.message, param);
+                process.send('re-initialize end');
+                socket.postEventStatus('cluster', 4, 'cluster', false, true);
+                handler.logger(84, res.message, param);
                 await log.audit({ user, desc: `add management service ${param.ip} to cluster failed`, ip });
             }
         } catch (error) {
-            result = handler.response(84, error, param);
+            process.send('re-initialize end');
+            socket.postEventStatus('cluster', 4, 'cluster', false, true);
+            handler.logger(84, error, param);
             await log.audit({ user, desc: `add management service ${param.ip} to cluster failed`, ip });
         }
-        return result;
     },
     async addClientToCluster(param, user, ip) {
         let result = {};
