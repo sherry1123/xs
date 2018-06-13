@@ -1,7 +1,6 @@
 const config = require('../config');
 const init = require('./initialize');
 const handler = require('../module/handler');
-const promise = require('../module/promise');
 const request = require('../module/request');
 const model = {
     isMgmt() {

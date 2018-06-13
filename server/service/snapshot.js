@@ -37,7 +37,7 @@ const model = {
                 socket.postEventStatus('snapshot', 12, name, true, true);
                 result = true;
             } else {
-                handler.error(132, message, param);
+                handler.error(102, message, param);
                 await database.deleteSnapshot({ name });
                 socket.postEventStatus('snapshot', 12, name, false, true);
                 result = false;

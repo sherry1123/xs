@@ -36,9 +36,6 @@ const model = {
     async addEventLog(param) {
         return await dao.createOne(eventLog, param);
     },
-    async updateEventLog(query, param) {
-        return await dao.updateOne(eventLog, query, param);
-    },
     async getAuditLog(param) {
         return await dao.findAll(auditLog, param, {}, { sort: { time: -1 } });
     },
