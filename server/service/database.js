@@ -297,11 +297,14 @@ const model = {
         await model.updateSetting({ key: config.setting.nodeList }, { value: nodeList });
     },
     async addManagementToCluster(param) {
-        let { ipList } = param;
+        let { managementServerIPs, floatIPs, hbIPs, enableHA } = param;
         let initParam = await model.getSetting({ key: config.setting.initParam });
         let nodeList = await model.getSetting({ key: config.setting.nodeList });
-        initParam.managementServerIPs = ipList;
-        nodeList = Array.from(new Set(nodeList.concat(ipList)));
+        initParam.managementServerIPs = managementServerIPs;
+        initParam.floatIPs = floatIPs;
+        initParam.hbIPs = hbIPs;
+        initParam.enableHA = enableHA;
+        nodeList = Array.from(new Set(nodeList.concat(managementServerIPs)));
         await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
         await model.updateSetting({ key: config.setting.nodeList }, { value: nodeList });
     }

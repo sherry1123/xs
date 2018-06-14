@@ -151,10 +151,11 @@ const model = {
         await log.audit({ user: username, desc: 'logout successfully', ip });
         return result;
     },
-    getDefaultUser(param) {
+    async getDefaultUser(param) {
         let result = {};
         try {
-            result = handler.response(0, { username: 'admin', password: '123456' });
+            let { floatIPs } = await database.getSetting({ key: config.setting.initParam });
+            result = handler.response(0, { username: 'admin', password: '123456', floatIP: floatIPs[0] });
         } catch (error) {
             result = handler.response(52, error, param);
         }
@@ -450,7 +451,7 @@ const model = {
             let res = await afterMe.addManagementToCluster({ hosts: [{ ip: mgmtIP1, heartBeatIp: hbIP1 }, { ip: mgmtIP2, heartBeatIp: hbIP2 }], floatIp: floatIP });
             if (!res.errorId) {
                 let { managementServerIPs, metadataServerIPs } = await database.getSetting({ key: config.setting.initParam });
-                await database.addManagementToCluster({ ipList: [mgmtIP1, mgmtIP2] });
+                await database.addManagementToCluster({ managementServerIPs: [mgmtIP1, mgmtIP2], floatIPs: [floatIP], hbIPs: [hbIP1, hbIP2], enableHA: true });
                 let ipList = [mgmtIP1, mgmtIP2, managementServerIPs.includes(mgmtIP1) ? metadataServerIPs[0] : managementServerIPs[0]];
                 await init.reInitMongoDB(ipList);
                 await log.audit({ user, desc: `add management service ${param.ip} to cluster successfully`, ip });
