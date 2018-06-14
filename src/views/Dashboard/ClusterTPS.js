@@ -9,7 +9,10 @@ class ClusterTPS extends Component {
     render (){
         let {clusterTPS: {total, time}} = this.props;
         let option = {
-            height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
+            height: 200,
+            y: 10,
+            legend: [],
+            labelTimeFormat: 'HH:mm:ss',
             tooltipFormatter: params  => `${params[0].name}<br/>${params[0].seriesName}: ${formatStorageSize(params[0].value)}`,
             yAxisLabelFormatter: value => formatStorageSize(value),
             label: time,

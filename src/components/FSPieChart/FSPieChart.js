@@ -4,7 +4,7 @@ import echarts from 'echarts';
 export default class FSPieChart extends Component {
     constructor (props) {
         super(props);
-        let {option: {width = '100%', height = '100%', title, tooltip, legend = {}, series, resizeDelay = 400}} = this.props;
+        let {option: {width = '100%', height = '100%', title, tooltip, legend = {}, series, resizeDelay = 16.67}} = this.props;
         this.state = {
             width,
             height,

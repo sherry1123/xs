@@ -6,7 +6,7 @@ import moment from 'moment';
 class FSLineChart extends Component {
     constructor (props){
         super(props);
-        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, tooltipFormatter = '', yAxisLabelFormatter = '', legend = [], label = [], series, resizeDelay = 400}} = this.props;
+        let {menuExpand, option: {title, width = '100%', height = '100%', x = 90, y = 50, yAxisUnit = '', yMin = null, yMax = null, labelTimeFormat, tooltipFormatter = '', yAxisLabelFormatter = '', legend = [], label = [], series, resizeDelay = 16.67}} = this.props;
         this.state = {
             menuExpand,
             title,
@@ -39,8 +39,9 @@ class FSLineChart extends Component {
     }
 
     async componentWillReceiveProps (nextProps){
-        let {menuExpand, option: {label, series, title}} = nextProps;
+        let {menuExpand, option: {label, series, title, legend}} = nextProps;
         await this.setState({
+            legend,
             label: label.map(label => {
                 // format 'Wed Aug 16 2017 21:24:26 GMT+0800 (CST)' to '21:24:26'
                 return moment(new Date(label)).format(this.state.labelTimeFormat);

@@ -8,7 +8,10 @@ class IOPSStatistics extends Component {
     render (){
         let {clusterIOPS: {total, time}} = this.props;
         let option = {
-            height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
+            height: 200,
+            y: 10,
+            legend: [],
+            labelTimeFormat: 'HH:mm:ss',
             label: time,
             series: [
                 {

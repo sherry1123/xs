@@ -1,12 +1,14 @@
 /**
  * This lees file is for the layout of both Dashboard and DataNode components.
  *
- * left : right is 845px : 845px in 1080p resolution ratio
+ * left : right is 845px : 845px in 1080p resolution ratio when menu is in the state of expansion
+ * and is 922px : 922px when menu is in the state of shrinkage
  * keep '.fs-cluster-information-content' always be in min-width 845px
  * right content min-width is 1200px
  */
 
 .fs-dashboard-wrapper {
+	max-width: 100%;
 	.fs-table-operation-wrapper {
 		.fs-operation-text {
 			display: inline-block;
@@ -51,6 +53,7 @@
 	.fs-dashboard-row {
 		display: flex;
 		flex-direction: row;
+		max-width: 100%;
 		// common
 		.fs-cluster-information-wrapper,
 		.fs-target-ranking-wrapper,

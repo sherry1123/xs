@@ -8,7 +8,10 @@ class PhysicalNodeDRAM extends Component {
     render (){
         let {physicalNodeRAM: {total, time}} = this.props;
         let option = {
-            height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
+            height: 200,
+            y: 10,
+            legend: [],
+            labelTimeFormat: 'HH:mm:ss',
             label: time,
             tooltipFormatter: params  => `${params[0].name}<br />${params[0].seriesName}: ${params[0].value}%`,
             yAxisUnit: '%',

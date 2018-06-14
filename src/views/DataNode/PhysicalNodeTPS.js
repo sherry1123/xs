@@ -9,24 +9,36 @@ class physicalNodeTPS extends Component {
     render (){
         let {physicalNodeTPS: {read, write, time}} = this.props;
         let option = {
-            height: 200, y: 10, legend: [], labelTimeFormat: 'HH:mm:ss',
+            height: 200,
+            y: 25,
+            legend: {
+                data: [lang('读', 'Read'), lang('写', 'Write')],
+            },
+            labelTimeFormat: 'HH:mm:ss',
             label: time,
-            tooltipFormatter: params  => `${params[0].name}<br />${params[0].seriesName}: ${formatStorageSize(params[0].value)}<br />${params[1].seriesName}: ${formatStorageSize(params[1].value)}`,
+            tooltipFormatter: params  => (params[0] && params[1]) ? `
+                ${params[0].name}<br />
+                ${params[0].seriesName}: ${formatStorageSize(params[0].value)}<br />
+                ${params[1].seriesName}: ${formatStorageSize(params[1].value)}
+            ` : `
+                ${params[0].name}<br />
+                ${params[0].seriesName}: ${formatStorageSize(params[0].value)}<br />
+            `,
             yAxisLabelFormatter: value => formatStorageSize(value),
             series: [
                 {
                     data: read,
                     name: lang('读', 'Read'),
                     type: 'line',
-                    itemStyle: {normal: {color: '#f8ada1', lineStyle: {width: 1}}},
+                    itemStyle: {normal: {color: '#f9c9c0', lineStyle: {width: 1}}},
                     area: ['#f8ada1', '#fdeedf'],
                 },
                 {
                     data: write,
                     name: lang('写', 'Write'),
                     type: 'line',
-                    itemStyle: {normal: {color: '#fc8a8b', lineStyle: {width: 1}}},
-                     area: ['#fc8a8b', '#eef3ff'],
+                    itemStyle: {normal: {color: '#f8a7a6', lineStyle: {width: 1}}},
+                    area: ['#fc8a8b', '#eef3ff'],
                 },
             ]
         };
