@@ -71,7 +71,7 @@ const model = {
         let mongodbParam = { ipList: managementServerIPs.concat(metadataServerIPs.slice(0, 1)), replicaSet: enableHA ? true : false };
         let nodeList = Array.from(new Set(managementServerIPs.concat(metadataServerIPs, storageServerIPs)));
         const handleServiceParam = (RAIDConfig, serviceType) => {
-            let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs || RAIDConfig.metadataNodes : RAIDConfig.storageServerIPs || RAIDConfig.metadataNodes;
+            let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs || RAIDConfig.metadataNodes : RAIDConfig.storageServerIPs || RAIDConfig.storageNodes;
             let param = [];
             if (enableCustomRAID) {
                 for (let service of serviceRaidConfig) {
@@ -88,7 +88,7 @@ const model = {
         let storage = { type: 'storage', hosts: handleServiceParam(enableCustomRAID ? customRAID : recommendedRAID, 'storage') };
         let mgmt = { type: 'mgmt', hosts: managementServerIPs.map((ip, index) => ({ ip, heartBeatIp: enableHA ? hbIPs[index] : '' })), floatIp: enableHA ? floatIPs[0] : '' };
         let client = { type: 'client', hosts: clientIPs.map(ip => ({ ip })) };
-        let orcafsParam = [metadata, storage, mgmt, client];
+        let orcafsParam = clientIPs[0] ? [metadata, storage, mgmt, client] : [metadata, storage, mgmt];
         return { mongodbParam, orcafsParam, nodeList, enableCreateBuddyGroup };
     },
     async initMongoDB(param) {
@@ -107,8 +107,9 @@ const model = {
                 await promise.runCommandInRemoteNodeInPromise(ip, `sed -i "/MongoDB/ a ${command}" /etc/rc.local`);
             }
             await promise.runCommandInPromise(`${config.database.bin}/mongo /tmp/.initiatedb.js`);
-            await promise.runCommandInPromise('sleep 20');
         }
+        await promise.runCommandInPromise('sleep 20');
+        await mongoose.connect(`mongodb://localhost/${config.database.name}`);
     },
     async initOrcaFS(param) {
         let token = await afterMe.getToken();
@@ -119,7 +120,6 @@ const model = {
         return await request.get(config.api.orcafs.createstatus, {}, token, true);
     },
     async saveInitInfo(param) {
-        await mongoose.connect(`mongodb://localhost/${config.database.name}`);
         for (let i of Object.keys(param)) {
             await database.addSetting({ key: config.setting[i], value: param[i] });
         }
