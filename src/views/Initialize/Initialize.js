@@ -20,7 +20,7 @@ class Initialize extends Component {
         this.CheckIPResultCodeMap = {
             1: lang('该IP无法使用，请更换！', 'This IP can\'t be used, please change it.')
         };
-        this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'clientIPs', 'managementServerIPs', 'floatIPs', 'hbIPs'];
+        this.categoryArr = ['metadataServerIPs', 'storageServerIPs', 'managementServerIPs', 'floatIPs', 'hbIPs', 'clientIPs',];
         this.state = {
             // card step
             currentStep: 0,
@@ -306,7 +306,16 @@ class Initialize extends Component {
 
     isNoError (){
         let validated = true;
-        for (let category of this.categoryArr){
+        let {enableHA} = this.props;
+        let {enableClient} = this.state;
+        let categoryArr = ['metadataServerIPs', 'storageServerIPs', 'managementServerIPs',];
+        if (enableHA){
+            categoryArr = categoryArr.concat(['floatIPs', 'hbIPs']);
+        }
+        if (enableClient){
+            categoryArr.push('clientIPs');
+        }
+        for (let category of categoryArr){
             let errors = this.state[category + 'Error'];
             for (let error of errors) {
                 if (error.help && error.status){
@@ -329,10 +338,10 @@ class Initialize extends Component {
         this.setState({currentServiceType});
     }
 
-    setCurrentServiceNode (ip, i){
-        if (this.state.currentServiceType !== 'management'){
+    async setCurrentServiceNode (ip, i){
+        if (this.state.currentServiceType !== 'management' && this.state.currentServiceType !== 'client'){
             let currentServiceNode = {type: this.state.currentServiceType, ip, i};
-            this.setState({currentServiceNode});
+            await this.setState({currentServiceNode});
             // change recommended RAID configuration
             // console.info('change to:', this.state.currentServiceType, '  ip:', ip);
             this[(this.state.enableCustomRAID ? 'custom' : 'recommended') + 'RAIDWrapper'].getWrappedInstance().changeServiceIP(currentServiceNode);
@@ -372,13 +381,12 @@ class Initialize extends Component {
 
     checkCustomRAID (){
         let {customRAID} = this.props;
-        console.info(customRAID);
         // One node has at least one RAID conf, add disks into this RAID conf should check the RAID rule depends
         // on this RAID level, this validation has already done when user click apply button in CustomRAID component.
         // So, at here, we only need to check whether one RAID has no selected disks or not. If no, it means this
         // RAID conf isn't properly configured.
         let isCheckOK = Object.keys(customRAID).reduce((prev, curr) => prev && !customRAID[curr].some(node => node.raidList.some(raid => !raid.selectedDisks.length)), true);
-        console.info(isCheckOK);
+        // console.info(isCheckOK);
         return isCheckOK;
     }
 
@@ -397,6 +405,7 @@ class Initialize extends Component {
 
                 // validate basic pattern of all IPs
                 await Promise.all(this.categoryArr.map(async category => {
+                    // At here we validate all the IPs, even if it's not enabled, and isNoError will filter out the selected categories
                     let ips = this.props[category];
                     let len = ips.length;
                     for (let i = 0; i < len; i ++){
@@ -449,8 +458,8 @@ class Initialize extends Component {
                         content: <div style={{fontSize: 12}}>
                             {
                                 this.props.enableCreateBuddyGroup ?
-                                    <p>{lang(`您确定要在初始化期间创建Buddy Group吗？`, `Are you sure to create Buddy Group during initialization?`)}</p> :
-                                    <p>{lang(`您确定不在初始化期间创建Buddy Group吗？您可以在系统初始化完成之后再创建。`, `Are you sure not to create Buddy Group during initialization? You can create it after system is initialized.`)}</p>
+                                    <p>{lang(`您确定要在初始化期间创建伙伴组吗？`, `Are you sure to create Buddy Group during initialization?`)}</p> :
+                                    <p>{lang(`您确定不在初始化期间创建伙伴组吗？您可以在系统初始化完成之后再创建。`, `Are you sure not to create Buddy Group during initialization? You can create it after system is initialized.`)}</p>
                             }
                         </div>,
                         iconType: 'exclamation-circle-o',
@@ -459,7 +468,7 @@ class Initialize extends Component {
                         cancelText: lang('取消', 'Cancel'),
                         onOk: async () => {
                             this.setState({currentStep: next});
-                            // this.startInitialization();
+                            this.startInitialization();
                         },
                         onCancel: () => {
 
@@ -475,25 +484,29 @@ class Initialize extends Component {
     startInitialization (){
         this.setState({initInfoList: [{step: 0, initProgress: 0}]});
         let {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, recommendedRAID, customRAID, enableCreateBuddyGroup} = this.props;
-        httpRequests.startInitialization({
-            // service and client IPs
-            metadataServerIPs,
-            storageServerIPs,
-            managementServerIPs,
-            clientIPs,
-            // HA
-            enableHA,
-            floatIPs,
-            hbIPs,
-            // RAID
-            enableRAID,
-            enableCustomRAID: this.state.enableCustomRAID,
-            recommendedRAID,
-            customRAID,
-            // buddy group
-            enableCreateBuddyGroup,
-        });
-        this.setProgressTimer();
+        try {
+            httpRequests.startInitialization({
+                // service and client IPs
+                metadataServerIPs,
+                storageServerIPs,
+                managementServerIPs,
+                clientIPs,
+                // HA
+                enableHA,
+                floatIPs,
+                hbIPs,
+                // RAID
+                enableRAID,
+                enableCustomRAID: this.state.enableCustomRAID,
+                recommendedRAID,
+                customRAID,
+                // buddy group
+                enableCreateBuddyGroup,
+            });
+            this.setProgressTimer();
+        } catch ({msg}){
+            message.warning(lang('初始化失败，原因: ' + msg, 'Initialize failed, reason: ' +msg));
+        }
     }
 
     setProgressTimer (){
@@ -522,7 +535,7 @@ class Initialize extends Component {
             this.props.history.push({
                 pathname: routerPath.Login,
                 state: {
-                    fromInit: true
+                    fromInit: true // tell login page should show the change the defualt password modal
                 }
             });
     }
@@ -567,7 +580,7 @@ class Initialize extends Component {
                 <Steps className="fs-initialize-step-index-wrapper" size="small" key="initialize-step" current={this.state.currentStep}>
                     <Steps.Step title={lang('定义角色', 'Define Roles')} icon={<Icon type="user" />} />
                     <Steps.Step title={lang('确认配置', 'Confirm Configuration')} icon={<Icon type="hdd" />} />
-                    <Steps.Step title={lang('初始化', 'Initialization')} icon={<Icon spin={this.state.currentStep === 2} type="setting" />} />
+                    <Steps.Step title={lang('初始化', 'Initialization')} icon={<Icon type="setting" />} />
                     <Steps.Step title={lang('完成', 'Complete')} icon={<Icon type="smile-o" />} />
                 </Steps>
                 <section className="fs-initialize-step-content-wrapper">
@@ -840,21 +853,29 @@ class Initialize extends Component {
                                         <div className={`fs-type-item ${this.state.currentServiceType === 'management' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'management')}>
                                             <Icon type="laptop" />{lang('管理服务', 'Management')}
                                         </div>
+                                        {
+                                            this.state.enableClient &&
+                                            <div className={`fs-type-item ${this.state.currentServiceType === 'client' ? 'active' : ''}`} onClick={this.setCurrentServiceType.bind(this, 'client')}>
+                                                <Icon type="laptop" />{lang('客户端', 'Client')}
+                                            </div>
+                                        }
                                     </section>
                                     <section className="fs-ip-wrapper">
-                                        {this.props[this.state.currentServiceType + 'ServerIPs'].map((ip, i) => (
-                                            <div
-                                                className={`
-                                                    fs-ip-item
-                                                    ${this.state.currentServiceType === 'management' ? 'no-hover' : ''}
-                                                    ${(ip === this.state.currentServiceNode.ip && this.state.currentServiceType === this.state.currentServiceNode.type) ? 'active' : ''}
-                                                `}
-                                                key={i}
-                                                onClick={this.setCurrentServiceNode.bind(this, ip, i)}
-                                            >
-                                                {ip}
-                                            </div>
-                                        ))}
+                                        {
+                                            this.props[this.state.currentServiceType + (this.state.currentServiceType !== 'client' ? 'ServerIPs' : 'IPs')].map((ip, i) => (
+                                                <div
+                                                    className={`
+                                                        fs-ip-item
+                                                        ${(this.state.currentServiceType === 'management' || this.state.currentServiceType === 'client') ? 'no-hover' : ''}
+                                                        ${(ip === this.state.currentServiceNode.ip && this.state.currentServiceType === this.state.currentServiceNode.type) ? 'active' : ''}
+                                                    `}
+                                                    key={i}
+                                                    onClick={this.setCurrentServiceNode.bind(this, ip, i)}
+                                                >
+                                                    {ip}
+                                                </div>
+                                            ))
+                                        }
                                     </section>
                                 </section>
                                 {
@@ -864,6 +885,7 @@ class Initialize extends Component {
                                             enableCustomRAID={this.enableCustomRAID.bind(this)}
                                         /> :
                                         <CustomRAID
+                                            ref={ref => this.customRAIDWrapper = ref}
                                             enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
                                         />
                                 }

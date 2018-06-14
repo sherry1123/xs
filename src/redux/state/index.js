@@ -5,13 +5,13 @@ export default {
     // initialize
     initialize: {
         // step 1 role definition
-        metadataServerIPs: ['192.168.100.48',],
-        storageServerIPs: ['192.168.100.49'],
-        clientIPs: ['192.168.100.101'],
-        managementServerIPs: ['192.168.100.101'],
+        metadataServerIPs: ['192.168.100.18'],
+        storageServerIPs: ['192.168.100.48'],
+        managementServerIPs: ['192.168.100.47'],
         enableHA: false,
-        floatIPs: ['192.168.100.140'],
-        hbIPs: ['192.168.101.98','192.168.101.99'],
+        floatIPs: [''],
+        hbIPs: ['', ''],
+        clientIPs: [''],
         // step 3 RAID configuration
         enableRAID: true,
         enableCustomRAID: false,

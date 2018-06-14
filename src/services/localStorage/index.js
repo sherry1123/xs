@@ -4,15 +4,15 @@ export const lsGet = (keys) => {
     if (!Array.isArray(keys)){
         let val = localStorage.getItem(keys);
         try {
-            return JSON.parse(val) || undefined;
+            return JSON.parse(val);
         } catch (e){
             return val;
         }
     } else {
         return keys.map(key => {
-            let val = JSON.parse(localStorage.getItem(key));
+            let val = localStorage.getItem(key);
             try {
-                return JSON.parse(val) || undefined;
+                return JSON.parse(val);
             } catch (e){
                 return val;
             }

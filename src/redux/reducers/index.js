@@ -15,7 +15,9 @@ import targetReducer from './targetReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
-State.main.general.menuExpand = !!lsGet('menuExpand');
+let menuExpand = lsGet('menuExpand');
+// if there is no menuExpand we set it as true
+State.main.general.menuExpand = menuExpand === null ? true : menuExpand;
 // no need this, now get the version from backend
 // const {VERSION, NODE_ENV} = process.env;
 // State.main.general.version = 'v' + VERSION + (NODE_ENV === 'development' ? ' dev' : '');

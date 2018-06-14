@@ -53,6 +53,7 @@ class Login extends Component {
         }
     }
 
+    /*
     componentDidMount (){
         // console.info(this.props.history.location);
         let {fromInit} = this.props.history.location.state || {};
@@ -60,6 +61,7 @@ class Login extends Component {
             this.changePasswordWrapper.getWrappedInstance().show({isAdmin: true});
         }
     }
+    */
 
     async changeUsername ({target: {value}}) {
         await this.setState({username: value});

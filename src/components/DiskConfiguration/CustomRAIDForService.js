@@ -120,8 +120,10 @@ class CustomRAIDForService extends Component {
     }
 
     async getNodeDisksByNodeIP (ip){
-        // If it has already fetched this node's disks, don't fetch them again
-        if (!this.nodeDisksMap[ip]){
+        // If it has already fetched this node's disks, and the disks length is not 0, don't fetch them again
+        let disksOfThisIP = this.nodeDisksMap[ip];
+        if (!disksOfThisIP || !disksOfThisIP.length){
+            // not fetch yet, or fetched but get no disk
             let disks = await httpRequests.getNodeDisksByNodeIP(ip);
             this.nodeDisksMap[ip] = disks;
             return  disks;

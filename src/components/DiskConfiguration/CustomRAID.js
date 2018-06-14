@@ -105,7 +105,7 @@ class CustomRAID extends Component {
 
     addRAID (){
         let currentServiceNode = Object.assign({}, this.state.currentServiceNode);
-        console.info(currentServiceNode);
+        // console.info(currentServiceNode);
         let nodes = [...this.state[currentServiceNode.type + 'Nodes']];
         let newRAIDIndex = nodes[currentServiceNode.i].raidList.length;
         currentServiceNode.raidList.push({
@@ -173,15 +173,17 @@ class CustomRAID extends Component {
                     arrayCapacity
                 });
             }
-        } catch (e){
+        } catch ({msg}){
             // fetch disks failed
-            message.error(lang(`获取节点 ${ip} 的磁盘失败！`, `Fetch disks of node ${ip} failed!`));
+            message.error(lang(`获取节点 ${ip}，原因: ` + msg, `Fetch disks of node ${ip} failed, reason: ` + msg));
         }
     }
 
     async getNodeDisksByNodeIP (ip){
-        // If it has already fetched this node's disks, don't fetch them again
-        if (!this.nodeDisksMap[ip]){
+        // If it has already fetched this node's disks, and the disks length is not 0, don't fetch them again
+        let disksOfThisIP = this.nodeDisksMap[ip];
+        if (!disksOfThisIP || !disksOfThisIP.length){
+            // not fetch yet, or fetched but get no disk
             let disks = await httpRequests.getNodeDisksByNodeIP(ip);
             this.nodeDisksMap[ip] = disks;
             return  disks;
