@@ -514,15 +514,17 @@ class Initialize extends Component {
     }
 
     forwardLogin (){
-        // fetch API to create user and set password
-
+        // clear some records in localStorage
         lsRemove(['initStep', 'initStatus', 'initInfoList']);
-        this.props.history.push({
-            pathname: routerPath.Login,
-            state: {
-                fromInit: true
-            }
-        });
+        let {enableHA, defaultUser: {floatIP}} = this.props;
+        enableHA && !!floatIP ?
+            window.location.href = 'http://' + floatIP :
+            this.props.history.push({
+                pathname: routerPath.Login,
+                state: {
+                    fromInit: true
+                }
+            });
     }
 
     render (){
