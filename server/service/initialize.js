@@ -71,7 +71,7 @@ const model = {
         let mongodbParam = { ipList: managementServerIPs.concat(metadataServerIPs.slice(0, 1)), replicaSet: enableHA ? true : false };
         let nodeList = Array.from(new Set(managementServerIPs.concat(metadataServerIPs, storageServerIPs)));
         const handleServiceParam = (RAIDConfig, serviceType) => {
-            let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs : RAIDConfig.storageServerIPs;
+            let serviceRaidConfig = serviceType === 'metadata' ? RAIDConfig.metadataServerIPs || RAIDConfig.metadataNodes : RAIDConfig.storageServerIPs || RAIDConfig.metadataNodes;
             let param = [];
             if (enableCustomRAID) {
                 for (let service of serviceRaidConfig) {
