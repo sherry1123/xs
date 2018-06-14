@@ -91,9 +91,14 @@ socket.on('event status', ({channel, code, target, result, notify}) => {
             try {
                 await httpRequests.syncUpSystemStatus();
                 clearInterval(timer);
+                let floatIP = lsGet('floatIP');
                 // clear all the records in localStorage
                 lsClearAll();
-                window.location.href = routerPath.Root;
+                if (!!floatIP){
+                    window.location.href = 'http://' + floatIP;
+                } else {
+                    window.location.href = routerPath.Root;
+                }
             } catch (e){
                 console.info(`Waiting for server restart, will try again ${requestServerUpInterval / 1000}s later ...`);
             }

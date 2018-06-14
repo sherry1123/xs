@@ -30,23 +30,23 @@ class ClusterPhysicalNodeList extends Component {
             },
             scroll: {y: 270},
             columns: [
-                {title: lang('节点名称', 'Node Hostname'), width: 100, dataIndex: 'hostname',
+                {title: lang('节点名称', 'Node Hostname'), width: '15%', dataIndex: 'hostname',
                     render: (text, record) => record.isPureMgmt ?
                         text :
                         <a onClick={this.forwardDataNodePage.bind(this, record)}>{text}</a>
                 },
-                {title: lang('节点IP', 'Node IP'), width: 70, dataIndex: 'ip'},
-                {title: lang('服务角色', 'Service Role'), width: 120, dataIndex: 'service',
+                {title: lang('节点IP', 'Node IP'), width: '11%', dataIndex: 'ip'},
+                {title: lang('服务角色', 'Service Role'), width: '20%', dataIndex: 'service',
                     render: text => text.map(role => serviceRoleMap[role]).join(', ')
                 },
-                {title: lang('节点状态', 'Node Status'), width: 60, dataIndex: 'status',
+                {title: lang('节点状态', 'Node Status'), width: '10%', dataIndex: 'status',
                     render: text => text ?
                         <span className="fs-physical-node-normal">{lang('正常', 'Normal')}</span> :
                         <span className="fs-physical-node-abnormal">{lang('异常', 'Abnormal')}</span>
                 },
-                {title: lang('CPU使用率', 'CPU'), width: 70, dataIndex: 'cpuUsage'},
-                {title: lang('内存使用率', 'DRAM'), width: 70, dataIndex: 'memoryUsage'},
-                {title: lang('容量', 'Capacity'), width: 120, dataIndex: 'space',
+                {title: lang('CPU使用率', 'CPU'), width: '12%', dataIndex: 'cpuUsage'},
+                {title: lang('内存使用率', 'DRAM'), width: '12%', dataIndex: 'memoryUsage'},
+                {title: lang('容量', 'Capacity'), width: '20%', dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
                         <Popover
                             placement="top"

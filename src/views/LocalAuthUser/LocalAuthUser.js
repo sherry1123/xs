@@ -137,7 +137,7 @@ class LocalAuthUser extends Component {
                 selectedRowKeys: batchDeleteNames,
                 onChange: selectedRowKeys => this.setState({batchDeleteNames: selectedRowKeys}),
             },
-            title: () => (<span className="fs-table-title"><Icon type="user-add" />{lang('本地认证用户', 'Local Authentication User')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="user" />{lang('本地认证用户', 'Local Authentication User')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 120, dataIndex: 'name',},

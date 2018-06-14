@@ -32,13 +32,13 @@ class PhysicalNodeTargetList extends Component {
             },
             scroll: {y: 270},
             columns: [
-                {title: lang('目标ID', 'Target ID'), width: 100, dataIndex: 'targetId',},
-                {title: lang('挂载路径', 'Mount Path'), width: 100, dataIndex: 'mountPath'},
-                {title: lang('所属节点', 'Node Belong'), width: 100, dataIndex: 'node',},
-                {title: lang('服务角色', 'Service Belong'), width: 100, dataIndex: 'service',
+                {title: lang('目标ID', 'Target ID'), width: '15%', dataIndex: 'targetId',},
+                {title: lang('挂载路径', 'Mount Path'), width: '20%', dataIndex: 'mountPath'},
+                {title: lang('所属节点', 'Node Belong'), width: '15%', dataIndex: 'node',},
+                {title: lang('服务角色', 'Service Belong'), width: '25%', dataIndex: 'service',
                     render: text => serviceRoleMap[text]
                 },
-                {title: lang('容量', 'Capacity'), width: 130, dataIndex: 'space',
+                {title: lang('容量', 'Capacity'), width: '25%', dataIndex: 'space',
                     render: text =>  text === '--' ? '--' : (
                         <Popover
                             placement="top"

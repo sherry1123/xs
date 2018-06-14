@@ -60,7 +60,10 @@ class EditLocalAuthUser extends Component {
             if (!password){
                 await this.validationUpdateState('password', {cn: '请输入新密码', en: 'Please enter new password'}, false);
             } else if (!validatePassword(password)){
-                await this.validationUpdateState('password', {cn: '请输入6至21位数字', en: 'Please enter 6 to 21 digits'}, false);
+                await this.validationUpdateState('password',  {
+                    cn: '密码仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度6-18位',
+                    en: 'Password can only contains letter, number and underscore(except for the first), length is 6-18'
+                }, false);
             } else {
                 if (password !== rePassword){
                     await this.validationUpdateState('rePassword', {cn: '两次密码输入不一致', en: 'Please enter two consistent passwords'}, false);

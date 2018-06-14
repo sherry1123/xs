@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Divider, Form, Icon, Input, message, Modal, Popover} from 'antd';
 import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
-import {validateIpv4} from '../../services';
+import {validateIpv4, lsSet} from '../../services';
 
 class CreateManagementService extends Component {
     constructor (props){
@@ -187,6 +187,8 @@ class CreateManagementService extends Component {
             okText: lang('创建', 'Create'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                // It's going to be used on re-initializing page
+                lsSet('floatIP', this.state.serviceData.floatIP);
                 let serviceData = Object.assign({}, this.state.serviceData);
                 this.setState({formSubmitting: true});
                 try {
