@@ -195,7 +195,7 @@ class CreateNFS extends Component {
         };
         return (
             <Modal
-                title={lang(`创建NFS共享 ${this.state.formStep === 1 ? '- 步骤1: 设置基础配置' : '- 步骤2: 添加客户端'}`, `Create NFS Share ${this.state.formStep === 1 ? '- Step 1: Setting Basic Configuration' : '- Add Client'}`)}
+                title={lang(`创建NFS共享 ${this.state.formStep === 1 ? '- 步骤1: 设置基础配置' : '- 步骤2: 添加客户端'}`, `Create NFS Share ${this.state.formStep === 1 ? '- Step 1: Set Basic Configuration' : '- Add Client'}`)}
                 width={400}
                 closable={false}
                 maskClosable={false}

@@ -74,7 +74,10 @@ class CreateLocalAuthUser extends Component {
             if (!password){
                 await this.validationUpdateState('password', {cn: '请输入新密码', en: 'Please enter new password'}, false);
             } else if (!validatePassword(password)){
-                await this.validationUpdateState('password', {cn: '请输入6至21位数字', en: 'Please enter 6 to 21 digits'}, false);
+                await this.validationUpdateState('password', {
+                    cn: '密码仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度6-18位',
+                    en: 'Password can only contains letter, number and underscore(except for the first), length is 6-18'
+                }, false);
             } else {
                 if (password !== rePassword){
                     await this.validationUpdateState('rePassword', {cn: '两次密码输入不一致', en: 'Please enter two consistent passwords'}, false);
@@ -164,16 +167,16 @@ class CreateLocalAuthUser extends Component {
     }
 
     render (){
-        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0, placement: 'right'};
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 4 : 6},
-                sm: {span: isChinese ? 4 : 6},
+                xs: {span: isChinese ? 4 : 8},
+                sm: {span: isChinese ? 4 : 8},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 20 : 18},
-                sm: {span: isChinese ? 20 : 18},
+                xs: {span: isChinese ? 20 : 16},
+                sm: {span: isChinese ? 20 : 16},
             }
         };
         return (
@@ -211,7 +214,7 @@ class CreateLocalAuthUser extends Component {
                         help={this.state.validation.name.help}
                     >
                         <Input
-                            style={{width: isChinese ? 280 : 260}} size="small"
+                            style={{width: isChinese ? 290 : 230}} size="small"
                             placeholder={lang('请输入与用户名', 'Please enter the username')}
                             value={this.state.userData.name}
                             onChange={({target: {value}}) => {
@@ -227,7 +230,7 @@ class CreateLocalAuthUser extends Component {
                         help={this.state.validation.password.help}
                     >
                         <Input
-                            style={{width: isChinese ? 280 : 260}} size="small"
+                            style={{width: isChinese ? 290 : 230}} size="small"
                             type="password"
                             placeholder={lang('请输入密码', 'Please enter the password')}
                             value={this.state.userData.password}
@@ -244,7 +247,7 @@ class CreateLocalAuthUser extends Component {
                         help={this.state.validation.rePassword.help}
                     >
                         <Input
-                            style={{width: isChinese ? 280 : 260}} size="small"
+                            style={{width: isChinese ? 290 : 230}} size="small"
                             type="password"
                             placeholder={lang('请再次输入密码', 'Please enter password again')}
                             value={this.state.userData.rePassword}
@@ -261,7 +264,7 @@ class CreateLocalAuthUser extends Component {
                         help={this.state.validation.primaryGroup.help}
                     >
                         <Input
-                            style={{width: isChinese ? 245 : 225}} size="small"
+                            style={{width: isChinese ? 255 : 195}} size="small"
                             readOnly
                             placeholder={lang('请选择主组', 'Please select the primary group')}
                             value={this.state.userData.primaryGroup}
@@ -285,7 +288,7 @@ class CreateLocalAuthUser extends Component {
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('附属组', 'Secondary Group')}>
                         <Input
-                            style={{width: isChinese ? 245 : 225}} size="small"
+                            style={{width: isChinese ? 255 : 195}} size="small"
                             readOnly
                             placeholder={lang('请选择附属组', 'Please select the secondary group')}
                             value={this.state.userData.secondaryGroup}
@@ -309,7 +312,7 @@ class CreateLocalAuthUser extends Component {
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea
-                            style={{width: isChinese ? 280 : 260}} size="small"
+                            style={{width: isChinese ? 290 : 230}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             maxLength={200}
                             placeholder={lang('描述为选填项，长度0-200位', 'Description is optional, length is 0-200')}

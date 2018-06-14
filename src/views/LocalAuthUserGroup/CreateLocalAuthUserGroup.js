@@ -54,8 +54,8 @@ class CreateLocalAuthUserGroup extends Component {
             } else if (!validateFsName(name)){
                 // name validate failed
                 await this.validationUpdateState('name', {
-                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位或末尾位）的组合，长度3-30位',
-                    en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30.'
+                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
+                    en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
                 }, false);
             } else if (name === 'everyone'){
                 // 'everyone' is reserved group name in system
@@ -156,7 +156,7 @@ class CreateLocalAuthUserGroup extends Component {
                 <Form>
                     <Form.Item
                         {...formItemLayout}
-                        label={lang('名称', 'name')}
+                        label={lang('名称', 'Name')}
                         validateStatus={this.state.validation.name.status}
                         help={this.state.validation.name.help}
                     >
