@@ -5,7 +5,7 @@ import CreateNFS from './CreateNFS';
 import EditNFS from './EditNFS';
 import ClientOfNFS from './ClientOfNFS';
 import lang from '../../components/Language/lang';
-import httpRequests from "../../http/requests";
+import httpRequests from '../../http/requests';
 
 class NFS extends Component {
     constructor (props){

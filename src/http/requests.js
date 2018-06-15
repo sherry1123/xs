@@ -110,6 +110,7 @@ export default  {
 
     getClusterTargets (){
         requestMiddleWare(async () => {
+            // only for dashboard target ranking
             let data = await fetchGet('/api/getclustertarget', {ranking: true});
             !!data && store.dispatch(dashboardAction.setClusterTargets(data));
         });

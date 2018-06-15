@@ -1,13 +1,14 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Input, message, Modal, Table} from "antd";
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Input, message, Modal, Table} from 'antd';
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class SelectLocalAuthUserGroup extends Component {
     constructor (props){
         super(props);
         let {localAuthUserGroupList} = this.props;
+        localAuthUserGroupList = this.dropEveryoneGroup(localAuthUserGroupList);
         this.state = {
             visible: false,
             multipleSelect: false,
@@ -20,6 +21,7 @@ class SelectLocalAuthUserGroup extends Component {
 
     async componentWillReceiveProps (nextProps){
         let {localAuthUserGroupList} = nextProps;
+        localAuthUserGroupList = this.dropEveryoneGroup(localAuthUserGroupList);
         await this.setState({localAuthUserGroupList, localAuthUserGroupListBackup: localAuthUserGroupList});
         await this.searchInTable(this.state.query, true);
     }
@@ -44,6 +46,7 @@ class SelectLocalAuthUserGroup extends Component {
         if (!localAuthUserGroupList.length){
             httpRequests.getLocalAuthUserGroupList();
         }
+        localAuthUserGroupList = this.dropEveryoneGroup(localAuthUserGroupList);
         await this.setState({
             visible: true,
             multipleSelect,
@@ -64,6 +67,10 @@ class SelectLocalAuthUserGroup extends Component {
             groupNames: [...selectedLocalAuthUserGroups],
         });
         this.hide();
+    }
+
+    dropEveryoneGroup (localAuthUserGroupList){
+        return localAuthUserGroupList.filter(group => group.name !== 'everyone');
     }
 
     hide (){

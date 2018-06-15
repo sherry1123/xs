@@ -4,7 +4,7 @@ import {Icon, Select, Popover} from 'antd';
 import lang from '../../components/Language/lang';
 import {lsGet, lsSet} from '../../services';
 import httpRequests from '../../http/requests';
-import dataNodeAction from "../../redux/actions/dataNodeAction";
+import dataNodeAction from '../../redux/actions/dataNodeAction';
 
 class PhysicalNodeInfo extends Component {
     constructor (props){

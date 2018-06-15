@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Icon} from 'antd';
 import FSLineChart from '../../components/FSLineChart/FSLineChart';
 import lang from '../../components/Language/lang';
-import {formatStorageSize} from "../../services";
+import {formatStorageSize} from '../../services';
 
 class physicalNodeTPS extends Component {
     render (){

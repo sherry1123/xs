@@ -211,7 +211,7 @@ class CreateClientToNFS extends Component {
                             style={{width: isChinese ? 300 : 300}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             maxLength={255}
-                            placeholder={lang('支持输入多个IPv4格式的IP，用应为分号";"隔开。', 'You can enter multiple client IP addressed with IPV4 pattern, split by ";"')}
+                            placeholder={lang('支持输入多个IPv4格式的IP或者主机名，用应为分号";"隔开。', 'You can enter multiple client IP addressed with IPV4 pattern or hostname, split by ";"')}
                             value={this.state.clientData.ips}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'ips')(value);

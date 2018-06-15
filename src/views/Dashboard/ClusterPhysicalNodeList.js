@@ -15,6 +15,7 @@ class ClusterPhysicalNodeList extends Component {
     }
 
     render (){
+        let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0, placement: 'right'};
         let {clusterPhysicalNodeList} = this.props;
         let serviceRoleMap = {
             metadata: lang('元数据服务', 'Metadata'),
@@ -33,7 +34,9 @@ class ClusterPhysicalNodeList extends Component {
                 {title: lang('节点名称', 'Node Hostname'), width: '15%', dataIndex: 'hostname',
                     render: (text, record) => record.isPureMgmt ?
                         text :
-                        <a onClick={this.forwardDataNodePage.bind(this, record)}>{text}</a>
+                        <Popover {...buttonPopoverConf} content={lang('点击跳转数据节点查看详情', 'Click to jump data node page to view the details')}>
+                            <a onClick={this.forwardDataNodePage.bind(this, record)}>{text}</a>
+                        </Popover>
                 },
                 {title: lang('节点IP', 'Node IP'), width: '11%', dataIndex: 'ip'},
                 {title: lang('服务角色', 'Service Role'), width: '20%', dataIndex: 'service',
@@ -47,7 +50,7 @@ class ClusterPhysicalNodeList extends Component {
                 {title: lang('CPU使用率', 'CPU'), width: '12%', dataIndex: 'cpuUsage'},
                 {title: lang('内存使用率', 'DRAM'), width: '12%', dataIndex: 'memoryUsage'},
                 {title: lang('容量', 'Capacity'), width: '20%', dataIndex: 'space',
-                    render: text =>  text === '--' ? '--' : (
+                    render: (text, record) =>  record.isPureMgmt ? '--' : (
                         <Popover
                             placement="top"
                             trigger='click'

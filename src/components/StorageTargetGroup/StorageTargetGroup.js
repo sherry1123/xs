@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import {Popover} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import {formatStorageSize} from '../../services';

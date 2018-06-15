@@ -4,8 +4,8 @@ import {Button, Icon, Input, message, Popover, Modal, Table} from 'antd';
 import CreateLocalAuthUserGroup from './CreateLocalAuthUserGroup';
 import EditLocalAuthUserGroup from './EditLocalAuthUserGroup';
 import LocalAuthUserOfGroup from './LocalAuthUserOfGroup';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class LocalAuthUserGroup extends Component {
     constructor (props){

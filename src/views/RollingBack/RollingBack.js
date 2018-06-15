@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import {ckGet} from '../../services';

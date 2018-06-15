@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import QueueAnim from 'rc-queue-anim';
 import FSPieChart from '../../components/FSPieChart/FSPieChart';
-import {formatStorageSize} from "../../services";
+import {formatStorageSize} from '../../services';
 import lang from '../Language/lang';
 
 class DiskUsageStatus extends Component {

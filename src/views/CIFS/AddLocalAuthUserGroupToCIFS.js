@@ -1,8 +1,8 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Icon, Input, message, Modal, Popover, Select, Table} from "antd";
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Icon, Input, message, Modal, Popover, Select, Table} from 'antd';
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class AddLocalAuthUserGroupToCIFS extends Component {
     constructor (props){

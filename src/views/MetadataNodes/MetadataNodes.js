@@ -6,8 +6,8 @@ import lang from '../../components/Language/lang';
 import ArrowButton from '../../components/ArrowButton/ArrowButton';
 import StaticsFilter from '../../components/StaticsTable/StaticsFilter';
 import StaticsTable from '../../components/StaticsTable/StaticsTable';
-import httpRequests from "../../http/requests";
-import {lsGet, lsSet, someUpperCase, metadataStaticsItems} from "../../services";
+import httpRequests from '../../http/requests';
+import {lsGet, lsSet, someUpperCase, metadataStaticsItems} from '../../services';
 
 class MetadataNodes extends Component {
     constructor (props){

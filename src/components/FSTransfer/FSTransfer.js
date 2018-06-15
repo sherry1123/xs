@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import {Button, Checkbox} from 'antd';
 import 'antd/lib/transfer/style';
 import lang from '../Language/lang';

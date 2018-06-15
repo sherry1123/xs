@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Tabs, Table, Button} from 'antd';
 import lang from '../../components/Language/lang';
-import {TABLE_LOCALE, timeFormat} from "../../services";
+import {TABLE_LOCALE, timeFormat} from '../../services';
 
 export default class WarningPopover extends Component {
     readEventLog (){

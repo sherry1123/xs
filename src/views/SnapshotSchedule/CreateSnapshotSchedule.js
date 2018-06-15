@@ -1,9 +1,9 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import update from "react-addons-update";
-import {Button, Checkbox, Col, Form, Icon, Input, message, Modal, Row, Popover, Select, Switch} from "antd";
-import lang from "../../components/Language/lang";
-import {validateNotZeroInteger, validateFsName, timeUnitMilliSecond} from "../../services/index";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import update from 'react-addons-update';
+import {Button, Checkbox, Col, Form, Icon, Input, message, Modal, Row, Popover, Select, Switch} from 'antd';
+import lang from '../../components/Language/lang';
+import {validateNotZeroInteger, validateFsName, timeUnitMilliSecond} from '../../services/index';
 import httpRequests from '../../http/requests';
 
 class CreateSnapshotSchedule extends Component {

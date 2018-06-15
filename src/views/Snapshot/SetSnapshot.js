@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover, Slider} from 'antd';
-import lang from "../../components/Language/lang";
+import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
-import {validateNotZeroInteger} from "../../services";
+import {validateNotZeroInteger} from '../../services';
 
 class SetSnapshot extends Component {
     constructor (props){

@@ -1,9 +1,9 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Form, Input, message, Modal} from "antd";
-import lang from "../../components/Language/lang";
-import {validateFsName} from "../../services";
-import httpRequests from "../../http/requests";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Form, Input, message, Modal} from 'antd';
+import lang from '../../components/Language/lang';
+import {validateFsName} from '../../services';
+import httpRequests from '../../http/requests';
 
 class CreateLocalAuthUserGroup extends Component {
     constructor (props){

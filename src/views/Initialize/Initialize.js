@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import update from "react-addons-update";
+import update from 'react-addons-update';
 import {Button, Divider, Form, Icon, Input, message, Modal, notification, Popover, Progress, Steps, Switch} from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import LanguageButton from '../../components/Language/LanguageButton';
@@ -128,7 +128,8 @@ class Initialize extends Component {
                                 await httpRequests.syncUpSystemStatus();
                                 clearInterval(timer);
                                 await httpRequests.getDefaultUser();
-                                this.setState({currentStep: 3});
+                                // wait for some time and let user see the initialization 100% result
+                                setTimeout(() => this.setState({currentStep: 3}), 3000)
                             } catch (e){
                                 console.info(`Waiting for server restart, will try again 1s later ...`);
                             }
@@ -240,9 +241,10 @@ class Initialize extends Component {
                 await this.setErrorArr(category, i, {status: 'error', help: lang('IP在该类型服务中已被使用', 'IP has already been used in this type of service')});
             } else {
                 // duplicate validate successfully
-                if (!!this.state[category + 'Error'][i].status){
-                    await this.setErrorArr(category, i, {status: '', help: ''});
-                    // if it's mgmt server IP and need to do HA validation
+                await this.setErrorArr(category, i, {status: '', help: ''});
+
+                if (!this.state[category + 'Error'][i].status){
+                    // if it's management server IP or heartbeat IP need to do HA validation
                     if ((category === 'managementServerIPs' || category === 'hbIPs') && this.props.enableHA){
                         await this.validateIPForHA();
                         await this.validateNetworkSegmentForMgmtAndHAIPs();
@@ -284,6 +286,7 @@ class Initialize extends Component {
         // and this will be recorded in the user guide of our production.
         let {managementServerIPs: [mgmtIP1, mgmtIP2], hbIPs: [hbIP1, hbIP2]} = this.props;
         let errorHelp = lang('管理服务IP不能与和它对应的连接检测IP处于相同网段', 'Management Service IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP');
+        // mgmtIP1 and hbIP1
         let [mgmtIP1_1, mgmtIP1_2, mgmtIP1_3] = mgmtIP1.split('.');
         let [hbIP1_1, hbIP1_2, hbIP1_3] = hbIP1.split('.');
         if (!(mgmtIP1_1 !== hbIP1_1 || mgmtIP1_2 !== hbIP1_2 || mgmtIP1_3 !== hbIP1_3)){
@@ -293,6 +296,7 @@ class Initialize extends Component {
                 await this.setErrorArr('managementServerIPs', 0, {status: '', help: ''});
             }
         }
+        // mgmtIP2 and hbIP2
         let [mgmtIP2_1, mgmtIP2_2, mgmtIP2_3] = mgmtIP2.split('.');
         let [hbIP2_1, hbIP2_2, hbIP2_3] = hbIP2.split('.');
         if (!(mgmtIP2_1 !== hbIP2_1 || mgmtIP2_2 !== hbIP2_2 || mgmtIP2_3 !== hbIP2_3)){
@@ -544,14 +548,14 @@ class Initialize extends Component {
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0, placement: 'top'};
         let initTipsMap = {
             '-1': lang('初始化失败，请联系运维人员寻求帮助！', 'Initialization failed, please ask operation and maintenance staff for help!'),
-            0: lang('初始化已开始，请稍候', 'Initializing, pleas wait for a moment'),
+            0: lang('初始化已开始，请稍候', 'Initialization started, please wait for a moment'),
             1: lang('正在初始化管理服务器', 'Initializing management server'),
             2: lang('正在初始化元数据服务器', 'Initializing metadata server'),
             3: lang('正在初始化存储服务器', 'Initializing storage server'),
             4: lang('正在初始化客户端', 'Initializing client'),
             5: lang('正在初始化数据库', 'Initializing database'),
-            6: lang('正在保存初始化配置', 'Saving initialization config'),
-            7: lang('初始化完成！', 'Initialization finished！'),
+            6: lang('正在保存初始化配置', 'Saving initialization configurations'),
+            7: lang('初始化成功完成！', 'Initialization is successfully done！'),
         };
         return (
             <section className="fs-initialize-wrapper">
@@ -589,8 +593,8 @@ class Initialize extends Component {
                         <div className="fs-initialize-step-content">
                             <section className="fs-step-title">
                                 {lang(
-                                    '步骤1 - 定义角色：请定义存储集群中各类型服务所在节点的IP和客户端IP(可选)。',
-                                    'Step1 - define roles: Please define the various types of services of node IP and the clients IP(optional) of the storage cluster.'
+                                    '步骤 1 - 定义角色：请定义集群中各类型服务所在节点的IP和客户端IP(可选)。',
+                                    'Step 1 - Define roles: Please define the node IP of various types of services and the client IP(optional) for the cluster.'
                                 )}
                                 <span style={{float: 'right'}} >
                                     {lang('配置客户端', 'Configure Client')}
@@ -603,9 +607,9 @@ class Initialize extends Component {
                                     <div className="fs-ip-input-title">
                                         <Popover
                                             {...buttonPopoverConf}
-                                            content={lang('元数据服务器允许配置1至N个', 'Allow 1 to N metadata servers to be configured')}
+                                            content={lang('元数据服务允许配置1至N个', 'Allow to configure 1 to N metadata services ')}
                                         >
-                                            <span>{lang('元数据服务', 'Metadata Servers')}</span>
+                                            <span>{lang('元数据服务', 'Metadata Service')}</span>
                                         </Popover>
                                         <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'metadataServerIPs')} />
                                     </div>
@@ -620,7 +624,7 @@ class Initialize extends Component {
                                                 <Input
                                                     className="fs-ip-input"
                                                     size="small"
-                                                    placeholder={lang('请输入IP', 'please enter IP')}
+                                                    placeholder={lang('请输入IP', 'Please enter IP')}
                                                     value={ip}
                                                     onChange={({target: {value}}) => {
                                                         this.setIP.bind(this, 'metadataServerIPs', i, value)();
@@ -643,9 +647,9 @@ class Initialize extends Component {
                                     <div className="fs-ip-input-title">
                                         <Popover
                                             {...buttonPopoverConf}
-                                            content={lang('存储服务器允许配置1至N个', 'Allow 1 to N storage servers to be configured')}
+                                            content={lang('存储服务允许配置1至N个', 'Allow to configure 1 to N storage services')}
                                         >
-                                            <span>{lang('存储服务', 'Storage Servers')}</span>
+                                            <span>{lang('存储服务', 'Storage Service')}</span>
                                         </Popover>
                                         <Icon className="fs-ip-plus" type="plus" onClick={this.addIP.bind(this, 'storageServerIPs')} />
                                     </div>
@@ -660,7 +664,7 @@ class Initialize extends Component {
                                                 <Input
                                                     className="fs-ip-input"
                                                     size="small"
-                                                    placeholder={lang('请输入IP', 'please enter IP')}
+                                                    placeholder={lang('请输入IP', 'Please enter IP')}
                                                     value={ip}
                                                     onChange={({target: {value}}) => {
                                                         this.setIP.bind(this, 'storageServerIPs', i, value)();
@@ -683,9 +687,9 @@ class Initialize extends Component {
                                     <div className="fs-ip-input-title">
                                         <Popover
                                             {...buttonPopoverConf}
-                                            content={lang('管理服务器允许配置1至2个', 'Allow 1 to 2 management servers to be configured')}
+                                            content={lang('管理服务允许配置1至2个。配置2个时将开启高可用性功能', 'Allow to configure 1 to 2 management services. With config 2, will enable high availability ')}
                                         >
-                                            <span>{lang('管理服务', 'Management Server')}</span>
+                                            <span>{lang('管理服务', 'Management Service')}</span>
                                         </Popover>
                                     </div>
                                     <QueueAnim type={['right', 'left']}>
@@ -700,7 +704,7 @@ class Initialize extends Component {
                                                     className="fs-ip-input no-margin"
                                                     size="small"
                                                     addonBefore={this.props.enableHA ? lang(`服务 ${i + 1}`, `Service ${i + 1}`) : ''}
-                                                    placeholder={lang('请输入IP', 'please enter IP')}
+                                                    placeholder={lang('请输入IP', 'Please enter IP')}
                                                     value={ip}
                                                     onChange={({target: {value}}) => {
                                                         this.setIP.bind(this, 'managementServerIPs', i, value)();
@@ -712,7 +716,7 @@ class Initialize extends Component {
                                     </QueueAnim>
                                     <Divider dashed style={{margin: "12px 0"}} />
                                     <div className="fs-ip-input-item">
-                                        <label className="fs-enable-ha-label">{lang('为管理服务启用HA', 'Enable HA for Mgmt Server')}</label>
+                                        <label className="fs-enable-ha-label">{lang('为管理服务启用高可用性', 'Enable High Availability')}</label>
                                         <Switch
                                             size="small"
                                             style={{float: 'right', marginTop: 3}}
@@ -735,7 +739,7 @@ class Initialize extends Component {
                                                     <Input
                                                         className="fs-ip-input no-margin"
                                                         size="small"
-                                                        placeholder={lang('请输入存储服务集群管理IP', 'please enter service mgmt IP')}
+                                                        placeholder={lang('请输入存储服务集群管理IP', 'Please enter service mgmt IP')}
                                                         addonAfter={
                                                             <Popover
                                                                 {...buttonPopoverConf}
@@ -755,15 +759,15 @@ class Initialize extends Component {
                                             {this.props.hbIPs.map((ip, i) =>
                                                 <Form.Item
                                                     className="fs-ip-input-item" key={`hb-${i}`}
-                                                    label={i === 0 ? lang('连接有效性检测IP', 'Connect validity check IP') : null}
+                                                    label={i === 0 ? lang('连接有效性检测IP', 'Connection Validity Check IP') : null}
                                                     validateStatus={this.state['hbIPsError'][i].status}
                                                     help={this.state['hbIPsError'][i].help}
                                                 >
                                                     <Input
                                                         className="fs-ip-input no-margin"
                                                         size="small"
-                                                        addonBefore={this.props.enableHA ? lang(`节点${i + 1}`, `Node ${i + 1}`) : ''}
-                                                        placeholder={lang('请输入有效性检测 IP', 'please enter heart beat IP')}
+                                                        addonBefore={this.props.enableHA ? lang(`IP ${i + 1}`, `IP ${i + 1}`) : ''}
+                                                        placeholder={lang('请输入有效性检测 IP', 'Please enter heart beat IP')}
                                                         addonAfter={
                                                             <Popover
                                                                 {...buttonPopoverConf}
@@ -808,7 +812,7 @@ class Initialize extends Component {
                                                     <Input
                                                         className="fs-ip-input"
                                                         size="small"
-                                                        placeholder={lang('请输入IP', 'please enter IP')}
+                                                        placeholder={lang('请输入IP', 'Please enter IP')}
                                                         value={ip}
                                                         onChange={({target: {value}}) => {
                                                             this.setIP.bind(this, 'clientIPs', i, value)();
@@ -836,8 +840,8 @@ class Initialize extends Component {
                         <div className="fs-initialize-step-content">
                             <section className="fs-step-title">
                                 {lang(
-                                    '步骤2 - 确认配置：请确定您输入的各类型服务所在节点的IP是正确的，并确认推荐给您的RAID配置是否符合需求，若不符合您可自定义。并决定是否在系统初始化期间创建Buddy Group。',
-                                    'Step2 - confirm configuration: Please confirm the IP of nodes which have various services run on, and also the recommended RAID configuration, if not match your needs can custom it. And decide whether to create Buddy Group during system initialization or not.'
+                                    '步骤 2 - 确认配置：请确定您输入的各类型服务所在节点的IP是正确的，并确认推荐给您的RAID配置是否符合需求，若不符合您可自定义。并决定是否在系统初始化期间创建Buddy Group。',
+                                    'Step 2 - Confirm configuration: Please confirm the IP of nodes which have various services run on, and also the recommended RAID configuration, if not match your needs can custom it. And decide whether to create Buddy Group during system initialization or not.'
                                 )}
                             </section>
                             <Divider className="fs-initialize-divider-wrapper" dashed />
@@ -916,8 +920,8 @@ class Initialize extends Component {
                         <div className="fs-initialize-step-content">
                             <section className="fs-step-title">
                                 {lang(
-                                    '步骤3 - 初始化：初始化已经开始！请保持相关设备的网络畅通，请勿关闭电源。',
-                                    'Step3 - initialization: Initialization has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
+                                    '步骤 3 - 初始化：初始化已经开始！请保持相关设备的网络畅通，请勿关闭电源。',
+                                    'Step 3 - Initialization: Initialization has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
                                 )}
                             </section>
                             <div className="fs-initialization-progress-gear-wrapper">
@@ -941,8 +945,8 @@ class Initialize extends Component {
                                             {initTipsMap[-1]}
                                         </div> :
                                         <div className="fs-initialization-info-item" key={i}>
-                                            <span>{lang('完成百分比：', 'Completion percentage: ') + info.initProgress + '%'}</span>
-                                            <span>{lang('当前阶段: ', 'Current phase: ') + initTipsMap[info.step]}</span>
+                                            <span>{lang('完成百分比：', 'Completion Percentage: ') + info.initProgress + '%'}</span>
+                                            <span>{lang('当前阶段: ', 'Current Phase: ') + initTipsMap[info.step]}</span>
                                         </div>)
                                 }
                             </section>
@@ -954,8 +958,8 @@ class Initialize extends Component {
                             <section className="fs-step-title">
                                 <p>
                                     {lang(
-                                        '步骤4 - 完成：初始化已完成，您的存储集群已经准备好了!',
-                                        'Step4 - finished: The initialization is complete and your storage cluster is ready!'
+                                        '步骤 4 - 完成：初始化已完成，您的存储集群已经准备好了!',
+                                        'Step 4 - finished: The initialization is complete and your storage cluster is ready!'
                                     )}
                                 </p>
                             </section>

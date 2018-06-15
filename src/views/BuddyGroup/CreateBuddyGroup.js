@@ -7,6 +7,7 @@ import lang from '../../components/Language/lang';
 import httpRequests from '../../http/requests';
 import {formatStorageSize} from '../../services';
 
+/*
 let availableTargets = [
     {targetId: 101, mountPath: "/data/Orcafs-meta", node: "orcadt1", service: "metadata", nodeId: 101, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
     {targetId: 102, mountPath: "/data/Orcafs-meta", node: "orcadt1", service: "metadata", nodeId: 102, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
@@ -16,10 +17,13 @@ let availableTargets = [
     {targetId: 106, mountPath: "/data/Orcafs-meta", node: "orcadt2", service: "metadata", nodeId: 106, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
     {targetId: 107, mountPath: "/data/Orcafs-meta", node: "orcadt1", service: "metadata", nodeId: 107, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
 ];
+*/
 
 class CreateBuddyGroup extends Component {
     constructor (props){
         super(props);
+        let {availableTargets} = this.props;
+        availableTargets = this.dropUsedTargets(availableTargets);
         this.state = {
             visible: false,
             formSubmitting: false,
@@ -28,6 +32,15 @@ class CreateBuddyGroup extends Component {
             selectedTargets: [], // index 0 is primary, index 1 is secondary, they can't be in the same node
             preConfigs: [],
         };
+    }
+
+    componentWillReceiveProps (nextProps){
+        let {availableTargets} = nextProps;
+        this.setState({availableTargets});
+    }
+
+    dropUsedTargets (targets){
+        return targets.filter(target => !target.isUsed);
     }
 
     serviceRoleChange (currentServiceRole){
@@ -103,6 +116,8 @@ class CreateBuddyGroup extends Component {
     }
 
     async show (){
+        let {availableTargets} = this.props;
+        availableTargets = this.dropUsedTargets(availableTargets);
         await this.setState({
             visible: true,
             formSubmitting: false,
@@ -263,8 +278,8 @@ class CreateBuddyGroup extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {target: {targetList}}} = state;
-    return {language, targetList};
+    let {language, main: {target: {targetList: availableTargets}}} = state;
+    return {language, availableTargets};
 };
 
 const mapDispatchToProps = {};

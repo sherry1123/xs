@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import localAuthUserAction from "../../redux/actions/localAuthUserAction";
-import {Button, Icon, Input, message, Modal, Popover, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import localAuthUserAction from '../../redux/actions/localAuthUserAction';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import AddLocalAuthUserToGroup from './AddLocalAuthUserToGroup';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class LocalAuthUserOfGroup extends Component {
     constructor (props){

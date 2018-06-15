@@ -1,11 +1,11 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import shareAction from "../../redux/actions/shareAction";
-import {Button, Icon, Input, message, Modal, Popover, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import shareAction from '../../redux/actions/shareAction';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateClientToNFS from './CreateClientToNFS';
 import EditClient from './EditClient';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class ClientOfNFS extends Component {
     constructor (props){

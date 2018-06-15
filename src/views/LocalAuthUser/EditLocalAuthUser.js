@@ -1,11 +1,11 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Form, Icon, Input, message, Modal, Switch} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Form, Icon, Input, message, Modal, Switch} from 'antd';
 import SelectLocalAuthUserGroup from './SelectLocalAuthUserGroup';
-import lang from "../../components/Language/lang";
-import {validateFsName} from "../../services/index";
-import httpRequests from "../../http/requests";
-import {validatePassword} from "../../services";
+import lang from '../../components/Language/lang';
+import {validateFsName} from '../../services/index';
+import httpRequests from '../../http/requests';
+import {validatePassword} from '../../services';
 
 class EditLocalAuthUser extends Component {
     constructor (props){

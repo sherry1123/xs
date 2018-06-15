@@ -4,7 +4,7 @@ import {Button} from 'antd';
 import ChangePassword from '../../components/ChangePassword/ChangePassword';
 import lang from '../../components/Language/lang';
 import mainAction from '../../redux/actions/generalAction';
-import httpRequests from "../../http/requests";
+import httpRequests from '../../http/requests';
 
 class UserSettingPopover extends Component {
     show (){

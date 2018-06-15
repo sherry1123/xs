@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Icon, Input, message, Modal, Popover, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateLocalAuthUser from './CreateLocalAuthUser';
 import EditLocalAuthUser from './EditLocalAuthUser';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class LocalAuthUser extends Component {
     constructor (props){

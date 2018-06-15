@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon, Radio, Table} from "antd";
+import {Icon, Radio, Table} from 'antd';
 import lang from '../../components/Language/lang';
 import {timeFormat} from '../../services';
 import httpRequests from '../../http/requests';

@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {Button, Form, Icon, Input, message, Modal, Popover, Table} from "antd";
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Button, Form, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CatalogTree from '../../components/CatalogTree/CatalogTree';
 import CreateClientToNFS from './CreateClientToNFS';
-import lang from "../../components/Language/lang";
-import httpRequests from "../../http/requests";
+import lang from '../../components/Language/lang';
+import httpRequests from '../../http/requests';
 
 class CreateNFS extends Component {
     constructor (props){

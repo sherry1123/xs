@@ -4,7 +4,7 @@ import {Button, Icon, Input, Table, Popover} from 'antd';
 import CreateNASServer from './CreateNASServer';
 import EditNASServer from './EditNASServer';
 import lang from '../../components/Language/lang';
-import httpRequests from "../../http/requests";
+import httpRequests from '../../http/requests';
 
 class NASServer extends Component {
     constructor (props){

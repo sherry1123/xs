@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import PhysicalNodeInfo from './PhysicalNodeInfo';
 import PhysicalNodeCPU from './PhysicalNodeCPU';
 import PhysicalNodeDRAM from './PhysicalNodeDRAM';
@@ -6,7 +7,6 @@ import PhysicalNodeTPS from './PhysicalNodeTPS';
 import PhysicalNodeIOPS from './PhysicalNodeIOPS';
 import PhysicalNodeTargetList from './PhysicalNodeTargetList';
 import httpRequests from '../../http/requests';
-import {connect} from "react-redux";
 
 class DataNode extends Component {
     constructor (props){

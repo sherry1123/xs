@@ -19,6 +19,7 @@ class BuddyGroup extends Component {
 
     componentDidMount (){
         httpRequests.getBuddyGroupList();
+        httpRequests.getTargetList();
     }
 
     async componentWillReceiveProps (nextProps){
