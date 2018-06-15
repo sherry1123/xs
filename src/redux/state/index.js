@@ -5,9 +5,9 @@ export default {
     // initialize
     initialize: {
         // step 1 role definition
-        metadataServerIPs: ['192.168.100.18'],
-        storageServerIPs: ['192.168.100.48'],
-        managementServerIPs: ['192.168.100.47'],
+        metadataServerIPs: [''],   // 192.168.100.18
+        storageServerIPs: [''],    // 192.168.100.48
+        managementServerIPs: [''], // 192.168.100.47
         enableHA: false,
         floatIPs: [''],
         hbIPs: ['', ''],

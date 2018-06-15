@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, Select, Popover} from 'antd';
+import dataNodeAction from '../../redux/actions/dataNodeAction';
 import lang from '../../components/Language/lang';
 import {lsGet, lsSet} from '../../services';
 import httpRequests from '../../http/requests';
-import dataNodeAction from '../../redux/actions/dataNodeAction';
 
 class PhysicalNodeInfo extends Component {
     constructor (props){
@@ -20,10 +20,9 @@ class PhysicalNodeInfo extends Component {
         let {clusterPhysicalNodeList, currentPhysicalNode} = nextProps;
         let preCurrentPhysicalNode = this.state.currentPhysicalNode;
         if (!!currentPhysicalNode.hostname){
-            // If currentPhysicalNode.hostname existed, it means this props change is not
-            // happened in the page firstly render phase.
-            // In firstly render phase we get the currentPhysicalNode from localStorage, so
-            // when we refresh the browser, we will know the previous value depend on the record.
+            // If currentPhysicalNode.hostname is already existed, it means this props change didn't occur
+            // in the page firstly render phase. And in that phase, we got the currentPhysicalNode from
+            // localStorage. So when we refresh the browser, we will know the previous value according to the record.
             currentPhysicalNode = currentPhysicalNode.hostname ? currentPhysicalNode : (clusterPhysicalNodeList[0] || {});
             this.setState({currentPhysicalNode});
             lsSet('currentPhysicalNode', currentPhysicalNode);
@@ -31,7 +30,7 @@ class PhysicalNodeInfo extends Component {
                 this.getPhysicalNodeData(currentPhysicalNode);
             }
         } else {
-            let currentPhysicalNode = clusterPhysicalNodeList[0] || {};
+            let currentPhysicalNode = (!!preCurrentPhysicalNode.hostname ? preCurrentPhysicalNode : clusterPhysicalNodeList[0]) || {};
             this.setState({currentPhysicalNode});
             lsSet('currentPhysicalNode', currentPhysicalNode);
         }
@@ -53,7 +52,7 @@ class PhysicalNodeInfo extends Component {
         this.setState({showPhysicalNodeSelect: !this.state.showPhysicalNodeSelect});
     }
 
-    switchPhysicalNode (hostname, {props: {currentPhysicalNode}}){
+    switchPhysicalNode (hostname, {props: {option: currentPhysicalNode}}){
         this.setState({showPhysicalNodeSelect: false,});
         this.props.setCurrentPhysicalNode(currentPhysicalNode);
         lsSet('currentPhysicalNode', currentPhysicalNode);
@@ -72,7 +71,14 @@ class PhysicalNodeInfo extends Component {
                         <span style={{paddingLeft: 10}}>
                             {lang('数据节点 ', 'Data Node ')}
                             {currentPhysicalNode.hostname}
-                            <i className={`fs-status-circle ${currentPhysicalNode.status ? 'up' : 'down'} m-l`} />{currentPhysicalNode.status ? lang('正常', 'Normal') : lang('异常', 'Abnormal')}
+                            {
+                                currentPhysicalNode.status !== undefined && <i className={`fs-status-circle ${currentPhysicalNode.status ? 'up' : 'down'} m-l`}/>
+                            }
+                            {
+                                currentPhysicalNode.status !== undefined ?
+                                    (currentPhysicalNode.status ? lang('正常', 'Normal') : lang('异常', 'Abnormal')) :
+                                    lang('', '')
+                            }
                         </span> :
                         <span style={{paddingLeft: 10}}>
                             {lang('切换数据节点', 'Switch Data Node')}
@@ -93,7 +99,7 @@ class PhysicalNodeInfo extends Component {
                                     disabled={node.isPureMgmt}
                                     title={node.isPureMgmt ? lang('纯管理节点', 'Pure management node') : ''}
                                     value={node.hostname}
-                                    currentPhysicalNode={node}
+                                    option={node}
                                 >
                                     {node.hostname}
                                 </Select.Option>
