@@ -56,7 +56,6 @@
     "jest": "20.0.4",
     "jquery": "~3.3.1",
     "js-cookie": "~2.2.0",
-    "js-md5": "~0.7.3",
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.3.0",
