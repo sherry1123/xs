@@ -1,6 +1,8 @@
-const jsMd5 = require('js-md5');
+const jsMD5 = require('js-md5');
 const logger = require('./logger');
 const config = require('../config');
+const cryptoJS = require('crypto-js');
+const tripleDES = require('crypto-js/tripledes');
 const model = {
     currentTime() {
         return new Date(new Date().toISOString().replace(/:\d+\.\d+/, ':00.000'));
@@ -58,7 +60,10 @@ const model = {
         return path.split('/')[1] === root.split('/')[1];
     },
     md5(text) {
-        return jsMd5(text);
+        return jsMD5(text)
+    },
+    tripleDes(text) {
+        return tripleDES.decrypt(text, 'orcadt@xian').toString(cryptoJS.enc.Utf8);
     }
 };
 module.exports = model;

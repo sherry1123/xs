@@ -133,7 +133,7 @@ const model = {
         let { username, password } = param;
         let result = {};
         try {
-            let data = await database.login({ username, password });
+            let data = await database.login({ username, password: handler.tripleDes(password) });
             if (data) {
                 await log.audit({ user: username, desc: 'login successfully', ip });
                 result = handler.response(0, data);
