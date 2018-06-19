@@ -6,8 +6,8 @@ import LanguageButton from '../../components/Language/LanguageButton';
 import lang from '../../components/Language/lang';
 import routerPath from '../routerPath';
 import {ckGet} from '../../services';
-import CryptoJS from 'crypto-js';
-import tripleDES from 'crypto-js/tripledes';
+import MD5 from 'crypto-js/md5';
+import TripleDES from 'crypto-js/tripledes';
 import httpRequests from '../../http/requests';
 
 class Login extends Component {
@@ -97,8 +97,8 @@ class Login extends Component {
         let {usernameStatus, passwordStatus} = this.state;
         if (!usernameStatus && !passwordStatus){
             await this.setState({doingLogin: true});
-            password = CryptoJS.MD5(password).toString();
-            password  = tripleDES.encrypt(password, 'orcadt@xian').toString();
+            password = MD5(password).toString();
+            password = TripleDES.encrypt(password, 'orcadt@xian').toString();
             try {
                 let user = await httpRequests.login({username, password});
                 this.props.setUser(user);

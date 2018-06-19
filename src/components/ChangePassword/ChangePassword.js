@@ -4,8 +4,8 @@ import {Button, Form, Input, message, Modal} from 'antd';
 import httpRequests from '../../http/requests';
 import lang from '../Language/lang';
 import {validatePassword} from '../../services';
-import CryptoJS from 'crypto-js';
-import tripleDES from 'crypto-js/tripledes';
+import MD5 from 'crypto-js/md5';
+import TripleDES from 'crypto-js/tripledes';
 
 class ChangePassword  extends Component {
     constructor (props){
@@ -93,8 +93,8 @@ class ChangePassword  extends Component {
     async changePassword (){
         let {username} = this.props.user;
         let {password} = this.state.formData;
-        password = CryptoJS.MD5(password).toString();
-        password  = tripleDES.encrypt(password, 'orcadt@xian').toString();
+        password = MD5(password).toString();
+        password  = TripleDES.encrypt(password, 'orcadt@xian').toString();
         await this.setState({formSubmitting: true});
         try {
             await httpRequests.updateUser({username, password});
