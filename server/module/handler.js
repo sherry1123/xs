@@ -1,4 +1,3 @@
-const jsMD5 = require('js-md5');
 const logger = require('./logger');
 const config = require('../config');
 const cryptoJS = require('crypto-js');
@@ -60,7 +59,7 @@ const model = {
         return path.split('/')[1] === root.split('/')[1];
     },
     md5(text) {
-        return jsMD5(text)
+        return cryptoJS.MD5(text).toString();
     },
     tripleDes(text) {
         return tripleDES.decrypt(text, 'orcadt@xian').toString(cryptoJS.enc.Utf8);

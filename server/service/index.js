@@ -184,15 +184,15 @@ const model = {
         return result;
     },
     async updateUser(param, user, ip) {
-        let query = { username: param.username };
+        let { username, password } = param;
         let result = {};
         try {
-            await database.updateUser(query, param);
+            await database.updateUser({ username }, { password: handler.tripleDes(password) });
             result = handler.response(0, 'update user successfully');
-            await log.audit({ user, desc: `update user '${param.username}' successfully`, ip });
+            await log.audit({ user, desc: `update user '${username}' successfully`, ip });
         } catch (error) {
             result = handler.response(55, error, param);
-            await log.audit({ user, desc: `update user '${param.username}' failed`, ip });
+            await log.audit({ user, desc: `update user '${username}' failed`, ip });
         }
         return result;
     },
