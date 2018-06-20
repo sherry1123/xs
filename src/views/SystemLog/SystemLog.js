@@ -87,7 +87,7 @@ class SystemLog extends Component {
         };
 
         return (
-            <section className="fs-page-content fs-management-system-log">
+            <section className="fs-page-content fs-system-log">
                 <div className="fs-table-operation-wrapper">
                     <Radio.Group
                         value={this.state.showLogType}
