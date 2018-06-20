@@ -1,7 +1,6 @@
 const logger = require('./logger');
 const config = require('../config');
 const cryptoJS = require('crypto-js');
-const tripleDES = require('crypto-js/tripledes');
 const model = {
     currentTime() {
         return new Date(new Date().toISOString().replace(/:\d+\.\d+/, ':00.000'));
@@ -62,7 +61,7 @@ const model = {
         return cryptoJS.MD5(text).toString();
     },
     tripleDes(text) {
-        return tripleDES.decrypt(text, 'orcadt@xian').toString(cryptoJS.enc.Utf8);
+        return cryptoJS.TripleDES.decrypt(text, config.user.key).toString(cryptoJS.enc.Utf8);
     }
 };
 module.exports = model;

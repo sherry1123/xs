@@ -15,8 +15,8 @@ const model = {
     },
     async sendChangePasswordMessage() {
         try {
-            let [{ password }] = await database.getUser({ username: 'admin' });
-            password === handler.md5('123456') && await status.sendEvent('user', 21, { username: 'admin', password: '123456' }, false, true);
+            let [{ password }] = await database.getUser({ username: config.user.name });
+            password === handler.md5(config.user.password) && await status.sendEvent('user', 21, { username: config.user.name, password: config.user.password }, false, true);
         } catch (error) {
             handler.error(212, error);
         }

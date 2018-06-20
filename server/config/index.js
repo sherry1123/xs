@@ -36,6 +36,11 @@ exports.setting = {
     initParam: 'INITIALIZE-PARAMETER',
     snapshotSetting: 'SNAPSHOT-SETTING'
 };
+exports.user = {
+    name: 'admin',
+    password: '123456',
+    key: 'orcadt@xian'
+};
 exports.api = {
     server: {
         receiveevent: 'http://localhost/api/receiveevent'
