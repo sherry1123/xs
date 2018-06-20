@@ -40,9 +40,6 @@ const SystemLog = asyncLoad(() => import('../SystemLog/SystemLog'));
 // fs operation
 const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
-// test
-const Test = asyncLoad(() => import('../Test/Test'));
-
 export default class Main extends Component {
     componentWillMount (){
         // see router interceptor rule in routerPath.js
@@ -105,8 +102,6 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.SystemLog}`} component={SystemLog} />
 
                         <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
-
-                        <Route path={`${Main}${routerPath.Test}`} component={Test} />
                     </main>
                 </div>
             </div>

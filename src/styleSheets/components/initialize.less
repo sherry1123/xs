@@ -178,7 +178,9 @@
                         height: 75px;
                         background: url(../../images/gear_big.png) 0 0 no-repeat;
                         background-size: 100% 100%;
-                        animation: clockwise-rotate 4s linear infinite .3s;
+                        &.running {
+                            animation: clockwise-rotate 3s linear infinite .2s;
+                        }
                     }
                     &.fs-initialization-gear-small {
                         position: absolute;
@@ -188,7 +190,9 @@
                         height: 45px;
                         background: url(../../images/gear_small.png) 0 0 no-repeat;
                         background-size: 100% 100%;
-                        animation: anticlockwise-rotate 3s linear infinite .3s;
+                        &.running {
+                            animation: anticlockwise-rotate 2s linear infinite .2s;
+                        }
                     }
                 }
             }
@@ -275,7 +279,7 @@
                     padding: 0 25px;
                     height: 40px;
                     line-height: 40px;
-                    background: @page-bg;
+                    background: @table-row-stripe-bg-opacity;
                 }
                 .fs-initialization-info-item {
                     padding: 0 25px;
@@ -375,78 +379,78 @@
             top: 5%; left: 5%;
             animation: fs-background-bubble-move-4 10s linear infinite;
             .fs-earth-layer {
-                animation: anticlockwise-rotate 6s linear infinite .5s;
+                animation: anticlockwise-rotate 6s linear infinite .1s;
             }
             .fs-moon-layer {
-                animation: clockwise-rotate 8s linear infinite .25s;
+                animation: clockwise-rotate 8s linear infinite .2s;
             }
             .fs-mercury-layer {
-                animation: anticlockwise-rotate 10s linear infinite 1.75s;
+                animation: anticlockwise-rotate 10s linear infinite .3s;
             }
         }
         &.b-2 {
             bottom: 30%; left: 18%;
             animation: fs-background-bubble-move-1 10s linear infinite;
             .fs-earth-layer {
-                animation: anticlockwise-rotate 6s linear infinite 1s;
+                animation: anticlockwise-rotate 6s linear infinite .3s;
             }
             .fs-moon-layer {
-                animation: clockwise-rotate 8s linear infinite .75s;
+                animation: clockwise-rotate 8s linear infinite .2s;
             }
             .fs-mercury-layer {
-                animation: anticlockwise-rotate 10s linear infinite .25s;
+                animation: anticlockwise-rotate 10s linear infinite .1s;
             }
         }
         &.b-3 {
             bottom: 40%; right: 35%;
             animation: fs-background-bubble-move-2 10s linear infinite;
             .fs-earth-layer {
-                animation: clockwise-rotate 6s linear infinite .5s;
+                animation: clockwise-rotate 6s linear infinite .2s;
             }
             .fs-moon-layer {
-                animation: anticlockwise-rotate 8s linear infinite .25s;
+                animation: anticlockwise-rotate 8s linear infinite .1s;
             }
             .fs-mercury-layer {
-                animation: clockwise-rotate 10s linear infinite 1.25s;
+                animation: clockwise-rotate 10s linear infinite .3s;
             }
         }
         &.b-4 {
             top: 30%; right: -20px;
             animation: fs-background-bubble-move-3 10s linear infinite;
             .fs-earth-layer {
-                animation: anticlockwise-rotate 6s linear infinite .75s;
+                animation: anticlockwise-rotate 6s linear infinite .2s;
             }
             .fs-moon-layer {
-                animation: clockwise-rotate 8s linear infinite .25s;
+                animation: clockwise-rotate 8s linear infinite .3s;
             }
             .fs-mercury-layer {
-                animation: anticlockwise-rotate 10s linear infinite 1.5s;
+                animation: anticlockwise-rotate 10s linear infinite .1s;
             }
         }
         &.b-5 {
             bottom: 5px; right: 30%;
             animation: fs-background-bubble-move-1 10s linear infinite;
             .fs-earth-layer {
-                animation: clockwise-rotate 6s linear infinite 1.25s;
+                animation: clockwise-rotate 6s linear infinite .1s;
             }
             .fs-moon-layer {
-                animation: anticlockwise-rotate 8s linear infinite .5s;
+                animation: anticlockwise-rotate 8s linear infinite .3s;
             }
             .fs-mercury-layer {
-                animation: clockwise-rotate 10s linear infinite .25s;
+                animation: clockwise-rotate 10s linear infinite .2s;
             }
         }
         &.b-6 {
             top: -10px; right: 30%;
             animation: fs-background-bubble-move-5 10s linear infinite;
             .fs-earth-layer {
-                animation: anticlockwise-rotate 6s linear infinite .75s;
+                animation: anticlockwise-rotate 6s linear infinite .3s;
             }
             .fs-moon-layer {
-                animation: clockwise-rotate 8s linear infinite 1.5s;
+                animation: clockwise-rotate 8s linear infinite .1s;
             }
             .fs-mercury-layer {
-                animation: anticlockwise-rotate 10s linear infinite 2s;
+                animation: anticlockwise-rotate 10s linear infinite .2s;
             }
         }
     }

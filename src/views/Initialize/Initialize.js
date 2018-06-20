@@ -68,7 +68,8 @@ class Initialize extends Component {
                 this.props.history.replace(routerPath.RollingBack);
             } else {
                 let initStepLocal = lsGet('initStep');
-                if (isInitialized === 'true' && isInitialized === 'true'){
+                if (isInitialized === 'true'){
+                    // already finish initialization
                     if (!initStepLocal){
                         let isLoggedIn = ckGet('login');
                         let path = '';
@@ -79,21 +80,21 @@ class Initialize extends Component {
                         }
                         this.props.history.replace(path);
                     } else {
-                        // isInitialized is true and there's a key 'initStep' in localStorage,
-                        // it means initialization was finished but there was an abnormal exit or refresh
-                        // action happened on browser before, should jump to the last initialization step
-                        this.setState({currentStep: Number(initStepLocal) || this.state.totalStep});
-                        // console.info('find initStep in localStorage, value is ' + initStepLocal);
+                        // isInitialized is true and there's a key 'initStep' in localStorage, it means initialization
+                        // was finished but there was an abnormal exit or browser refresh action occurred on browser
+                        // early, and this time it should jump to the last initialization step
+                        this.setState({currentStep: Number(initStepLocal) || this.state.totalStep - 1});
                     }
                 } else {
+                    // not finish initialization
                     // for this case: isInitialized is false and there's a key 'initStep' in localStorage,
                     // it means initialization wasn't finished, so need to jump to the step recorded in localStorage
-                    if (!!initStepLocal && initStepLocal > 2){
+                    if (!!initStepLocal && initStepLocal > 1){
                         // get some state from localStorage then render them on view
                         let [{current = 0, total = 8}, initInfoList = []] = lsGet(['initStatus', 'initInfoList']);
                         let initProgress = (current / total).toFixed(2) * 100;
                         this.setState({
-                            currentStep: Number(initStepLocal) || 3,
+                            currentStep: Number(initStepLocal) || this.state.totalStep - 2,
                             initProgress,
                             initInfoList
                         });
@@ -165,10 +166,6 @@ class Initialize extends Component {
                 lsRemove(['initStep', 'initStatus', 'initInfoList']);
             }
         }
-    }
-
-    componentDidMount (){
-        // httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
     }
 
     // step 1
@@ -925,8 +922,8 @@ class Initialize extends Component {
                                 )}
                             </section>
                             <div className="fs-initialization-progress-gear-wrapper">
-                                <i className="fs-initialization-gear-big" />
-                                <i className="fs-initialization-gear-small" />
+                                <i className={`fs-initialization-gear-big ${this.state.initStatusNum !== -1 ? 'running' : ''}`} />
+                                <i className={`fs-initialization-gear-small ${this.state.initStatusNum !== -1 ? 'running' : ''}`}/>
                             </div>
                             <Progress
                                 className="fs-initialization-progress-bar"
@@ -937,7 +934,7 @@ class Initialize extends Component {
                             />
                             <section className="fs-initialization-wrapper">
                                 <div className="fs-initialization-info-title">
-                                    {lang('初始化进度信息', 'Initialization Progress Informations')}
+                                    {lang('初始化进度信息', 'Initialization Progress Information')}
                                 </div>
                                 {
                                     this.state.initInfoList.map((info, i) => info.step === -1 ?
