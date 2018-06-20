@@ -281,8 +281,8 @@ class Initialize extends Component {
             // management server IPs haven't pass the basic validation
             return;
         }
-        // A more graceful way to validate network segment is using net mask to do binary '&' operations.
-        // But currently, as per storage backend said, the default network mask should be 255.255.255.0,
+        // A more graceful way to validate net segment is using net mask to do binary '&' operations.
+        // But currently, as per storage backend said, the default net mask should be 255.255.255.0,
         // and this will be recorded in the user guide of our production.
         let {managementServerIPs: [mgmtIP1, mgmtIP2], hbIPs: [hbIP1, hbIP2]} = this.props;
         let errorHelp = lang('管理服务IP不能与和它对应的连接检测IP处于相同网段', 'Management Service IP shouldn\'t be in the same network segment with its corresponding Heartbeat IP');

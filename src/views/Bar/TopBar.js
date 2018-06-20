@@ -53,7 +53,7 @@ class TopBar extends Component {
     browserOffline (){
         notification.warning({
             message: lang('网络异常', 'Network Abnormally'),
-            description: lang(`浏览器处于离线状态，强检查网络连接！`, `Browser is offline, please check network connection!`)
+            description: lang(`浏览器处于离线状态，请检查网络连接！`, `Browser is offline, please check network connection!`)
         });
     }
 
