@@ -123,7 +123,7 @@ const model = {
         for (let i of Object.keys(param)) {
             await database.addSetting({ key: config.setting[i], value: param[i] });
         }
-        await database.addUser({ username: 'admin', password: handler.md5('123456') });
+        await database.addUser({ username: config.user.name, password: handler.md5(config.user.password) });
         await database.addLocalAuthUserGroup({ name: 'everyone', description: 'everyone' });
         await database.addSetting({ key: config.setting.snapshotSetting, value: config.snapshot });
     },

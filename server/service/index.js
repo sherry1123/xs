@@ -155,7 +155,7 @@ const model = {
         let result = {};
         try {
             let { floatIPs } = await database.getSetting({ key: config.setting.initParam });
-            result = handler.response(0, { username: 'admin', password: '123456', floatIP: floatIPs[0] });
+            result = handler.response(0, { username: config.user.name, password: config.user.password, floatIP: floatIPs[0] });
         } catch (error) {
             result = handler.response(52, error, param);
         }

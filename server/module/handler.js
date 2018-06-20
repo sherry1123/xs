@@ -61,7 +61,7 @@ const model = {
         return cryptoJS.MD5(text).toString();
     },
     tripleDes(text) {
-        return cryptoJS.TripleDES.decrypt(text, 'orcadt@xian').toString(cryptoJS.enc.Utf8);
+        return cryptoJS.TripleDES.decrypt(text, config.user.key).toString(cryptoJS.enc.Utf8);
     }
 };
 module.exports = model;
