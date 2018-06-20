@@ -4,7 +4,8 @@ import {Button, Form, Input, message, Modal} from 'antd';
 import httpRequests from '../../http/requests';
 import lang from '../Language/lang';
 import {validatePassword} from '../../services';
-import jsMD5 from 'js-md5';
+import MD5 from 'crypto-js/md5';
+import TripleDES from 'crypto-js/tripledes';
 
 class ChangePassword  extends Component {
     constructor (props){
@@ -92,9 +93,11 @@ class ChangePassword  extends Component {
     async changePassword (){
         let {username} = this.props.user;
         let {password} = this.state.formData;
+        password = MD5(password).toString();
+        password  = TripleDES.encrypt(password, 'orcadt@xian').toString();
         await this.setState({formSubmitting: true});
         try {
-            await httpRequests.updateUser({username, password: jsMD5(password)});
+            await httpRequests.updateUser({username, password});
             await this.hide();
             this.logout();
             message.success(lang(`用户 ${username} 密码修改成功，请使用新密码重新登录！`, `The password of user ${username} has been changed successfully, please use the new password to do re-login!`));
@@ -135,7 +138,7 @@ class ChangePassword  extends Component {
     render (){
         let {isAdmin} = this.state;
         let title = isAdmin ?
-            lang('修改管理员用户的初始密码', 'Change Initial Password Of Administrator User') :
+            lang('修改管理员用户的初始密码', 'Change Initial Password Of Administrator') :
             lang('修改密码', 'Change Password');
         let username = isAdmin ? 'admin' : this.props.user.username;
 

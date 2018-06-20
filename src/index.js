@@ -11,16 +11,16 @@ import {lsGet} from './services';
 import httpRequests from './http/requests';
 
 (async () => {
+    // Each time when react app is accessed on browser, should firstly synchronized up system status with server side.
     const NODE_ENV = process.env.NODE_ENV;
     try {
-        // Each time when react app is accessed on browser, should synchronized up system status with server side.
         await httpRequests.syncUpSystemStatus();
         NODE_ENV === 'development' && console.info('%c System status recorded by cookie in browser has been synchronized up with the corresponding status on server side successfully!', 'color: #52a7fe');
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }
 
-    // create react app
+    // Create react app
     const render = Component => {
         ReactDOM.render(
             <AppContainer>
@@ -32,19 +32,21 @@ import httpRequests from './http/requests';
         );
     };
 
+    // Render App
     render(App);
 
+    // Hot module replacement: re-render the App after the modifications of components occurred
     if (module.hot){
-        // Hot replace the APP when the modifications of components occur
         module.hot.accept('./views/App', () => render(App));
     }
 
+    // Some warning tips in production environment
     if (NODE_ENV === 'production'){
         let language = lsGet('language');
         console.info(
             language === 'english' ?
             '%c Warning: For the stable operation of the system, if you are not the operation and maintenance personnel of OrcaFS, don\'t do anything in the Developer Tool!' :
-            '%c 警告：为了系统的稳定运行，如果您非OrcaFS的运维人员请勿在开发者工具里做任何操作！',
+            '%c 警告：为了系统的稳定运行，如果您非OrcaFS的运维人员请勿在开发者工具里执行任何操作！',
             'color: #f15cfd'
         );
     }
