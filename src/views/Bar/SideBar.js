@@ -137,11 +137,11 @@ class SideBar extends Component {
                             <Icon type="hdd" />{lang('存储目标', 'Storage Target')}
                         </Menu.Item>
                         <Menu.Item key={routerPath.BuddyGroup}>
-                            <Icon type="api" />{lang('伙伴组', 'Buddy Group')}
+                            <Icon type="tags-o" />{lang('伙伴组', 'Buddy Group')}
                         </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.Item key={routerPath.FSOperation}>
-                        <Icon type="setting" />{lang('文件系统操作', 'FS Operation')}
+                        <Icon type="folder" />{lang('文件系统操作', 'FS Operation')}
                     </Menu.Item>
                     <Menu.Item key={routerPath.SystemLog}>
                         <Icon type="file-text" />{lang('系统日志', 'System Log')}

@@ -282,12 +282,12 @@ class CreateManagementService extends Component {
                     <div style={{margin: '-24px -24px 20px', padding: '14px', fontSize: 12, background: '#f3f3f3'}}>
                         {this.state.mgmtIP1Usability ?
                             lang(
-                                '当前已经存在有1个可用的管理服务，再添加1个新的管理服务就能启用HA功能。',
-                                'There is already 1 existing and usable management service currently, add a new management service will enable HA feature.'
+                                '当前已经存在有1个可用的管理服务，再添加1个新的管理服务就能启用高可用性功能。',
+                                'There is already 1 existing and usable management service currently, add a new management service will enable High Availability feature.'
                             ) :
                             lang(
-                                '在初始时添加的管理服务所在的节点上还运行有其他服务，因此不能被用户开启HA功能。需要输入2个未运行其他任何服务的节点的IP，新的2个管理服务将分别运行在这2个节点上。',
-                                'The node that management service IP added in initialization has some other services run on, so it can not be used for enabling HA feature. There are 2 node IPs need with no other services run on, the new 2 management services will run on them respectively.'
+                                '在初始时添加的管理服务所在的节点上还运行有其他服务，因此不能被用户开启高可用性功能。需要输入2个未运行其他任何服务的节点的IP，新的2个管理服务将分别运行在这2个节点上。',
+                                'The node that management service IP added in initialization has some other services run on, so it can not be used for enabling High Availability feature. There are 2 node IPs need with no other services run on, the new 2 management services will run on them respectively.'
                             )
                         }
                     </div>
