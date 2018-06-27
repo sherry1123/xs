@@ -74,15 +74,14 @@ class CreateMetadataOrStorageService extends Component {
 
     async enableCustomRAID (){
         // switch to custom RAID mode
-        let {currentServiceIP} = this.state;
+        let {currentServiceIP, currentServiceRole} = this.state;
         let currentServiceNode = {
-            type: 'metadata',
+            type: currentServiceRole,
             ip: currentServiceIP,
             i: 0,
         };
         await this.setState({
             enableCustomRAID: true,
-            currentServiceType: 'metadata',
             currentServiceNode,
         });
         this.customRAIDForServiceWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
@@ -90,15 +89,14 @@ class CreateMetadataOrStorageService extends Component {
 
     async enableRecommendedRAID (){
         // switch to recommended RAID mode
-        let {currentServiceIP} = this.state;
+        let {currentServiceIP, currentServiceRole} = this.state;
         let currentServiceNode = {
-            type: 'metadata',
+            type: currentServiceRole,
             ip: currentServiceIP,
             i: -1
         };
         await this.setState({
             enableCustomRAID: false,
-            currentServiceType: 'metadata',
             currentServiceNode,
         });
         this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
