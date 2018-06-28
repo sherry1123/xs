@@ -10,6 +10,7 @@ export default importComponentCallBack =>  {
         }
 
         async componentDidMount (){
+            // import is an async function
             // key default is the final exported component of this chunk file
             // key __esModule is true
             const {default: Component} = await importComponentCallBack();
