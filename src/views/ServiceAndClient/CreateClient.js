@@ -49,6 +49,10 @@ class CreateClient extends Component {
             if (!validateIpv4(ip)){
                 this.validationUpdateState('ip', {cn: '该IP格式错误', en: 'This pattern of this IP is incorrect'}, false);
             }
+            // since storage deep layer create a default client for its business, so can't create a new client on it again
+            if (this.props.managementServerIPs.includes(ip)){
+                this.validationUpdateState('ip', {cn: '该IP已被一个已存在的管理节点使用', en: 'This IP has been used by a existing management server'}, false);
+            }
             let clientIPDuplicated = this.props.clientIPs.includes(ip);
             if (clientIPDuplicated){
                 this.validationUpdateState('ip', {cn: '该IP已被一个已存在的客户端使用', en: 'This IP has been used by a existing client'}, false);
@@ -158,8 +162,8 @@ class CreateClient extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {dashboard: {clusterServiceAndClientIPs: {clientIPs}}}} = state;
-    return {language, clientIPs};
+    let {language, main: {dashboard: {clusterServiceAndClientIPs: {managementServerIPs, clientIPs}}}} = state;
+    return {language, managementServerIPs, clientIPs};
 };
 
 const mapDispatchToProps = [];
