@@ -43,7 +43,7 @@ class CreateClient extends Component {
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {ip} = this.state.clientData;
         if (key === 'ip'){
-            if (!ip) {
+            if (!ip){
                 this.validationUpdateState('ip', {cn: '请选择要运行该NAS服务器的客户端IP', en: 'Please select the client IP for running on'}, false);
             }
             if (!validateIpv4(ip)){
