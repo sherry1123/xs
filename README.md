@@ -47,10 +47,10 @@ This framework supplies a series of design principles, practical patterns and hi
         |- Initialize
         |- Login
         |- Main
-            |- MetadataNodes
-            |- StorageNodes
-            |- FSOperation
+            |- Dashboard
+            |- NodeData
             |- Snapshot
+            |- FsOperation
             ...
  ```
 
