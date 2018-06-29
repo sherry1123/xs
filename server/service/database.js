@@ -270,12 +270,12 @@ const model = {
     },
     async getServiceAndClientFromCluster() {
         let initParam = await model.getSetting({ key: config.setting.initParam });
-        return { metadataServerIPs: initParam.metadataServerIPs, storageServerIPs: initParam.storageServerIPs, managementServerIPs: initParam.managementServerIPs, clientIPs: initParam.clientIPs[0] ? initParam.clientIPs : []};
+        return { metadataServerIPs: initParam.metadataServerIPs, storageServerIPs: initParam.storageServerIPs, managementServerIPs: initParam.managementServerIPs, clientIPs: initParam.clientIPs.filter(ip => ip)};
     },
     async addClientToCluster(param) {
         let { ip } = param;
         let initParam = await model.getSetting({ key: config.setting.initParam });
-        initParam.clientIPs = Array.from(new Set(initParam.clientIPs.concat([ip])));
+        initParam.clientIPs = Array.from(new Set(initParam.clientIPs.filter(ip => ip).concat([ip])));
         return await model.updateSetting({ key: config.setting.initParam }, { value: initParam });
     },
     async addMetadataToCluster(param) {
