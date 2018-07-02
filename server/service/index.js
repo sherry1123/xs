@@ -225,7 +225,7 @@ const model = {
                 clusterStatus = { status, total, normal, abnormal: total - normal };
             }
             let space = await afterMe.getStorageDiskSpace(param);
-            space = version.errorId ? { total: 0, used: 0, free: 0, usage: '0%' } : { total: space.data.total, used: space.data.used, free: space.data.free, usage: `${(space.data.used / space.data.total * 100).toFixed(2)}%` };
+            space = space.errorId ? { total: 0, used: 0, free: 0, usage: '0%' } : { total: space.data.total, used: space.data.used, free: space.data.free, usage: `${(space.data.used / space.data.total * 100).toFixed(2)}%` };
             let data = { clusterStatus, clusterCapacity: space, version };
             result = handler.response(0, data);
         } catch (error) {
