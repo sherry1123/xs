@@ -51,10 +51,10 @@ class DataNode extends Component {
          * 40px is the width when left menu is in the state of shrinkage
          * 20px is the lef-padding + right-padding of fs-content-wrapper
          *
-         * These numbers mentioned above are based on what we set in sideBar.less and dashboard.less, if change them in these files,
-         * should change them here too.
+         * These numbers mentioned above are based on what we set in sideBar.less and dashboard.less, if modify them in these files,
+         * should modify them here too.
          *
-         * Why we do this here?
+         * Why do we do this here?
          *
          * On dashboard page, there's only one fs-dashboard-row, so no one else will widen the width of fs-page-content,
          * so it can adaptive the width by itself when menu expand or shrink action happens, then take effect on fs-dashboard-row,
