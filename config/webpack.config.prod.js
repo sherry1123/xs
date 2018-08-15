@@ -1,16 +1,32 @@
 'use strict';
 
+// A css post handler that will add vendor prefix for css files or compiled css files.
 const autoprefixer = require('autoprefixer');
+// An useful path tool.
 const path = require('path');
+// Protagonist of the party.
 const webpack = require('webpack');
+// Create html file to serve the webpack bundles.
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// Extract css modules in entry chunks into a separate css file, without inlined into JS bundle.
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// Will generate a manifest file for all resources.
 const ManifestPlugin = require('webpack-manifest-plugin');
+// Will work with html-webpack-plugin 2.x version to interpolate custom variables into
+// the html file, and just think that it is a template resolve engine.
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+// For using service workers to cache your external project dependencies. It will generate
+// a service worker file using sw-precache and add it to your build directory.
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+// This is a custom ESLint formatter that work well with this build tool's console output.
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
+// This plugin will ensure that relative imports from app's source directory don't reach outside of it.
+// For this case, it will restrict all the module imports under the 'src/' folder, if not, it will throw
+// out an error in the build process.
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+// A method to get the environment variables of current client for injection.
 const paths = require('./paths');
+// The pre-configured paths.
 const getClientEnvironment = require('./env');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
