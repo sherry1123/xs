@@ -25,7 +25,5 @@ module.exports = function(proxy) {
 
 // This is a forward proxy which provides a development environment functionality enhancement,
 // an usage example: $ npm (run) start http://192.168.100.101:3579
-
-// Below feature needs to be verified:
-// If your http server and webSocket server are running on the same port, only need to enter a 'http:' protocol for a short,
-// and the proxy config will change the protocol to 'ws:' automatically.
+// If your http server and webSocket server are running on the same port, only need to enter a 'http://' protocol for a short,
+// and the proxy config will change the protocol to 'ws://' to fit the webSocket server automatically.

@@ -4,10 +4,17 @@
 const autoprefixer = require('autoprefixer');
 // An useful path tool.
 const path = require('path');
+// Enable more threads build, use process to emulate.
+const HappyPack = require('happypack');
+// Shared thread pool.
+const happyThreadPool = HappyPack.ThreadPool({size: 8});
 // Protagonist of the party.
 const webpack = require('webpack');
 // Create html file to serve the webpack bundles.
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// This is an extension plugin for the html-webpack-plugin that simplifies the creation of HTML
+// files to serve your webpack bundles.
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 // Extract css modules in entry chunks into a separate css file, without inlined into JS bundle.
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 // Will generate a manifest file for all resources.
@@ -25,9 +32,9 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 // out an error in the build process.
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 // A method to get the environment variables of current client for injection.
-const paths = require('./paths');
-// The pre-configured paths.
 const getClientEnvironment = require('./env');
+// The pre-configured paths.
+const paths = require('./paths');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -106,10 +113,16 @@ module.exports = {
         // for React Native Web.
         extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
         alias: {
-
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
             'react-native': 'react-native-web',
+            // For business file path simplify
+            'Images': path.resolve(__dirname, '..', 'src/images/'),
+            'Components': path.resolve(__dirname, '..', 'src/components/'),
+            'Actions': path.resolve(__dirname, '..', 'src/redux/actions/'),
+            'Reducers': path.resolve(__dirname, '..', 'src/redux/reducers/'),
+            'Services$': path.resolve(__dirname, '..', 'src/services/index.js'),
+            'Http': path.resolve(__dirname, '..', 'src/http/'),
         },
         plugins: [
             // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -131,18 +144,9 @@ module.exports = {
             // It's important to do this before Babel processes the JS.
             {
                 test: /\.(js|jsx|mjs)$/,
-                enforce: 'pre',
-                use: [
-                    {
-                        options: {
-                            formatter: eslintFormatter,
-                            eslintPath: require.resolve('eslint'),
-
-                        },
-                        loader: require.resolve('eslint-loader'),
-                    },
-                ],
                 include: paths.appSrc,
+                enforce: 'pre',
+                use: ['happypack/loader?id=linter'],
             },
             {
                 // "oneOf" will traverse all following loaders until one will
@@ -155,19 +159,22 @@ module.exports = {
                         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                         loader: require.resolve('url-loader'),
                         options: {
-                            limit: 10000,
+                            limit: 1000,
                             name: 'static/media/[name].[hash:8].[ext]',
                         },
                     },
+                    // Since there is a issue needs to be solved, don't give it to HappyPack temporarily.
+                    /*
+                    {
+                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+                        use: ['happypack/loader?id=image'],
+                    },
+                    */
                     // Process JS with Babel.
                     {
                         test: /\.(js|jsx|mjs)$/,
                         include: paths.appSrc,
-                        loader: require.resolve('babel-loader'),
-                        options: {
-
-                            compact: true,
-                        },
+                        use: ['happypack/loader?id=babel'],
                     },
                     // The notation here is somewhat confusing.
                     // "postcss" loader applies autoprefixer to our CSS.
@@ -183,6 +190,7 @@ module.exports = {
                     // in the main CSS file.
                     {
                         test: /\.css$/,
+                        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
                         loader: ExtractTextPlugin.extract(
                             Object.assign(
                                 {
@@ -226,39 +234,10 @@ module.exports = {
                                 extractTextPluginOptions
                             )
                         ),
-                        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
                     },
                     {
                         test: /\.less$/,
-                        use: [
-                            require.resolve('style-loader'),
-                            require.resolve('css-loader'),
-                            {
-                                loader: require.resolve('postcss-loader'),
-                                options: {
-                                    ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
-                                    plugins: () => [
-                                        require('postcss-flexbugs-fixes'),
-                                        autoprefixer({
-                                            browsers: [
-                                                '>1%',
-                                                'last 4 versions',
-                                                'Firefox ESR',
-                                                'not ie < 9', // React doesn't support IE8 anyway
-                                            ],
-                                            flexbox: 'no-2009',
-                                        }),
-                                    ],
-                                },
-                            },
-                            {
-                                loader: require.resolve('less-loader'),
-                                options: {
-                                    // your can custom the antd theme like below
-                                    // modifyVars: { "@primary-color": "#1DA57A" },
-                                },
-                            },
-                        ],
+                        use: ['happypack/loader?id=less'],
                     },
                     // "file" loader makes sure assets end up in the `build` folder.
                     // When you `import` an asset, you get its filename.
@@ -282,11 +261,181 @@ module.exports = {
             {
                 // test: /\.(woff|svg|eot|tff)\??.*$/,
                 test: /\.(woff|eot|tff)\??.*$/,
-                loader: 'url-loader?name=fonts/[name].[md5:hash:hex:7].[ext]',
+                use: ['happypack/loader?id=font'],
             },
         ],
     },
     plugins: [
+        // A HappyPack instance for js linter task.
+        new HappyPack({
+            id: 'linter',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: [
+                {
+                    options: {
+                        formatter: eslintFormatter,
+                        eslintPath: require.resolve('eslint'),
+                    },
+                    loader: require.resolve('eslint-loader'),
+                }
+            ]
+        }),
+        // A HappyPack instance for image sources.
+        /*
+        new HappyPack({
+            id: 'image',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: [
+                {
+                    loader: require.resolve('url-loader'),
+                    options: {
+                        limit: 10000,
+                        name: 'static/media/[name].[hash:8].[ext]',
+                    },
+                }
+            ]
+        }),
+        */
+        // A HappyPack instance for js sources.
+        new HappyPack({
+            id: 'babel',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: [
+                {
+                    loader: require.resolve('babel-loader'),
+                    options: {
+                        compact: true,
+                    },
+                }
+            ]
+        }),
+        // A HappyPack instance for css sources.
+        /*
+        new HappyPack({
+            id: 'css',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: ExtractTextPlugin.extract(
+                Object.assign(
+                    {
+                        fallback: {
+                            loader: require.resolve('style-loader'),
+                            options: {
+                                hmr: false,
+                            },
+                        },
+                        use: [
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                    minimize: true,
+                                    sourceMap: shouldUseSourceMap,
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    // Necessary for external CSS imports to work
+                                    // https://github.com/facebookincubator/create-react-app/issues/2677
+                                    ident: 'postcss',
+                                    plugins: () => [
+                                        require('postcss-flexbugs-fixes'),
+                                        autoprefixer({
+                                            browsers: [
+                                                '>1%',
+                                                'last 4 versions',
+                                                'Firefox ESR',
+                                                'not ie < 9', // React doesn't support IE8 anyway
+                                            ],
+                                            flexbox: 'no-2009',
+                                        }),
+                                    ],
+                                },
+                            },
+                        ],
+                    },
+                    extractTextPluginOptions
+                )
+            ),
+        }),
+        */
+        // A HappyPack instance for less sources.
+        new HappyPack({
+            id: 'less',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: [
+                {
+                    loader: require.resolve('style-loader'),
+                },
+                {
+                    loader: require.resolve('css-loader'),
+                },
+                {
+                    loader: require.resolve('postcss-loader'),
+                    options: {
+                        ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                        plugins: () => [
+                            require('postcss-flexbugs-fixes'),
+                            autoprefixer({
+                                browsers: [
+                                    '>1%',
+                                    'last 4 versions',
+                                    'Firefox ESR',
+                                    'not ie < 9', // React doesn't support IE8 anyway
+                                ],
+                                flexbox: 'no-2009',
+                            }),
+                        ],
+                    },
+                },
+                {
+                    loader: require.resolve('less-loader'),
+                    /*
+                    options: {
+                        // your can custom the antd theme like below
+                        // modifyVars: { "@primary-color": "#1DA57A" },
+                    },
+                    */
+                },
+            ]
+        }),
+        // A HappyPack instance for font sources.
+        new HappyPack({
+            id: 'font',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: [
+                {
+                    loader: 'url-loader?name=fonts/[name].[md5:hash:hex:7].[ext]',
+                }
+            ]
+        }),
+        // A HappyPack instance for all static files.
+        /*
+        new HappyPack({
+            id: 'file',
+            threadPool: happyThreadPool,
+            verbose: true,
+            loaders: [
+                {
+                    loader: require.resolve('file-loader'),
+                    // Exclude `js` files to keep "css" loader working as it injects
+                    // it's runtime that would otherwise processed through "file" loader.
+                    // Also exclude `html` and `json` extensions so they get processed
+                    // by webpacks internal loaders.
+                    exclude: [/\.js$/, /\.html$/, /\.json$/],
+                    options: {
+                        name: 'static/media/[name].[hash:8].[ext]',
+                    },
+                }
+            ]
+        }),
+        */
         // Makes some environment variables available in index.html.
         // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
         // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
@@ -309,6 +458,14 @@ module.exports = {
                 minifyCSS: true,
                 minifyURLs: true,
             },
+        }),
+        // For some android smart phones' inferior default browsers, the JavaScript codes with webpack module
+        // runtime imported into the index.html by the way of outer chain, will not run actually. And the
+        // react dom will not be created or mounted on the target DOM in index.html, the screen of the phones
+        // will be simply white without any error or logs in console tab. So, here we introduce this plugin to
+        // inline the codes of main.xxxxxx.js file into the <script> tag in index.html.
+        new ScriptExtHtmlWebpackPlugin({
+            inline: 'main'
         }),
         // Makes some environment variables available to the JS code, for example:
         // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
