@@ -14,7 +14,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // This is an extension plugin for the html-webpack-plugin that simplifies the creation of HTML
 // files to serve your webpack bundles.
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+// const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 // Extract css modules in entry chunks into a separate css file, without inlined into JS bundle.
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 // Will generate a manifest file for all resources.
@@ -464,9 +464,11 @@ module.exports = {
         // react dom will not be created or mounted on the target DOM in index.html, the screen of the phones
         // will be simply white without any error or logs in console tab. So, here we introduce this plugin to
         // inline the codes of main.xxxxxx.js file into the <script> tag in index.html.
+        /*
         new ScriptExtHtmlWebpackPlugin({
             inline: 'main'
         }),
+        */
         // Makes some environment variables available to the JS code, for example:
         // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
         // It is absolutely essential that NODE_ENV was set to production here.
