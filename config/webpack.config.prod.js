@@ -222,6 +222,8 @@ module.exports = {
                                                             '>1%',
                                                             'last 4 versions',
                                                             'Firefox ESR',
+                                                            'Firefox > 25',
+                                                            'Firefox < 30',
                                                             'not ie < 9', // React doesn't support IE8 anyway
                                                         ],
                                                         flexbox: 'no-2009',
@@ -386,6 +388,7 @@ module.exports = {
                                     '>1%',
                                     'last 4 versions',
                                     'Firefox ESR',
+                                    'Firefox <= 28',
                                     'not ie < 9', // React doesn't support IE8 anyway
                                 ],
                                 flexbox: 'no-2009',
