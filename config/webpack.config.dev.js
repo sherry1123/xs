@@ -56,7 +56,9 @@ module.exports = {
     // The first two entry points enable "hot" CSS and auto-refreshes for JS.
     entry: [
         // Capture all changes
-        'react-hot-loader/patch',
+        // If we introduce this patch, since something will be wrong in a very old version of FireFox browser,
+        // So we just annotate it here until we solve this issue.
+        // 'react-hot-loader/patch',
         // We ship a few polyfills by default:
         require.resolve('./polyfills'),
         // Include an alternative client for WebpackDevServer. A client's job is to
@@ -179,7 +181,36 @@ module.exports = {
                     // in development "style" loader enables hot editing of CSS.
                     {
                         test: /\.css$/,
-                        use: ['happypack/loader?id=css'],
+                        use: [
+                            require.resolve('style-loader'),
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    // Necessary for external CSS imports to work
+                                    // https://github.com/facebookincubator/create-react-app/issues/2677
+                                    ident: 'postcss',
+                                    plugins: () => [
+                                        require('postcss-flexbugs-fixes'),
+                                        autoprefixer({
+                                            browsers: [
+                                                '>1%',
+                                                'last 4 versions',
+                                                'Firefox ESR',
+                                                'Firefox <= 26',
+                                                'not ie < 9', // React doesn't support IE8 anyway
+                                            ],
+                                            flexbox: 'no-2009',
+                                        }),
+                                    ],
+                                },
+                            },
+                        ],
                     },
                     // "file" loader makes sure those assets get served by WebpackDevServer.
                     // When you `import` an asset, you get its (virtual) filename.
@@ -265,6 +296,7 @@ module.exports = {
                 }
             ]
         }),
+        /*
         // A HappyPack instance for css sources.
         new HappyPack({
             id: 'css',
@@ -291,7 +323,7 @@ module.exports = {
                                     '>1%',
                                     'last 4 versions',
                                     'Firefox ESR',
-                                    'Firefox <= 28',
+                                    'Firefox <= 26',
                                     'not ie < 9', // React doesn't support IE8 anyway
                                 ],
                                 flexbox: 'no-2009',
@@ -301,6 +333,7 @@ module.exports = {
                 },
             ]
         }),
+        */
         // A HappyPack instance for all static files.
         new HappyPack({
             id: 'file',
@@ -338,7 +371,7 @@ module.exports = {
                                     '>1%',
                                     'last 4 versions',
                                     'Firefox ESR',
-                                    'Firefox <= 28',
+                                    'Firefox <= 26',
                                     'not ie < 9', // React doesn't support IE8 anyway
                                 ],
                                 flexbox: 'no-2009',
