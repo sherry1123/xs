@@ -91,7 +91,7 @@ class SetSnapshot extends Component {
                 }, false);
             } else if (total < totalSnapshotNumber){
                 await this.validationUpdateState('total', {
-                    cn: `快照总数量不能小于当前已存在的快照的数量 ${totalSnapshotNumber}，清先删除一些快照再执行此操作`,
+                    cn: `快照总数量不能小于当前已存在的快照的数量 ${totalSnapshotNumber}，请先删除一些快照再执行此操作`,
                     en: `Snapshot total number less than existing snapshots count ${totalLimitation}, please delete some snapshots before doing this operation`
                 }, false);
             } else {
