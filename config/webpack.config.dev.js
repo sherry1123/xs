@@ -56,9 +56,10 @@ module.exports = {
     // The first two entry points enable "hot" CSS and auto-refreshes for JS.
     entry: [
         // Capture all changes
-        // If we introduce this patch, since something will be wrong in a very old version of FireFox browser,
-        // So we just annotate it here until we solve this issue.
-        // 'react-hot-loader/patch',
+        // If we introduce this patch, some non-capturing error will occur in some very
+        // old version browsers, so if you want your App be compatible with these browsers,
+        // you should annotate it here until this issue is solved in these browsers.
+        'react-hot-loader/patch',
         // We ship a few polyfills by default:
         require.resolve('./polyfills'),
         // Include an alternative client for WebpackDevServer. A client's job is to
