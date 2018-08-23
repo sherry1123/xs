@@ -267,6 +267,7 @@ module.exports = {
         ],
     },
     plugins: [
+        new webpack.BannerPlugin('© 2018 Orcadt All Rights Reserved'),
         // A HappyPack instance for js linter task.
         new HappyPack({
             id: 'linter',
