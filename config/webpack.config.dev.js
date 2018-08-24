@@ -14,7 +14,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // This is an extension plugin for the html-webpack-plugin that simplifies the creation of HTML
 // files to serve your webpack bundles.
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+// const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 // Enforces the path of all required modules match the exact case of the actual path on disk.
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 // Will work with html-webpack-plugin 2.x version to interpolate custom variables into
@@ -56,6 +56,9 @@ module.exports = {
     // The first two entry points enable "hot" CSS and auto-refreshes for JS.
     entry: [
         // Capture all changes
+        // If we introduce this patch, some non-capturing error will occur in some very
+        // old version browsers, so if you want your App be compatible with these browsers,
+        // you should annotate it here until this issue is solved in these browsers.
         'react-hot-loader/patch',
         // We ship a few polyfills by default:
         require.resolve('./polyfills'),
@@ -179,7 +182,36 @@ module.exports = {
                     // in development "style" loader enables hot editing of CSS.
                     {
                         test: /\.css$/,
-                        use: ['happypack/loader?id=css'],
+                        use: [
+                            require.resolve('style-loader'),
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    // Necessary for external CSS imports to work
+                                    // https://github.com/facebookincubator/create-react-app/issues/2677
+                                    ident: 'postcss',
+                                    plugins: () => [
+                                        require('postcss-flexbugs-fixes'),
+                                        autoprefixer({
+                                            browsers: [
+                                                '>1%',
+                                                'last 4 versions',
+                                                'Firefox ESR',
+                                                'Firefox <= 26',
+                                                'not ie < 9', // React doesn't support IE8 anyway
+                                            ],
+                                            flexbox: 'no-2009',
+                                        }),
+                                    ],
+                                },
+                            },
+                        ],
                     },
                     // "file" loader makes sure those assets get served by WebpackDevServer.
                     // When you `import` an asset, you get its (virtual) filename.
@@ -265,6 +297,7 @@ module.exports = {
                 }
             ]
         }),
+        /*
         // A HappyPack instance for css sources.
         new HappyPack({
             id: 'css',
@@ -291,6 +324,7 @@ module.exports = {
                                     '>1%',
                                     'last 4 versions',
                                     'Firefox ESR',
+                                    'Firefox <= 26',
                                     'not ie < 9', // React doesn't support IE8 anyway
                                 ],
                                 flexbox: 'no-2009',
@@ -300,6 +334,7 @@ module.exports = {
                 },
             ]
         }),
+        */
         // A HappyPack instance for all static files.
         new HappyPack({
             id: 'file',
@@ -337,6 +372,7 @@ module.exports = {
                                     '>1%',
                                     'last 4 versions',
                                     'Firefox ESR',
+                                    'Firefox <= 26',
                                     'not ie < 9', // React doesn't support IE8 anyway
                                 ],
                                 flexbox: 'no-2009',
@@ -380,9 +416,11 @@ module.exports = {
         // react dom will not be created or mounted on the target DOM in index.html, the screen of the phones
         // will be simply white without any error or logs in console tab. So, here we introduce this plugin to
         // inline the codes of main.xxxxxx.js file into the <script> tag in index.html.
+        /*
         new ScriptExtHtmlWebpackPlugin({
             inline: 'bundle'
         }),
+        */
         // Add module names to factory functions so they appear in browser profiler.
         new webpack.NamedModulesPlugin(),
         // Makes some environment variables available to the JS code, for example:

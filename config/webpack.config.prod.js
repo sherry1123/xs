@@ -222,6 +222,7 @@ module.exports = {
                                                             '>1%',
                                                             'last 4 versions',
                                                             'Firefox ESR',
+                                                            'Firefox <= 26',
                                                             'not ie < 9', // React doesn't support IE8 anyway
                                                         ],
                                                         flexbox: 'no-2009',
@@ -237,7 +238,51 @@ module.exports = {
                     },
                     {
                         test: /\.less$/,
-                        use: ['happypack/loader?id=less'],
+                        loader: ExtractTextPlugin.extract(
+                            Object.assign(
+                                {
+                                    fallback: {
+                                        loader: require.resolve('style-loader'),
+                                        options: {
+                                            hmr: false,
+                                        },
+                                    },
+                                    use: [
+                                        {
+                                            loader: require.resolve('css-loader'),
+                                        },
+                                        {
+                                            loader: require.resolve('postcss-loader'),
+                                            options: {
+                                                ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                                                plugins: () => [
+                                                    require('postcss-flexbugs-fixes'),
+                                                    autoprefixer({
+                                                        browsers: [
+                                                            '>1%',
+                                                            'last 4 versions',
+                                                            'Firefox ESR',
+                                                            'Firefox <= 26',
+                                                            'not ie < 9', // React doesn't support IE8 anyway
+                                                        ],
+                                                        flexbox: 'no-2009',
+                                                    }),
+                                                ],
+                                            },
+                                        },
+                                        {
+                                            loader: require.resolve('less-loader'),
+                                            // options: {
+                                            // your can custom the antd theme like below
+                                            // modifyVars: { "@primary-color": "#1DA57A" },
+                                            // },
+
+                                        },
+                                    ],
+                                },
+                                extractTextPluginOptions
+                            )
+                        ),
                     },
                     // "file" loader makes sure assets end up in the `build` folder.
                     // When you `import` an asset, you get its filename.
@@ -266,6 +311,7 @@ module.exports = {
         ],
     },
     plugins: [
+        new webpack.BannerPlugin('© 2018 Orcadt All Rights Reserved'),
         // A HappyPack instance for js linter task.
         new HappyPack({
             id: 'linter',
@@ -349,6 +395,7 @@ module.exports = {
                                                 '>1%',
                                                 'last 4 versions',
                                                 'Firefox ESR',
+                                                'Firefox <= 26',
                                                 'not ie < 9', // React doesn't support IE8 anyway
                                             ],
                                             flexbox: 'no-2009',
@@ -363,6 +410,7 @@ module.exports = {
             ),
         }),
         */
+        /*
         // A HappyPack instance for less sources.
         new HappyPack({
             id: 'less',
@@ -386,6 +434,7 @@ module.exports = {
                                     '>1%',
                                     'last 4 versions',
                                     'Firefox ESR',
+                                    'Firefox <= 26',
                                     'not ie < 9', // React doesn't support IE8 anyway
                                 ],
                                 flexbox: 'no-2009',
@@ -395,15 +444,15 @@ module.exports = {
                 },
                 {
                     loader: require.resolve('less-loader'),
-                    /*
-                    options: {
+                    // options: {
                         // your can custom the antd theme like below
                         // modifyVars: { "@primary-color": "#1DA57A" },
-                    },
-                    */
+                    // },
+
                 },
             ]
         }),
+        */
         // A HappyPack instance for font sources.
         new HappyPack({
             id: 'font',
