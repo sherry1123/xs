@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import generalAction from '../../redux/actions/generalAction';
 import {Affix, Icon, Popover, notification} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
-import LanguageButton from '../../components/Language/LanguageButton';
-import lang from '../../components/Language/lang';
-import {lsGet, lsSet} from '../../services';
+import LanguageButton from 'Components/Language/LanguageButton';
+import lang from 'Components/Language/lang';
+import {lsGet, lsSet} from 'Services';
 
 class TopBar extends Component {
     constructor (props){

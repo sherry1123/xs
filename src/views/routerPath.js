@@ -28,6 +28,8 @@ const routerPath = {
 
     DataNode: '/data-node',
 
+    StoragePool: '/storage-pool',
+
     Snapshot: '/snapshot',
 
     SnapshotSchedule: '/snapshot-schedule',
@@ -58,6 +60,7 @@ export default routerPath;
 export const pathToMenu = {
     Dashboard: [routerPath.Dashboard],
     DataNode: [routerPath.DataNode],
+    StoragePool: [routerPath.StoragePool],
     Snapshot: [routerPath.Snapshot, routerPath.SnapshotSchedule],
     Share: [routerPath.NASServer, routerPath.NFS, routerPath.CIFS],
     ServiceAndClient: [routerPath.ServiceAndClient],
