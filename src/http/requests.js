@@ -6,6 +6,7 @@ import generalAction from '../redux/actions/generalAction';
 import serviceAction from '../redux/actions/serviceAction';
 import dashboardAction from '../redux/actions/dashboardAction';
 import dataNodeAction from '../redux/actions/dataNodeAction';
+import storagePoolAction from '../redux/actions/storagePoolAction';
 import systemLogAction from '../redux/actions/systemLogAction';
 import snapshotAction from '../redux/actions/snapshotAction';
 import shareAction from '../redux/actions/shareAction';
@@ -196,6 +197,26 @@ export default  {
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeIOPS(data));
             });
         }
+    },
+
+    // storage pool
+    async getStoragePoolList (){
+        requestMiddleWare(async () => {
+            let data = await fetchGet('/api/getstoragepools');
+            !!data && store.dispatch(storagePoolAction.setStoragePoolList(data));
+        });
+    },
+
+    async createStoragePool (storagePool){
+        await fetchPost('/api/createstoragepool', storagePool);
+    },
+
+    async editStoragePool (storagePool){
+        await fetchPost('/api/editstoragepool', storagePool)
+    },
+
+    async deleteStoragePool (storagePool){
+        await fetchPost('/api/deletestoragepool', storagePool)
     },
 
     // service and client

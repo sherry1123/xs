@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button} from 'antd';
-import ChangePassword from '../../components/ChangePassword/ChangePassword';
-import lang from '../../components/Language/lang';
-import mainAction from '../../redux/actions/generalAction';
-import httpRequests from '../../http/requests';
+import ChangePassword from 'Components/ChangePassword/ChangePassword';
+import lang from 'Components/Language/lang';
+import mainAction from 'Actions/generalAction';
+import httpRequests from 'Http/requests';
 
 class UserSettingPopover extends Component {
     show (){
