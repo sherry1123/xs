@@ -28,6 +28,8 @@ const routerPath = {
 
     DataNode: '/data-node',
 
+	StoragePool: '/storage-pool',
+
     Snapshot: '/snapshot',
 
     SnapshotSchedule: '/snapshot-schedule',

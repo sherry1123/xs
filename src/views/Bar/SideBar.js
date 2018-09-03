@@ -73,6 +73,9 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.ServiceAndClient}>
                         <Icon type="desktop" />{lang('服务与客户端', 'Service And Client')}
                     </Menu.Item>
+					<Menu.Item key={routerPath.StoragePool}>
+						<Icon type="save" />{lang('存储池', 'Storage Pool')}
+					</Menu.Item>
                     <Menu.SubMenu
                         key="Snapshot"
                         title={

@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Modal} from 'antd';
 import lang from 'Components/Language/lang';
+import httpRequests from "../../http/requests";
+import {message} from "antd/lib/index";
 
 class CreateStoragePool extends Component {
     constructor (props){
@@ -18,6 +20,21 @@ class CreateStoragePool extends Component {
             }
         };
     }
+
+	async createStoragepool (){
+		let storagePoolData = Object.assign({}, this.state.storagePoolData);
+		this.setState({formSubmitting: true});
+		try {
+			await httpRequests.createStoragePool(storagePoolData);
+			// move this operation to socket, and listen the snapshot start creating event
+			// httpRequests.getSnapshotList();
+			await this.hide();
+			message.success(lang(`开始创建存储池 ${storagePoolData.name}!`, `Start creating storagePool ${storagePoolData.name}!`));
+		} catch ({msg}){
+			message.error(lang(`存储池 ${storagePoolData.name} 创建失败, 原因: `, `Create storagePool ${storagePoolData.name} failed, reason: `) + msg);
+		}
+		this.setState({formSubmitting: false});
+	}
 
     show (storagePoolData){
         this.setState({
@@ -63,7 +80,7 @@ class CreateStoragePool extends Component {
                             size="small"
                             type="primary"
                             loading={this.state.formSubmitting}
-                            onClick={this.edit.bind(this)}
+                            onClick={this.createStoragepool.bind(this)}
                         >
                             {lang('创建', 'Edit')}
                         </Button>
@@ -81,4 +98,12 @@ const mapStateToProps = state => {
     return {language};
 };
 
-export default connect(mapStateToProps)(CreateStoragePool);
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	return Object.assign({}, stateProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateStoragePool);

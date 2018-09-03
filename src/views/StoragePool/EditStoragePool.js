@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Modal} from 'antd';
 import lang from 'Components/Language/lang';
+import httpRequests from "../../http/requests";
+import {message} from "antd/lib/index";
 
 class EditStoragePool extends Component {
     constructor (props){
@@ -26,6 +28,20 @@ class EditStoragePool extends Component {
             storagePoolData,
         });
     }
+
+	async editStoragepool (){
+		let storagePoolData = Object.assign({}, this.state.storagePoolData);
+		this.setState({formSubmitting: true});
+		try {
+			await httpRequests.updateStoragePool(storagePoolData);
+			httpRequests.getStoragePoolList();
+			await this.hide();
+			message.success(lang('编辑存储池成功!', 'Edit Storage Pool successfully!'));
+		} catch ({msg}){
+			message.error(lang('编辑存储池失败, 原因: ', 'Edit Storage Pool failed, reason: ') + msg);
+		}
+		this.setState({formSubmitting: false});
+	}
 
     async hide (){
         this.setState({visible: false});
@@ -63,7 +79,7 @@ class EditStoragePool extends Component {
                             size="small"
                             type="primary"
                             loading={this.state.formSubmitting}
-                            onClick={this.edit.bind(this)}
+                            onClick={this.editStoragepool.bind(this)}
                         >
                             {lang('编辑', 'Edit')}
                         </Button>
@@ -77,8 +93,16 @@ class EditStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
+    let {language, main: {storagepool: {storagepoolList}}} = state;
+    return {language, storagepoolList};
 };
 
-export default connect(mapStateToProps)(EditStoragePool);
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	return Object.assign({}, stateProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditStoragePool);

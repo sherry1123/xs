@@ -14,6 +14,9 @@ const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 // data node
 const DataNode = asyncLoad(() => import('../DataNode/DataNode'));
 
+//storage pool
+const StoragePool = asyncLoad(() => import('../StoragePool/StoragePool'));
+
 // snapshot
 const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
 const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
@@ -78,6 +81,8 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.Dashboard}`} component={Dashboard} />
 
                         <Route path={`${Main}${routerPath.DataNode}`} component={DataNode} />
+
+						<Route path={`${Main}${routerPath.StoragePool}`} component={StoragePool} />
 
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
 

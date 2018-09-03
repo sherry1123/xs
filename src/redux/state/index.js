@@ -137,8 +137,16 @@ export default {
         // snapshot, timed snapshot schedule and setting
         snapshot: {
             snapshotSetting: {total: 0, auto: 0, manual: 0,},
-            snapshotList: [],
+            snapshotList: [
+                {name:"snapshot_1",description:"测试",createTime:"2018.9.3"}
+            ],
             snapshotScheduleList: [],
+        },
+        //storage pool
+		storagepool: {
+			storagepoolList: [
+				{name:"storagepool_1"}
+			],
         },
         // NAS server, NFS share and client, CIFS share
         share: {
