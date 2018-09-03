@@ -134,6 +134,10 @@ export default {
             physicalNodeTPS: {read: [], write: [], time: []},
             physicalNodeIOPS: {total: [], time: []},
         },
+        // storage pool
+        storagePool: {
+            storagePoolList: [],
+        },
         // snapshot, timed snapshot schedule and setting
         snapshot: {
             snapshotSetting: {total: 0, auto: 0, manual: 0,},

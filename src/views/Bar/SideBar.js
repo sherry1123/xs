@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {Menu, Icon} from 'antd';
-import generalAction from '../../redux/actions/generalAction';
-import lang from '../../components/Language/lang';
+import generalAction from 'Actions/generalAction';
+import lang from 'Components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
 
 class SideBar extends Component {
@@ -72,6 +72,9 @@ class SideBar extends Component {
                     </Menu.Item>
                     <Menu.Item key={routerPath.ServiceAndClient}>
                         <Icon type="desktop" />{lang('服务与客户端', 'Service And Client')}
+                    </Menu.Item>
+                    <Menu.Item key={routerPath.StoragePool}>
+                        <Icon type="appstore-o" />{lang('存储池', 'Storage Pool')}
                     </Menu.Item>
                     <Menu.SubMenu
                         key="Snapshot"
