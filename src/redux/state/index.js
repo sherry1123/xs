@@ -136,7 +136,9 @@ export default {
         },
         // storage pool
         storagePool: {
-            storagePoolList: [],
+            storagePoolList: [
+                {name: 'pool_1'}
+            ],
         },
         // snapshot, timed snapshot schedule and setting
         snapshot: {
