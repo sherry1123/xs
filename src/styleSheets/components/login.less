@@ -55,8 +55,8 @@
             padding: 30px;
             width: 350px;
             height: 400px;
-            background: @white;
-            .fs-box-shadow();
+            // background: rgba(255, 255, 255, .1);
+            .fs-box-shadow(0, 0, 3px, 3px, #a3c2fe);
             z-index: 10;
             .fs-logo-wrapper {
                 width: 120px;
@@ -102,8 +102,9 @@
                     .fs-login-forget-password-tip {
                         padding-top: 20px;
                         font-size: @smallFont;
+                        color: @white;
                         .anticon {
-                            color: @blue;
+                            color: @white;
                         }
                     }
                 }
