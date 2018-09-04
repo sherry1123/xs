@@ -1,6 +1,6 @@
+APScheduler==3.5.3
+EventLet==0.24.1
 Flask==1.0.2
 Flask-SocketIO==3.0.1
-EventLet==0.24.1
 MongoEngine==0.15.3
 Requests==2.19.1
-APScheduler==3.5.3
