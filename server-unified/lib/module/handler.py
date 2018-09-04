@@ -1,4 +1,5 @@
 import collections
+import math
 import re
 
 
@@ -87,3 +88,12 @@ def match_ip(ip):
 
 def remote_cmd(ip, cmd):
     return 'ssh -i /root/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet root@%s \'%s\'' % (ip, cmd)
+
+
+def toByte(value, unit):
+    unit_list = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+    return math.floor(value * math.pow(1024, unit_list.index(unit)))
+
+
+def replace(pattern, repl, string):
+    return re.sub(pattern, repl, string)

@@ -15,6 +15,16 @@ def check_env():
     return jsonify(controller.check_env(request.params))
 
 
+@app.route('/api/getraidrecommendedconfiguration', methods=['POST'])
+def get_raid():
+    return jsonify(controller.get_raid(request.params))
+
+
+@app.route('/api/getdisklist', methods=['GET', 'POST'])
+def get_disklist():
+    return jsonify(controller.get_disklist(request.params))
+
+
 @app.route('/api/receiveevent', methods=['POST'])
 def receive_event():
     return jsonify(controller.receive_event(request.params))

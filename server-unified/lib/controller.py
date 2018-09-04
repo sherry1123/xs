@@ -1,5 +1,5 @@
 from lib.module import handler, terminal
-from lib.service import database
+from lib.service import backend, database
 from lib.util import event, initialize, schedule, status
 
 
@@ -19,6 +19,31 @@ def check_env(params):
             params, metadataServerIPs=list, storageServerIPs=list)
         data = initialize.check_cluster_env(
             metadataServerIPs, storageServerIPs)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_raid(params):
+    response = {}
+    try:
+        metadataServerIPs, storageServerIPs = handler.request(
+            params, metadataServerIPs=list, storageServerIPs=list)
+        data = initialize.get_recommended_raid_configuration(
+            metadataServerIPs, storageServerIPs)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_disklist(params):
+    response = {}
+    try:
+        ip, = handler.request(params, ip=str)
+        print(ip)
+        data = backend.get_disk_list(ip)
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
