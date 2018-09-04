@@ -29,11 +29,10 @@ def get_disk_list(ip):
     disk_list = backend_handler(request.get(
         'http://localhost:9090/disk/list/' + ip, {}, get_token())) or []
 
-    def filter_not_used_disk(disk_list):
-        return False if disk_list['isUsed'] else True
     def revise_disk_space(disk):
-        disk['totalSpace'] = handler.toByte(float(handler.replace('\SB', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0])
+        disk['totalSpace'] = handler.toByte(float(handler.replace(
+            '\SB', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0])
         return disk
-    disk_list = filter(filter_not_used_disk, disk_list)
+    disk_list = filter(lambda disk: not disk_list['isUsed'], disk_list)
     disk_list = map(revise_disk_space, disk_list)
     return disk_list

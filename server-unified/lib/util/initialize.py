@@ -70,16 +70,12 @@ def get_recommended_raid_configuration(metadatas, storages):
 
         return map(map_container_list, container_list)
 
-    def filter_nvme_disk(disk):
-        return True if 'nvme' in disk['diskName'] else False
-
-    def map_nvme_disk(disk):
-        return {'diskName': disk['diskName'], 'space': disk['totalSpace']}
     for item in disk_group:
         ip = item['ip']
         disk_list = item['diskList']
-        disk_list = filter(filter_nvme_disk, disk_list)
-        disk_list = map(map_nvme_disk, disk_list)
+        disk_list = filter(lambda disk: 'nvme' in disk['diskName'], disk_list)
+        disk_list = map(lambda disk: {
+                        'diskName': disk['diskName'], 'space': disk['totalSpace']}, disk_list)
         disk_list_length = len(disk_list)
         if ip in metadatas and ip in storages:
             metadata_configuration[ip] = get_configuration(

@@ -42,7 +42,6 @@ def get_disklist(params):
     response = {}
     try:
         ip, = handler.request(params, ip=str)
-        print(ip)
         data = backend.get_disk_list(ip)
         response = handler.response(0, data)
     except Exception as error:
