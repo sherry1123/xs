@@ -22,7 +22,7 @@ def get_token():
 
 
 def get_create_status():
-    return backend_handler(request.get('http://localhost:9090/cluster/createstatus', {}, get_token()))
+    return request.get('http://localhost:9090/cluster/createstatus', {}, get_token())
 
 
 def get_disk_list(ip):
@@ -36,3 +36,15 @@ def get_disk_list(ip):
     disk_list = filter(lambda disk: not disk['isUsed'], disk_list)
     disk_list = map(revise_disk_space, disk_list)
     return disk_list
+
+
+def initialize_cluster(param):
+    return request.post('http://localhost:9090/cluster/create', param, get_token())
+
+
+def deinitialize_cluster():
+    return request.post('http://localhost:9090/cluster/destroy', {}, get_token())
+
+
+def create_buddy_group(param):
+    return backend_handler(request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token()))

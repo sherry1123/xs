@@ -1,7 +1,7 @@
 from flask import jsonify, make_response, request
 
 from lib import controller
-from lib.module import handler, terminal
+from lib.module import handler, process
 from lib.util.socket import app
 
 
@@ -32,7 +32,7 @@ def receive_event():
 
 @app.route('/api/init', methods=['POST'])
 def initialize_cluster():
-    terminal.do(controller.initialize_cluster, request.params)
+    process.do(controller.initialize_cluster, request.params)
     return jsonify(handler.response(0, 'Start to initialize the cluster!'))
 
 
@@ -44,11 +44,18 @@ def deinitialize_cluster():
     return response
 
 
+@app.route('/api/getdefaultuser', methods=['GET', 'POST'])
+def get_default_user():
+    return jsonify(controller.get_default_user())
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
     result = controller.login(request.params)
     response = make_response(jsonify(result))
-    result['code'] or response.set_cookie('login', 'true')
+    if not result['code']:
+        response.set_cookie('login', 'true')
+        response.set_cookie('user', result['data']['username'])
     return response
 
 
@@ -56,7 +63,9 @@ def login():
 def logout():
     result = controller.logout(request.params)
     response = make_response(jsonify(result))
-    result['code'] or response.set_cookie('login', 'false')
+    if not result['code']:
+        response.set_cookie('login', 'false')
+        response.set_cookie('user', '')
     return response
 
 

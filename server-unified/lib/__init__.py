@@ -12,8 +12,9 @@ def create_app():
         login = handler.cookie(request.cookies.get('login'))
         api = handler.api(request.path)
         api_before_initialize = ['checkclusterenv', 'init']
-        api_after_initialize = ['receiveevent']
-        api_always_pass = ['syncsystemstatus', 'getraidrecommendedconfiguration', 'getdisklist']
+        api_after_initialize = ['getdefaultuser']
+        api_always_pass = [
+            'syncsystemstatus', 'getraidrecommendedconfiguration', 'getdisklist', 'receiveevent']
         api_login = ['login']
         if initialize:
             if api in api_login + api_always_pass + api_after_initialize or login:

@@ -12,22 +12,21 @@ def send(channel, code, target, result, data={}, notify=False, ip=None):
             raise ValueError('This is not a valid IP address!')
     else:
         url = 'http://localhost' + receive_api
-    request.post(url, {'channel': channel, 'code': code, 'target': target,
-                       'result': result, 'data': data, 'notify': notify})
+    response = request.post(url, {'channel': channel, 'code': code,
+                                  'target': target, 'result': result, 'data': data, 'notify': notify})
+    if response['code']:
+        raise ValueError(response['msg'])
 
 
 def receive(channel, code, target, result, data, notify):
-    if code == 1:
+    if code == 0:
         current, state, total = handler.request(
-            data, current=int, state=bool, total=int)
-        if current == 0:
-            socket.send('Start')
-        elif current == 3:
+            data, current=int, state=int, total=int)
+        socket.emit('init status', {
+                    'current': current, 'status': state, 'total': total})
+        if current == 7:
             status.set_cluster_initialize_status(True)
             database.connect_database()
-            schedule.start_scheduler()
-            socket.send('Finish')
-        else:
-            socket.send(current)
+            # schedule.start_scheduler()
     else:
         pass

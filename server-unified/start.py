@@ -11,7 +11,7 @@ def main():
     initialize = status.get_cluster_status()
     if initialize:
         connect_database()
-        start_scheduler()
+        # start_scheduler()
     else:
         pass
     socketio.run(app, host='0.0.0.0', port=3456)
