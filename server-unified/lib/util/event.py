@@ -28,5 +28,12 @@ def receive(channel, code, target, result, data, notify):
             status.set_cluster_initialize_status(True)
             database.connect_database()
             # schedule.start_scheduler()
-    else:
-        pass
+    elif code == 1:
+        status.set_cluster_deinitialize_status(True)
+        socket.emit('event status', {'channel': channel, 'code': code,
+                                     'target': target, 'result': result, 'notify': notify})
+    elif code == 2:
+        status.set_cluster_deinitialize_status(False)
+        result and status.set_cluster_initialize_status(False)
+        socket.emit('event status', {'channel': channel, 'code': code,
+                                     'target': target, 'result': result, 'notify': notify})

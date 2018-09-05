@@ -186,9 +186,22 @@ def save_initialize_information(param, node_list):
     database.create_user('admin', 'e10adc3949ba59abbe56e057f20f883e')
 
 
-def deinitialize_mongodb(node_list):
-    for i in range(len(node_list)):
+def deinitialize_mongodb(ip_list):
+    for ip in ip_list:
         process.run('killall mongod', ip)
         process.run('sleep 5', ip)
         process.run('rm -rf /var/lib/mongo/*', ip)
         process.run('echo "" > /var/log/mongodb/mongod.log', ip)
+
+
+def get_mongodb_process():
+    command = 'ps aux|grep /usr/bin/mongod|grep grep -v|awk \'{print $2}\''
+    return bool(process.run(command))
+
+
+def get_mongodb_status():
+    command = '/usr/bin/mongo --quiet --eval "db.serverStatus().ok"'
+    if get_mongodb_process():
+        return process.run(command) == '1'
+    else:
+        return False

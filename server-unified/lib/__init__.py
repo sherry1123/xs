@@ -9,6 +9,7 @@ def create_app():
     @app.before_request
     def filter_request():
         initialize = status.get_cluster_initialize_status()
+        deinitialize = status.get_cluster_deinitialize_status()
         login = handler.cookie(request.cookies.get('login'))
         api = handler.api(request.path)
         api_before_initialize = ['checkclusterenv', 'init']
@@ -17,7 +18,11 @@ def create_app():
             'syncsystemstatus', 'getraidrecommendedconfiguration', 'getdisklist', 'receiveevent']
         api_login = ['login']
         if initialize:
-            if api in api_login + api_always_pass + api_after_initialize or login:
+            if api in api_always_pass:
+                pass
+            elif deinitialize:
+                return jsonify(handler.response(1, 'The cluster is de-initializing!'))
+            elif api in api_login + api_after_initialize or login:
                 if api not in api_before_initialize:
                     pass
                 else:
@@ -42,10 +47,16 @@ def create_app():
     @app.after_request
     def sync_status(response):
         initialize_cookie = handler.cookie(request.cookies.get('init'))
+        deinitialize_cookie = handler.cookie(request.cookies.get('deinit'))
         initialize_status = status.get_cluster_initialize_status()
+        deinitialize_status = status.get_cluster_deinitialize_status()
         initialize_cookie != initialize_status and response.set_cookie(
             'init', str(initialize_status).lower())
-        not initialize_status and response.set_cookie('login', 'false')
+        deinitialize_cookie != deinitialize_status and response.set_cookie(
+            'deinit', str(deinitialize_status).lower())
+        if not initialize_status:
+            response.set_cookie('login', 'false')
+            response.set_cookie('user', '')
         return response
 
     return app

@@ -43,7 +43,7 @@ def initialize_cluster(param):
 
 
 def deinitialize_cluster():
-    return request.post('http://localhost:9090/cluster/destroy', {}, get_token())
+    request.post('http://localhost:9090/cluster/destroy', {}, get_token())
 
 
 def create_buddy_group(param):

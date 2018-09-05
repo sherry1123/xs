@@ -73,8 +73,8 @@ def initialize_cluster(params):
                                         enableHA, floatIPs, hbIPs, enableCustomRAID, recommendedRAID, customRAID, enableCreateBuddyGroup)
         init_res = backend.initialize_cluster(data['orcafs_param'])
         if not init_res['errorId']:
-            @setinterval(1)
-            def send_initialize_status(fn):
+            @setinterval(2)
+            def send_initialize_status(callback):
                 status_res = backend.get_create_status()
                 current = status_res['data']['currentStep']
                 fs_total = status_res['data']['totalStep']
@@ -83,7 +83,7 @@ def initialize_cluster(params):
                 error_message = status_res['data']['errorMessage']
                 if not status_res['errorId']:
                     if state:
-                        fn()
+                        callback()
                         event.send('cluster', 0, 'cluster', False, {
                                    'current': current, 'state': -1, 'total': total})
                     elif current != fs_total:
@@ -91,7 +91,7 @@ def initialize_cluster(params):
                         event.send('cluster', 0, 'cluster', True, {
                                    'current': current, 'state': state, 'total': total})
                     elif 'finish' in describle:
-                        fn()
+                        callback()
                         if data['enable_create_buddy_group']:
                             backend.create_buddy_group({})
                         current = 5
@@ -111,7 +111,7 @@ def initialize_cluster(params):
                                    'current': current, 'state': 0, 'total': total})
                         print('finish')
                 else:
-                    fn()
+                    callback()
                     event.send('cluster', 0, 'cluster', False, {
                                'current': current, 'state': -1, 'total': total})
 
@@ -124,20 +124,49 @@ def initialize_cluster(params):
                        'current': current, 'state': -1, 'total': total})
     except Exception as error:
         print(handler.error(error))
+        deinitialize_cluster(2)
         event.send('cluster', 0, 'cluster', False, {
                    'current': current, 'state': -1, 'total': total})
 
 
-def deinitialize_cluster(params):
-    response = {}
+def deinitialize_cluster(mode):
+    print('start')
     try:
-        bar, foo = handler.request(params, foo=str, bar=str)
-        status.set_cluster_initialize_status(False)
-        schedule.stop_sheduler()
-        response = handler.response(0, 'Deinitialize cluster successfully!')
+        event.send('cluster', 1, 'cluster', True, {}, True)
+        if mode == 1:
+            backend.deinitialize_cluster()
+
+        @setinterval(2)
+        def send_deinitialize_status(callback):
+            status_res = backend.get_create_status()
+            current = status_res['data']['currentStep']
+            describle = status_res['data']['describle']
+            state = status_res['data']['status']
+            error_message = status_res['data']['errorMessage']
+            if not status_res['errorId']:
+                print(current)
+                if state:
+                    callback()
+                    event.send('cluster', 2, 'cluster', False, {}, True)
+                elif not current and 'finish' in describle:
+                    callback()
+                    mongodb_status = initialize.get_mongodb_status()
+                    node_list = ['127.0.0.1']
+                    if mongodb_status:
+                        node_list = database.get_setting('NODE-LIST')
+                        node_list = node_list['mgmt'] if len(
+                            node_list['mgmt']) == 1 else node_list['mgmt'] + node_list['meta'][0:1]
+                        initialize.deinitialize_mongodb(node_list)
+                    event.send('cluster', 2, 'cluster', True, {}, True)
+                    print('finish')
+
+        def stop_get_deinitialize_status():
+            start_get_deinitialize_status.set()
+        start_get_deinitialize_status = send_deinitialize_status(
+            stop_get_deinitialize_status)
     except Exception as error:
-        response = handler.response(1, handler.error(error))
-    return response
+        print(handler.error(error))
+        event.send('cluster', 2, 'cluster', False, {}, True)
 
 
 def get_default_user():

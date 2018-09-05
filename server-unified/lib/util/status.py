@@ -2,6 +2,7 @@ from lib.module import handler
 from lib.util import initialize as initUtil
 
 initialize = False
+deinitialize = False
 
 
 def get_cluster_status():
@@ -21,3 +22,13 @@ def get_cluster_initialize_status():
 def set_cluster_initialize_status(status):
     global initialize
     initialize = status
+
+
+def get_cluster_deinitialize_status():
+    global deinitialize
+    return deinitialize
+
+
+def set_cluster_deinitialize_status(status):
+    global deinitialize
+    deinitialize = status

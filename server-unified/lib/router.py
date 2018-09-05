@@ -36,12 +36,10 @@ def initialize_cluster():
     return jsonify(handler.response(0, 'Start to initialize the cluster!'))
 
 
-@app.route('/api/deinit', methods=['POST'])
+@app.route('/api/deinit', methods=['GET', 'POST'])
 def deinitialize_cluster():
-    result = controller.deinitialize_cluster(request.params)
-    response = make_response(jsonify(result))
-    result['code'] or response.set_cookie('initialize', 'false')
-    return response
+    process.do(controller.deinitialize_cluster, 1)
+    return jsonify(handler.response(0, 'Start to de-initialize the cluster!'))
 
 
 @app.route('/api/getdefaultuser', methods=['GET', 'POST'])
