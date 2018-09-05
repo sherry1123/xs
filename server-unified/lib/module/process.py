@@ -4,6 +4,14 @@ import commands
 from lib.module import handler
 
 
+class ProcessError(Exception):
+    def __init__(self, errorinfo):
+        self.errorinfo = errorinfo
+
+    def __str__(self):
+        return self.errorinfo
+
+
 def run(cmd, ip=None):
     if ip is not None:
         if handler.match_ip(ip) is not None:
@@ -16,7 +24,7 @@ def run(cmd, ip=None):
     if not status:
         return output.strip()
     else:
-        raise ValueError(output.strip())
+        raise ProcessError(output.strip())
 
 
 def do(fn, params={}):

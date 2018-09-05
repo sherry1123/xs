@@ -14,7 +14,7 @@ def main():
         # start_scheduler()
     else:
         pass
-    socketio.run(app, host='0.0.0.0', port=3456)
+    socketio.run(app, port=3456, log_output=True)
 
 
 if __name__ == '__main__':

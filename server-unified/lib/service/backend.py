@@ -2,9 +2,8 @@ from lib.module import handler, request
 
 
 class BackendError(Exception):
-    def __init__(self, ErrorInfo):
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
+    def __init__(self, errorinfo):
+        self.errorinfo = errorinfo
 
     def __str__(self):
         return self.errorinfo
