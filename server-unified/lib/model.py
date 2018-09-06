@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, IntField
+from mongoengine import Document, IntField, ListField, StringField
 
 
 class Setting(Document):
@@ -15,3 +15,15 @@ class ClusterThroughputAndIops(Document):
     cluster_time = IntField()
     cluster_throughput = IntField()
     cluster_iops = IntField()
+
+
+class NodeCpuAndMemory(Document):
+    node_time = IntField()
+    node_host_list = ListField()
+    node_data_list = ListField()  # {'cpu', 'memory'}
+
+
+class NodeThroughputAndIops(Document):
+    node_time = IntField()
+    node_host_list = ListField()
+    node_data_list = ListField()  # {'throughput': {'read', 'write'}, 'iops'}

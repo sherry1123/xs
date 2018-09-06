@@ -345,3 +345,36 @@ def get_node_list():
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_node_service(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = backend.get_node_service(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_cpu(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_cpu(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_memory(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_memory(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

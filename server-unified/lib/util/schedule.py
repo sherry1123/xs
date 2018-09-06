@@ -9,6 +9,8 @@ def create_scheduler():
     scheduler = BackgroundScheduler()
     scheduler.add_job(task.get_cluster_throughput_and_iops,
                       'cron', second='*/15')
+    scheduler.add_job(task.get_node_cpu_and_memory,
+                      'cron', second='*/15')
     return scheduler
 
 

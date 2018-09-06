@@ -120,3 +120,18 @@ def get_cluster_iops():
 @app.route('/api/getnodelist', methods=['GET', 'POST'])
 def get_node_list():
     return jsonify(controller.get_node_list())
+
+
+@app.route('/api/getnodeservice', methods=['GET', 'POST'])
+def get_node_service():
+    return jsonify(controller.get_node_service(request.params))
+
+
+@app.route('/api/getnodecpu', methods=['GET', 'POST'])
+def get_node_cpu():
+    return jsonify(controller.get_node_cpu(request.params))
+
+
+@app.route('/api/getnodememory', methods=['GET', 'POST'])
+def get_node_memory():
+    return jsonify(controller.get_node_memory(request.params))

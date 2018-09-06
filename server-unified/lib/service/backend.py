@@ -104,3 +104,15 @@ def get_node_list():
     node_list = map(modify_node_info, node_list)
     node_list = sorted(node_list, key=lambda node: node['hostname'])
     return node_list
+
+
+def get_node_service(hostname):
+    node_service = backend_handler(request.get(
+        'http://localhost:9090/cluster/getnodeservice', {'hostname': hostname}, get_token()))
+    return {'metadata': node_service['meta'], 'storage': node_service['storage']}
+
+
+def get_node_cpu_and_memory(hostname):
+    node_cpu_and_memory = backend_handler(request.get(
+        'http://localhost:9090/cluster/getphysicresource', {'hostname': hostname}, get_token()))
+    return {'cpu': round(node_cpu_and_memory['cpu'], 2), 'memory': round(node_cpu_and_memory['memory'], 2)}
