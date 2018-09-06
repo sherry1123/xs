@@ -1,7 +1,7 @@
 from flask import jsonify, make_response, request
 
 from lib import controller
-from lib.module import handler, terminal
+from lib.module import handler, process
 from lib.util.socket import app
 
 
@@ -15,6 +15,16 @@ def check_env():
     return jsonify(controller.check_env(request.params))
 
 
+@app.route('/api/getraidrecommendedconfiguration', methods=['POST'])
+def get_raid():
+    return jsonify(controller.get_raid(request.params))
+
+
+@app.route('/api/getdisklist', methods=['GET', 'POST'])
+def get_disklist():
+    return jsonify(controller.get_disklist(request.params))
+
+
 @app.route('/api/receiveevent', methods=['POST'])
 def receive_event():
     return jsonify(controller.receive_event(request.params))
@@ -22,23 +32,28 @@ def receive_event():
 
 @app.route('/api/init', methods=['POST'])
 def initialize_cluster():
-    terminal.do(controller.initialize_cluster, request.params)
+    process.do(controller.initialize_cluster, request.params)
     return jsonify(handler.response(0, 'Start to initialize the cluster!'))
 
 
-@app.route('/api/deinit', methods=['POST'])
+@app.route('/api/deinit', methods=['GET', 'POST'])
 def deinitialize_cluster():
-    result = controller.deinitialize_cluster(request.params)
-    response = make_response(jsonify(result))
-    result['code'] or response.set_cookie('initialize', 'false')
-    return response
+    process.do(controller.deinitialize_cluster, 1)
+    return jsonify(handler.response(0, 'Start to de-initialize the cluster!'))
+
+
+@app.route('/api/getdefaultuser', methods=['GET', 'POST'])
+def get_default_user():
+    return jsonify(controller.get_default_user())
 
 
 @app.route('/api/login', methods=['POST'])
 def login():
     result = controller.login(request.params)
     response = make_response(jsonify(result))
-    result['code'] or response.set_cookie('login', 'true')
+    if not result['code']:
+        response.set_cookie('login', 'true')
+        response.set_cookie('user', result['data']['username'])
     return response
 
 
@@ -46,7 +61,9 @@ def login():
 def logout():
     result = controller.logout(request.params)
     response = make_response(jsonify(result))
-    result['code'] or response.set_cookie('login', 'false')
+    if not result['code']:
+        response.set_cookie('login', 'false')
+        response.set_cookie('user', '')
     return response
 
 
