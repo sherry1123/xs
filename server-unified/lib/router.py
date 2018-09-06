@@ -102,3 +102,7 @@ def get_storage_status():
 @app.route('/api/getclustertarget', methods=['GET', 'POST'])
 def get_target_list():
     return jsonify(controller.get_target_list(request.params))
+
+@app.route('/api/getnodelist', methods=['GET', 'POST'])
+def get_node_list():
+    return jsonify(controller.get_node_list())
