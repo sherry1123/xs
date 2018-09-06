@@ -43,8 +43,39 @@ def initialize_cluster(param):
 
 
 def deinitialize_cluster():
-    request.post('http://localhost:9090/cluster/destroy', {}, get_token())
+    return request.post('http://localhost:9090/cluster/destroy', {}, get_token())
 
 
 def create_buddy_group(param):
     return backend_handler(request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token()))
+
+
+def get_version():
+    return backend_handler(request.get('http://localhost:9090/cluster/getversion', {}, get_token()))
+
+
+def get_node_list():
+    node_list = backend_handler(request.get(
+        'http://localhost:9090/cluster/listallnodes', {}, get_token()))
+
+    def modify_node_info(node):
+        node['service'] = map(lambda service: 'metadata' if service == 'meta' else service, filter(
+            lambda service: service != 'client', node['service']))
+        is_pure_mgmt = True if len(
+            node['service']) == 1 and 'mgmt' in node['service'] else False
+        cpu_usage = '%s%%' % round(node['cpuUsage'], 2)
+        memory_usage = '%s%%' % round(node['memUsage'], 2)
+        space_usage = '%s%%' % round(
+            float(node['spaceUsed']) / node['spaceTotal'] * 100, 2) if node['spaceTotal'] else '0%'
+        return {'hostname': node['hostname'], 'ip': node['ip'], 'service': node['service'], 'isPureMgmt': is_pure_mgmt, 'status': node['status'], 'cpuUsage': cpu_usage, 'memoryUsage': memory_usage, 'space': {'total': node['spaceTotal'], 'used': node['spaceUsed'], 'free': node['spaceFree'], 'usage': space_usage}}
+    node_list = map(modify_node_info, node_list)
+    node_list = sorted(node_list, key=lambda node: node['hostname'])
+    return node_list
+
+
+def get_storage_disk_space():
+    disk_space = backend_handler(request.get(
+        'http://localhost:9090/cluster/getstoragespace', {}, get_token()))
+    space_usage = space_usage = '%s%%' % round(
+        float(disk_space['used']) / disk_space['total'] * 100, 2)
+    return {'total': disk_space['total'], 'used': disk_space['used'], 'free': disk_space['free'], 'usage': space_usage}

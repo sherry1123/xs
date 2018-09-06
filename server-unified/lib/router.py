@@ -21,8 +21,8 @@ def get_raid():
 
 
 @app.route('/api/getdisklist', methods=['GET', 'POST'])
-def get_disklist():
-    return jsonify(controller.get_disklist(request.params))
+def get_disk_list():
+    return jsonify(controller.get_disk_list(request.params))
 
 
 @app.route('/api/receiveevent', methods=['POST'])
@@ -85,3 +85,8 @@ def update_user():
 @app.route('/api/deleteuser', methods=['POST'])
 def delete_user():
     return jsonify(controller.delete_user(request.params))
+
+
+@app.route('/api/getclusterinfo', methods=['GET', 'POST'])
+def get_cluster_info():
+    return jsonify(controller.get_cluster_info())

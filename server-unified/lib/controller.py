@@ -39,7 +39,7 @@ def get_raid(params):
     return response
 
 
-def get_disklist(params):
+def get_disk_list(params):
     response = {}
     try:
         ip, = handler.request(params, ip=str)
@@ -249,6 +249,25 @@ def delete_user(params):
         username, = handler.request(params, username=str)
         database.delete_user(username)
         response = handler.response(0, 'Delete user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_cluster_info():
+    response = {}
+    try:
+        version = backend.get_version()
+        node_list = backend.get_node_list()
+        total = len(node_list)
+        normal = len(filter(lambda node: node['status'], node_list))
+        status = True if total == normal else False
+        cluster_status = {'status': status, 'total': total,
+                          'normal': normal, 'abnormal': total - normal}
+        space = backend.get_storage_disk_space()
+        data = {'clusterStatus': cluster_status,
+                'clusterCapacity': space, 'version': version}
+        response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
