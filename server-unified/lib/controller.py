@@ -271,3 +271,23 @@ def get_cluster_info():
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_meta_status():
+    response = {}
+    try:
+        data = backend.get_meta_status()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_storage_status():
+    response = {}
+    try:
+        data = backend.get_storage_status()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

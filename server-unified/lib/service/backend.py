@@ -79,3 +79,11 @@ def get_storage_disk_space():
     space_usage = space_usage = '%s%%' % round(
         float(disk_space['used']) / disk_space['total'] * 100, 2)
     return {'total': disk_space['total'], 'used': disk_space['used'], 'free': disk_space['free'], 'usage': space_usage}
+
+
+def get_meta_status():
+    return backend_handler(request.get('http://localhost:9090/cluster/listmetanodes', {}, get_token()))
+
+
+def get_storage_status():
+    return backend_handler(request.get('http://localhost:9090/cluster/liststoragenodes', {}, get_token()))

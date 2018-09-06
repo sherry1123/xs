@@ -10,12 +10,12 @@ def sync_status():
     return jsonify(controller.sync_status())
 
 
-@app.route('/api/checkclusterenv', methods=['POST'])
+@app.route('/api/checkclusterenv', methods=['GET', 'POST'])
 def check_env():
     return jsonify(controller.check_env(request.params))
 
 
-@app.route('/api/getraidrecommendedconfiguration', methods=['POST'])
+@app.route('/api/getraidrecommendedconfiguration', methods=['GET', 'POST'])
 def get_raid():
     return jsonify(controller.get_raid(request.params))
 
@@ -25,12 +25,12 @@ def get_disk_list():
     return jsonify(controller.get_disk_list(request.params))
 
 
-@app.route('/api/receiveevent', methods=['POST'])
+@app.route('/api/receiveevent', methods=['GET', 'POST'])
 def receive_event():
     return jsonify(controller.receive_event(request.params))
 
 
-@app.route('/api/init', methods=['POST'])
+@app.route('/api/init', methods=['GET', 'POST'])
 def initialize_cluster():
     process.do(controller.initialize_cluster, request.params)
     return jsonify(handler.response(0, 'Start to initialize the cluster!'))
@@ -47,7 +47,7 @@ def get_default_user():
     return jsonify(controller.get_default_user())
 
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/api/login', methods=['GET', 'POST'])
 def login():
     result = controller.login(request.params)
     response = make_response(jsonify(result))
@@ -57,7 +57,7 @@ def login():
     return response
 
 
-@app.route('/api/logout', methods=['POST'])
+@app.route('/api/logout', methods=['GET', 'POST'])
 def logout():
     result = controller.logout(request.params)
     response = make_response(jsonify(result))
@@ -72,17 +72,17 @@ def get_user():
     return jsonify(controller.get_user(request.params))
 
 
-@app.route('/api/createuser', methods=['POST'])
+@app.route('/api/createuser', methods=['GET', 'POST'])
 def create_user():
     return jsonify(controller.create_user(request.params))
 
 
-@app.route('/api/updateuser', methods=['POST'])
+@app.route('/api/updateuser', methods=['GET', 'POST'])
 def update_user():
     return jsonify(controller.update_user(request.params))
 
 
-@app.route('/api/deleteuser', methods=['POST'])
+@app.route('/api/deleteuser', methods=['GET', 'POST'])
 def delete_user():
     return jsonify(controller.delete_user(request.params))
 
@@ -90,3 +90,11 @@ def delete_user():
 @app.route('/api/getclusterinfo', methods=['GET', 'POST'])
 def get_cluster_info():
     return jsonify(controller.get_cluster_info())
+
+@app.route('/api/getmetanodestatus', methods=['GET', 'POST'])
+def get_meta_status():
+    return jsonify(controller.get_meta_status())
+
+@app.route('/api/getstoragenodestatus', methods=['GET', 'POST'])
+def get_storage_status():
+    return jsonify(controller.get_storage_status())
