@@ -208,7 +208,7 @@ def logout(params):
 def get_user(params):
     response = {}
     try:
-        if len(dict.keys(params)):
+        if params is not None and len(dict.keys(params)):
             username, = handler.request(params, username=str)
             data = database.get_user(username)
         else:
