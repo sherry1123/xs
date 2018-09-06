@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, Radio, Table} from 'antd';
-import lang from '../../components/Language/lang';
-import {timeFormat} from '../../services';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import {timeFormat} from 'Services';
+import httpRequests from 'Http/requests';
 
 class SystemLog extends Component {
     constructor (props){

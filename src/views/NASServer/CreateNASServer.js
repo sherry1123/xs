@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal} from 'antd';
 import SelectClient from './SelectClient';
-import CatalogTree from '../../components/CatalogTree/CatalogTree';
-import lang from '../../components/Language/lang';
-import {validateIpv4} from '../../services';
-import httpRequests from '../../http/requests';
+import CatalogTree from 'Components/CatalogTree/CatalogTree';
+import lang from 'Components/Language/lang';
+import {validateIpv4} from 'Services';
+import httpRequests from 'Http/requests';
 
 class CreateNASServer extends Component {
     constructor (props){

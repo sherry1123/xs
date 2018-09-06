@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon} from 'antd';
-import FSPieChart from '../../components/FSPieChart/FSPieChart';
-import ClusterImage from '../../images/cluster.png';
-import lang from '../../components/Language/lang';
-import {formatStorageSize} from '../../services';
+import FSPieChart from 'Components/FSPieChart/FSPieChart';
+import ClusterImage from 'Images/cluster.png';
+import lang from 'Components/Language/lang';
+import {formatStorageSize} from 'Services';
 
 class ClusterBasicInfo extends Component {
     formatSizeAndSmallerUnit (size){

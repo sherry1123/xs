@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Input, Popover, Table} from 'antd';
 import CreateTarget from './CreateTarget';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
-import {formatStorageSize, getCapacityColour} from '../../services';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
+import {formatStorageSize, getCapacityColour} from 'Services';
 
 class Target extends Component {
     constructor (props){

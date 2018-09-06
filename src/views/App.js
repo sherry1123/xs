@@ -4,7 +4,7 @@ import {LocaleProvider} from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import asyncLoad from './asyncLoad';
-import lang from '../components/Language/lang';
+import lang from 'Components/Language/lang';
 import {ckGet, lsRemove} from '../services';
 import routerPath from './routerPath';
 

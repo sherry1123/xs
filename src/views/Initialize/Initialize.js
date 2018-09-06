@@ -3,13 +3,13 @@ import {connect} from 'react-redux';
 import update from 'react-addons-update';
 import {Button, Divider, Form, Icon, Input, message, Modal, notification, Popover, Progress, Steps, Switch} from 'antd';
 import QueueAnim from 'rc-queue-anim';
-import LanguageButton from '../../components/Language/LanguageButton';
-import RecommendedRAID from '../../components/DiskConfiguration/RecommendedRAID';
-import CustomRAID from '../../components/DiskConfiguration/CustomRAID';
-import initializeAction from '../../redux/actions/initializeAction';
-import lang from '../../components/Language/lang';
-import {validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from '../../services';
-import httpRequests from '../../http/requests';
+import LanguageButton from 'Components/Language/LanguageButton';
+import RecommendedRAID from 'Components/DiskConfiguration/RecommendedRAID';
+import CustomRAID from 'Components/DiskConfiguration/CustomRAID';
+import initializeAction from 'Actions/initializeAction';
+import lang from 'Components/Language/lang';
+import {validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from 'Services';
+import httpRequests from 'Http/requests';
 import routerPath from '../routerPath';
 
 class Initialize extends Component {

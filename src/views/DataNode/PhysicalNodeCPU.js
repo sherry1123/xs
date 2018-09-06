@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon} from 'antd';
-import FSLineChart from '../../components/FSLineChart/FSLineChart';
-import lang from '../../components/Language/lang';
+import FSLineChart from 'Components/FSLineChart/FSLineChart';
+import lang from 'Components/Language/lang';
 
 class PhysicalNodeCPU extends Component {
     render (){

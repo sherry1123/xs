@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {Icon, Table, Popover} from 'antd';
-import lang from '../../components/Language/lang';
-import {formatStorageSize, getCapacityColour} from '../../services';
+import lang from 'Components/Language/lang';
+import {formatStorageSize, getCapacityColour} from 'Services';
 import routerPath from '../routerPath';
-import dataNodeAction from '../../redux/actions/dataNodeAction';
+import dataNodeAction from 'Actions/dataNodeAction';
 
 class ClusterPhysicalNodeList extends Component {
     forwardDataNodePage (physicalNode){

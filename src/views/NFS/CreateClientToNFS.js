@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, Radio, Select, message, Modal} from 'antd';
-import lang from '../../components/Language/lang';
-import {validateIpv4, /*validateIpv4Segment*/} from '../../services';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import {validateIpv4, /*validateIpv4Segment*/} from 'Services';
+import httpRequests from 'Http/requests';
 
 class CreateClientToNFS extends Component {
     constructor (props){

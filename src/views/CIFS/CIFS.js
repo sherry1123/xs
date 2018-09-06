@@ -4,8 +4,8 @@ import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateCIFS from './CreateCIFS';
 import EditCIFS from './EditCIFS';
 import UserOrGroupOfCIFS from './UserOrGroupOfCIFS';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
 
 class CIFS extends Component {
     constructor (props){
