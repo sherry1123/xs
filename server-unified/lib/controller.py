@@ -291,3 +291,27 @@ def get_storage_status():
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_target_list(params):
+    response = {}
+    try:
+        ranking = params.get('ranking')
+        if ranking is not None:
+            if isinstance(ranking, basestring):
+                ranking = ranking == 'true'
+            else:
+                ranking = ranking == True
+        else:
+            ranking = False
+        target_list = backend.get_target_list()
+        if ranking:
+            data = sorted(
+                target_list, key=lambda target: target['space']['usage'], reverse=True)
+        else:
+            data = sorted(
+                target_list, key=lambda target: target['targetId'])
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

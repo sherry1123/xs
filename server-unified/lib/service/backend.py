@@ -76,7 +76,7 @@ def get_node_list():
 def get_storage_disk_space():
     disk_space = backend_handler(request.get(
         'http://localhost:9090/cluster/getstoragespace', {}, get_token()))
-    space_usage = space_usage = '%s%%' % round(
+    space_usage = '%s%%' % round(
         float(disk_space['used']) / disk_space['total'] * 100, 2)
     return {'total': disk_space['total'], 'used': disk_space['used'], 'free': disk_space['free'], 'usage': space_usage}
 
@@ -87,3 +87,16 @@ def get_meta_status():
 
 def get_storage_status():
     return backend_handler(request.get('http://localhost:9090/cluster/liststoragenodes', {}, get_token()))
+
+
+def get_target_list():
+    target_list = backend_handler(request.get(
+        'http://localhost:9090/cluster/listtargets', {}, get_token()))
+
+    def modify_target_info(target):
+        target['service'] = 'metadata' if target['service'] == 'meta' else target['service']
+        space_usage = '%s%%' % round(
+            float(target['usedSpace']) / target['totalSpace'] * 100, 2)
+        return {'targetId': target['targetId'], 'mountPath': target['mountPath'], 'node': target['hostname'], 'service': target['service'], 'isUsed': target['isUsed'], 'nodeId': target['nodeId'], 'space': {'total': target['totalSpace'], 'used': target['usedSpace'], 'free': target['freeSpace'], 'usage': space_usage}}
+    target_list = map(modify_target_info, target_list)
+    return target_list

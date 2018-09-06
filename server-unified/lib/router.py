@@ -98,3 +98,7 @@ def get_meta_status():
 @app.route('/api/getstoragenodestatus', methods=['GET', 'POST'])
 def get_storage_status():
     return jsonify(controller.get_storage_status())
+
+@app.route('/api/getclustertarget', methods=['GET', 'POST'])
+def get_target_list():
+    return jsonify(controller.get_target_list(request.params))
