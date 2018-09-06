@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, message, Modal, Select} from 'antd';
-import RecommendedRAID from '../../components/DiskConfiguration/RecommendedRAID';
-import CustomRAID from '../../components/DiskConfiguration/CustomRAID';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
-import initializeAction from '../../redux/actions/initializeAction';
+import RecommendedRAID from 'Components/DiskConfiguration/RecommendedRAID';
+import CustomRAID from 'Components/DiskConfiguration/CustomRAID';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
+import initializeAction from 'Actions/initializeAction';
 
 class CreateTarget extends Component {
     constructor (props){

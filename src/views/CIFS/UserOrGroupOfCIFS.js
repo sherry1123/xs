@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import shareAction from '../../redux/actions/shareAction';
+import shareAction from 'Actions/shareAction';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import EditUserOrGroupOfCIFS from './EditUserOrGroupOfCIFS';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
 
 class UserOrGroupOfCIFS extends Component {
     constructor (props){

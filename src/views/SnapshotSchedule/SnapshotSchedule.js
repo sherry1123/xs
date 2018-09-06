@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Modal, Popover, Switch, Table} from 'antd';
 import CreateSnapshotSchedule from './CreateSnapshotSchedule';
 import EditSnapshotSchedule from './EditSnapshotSchedule';
-import lang from '../../components/Language/lang';
-import {timeLeftFormat, timeFormat} from '../../services/index';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import {timeLeftFormat, timeFormat} from 'Services';
+import httpRequests from 'Http/requests';
 
 class SnapshotSchedule extends Component {
     constructor (props){

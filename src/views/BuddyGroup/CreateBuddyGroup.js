@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, message, Modal, Popover, Select} from 'antd';
-import pImg from '../../images/primary_target.png';
-import sImg from '../../images/secondary_target.png';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
-import {formatStorageSize} from '../../services';
+import pImg from 'Images/primary_target.png';
+import sImg from 'Images/secondary_target.png';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
+import {formatStorageSize} from 'Services';
 
 /*
 let availableTargets = [

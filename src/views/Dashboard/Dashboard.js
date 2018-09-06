@@ -4,7 +4,7 @@ import ClusterTPS from './ClusterTPS';
 import ClusterIOPS from './ClusterIOPS';
 import ClusterTargetsRanking from './ClusterTargetsRanking';
 import ClusterPhysicalNodeList from './ClusterPhysicalNodeList';
-import httpRequests from '../../http/requests';
+import httpRequests from 'Http/requests';
 
 export default class Dashboard extends Component {
     componentDidMount (){

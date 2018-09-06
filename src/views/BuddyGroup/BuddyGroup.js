@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Input, Table} from 'antd';
 import CreateBuddyGroup from './CreateBuddyGroup';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
 
 class BuddyGroup extends Component {
     constructor (props){

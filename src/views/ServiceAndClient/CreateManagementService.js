@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Divider, Form, Icon, Input, message, Modal, Popover} from 'antd';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
-import {validateIpv4, lsSet} from '../../services';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
+import {validateIpv4, lsSet} from 'Services';
 
 class CreateManagementService extends Component {
     constructor (props){

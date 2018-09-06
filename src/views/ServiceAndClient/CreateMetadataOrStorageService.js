@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover} from 'antd';
-import RecommendedRAID from '../../components/DiskConfiguration/RecommendedRAID';
-import CustomRAIDForService from '../../components/DiskConfiguration/CustomRAIDForService';
-import initializeAction from '../../redux/actions/initializeAction';
-import dashboardAction from '../../redux/actions/dashboardAction';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
-import {validateIpv4} from '../../services';
+import RecommendedRAID from 'Components/DiskConfiguration/RecommendedRAID';
+import CustomRAIDForService from 'Components/DiskConfiguration/CustomRAIDForService';
+import initializeAction from 'Actions/initializeAction';
+import dashboardAction from 'Actions/dashboardAction';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
+import {validateIpv4} from 'Services';
 
 class CreateMetadataOrStorageService extends Component {
     constructor (props){
