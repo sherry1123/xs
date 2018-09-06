@@ -50,18 +50,6 @@ def get_disk_list(params):
     return response
 
 
-def receive_event(params):
-    response = {}
-    try:
-        channel, code, data, notify, result, target = handler.request(
-            params, channel=str, code=int, target=str, result=bool, data=dict, notify=bool)
-        event.receive(channel, code, target, result, data, notify)
-        response = handler.response(0, 'Receive event successfully!')
-    except Exception as error:
-        response = handler.response(1, handler.error(error))
-    return response
-
-
 def initialize_cluster(params):
     print('start')
     current = 0
@@ -169,14 +157,13 @@ def deinitialize_cluster(mode):
         event.send('cluster', 2, 'cluster', False, {}, True)
 
 
-def get_default_user():
+def receive_event(params):
     response = {}
     try:
-        init_param = database.get_setting('INITIALIZE-PARAMETER')
-        float_ips = init_param['floatIPs']
-        float_ip = float_ips[0] if len(float_ips) else ''
-        data = {'username': 'admin', 'password': '123456', 'floatIP': float_ip}
-        response = handler.response(0, data)
+        channel, code, data, notify, result, target = handler.request(
+            params, channel=str, code=int, target=str, result=bool, data=dict, notify=bool)
+        event.receive(channel, code, target, result, data, notify)
+        response = handler.response(0, 'Receive event successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -200,6 +187,19 @@ def logout(params):
         username, = handler.request(params, username=str)
         database.logout(username)
         response = handler.response(0, 'Logout successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_default_user():
+    response = {}
+    try:
+        init_param = database.get_setting('INITIALIZE-PARAMETER')
+        float_ips = init_param['floatIPs']
+        float_ip = float_ips[0] if len(float_ips) else ''
+        data = {'username': 'admin', 'password': '123456', 'floatIP': float_ip}
+        response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -315,6 +315,27 @@ def get_target_list(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_cluster_throughput():
+    response = {}
+    try:
+        data = database.get_cluster_throughput()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_cluster_iops():
+    response = {}
+    try:
+        data = database.get_cluster_iops()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
 
 def get_node_list():
     response = {}

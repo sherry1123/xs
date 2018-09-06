@@ -25,11 +25,6 @@ def get_disk_list():
     return jsonify(controller.get_disk_list(request.params))
 
 
-@app.route('/api/receiveevent', methods=['GET', 'POST'])
-def receive_event():
-    return jsonify(controller.receive_event(request.params))
-
-
 @app.route('/api/init', methods=['GET', 'POST'])
 def initialize_cluster():
     process.do(controller.initialize_cluster, request.params)
@@ -42,9 +37,9 @@ def deinitialize_cluster():
     return jsonify(handler.response(0, 'Start to de-initialize the cluster!'))
 
 
-@app.route('/api/getdefaultuser', methods=['GET', 'POST'])
-def get_default_user():
-    return jsonify(controller.get_default_user())
+@app.route('/api/receiveevent', methods=['GET', 'POST'])
+def receive_event():
+    return jsonify(controller.receive_event(request.params))
 
 
 @app.route('/api/login', methods=['GET', 'POST'])
@@ -65,6 +60,11 @@ def logout():
         response.set_cookie('login', 'false')
         response.set_cookie('user', '')
     return response
+
+
+@app.route('/api/getdefaultuser', methods=['GET', 'POST'])
+def get_default_user():
+    return jsonify(controller.get_default_user())
 
 
 @app.route('/api/getuser', methods=['GET', 'POST'])
@@ -91,17 +91,31 @@ def delete_user():
 def get_cluster_info():
     return jsonify(controller.get_cluster_info())
 
+
 @app.route('/api/getmetanodestatus', methods=['GET', 'POST'])
 def get_meta_status():
     return jsonify(controller.get_meta_status())
+
 
 @app.route('/api/getstoragenodestatus', methods=['GET', 'POST'])
 def get_storage_status():
     return jsonify(controller.get_storage_status())
 
+
 @app.route('/api/getclustertarget', methods=['GET', 'POST'])
 def get_target_list():
     return jsonify(controller.get_target_list(request.params))
+
+
+@app.route('/api/getclusterthroughput', methods=['GET', 'POST'])
+def get_cluster_throughput():
+    return jsonify(controller.get_cluster_throughput())
+
+
+@app.route('/api/getclusteriops', methods=['GET', 'POST'])
+def get_cluster_iops():
+    return jsonify(controller.get_cluster_iops())
+
 
 @app.route('/api/getnodelist', methods=['GET', 'POST'])
 def get_node_list():

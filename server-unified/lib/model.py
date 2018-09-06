@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField
+from mongoengine import Document, StringField, IntField
 
 
 class Setting(Document):
@@ -9,3 +9,9 @@ class Setting(Document):
 class User(Document):
     user_name = StringField(required=True)
     user_passwd = StringField()
+
+
+class ClusterThroughputAndIops(Document):
+    cluster_time = IntField()
+    cluster_throughput = IntField()
+    cluster_iops = IntField()
