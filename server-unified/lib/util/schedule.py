@@ -1,17 +1,14 @@
-import datetime
-
 from apscheduler.schedulers.background import BackgroundScheduler
+
+from lib.util import task
 
 scheduler = None
 
 
-def alarm_clock():
-    print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3])
-
-
 def create_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(alarm_clock, 'cron', second=0)
+    scheduler.add_job(task.get_cluster_throughput_and_iops,
+                      'cron', second='*/15')
     return scheduler
 
 

@@ -2,7 +2,7 @@ import json
 
 from mongoengine import connect
 
-from lib.model import Setting, User
+from lib.model import ClusterThroughputAndIops, Setting, User
 from lib.module import handler
 
 
@@ -94,3 +94,30 @@ def delete_user(username):
         user.delete()
     else:
         raise DatabaseError('No such user!')
+
+
+def create_cluster_throughput_and_iops(time, throughput, iops):
+    ClusterThroughputAndIops(
+        cluster_time=time, cluster_throughput=throughput, cluster_iops=iops).save()
+
+
+def get_cluster_throughput():
+    total = []
+    time = []
+    for throughput in ClusterThroughputAndIops.objects.order_by('-id')[:60]:
+        total.append(throughput.cluster_throughput)
+        time.append(throughput.cluster_time)
+    total.reverse()
+    time.reverse()
+    return {'total': total, 'time': time}
+
+
+def get_cluster_iops():
+    total = []
+    time = []
+    for throughput in ClusterThroughputAndIops.objects.order_by('-id')[:60]:
+        total.append(throughput.cluster_iops)
+        time.append(throughput.cluster_time)
+    total.reverse()
+    time.reverse()
+    return {'total': total, 'time': time}

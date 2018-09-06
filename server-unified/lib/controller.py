@@ -39,24 +39,12 @@ def get_raid(params):
     return response
 
 
-def get_disklist(params):
+def get_disk_list(params):
     response = {}
     try:
         ip, = handler.request(params, ip=str)
         data = backend.get_disk_list(ip)
         response = handler.response(0, data)
-    except Exception as error:
-        response = handler.response(1, handler.error(error))
-    return response
-
-
-def receive_event(params):
-    response = {}
-    try:
-        channel, code, data, notify, result, target = handler.request(
-            params, channel=str, code=int, target=str, result=bool, data=dict, notify=bool)
-        event.receive(channel, code, target, result, data, notify)
-        response = handler.response(0, 'Receive event successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -169,14 +157,13 @@ def deinitialize_cluster(mode):
         event.send('cluster', 2, 'cluster', False, {}, True)
 
 
-def get_default_user():
+def receive_event(params):
     response = {}
     try:
-        init_param = database.get_setting('INITIALIZE-PARAMETER')
-        float_ips = init_param['floatIPs']
-        float_ip = float_ips[0] if len(float_ips) else ''
-        data = {'username': 'admin', 'password': '123456', 'floatIP': float_ip}
-        response = handler.response(0, data)
+        channel, code, data, notify, result, target = handler.request(
+            params, channel=str, code=int, target=str, result=bool, data=dict, notify=bool)
+        event.receive(channel, code, target, result, data, notify)
+        response = handler.response(0, 'Receive event successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -205,10 +192,23 @@ def logout(params):
     return response
 
 
+def get_default_user():
+    response = {}
+    try:
+        init_param = database.get_setting('INITIALIZE-PARAMETER')
+        float_ips = init_param['floatIPs']
+        float_ip = float_ips[0] if len(float_ips) else ''
+        data = {'username': 'admin', 'password': '123456', 'floatIP': float_ip}
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
 def get_user(params):
     response = {}
     try:
-        if len(dict.keys(params)):
+        if params is not None and len(dict.keys(params)):
             username, = handler.request(params, username=str)
             data = database.get_user(username)
         else:
@@ -249,6 +249,99 @@ def delete_user(params):
         username, = handler.request(params, username=str)
         database.delete_user(username)
         response = handler.response(0, 'Delete user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_cluster_info():
+    response = {}
+    try:
+        version = backend.get_version()
+        node_list = backend.get_node_list()
+        total = len(node_list)
+        normal = len(filter(lambda node: node['status'], node_list))
+        status = True if total == normal else False
+        cluster_status = {'status': status, 'total': total,
+                          'normal': normal, 'abnormal': total - normal}
+        space = backend.get_storage_disk_space()
+        data = {'clusterStatus': cluster_status,
+                'clusterCapacity': space, 'version': version}
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_meta_status():
+    response = {}
+    try:
+        data = backend.get_meta_status()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_storage_status():
+    response = {}
+    try:
+        data = backend.get_storage_status()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_target_list(params):
+    response = {}
+    try:
+        ranking = params.get('ranking')
+        if ranking is not None:
+            if isinstance(ranking, basestring):
+                ranking = ranking == 'true'
+            else:
+                ranking = ranking == True
+        else:
+            ranking = False
+        target_list = backend.get_target_list()
+        if ranking:
+            data = sorted(
+                target_list, key=lambda target: target['space']['usage'], reverse=True)
+        else:
+            data = sorted(
+                target_list, key=lambda target: target['targetId'])
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_cluster_throughput():
+    response = {}
+    try:
+        data = database.get_cluster_throughput()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_cluster_iops():
+    response = {}
+    try:
+        data = database.get_cluster_iops()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_list():
+    response = {}
+    try:
+        data = backend.get_node_list()
+        response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
