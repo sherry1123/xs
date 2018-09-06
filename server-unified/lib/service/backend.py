@@ -34,6 +34,7 @@ def get_disk_list(ip):
         return disk
     disk_list = filter(lambda disk: not disk['isUsed'], disk_list)
     disk_list = map(revise_disk_space, disk_list)
+    disk_list = sorted(disk_list, key=lambda disk: disk['diskName'])
     return disk_list
 
 
