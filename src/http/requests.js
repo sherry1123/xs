@@ -1,19 +1,31 @@
 import {fetchGet, fetchPost} from './fetch';
-import {lsGet} from '../services';
+import {lsGet} from 'Services';
 import store from '../redux';
-import initializeAction from '../redux/actions/initializeAction';
-import generalAction from '../redux/actions/generalAction';
-import serviceAction from '../redux/actions/serviceAction';
-import dashboardAction from '../redux/actions/dashboardAction';
-import dataNodeAction from '../redux/actions/dataNodeAction';
-import storagePoolAction from '../redux/actions/storagePoolAction';
-import systemLogAction from '../redux/actions/systemLogAction';
-import snapshotAction from '../redux/actions/snapshotAction';
-import shareAction from '../redux/actions/shareAction';
-import localAuthUserAction from '../redux/actions/localAuthUserAction';
-import targetAction from '../redux/actions/targetAction';
+import initializeAction from 'Actions/initializeAction';
+import generalAction from 'Actions/generalAction';
+import serviceAction from 'Actions/serviceAction';
+import dashboardAction from 'Actions/dashboardAction';
+import dataNodeAction from 'Actions/dataNodeAction';
+import storagePoolAction from 'Actions/storagePoolAction';
+import systemLogAction from 'Actions/systemLogAction';
+import snapshotAction from 'Actions/snapshotAction';
+import shareAction from 'Actions/shareAction';
+import localAuthUserAction from 'Actions/localAuthUserAction';
+import targetAction from 'Actions/targetAction';
 
-const requestMiddleWare = fn => {
+/*
+ * We send async HTTP API calls here, and after a call is finished, we make a sync action
+ * through the action creator. In this way, we don't need to fire a action in an async handle
+ * process. However, in official documents, it tells us we should write an async HTTP API call
+ * into an action. This is determined depends on a redux idea that each part in APP has its
+ * own responsibility, render the view, calculate the state, or others. For the HTTP API calls,
+ * they are used to get the data (state), so they should be encapsulated into a action. But
+ * as we know, the dispatch only receive an action object, we can't give it a HTTP API async
+ * function. So to reach this goal, we should use a middle ware named redux-thunk to rebuild
+ * all the calls at some time of future.
+ */
+
+const requestHandler = fn => {
     try {
         return fn();
     } catch (e){
@@ -34,22 +46,22 @@ export default  {
 
     // get disks of a node
     getNodeDisksByNodeIP (ip){
-        return requestMiddleWare(async () => await fetchGet('/api/getdisklist', {ip}));
+        return requestHandler(async () => await fetchGet('/api/getdisklist', {ip}));
     },
 
     // start initializing
     startInitialization (config){
-        requestMiddleWare(async () => await fetchPost('/api/init', config));
+        requestHandler(async () => await fetchPost('/api/init', config));
     },
 
     // check service and client IPs' usability
     checkIPs (IPs){
-        return requestMiddleWare(async () => await fetchPost('/api/checkclusterenv', IPs));
+        return requestHandler(async () => await fetchPost('/api/checkclusterenv', IPs));
     },
 
     // get recommended RAID of a node
     getRecommendedRIAD (metadataServerIPs, storageServerIPs){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchPost('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
             // console.info('recommended RAID config', data);
             !!data && store.dispatch(initializeAction.setRecommendedRAID(data));
@@ -58,7 +70,7 @@ export default  {
 
     // get the default user account and password of the system when initialization done
     getDefaultUser (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchPost('/api/getdefaultuser');
             !!data && store.dispatch(initializeAction.setDefaultUser(data));
         });
@@ -85,14 +97,14 @@ export default  {
 
     // services
     getMetadataNodes (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getmetanodestatus');
             !!data && store.dispatch(serviceAction.setMetadataServiceLiSt(data));
         });
     },
 
     getStorageNodes (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getstoragenodestatus');
             !!data && store.dispatch(serviceAction.setStorageServiceLiSt(data));
         });
@@ -100,7 +112,7 @@ export default  {
 
     // dashboard and cluster info
     getClusterInfo (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclusterinfo');
             if (!!data){
                 store.dispatch(dashboardAction.setClusterInfo(data));
@@ -110,7 +122,7 @@ export default  {
     },
 
     getClusterTargets (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             // only for dashboard target ranking
             let data = await fetchGet('/api/getclustertarget', {ranking: true});
             !!data && store.dispatch(dashboardAction.setClusterTargets(data));
@@ -118,28 +130,28 @@ export default  {
     },
 
     getClusterThroughput (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclusterthroughput');
             !!data && store.dispatch(dashboardAction.setClusterThroughput(data));
         });
     },
 
     getClusterIOPS (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclusteriops');
             !!data && store.dispatch(dashboardAction.setClusterIOPS(data));
         });
     },
 
     getClusterPhysicalNodeList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getnodelist');
             !!data && store.dispatch(dashboardAction.setClusterPhysicalNodeList(data));
         });
     },
 
     getClusterServiceAndClientIPs (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclusterserviceandclientip');
             !!data && store.dispatch(dashboardAction.setClusterServiceAndClientIPs(data));
         });
@@ -148,7 +160,7 @@ export default  {
     // data node
     getPhysicalNodeInfo ({hostname} = (lsGet('currentPhysicalNode') || {})){
         if (!!hostname){
-            requestMiddleWare(async () => {
+            requestHandler(async () => {
                 let data = await fetchGet('/api/getnodeservice', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeInfo(data));
             });
@@ -157,7 +169,7 @@ export default  {
 
     getPhysicalNodeTargets ({hostname} = (lsGet('currentPhysicalNode') || {})){
         if (!!hostname){
-            requestMiddleWare(async () => {
+            requestHandler(async () => {
                 let data = await fetchGet('/api/getnodetarget', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeTargets(data));
             });
@@ -165,7 +177,7 @@ export default  {
     },
     getPhysicalNodeCPU ({hostname} = (lsGet('currentPhysicalNode') || {})){
         if (!!hostname){
-            requestMiddleWare(async () => {
+            requestHandler(async () => {
                 let data = await fetchGet('/api/getnodecpu', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeCPU(data));
             });
@@ -174,7 +186,7 @@ export default  {
 
     getPhysicalNodeDRAM ({hostname} = (lsGet('currentPhysicalNode') || {})){
         if (!!hostname){
-            requestMiddleWare(async () => {
+            requestHandler(async () => {
                 let data = await fetchGet('/api/getnodememory', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeRAM(data));
             });
@@ -183,7 +195,7 @@ export default  {
 
     getPhysicalNodeTPS ({hostname} = (lsGet('currentPhysicalNode') || {})){
         if (!!hostname){
-            requestMiddleWare(async () => {
+            requestHandler(async () => {
                 let data = await fetchGet('/api/getnodethroughput', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeTPS(data));
             });
@@ -192,7 +204,7 @@ export default  {
 
     getPhysicalNodeIOPS ({hostname} = (lsGet('currentPhysicalNode') || {})){
         if (!!hostname){
-            requestMiddleWare(async () => {
+            requestHandler(async () => {
                 let data = await fetchGet('/api/getnodeiops', {hostname});
                 !!data && store.dispatch(dataNodeAction.setPhysicalNodeIOPS(data));
             });
@@ -201,7 +213,7 @@ export default  {
 
     // storage pool
     async getStoragePoolList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getstoragepools');
             !!data && store.dispatch(storagePoolAction.setStoragePoolList(data));
         });
@@ -238,7 +250,7 @@ export default  {
 
     // snapshot
     getSnapshotList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getsnapshot');
             !!data && store.dispatch(snapshotAction.setSnapshotList(data));
         });
@@ -265,7 +277,7 @@ export default  {
     },
 
     getSnapshotSetting (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getsnapshotsetting');
             store.dispatch(snapshotAction.setSnapshotSetting(data));
         });
@@ -277,7 +289,7 @@ export default  {
 
     // snapshot schedule
     getSnapshotScheduleList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getsnapshotschedule');
             !!data && store.dispatch(snapshotAction.setSnapshotScheduleList(data));
         });
@@ -309,14 +321,14 @@ export default  {
 
     // NAS server
     async getNASServerList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getnasserver');
             !!data && store.dispatch(shareAction.setNASServerList(data));
         });
     },
 
     async getClientListForNASServer (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclient');
             !!data && store.dispatch(shareAction.setClientListForNASServer(data));
         });
@@ -332,7 +344,7 @@ export default  {
 
     // NFS share
     async getNFSShareList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getnfsshare');
             !!data && store.dispatch(shareAction.setNFSList(data));
         });
@@ -356,7 +368,7 @@ export default  {
 
     // NFS share client
     async getClientListByNFSSharePath (path){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclientinnfsshare', {path});
             !!data && store.dispatch(shareAction.setClientListOfNFS(data));
         });
@@ -399,7 +411,7 @@ export default  {
     },
 
     async getLocalAuthUserOrGroupListByCIFSShareName (shareName){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getuserorgroupfromcifsshare', {shareName});
             !!data && store.dispatch(shareAction.setLocalAuthUserOrGroupListOfCIFS(data));
         });
@@ -419,7 +431,7 @@ export default  {
 
     // local authentication user
     async getLocalAuthUserList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getlocalauthuser');
             !!data && store.dispatch(localAuthUserAction.setLocalAuthUserList(data));
         });
@@ -443,7 +455,7 @@ export default  {
 
     // local authentication user group
     async getLocalAuthUserGroupList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getlocalauthusergroup');
             !!data && store.dispatch(localAuthUserAction.setLocalAuthUserGroupList(data));
         });
@@ -462,7 +474,7 @@ export default  {
     },
 
     async getLocalAuthUserListByGroupName (groupName){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getlocalauthuserfromgroup', {groupName});
             !!data && store.dispatch(localAuthUserAction.setLocalAuthUserListOfGroup(data));
         });
@@ -478,7 +490,7 @@ export default  {
 
     // target and buddy group
     async getTargetList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getclustertarget', {ranking: false});
             !!data && store.dispatch(targetAction.setTargetList(data));
         });
@@ -489,7 +501,7 @@ export default  {
     },
 
     async getBuddyGroupList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getbuddygroup');
             !!data && store.dispatch(targetAction.setBuddyGroupList(data));
         });
@@ -501,7 +513,7 @@ export default  {
 
     // fs operation
     getEntryInfo (dir){
-        return requestMiddleWare(async () => await fetchGet('/api/getentryinfo', {dir}));
+        return requestHandler(async () => await fetchGet('/api/getentryinfo', {dir}));
     },
 
     async getFiles (dir){
@@ -514,14 +526,14 @@ export default  {
 
     // system log
     getEventLogs (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/geteventlog');
             !!data && store.dispatch(systemLogAction.setSystemEventLogs(data));
         });
     },
 
     getAuditLogs (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getauditlog');
             !!data && store.dispatch(systemLogAction.setSystemAuditLogs(data));
         });
