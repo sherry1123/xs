@@ -133,3 +133,7 @@ def get_node_target(hostname):
         return {'targetId': target['targetId'], 'mountPath': target['mountPath'], 'node': target['hostname'], 'service': target['service'], 'isUsed': target['isUsed'], 'nodeId': target['nodeId'], 'space': {'total': target['totalSpace'], 'used': target['usedSpace'], 'free': target['freeSpace'], 'usage': space_usage}}
     node_target = map(modify_target_info, node_target)
     return node_target
+
+
+def update_snapshot_setting(total, manual, auto):
+    return backend_handler(request.post('http://localhost:9090/cluster/applysnapconf', {'total': total, 'manual': manual, 'schedule': auto}, get_token()))

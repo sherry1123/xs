@@ -150,3 +150,13 @@ def get_node_iops():
 @app.route('/api/getnodetarget', methods=['GET', 'POST'])
 def get_node_target():
     return jsonify(controller.get_node_target(request.params))
+
+
+@app.route('/api/getsnapshotsetting', methods=['GET', 'POST'])
+def get_snapshot_setting():
+    return jsonify(controller.get_snapshot_setting())
+
+
+@app.route('/api/updatesnapshotsetting', methods=['GET', 'POST'])
+def update_snapshot_setting():
+    return jsonify(controller.update_snapshot_setting(request.params))

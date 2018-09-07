@@ -411,3 +411,27 @@ def get_node_target(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_snapshot_setting():
+    response = {}
+    try:
+        data = database.get_setting('SNAPSHOT-SETTING')
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_snapshot_setting(params):
+    response = {}
+    try:
+        auto, manual, total = handler.request(
+            params, total=int, manual=int, auto=int)
+        backend.update_snapshot_setting(total, manual, auto)
+        database.update_setting(
+            'SNAPSHOT-SETTING', {'total': total, 'manual': manual, 'auto': auto})
+        response = handler.response(0, 'Update snapshot setting successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
