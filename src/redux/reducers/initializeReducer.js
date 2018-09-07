@@ -1,5 +1,5 @@
 import State from '../state';
-import {initializeActionTypes} from '../actions/initializeAction';
+import {initializeActionTypes} from 'Actions/initializeAction';
 
 const initializeReducer = (state = State.initialize, action) => {
     let {category, index, ip, enableHA, enableRAID, recommendedRAID, enableCustomRAID, customRAID, enableCreateBuddyGroup, initStatus, defaultUser,} = action;
