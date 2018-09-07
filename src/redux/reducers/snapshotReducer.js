@@ -1,5 +1,5 @@
 import State from '../state';
-import {snapshotActionTypes} from '../actions/snapshotAction';
+import {snapshotActionTypes} from 'Actions/snapshotAction';
 
 const snapshotReducer = (state = State.main.snapshot, action) => {
     let {snapshotList, snapshotScheduleList, snapshotSetting} = action;

@@ -1,5 +1,5 @@
 import State from '../state';
-import {systemLogActionTypes} from '../actions/systemLogAction';
+import {systemLogActionTypes} from 'Actions/systemLogAction';
 
 const managementReducer = (state = State.main.systemLog, action) => {
     switch (action.type){

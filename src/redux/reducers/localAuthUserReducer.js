@@ -1,5 +1,5 @@
 import State from '../state';
-import {localAuthUserActionTypes} from '../actions/localAuthUserAction';
+import {localAuthUserActionTypes} from 'Actions/localAuthUserAction';
 
 const shareReducer = (state = State.main.localAuthUser, action) => {
     let {localAuthUserList, localAuthUserGroupList, localAuthUserListOfGroup} = action;

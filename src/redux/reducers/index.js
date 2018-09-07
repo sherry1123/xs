@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 import State from '../state';
-import {lsGet} from '../../services';
+import {lsGet} from 'Services';
 import languageReducer from './languageReducer';
 import initializeReducer from './initializeReducer';
 import generalReducer from './generalReducer';

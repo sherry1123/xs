@@ -1,5 +1,5 @@
 import State from '../state';
-import {dataNodeActionTypes} from '../actions/dataNodeAction';
+import {dataNodeActionTypes} from 'Actions/dataNodeAction';
 
 const dataNodeReducer = (state = State.main.dataNode, action) => {
     let {currentPhysicalNode, physicalNodeInfo, physicalNodeTargets, physicalNodeCPU, physicalNodeRAM, physicalNodeTPS, physicalNodeIOPS} = action;

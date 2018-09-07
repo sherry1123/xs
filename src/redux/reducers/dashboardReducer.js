@@ -1,5 +1,5 @@
 import State from '../state';
-import {dashboardActionTypes} from '../actions/dashboardAction';
+import {dashboardActionTypes} from 'Actions/dashboardAction';
 
 const dashboardReducer = (state = State.main.dashboard, action) => {
     let {clusterInfo, clusterTargets, clusterTPS, clusterIOPS, clusterPhysicalNodeList, clusterServiceAndClientIPs, customRAIDList} = action;

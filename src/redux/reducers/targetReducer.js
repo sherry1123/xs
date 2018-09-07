@@ -1,5 +1,5 @@
 import State from '../state';
-import {targetActionTypes} from '../actions/targetAction';
+import {targetActionTypes} from 'Actions/targetAction';
 
 const targetReducer = (state = State.main.target, action) => {
     let {targetList, buddyGroupList, } = action;

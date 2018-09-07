@@ -1,5 +1,5 @@
 import State from '../state';
-import {serviceActionTypes} from '../actions/serviceAction';
+import {serviceActionTypes} from 'Actions/serviceAction';
 
 const serviceReducer = (state = State.main.service, action) => {
     let {metadataServiceList, storageServiceList,} = action;
