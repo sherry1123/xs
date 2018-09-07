@@ -388,7 +388,7 @@ export default  {
 
     // CIFS share
     async getCIFSShareList (){
-        requestMiddleWare(async () => {
+        requestHandler(async () => {
             let data = await fetchGet('/api/getcifsshare');
             !!data && store.dispatch(shareAction.setCIFSList(data));
         });
