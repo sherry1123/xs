@@ -1,6 +1,7 @@
 import collections
 import math
 import re
+import datetime
 
 
 def request(params, **kwargs):
@@ -97,3 +98,7 @@ def toByte(value, unit):
 
 def replace(pattern, repl, string):
     return re.sub(pattern, repl, string)
+
+
+def create_iso_date():
+    return datetime.datetime.now().replace(microsecond=0).isoformat()

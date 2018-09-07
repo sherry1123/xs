@@ -37,3 +37,6 @@ def receive(channel, code, target, result, data, notify):
         result and status.set_cluster_initialize_status(False)
         socket.emit('event status', {'channel': channel, 'code': code,
                                      'target': target, 'result': result, 'notify': notify})
+    else:
+        socket.emit('event status', {'channel': channel, 'code': code,
+                                     'target': target, 'result': result, 'notify': notify})

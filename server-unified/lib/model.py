@@ -1,4 +1,5 @@
-from mongoengine import Document, IntField, ListField, StringField
+from mongoengine import (BooleanField, Document, IntField,
+                         ListField, StringField)
 
 
 class Setting(Document):
@@ -27,3 +28,13 @@ class NodeThroughputAndIops(Document):
     node_time = IntField()
     node_host_list = ListField()
     node_data_list = ListField()  # {'throughput': {'read', 'write'}, 'iops'}
+
+
+class Snapshot(Document):
+    snapshot_name = StringField(required=True)
+    snapshot_desc = StringField()
+    snapshot_is_auto = BooleanField()
+    snapshot_is_creating = BooleanField()
+    snapshot_is_deleting = BooleanField()
+    snapshot_is_rollbacking = BooleanField()
+    snapshot_create_time = StringField()

@@ -137,3 +137,15 @@ def get_node_target(hostname):
 
 def update_snapshot_setting(total, manual, auto):
     return backend_handler(request.post('http://localhost:9090/cluster/applysnapconf', {'total': total, 'manual': manual, 'schedule': auto}, get_token()))
+
+
+def create_snapshot(name, is_auto):
+    return request.post('http://localhost:9090/cluster/createsnapshot', {'name': name, 'schedule': is_auto}, get_token())
+
+
+def delete_snapshot(name):
+    return request.post('http://localhost:9090/cluster/deletesnapshot', {'name': name}, get_token())
+
+
+def batch_delete_snapshot(names):
+    return request.post('http://localhost:9090/cluster/batchdeletesnap', {'names': names}, get_token())

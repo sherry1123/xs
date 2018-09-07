@@ -160,3 +160,31 @@ def get_snapshot_setting():
 @app.route('/api/updatesnapshotsetting', methods=['GET', 'POST'])
 def update_snapshot_setting():
     return jsonify(controller.update_snapshot_setting(request.params))
+
+
+@app.route('/api/getsnapshot', methods=['GET', 'POST'])
+def get_snapshot():
+    return jsonify(controller.get_snapshot(request.params))
+
+
+@app.route('/api/createsnapshot', methods=['GET', 'POST'])
+def create_snapshot():
+    process.do(controller.create_snapshot, request.params)
+    return jsonify(handler.response(0, 'Start to create the snapshot!'))
+
+
+@app.route('/api/updatesnapshot', methods=['GET', 'POST'])
+def update_snapshot():
+    return jsonify(controller.update_snapshot(request.params))
+
+
+@app.route('/api/deletesnapshot', methods=['GET', 'POST'])
+def delete_snapshot():
+    process.do(controller.delete_snapshot, request.params)
+    return jsonify(handler.response(0, 'Start to delete the snapshot!'))
+
+
+@app.route('/api/batchdeletesnapshot', methods=['GET', 'POST'])
+def batch_delete_snapshot():
+    process.do(controller.batch_delete_snapshot, request.params)
+    return jsonify(handler.response(0, 'Start to batch delete snapshots!'))

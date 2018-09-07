@@ -435,3 +435,85 @@ def update_snapshot_setting(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_snapshot(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_snapshot(name)
+        else:
+            data = database.list_snapshot()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_snapshot(params):
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        create_time = handler.create_iso_date()
+        setting = database.get_setting('SNAPSHOT-SETTING')
+        limit = setting['manual']
+        count = database.count_snapshot(False)
+        if count < limit:
+            database.create_snapshot(name, description, False, create_time)
+            event.send('snapshot', 11, name, True)
+            response = backend.create_snapshot(name, False)
+            if not response['errorId']:
+                database.update_snapshot_status(name)
+                event.send('snapshot', 12, name, True, {}, True)
+            else:
+                database.delete_snapshot(name)
+                event.send('snapshot', 12, name, False, {}, True)
+                print(response['message'])
+        else:
+            event.send('snapshot', 12, name, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))
+
+
+def update_snapshot(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        database.update_snapshot_desc(name, description)
+        response = handler.response(0, 'Update snapshot successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_snapshot(params):
+    try:
+        name, = handler.request(params, name=str)
+        database.update_snapshot_status(name, False, True, False)
+        response = backend.delete_snapshot(name)
+        if not response['errorId']:
+            database.delete_snapshot(name)
+            event.send('snapshot', 13, name, True, {}, True)
+        else:
+            database.update_snapshot_status(name)
+            event.send('snapshot', 14, name, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))
+
+
+def batch_delete_snapshot(params):
+    try:
+        names, = handler.request(params, names=list)
+        for name in names:
+            database.update_snapshot_status(name, False, True, False)
+        response = backend.batch_delete_snapshot(','.join(names))
+        if not response['errorId']:
+            for name in names:
+                database.delete_snapshot(name)
+            event.send('snapshot', 15, {'total': len(names)}, True, {}, True)
+        else:
+            for name in names:
+                database.update_snapshot_status(name)
+            event.send('snapshot', 16, {'total': len(names)}, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))
