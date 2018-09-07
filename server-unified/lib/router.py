@@ -145,3 +145,8 @@ def get_node_throughput():
 @app.route('/api/getnodeiops', methods=['GET', 'POST'])
 def get_node_iops():
     return jsonify(controller.get_node_iops(request.params))
+
+
+@app.route('/api/getnodetarget', methods=['GET', 'POST'])
+def get_node_target():
+    return jsonify(controller.get_node_target(request.params))

@@ -120,3 +120,16 @@ def get_node_cpu_and_memory(hostname):
 
 def get_node_throughput_and_iops(hostname):
     return backend_handler(request.get('http://localhost:9090/cluster/getiostat', {'hostname': hostname}, get_token(), {'errorId': 0, 'data': {'throughput': [], 'iops': []}}))
+
+
+def get_node_target(hostname):
+    node_target = backend_handler(request.get(
+        'http://localhost:9090/cluster/listnodetargets', {'hostname': hostname}, get_token())) or []
+
+    def modify_target_info(target):
+        target['service'] = 'metadata' if target['service'] == 'meta' else target['service']
+        space_usage = '%s%%' % round(
+            float(target['usedSpace']) / target['totalSpace'] * 100, 2)
+        return {'targetId': target['targetId'], 'mountPath': target['mountPath'], 'node': target['hostname'], 'service': target['service'], 'isUsed': target['isUsed'], 'nodeId': target['nodeId'], 'space': {'total': target['totalSpace'], 'used': target['usedSpace'], 'free': target['freeSpace'], 'usage': space_usage}}
+    node_target = map(modify_target_info, node_target)
+    return node_target

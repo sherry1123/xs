@@ -400,3 +400,14 @@ def get_node_iops(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_node_target(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = backend.get_node_target(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
