@@ -2,7 +2,8 @@ import json
 
 from mongoengine import connect
 
-from lib.model import ClusterThroughputAndIops, Setting, User
+from lib.model import (ClusterThroughputAndIops, NodeCpuAndMemory,
+                       NodeThroughputAndIops, Setting, User)
 from lib.module import handler
 
 
@@ -120,4 +121,92 @@ def get_cluster_iops():
         time.append(throughput.cluster_time)
     total.reverse()
     time.reverse()
+    return {'total': total, 'time': time}
+
+
+def create_node_cpu_and_memory(time, host_list, data_list):
+    NodeCpuAndMemory(
+        node_time=time, node_host_list=host_list, node_data_list=data_list).save()
+
+
+def get_node_cpu(hostname):
+    host_list = []
+    data_list = []
+    time = []
+    for item in NodeCpuAndMemory.objects.order_by('-id')[:60]:
+        host_list.append(item.node_host_list)
+        data_list.append(item.node_data_list)
+        time.append(item.node_time)
+    host_list.reverse()
+    data_list.reverse()
+    time.reverse()
+    first_host_list = host_list[0]
+    index = first_host_list.index(
+        hostname) if first_host_list.count(hostname) else -1
+    total = map(lambda item: item[index]['cpu']
+                if len(item) >= index and index != -1 else 0, data_list)
+    return {'total': total, 'time': time}
+
+
+def get_node_memory(hostname):
+    host_list = []
+    data_list = []
+    time = []
+    for item in NodeCpuAndMemory.objects.order_by('-id')[:60]:
+        host_list.append(item.node_host_list)
+        data_list.append(item.node_data_list)
+        time.append(item.node_time)
+    host_list.reverse()
+    data_list.reverse()
+    time.reverse()
+    first_host_list = host_list[0]
+    index = first_host_list.index(
+        hostname) if first_host_list.count(hostname) else -1
+    total = map(lambda item: item[index]['memory']
+                if len(item) >= index and index != -1 else 0, data_list)
+    return {'total': total, 'time': time}
+
+
+def create_node_throughput_and_iops(time, host_list, data_list):
+    NodeThroughputAndIops(
+        node_time=time, node_host_list=host_list, node_data_list=data_list).save()
+
+
+def get_node_throughput(hostname):
+    host_list = []
+    data_list = []
+    time = []
+    for item in NodeThroughputAndIops.objects.order_by('-id')[:60]:
+        host_list.append(item.node_host_list)
+        data_list.append(item.node_data_list)
+        time.append(item.node_time)
+    host_list.reverse()
+    data_list.reverse()
+    time.reverse()
+    first_host_list = host_list[0]
+    index = first_host_list.index(
+        hostname) if first_host_list.count(hostname) else -1
+    read = map(lambda item: item[index]['throughput']['read']
+               if len(item) >= index and index != -1 else 0, data_list)
+    write = map(lambda item: item[index]['throughput']['write']
+                if len(item) >= index and index != -1 else 0, data_list)
+    return {'read': read, 'write': write, 'time': time}
+
+
+def get_node_iops(hostname):
+    host_list = []
+    data_list = []
+    time = []
+    for item in NodeThroughputAndIops.objects.order_by('-id')[:60]:
+        host_list.append(item.node_host_list)
+        data_list.append(item.node_data_list)
+        time.append(item.node_time)
+    host_list.reverse()
+    data_list.reverse()
+    time.reverse()
+    first_host_list = host_list[0]
+    index = first_host_list.index(
+        hostname) if first_host_list.count(hostname) else -1
+    total = map(lambda item: item[index]['iops']
+                if len(item) >= index and index != -1 else 0, data_list)
     return {'total': total, 'time': time}

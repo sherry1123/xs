@@ -120,3 +120,43 @@ def get_cluster_iops():
 @app.route('/api/getnodelist', methods=['GET', 'POST'])
 def get_node_list():
     return jsonify(controller.get_node_list())
+
+
+@app.route('/api/getnodeservice', methods=['GET', 'POST'])
+def get_node_service():
+    return jsonify(controller.get_node_service(request.params))
+
+
+@app.route('/api/getnodecpu', methods=['GET', 'POST'])
+def get_node_cpu():
+    return jsonify(controller.get_node_cpu(request.params))
+
+
+@app.route('/api/getnodememory', methods=['GET', 'POST'])
+def get_node_memory():
+    return jsonify(controller.get_node_memory(request.params))
+
+
+@app.route('/api/getnodethroughput', methods=['GET', 'POST'])
+def get_node_throughput():
+    return jsonify(controller.get_node_throughput(request.params))
+
+
+@app.route('/api/getnodeiops', methods=['GET', 'POST'])
+def get_node_iops():
+    return jsonify(controller.get_node_iops(request.params))
+
+
+@app.route('/api/getnodetarget', methods=['GET', 'POST'])
+def get_node_target():
+    return jsonify(controller.get_node_target(request.params))
+
+
+@app.route('/api/getsnapshotsetting', methods=['GET', 'POST'])
+def get_snapshot_setting():
+    return jsonify(controller.get_snapshot_setting())
+
+
+@app.route('/api/updatesnapshotsetting', methods=['GET', 'POST'])
+def update_snapshot_setting():
+    return jsonify(controller.update_snapshot_setting(request.params))

@@ -104,3 +104,36 @@ def get_node_list():
     node_list = map(modify_node_info, node_list)
     node_list = sorted(node_list, key=lambda node: node['hostname'])
     return node_list
+
+
+def get_node_service(hostname):
+    node_service = backend_handler(request.get(
+        'http://localhost:9090/cluster/getnodeservice', {'hostname': hostname}, get_token()))
+    return {'metadata': node_service['meta'], 'storage': node_service['storage']}
+
+
+def get_node_cpu_and_memory(hostname):
+    node_cpu_and_memory = backend_handler(request.get(
+        'http://localhost:9090/cluster/getphysicresource', {'hostname': hostname}, get_token()))
+    return {'cpu': round(node_cpu_and_memory['cpu'], 2), 'memory': round(node_cpu_and_memory['memory'], 2)}
+
+
+def get_node_throughput_and_iops(hostname):
+    return backend_handler(request.get('http://localhost:9090/cluster/getiostat', {'hostname': hostname}, get_token(), {'errorId': 0, 'data': {'throughput': [], 'iops': []}}))
+
+
+def get_node_target(hostname):
+    node_target = backend_handler(request.get(
+        'http://localhost:9090/cluster/listnodetargets', {'hostname': hostname}, get_token())) or []
+
+    def modify_target_info(target):
+        target['service'] = 'metadata' if target['service'] == 'meta' else target['service']
+        space_usage = '%s%%' % round(
+            float(target['usedSpace']) / target['totalSpace'] * 100, 2)
+        return {'targetId': target['targetId'], 'mountPath': target['mountPath'], 'node': target['hostname'], 'service': target['service'], 'isUsed': target['isUsed'], 'nodeId': target['nodeId'], 'space': {'total': target['totalSpace'], 'used': target['usedSpace'], 'free': target['freeSpace'], 'usage': space_usage}}
+    node_target = map(modify_target_info, node_target)
+    return node_target
+
+
+def update_snapshot_setting(total, manual, auto):
+    return backend_handler(request.post('http://localhost:9090/cluster/applysnapconf', {'total': total, 'manual': manual, 'schedule': auto}, get_token()))

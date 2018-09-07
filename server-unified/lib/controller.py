@@ -345,3 +345,93 @@ def get_node_list():
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_node_service(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = backend.get_node_service(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_cpu(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_cpu(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_memory(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_memory(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_throughput(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_throughput(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_iops(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_iops(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_target(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = backend.get_node_target(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_snapshot_setting():
+    response = {}
+    try:
+        data = database.get_setting('SNAPSHOT-SETTING')
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_snapshot_setting(params):
+    response = {}
+    try:
+        auto, manual, total = handler.request(
+            params, total=int, manual=int, auto=int)
+        backend.update_snapshot_setting(total, manual, auto)
+        database.update_setting(
+            'SNAPSHOT-SETTING', {'total': total, 'manual': manual, 'auto': auto})
+        response = handler.response(0, 'Update snapshot setting successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
