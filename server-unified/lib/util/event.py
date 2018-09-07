@@ -19,24 +19,27 @@ def send(channel, code, target, result, data={}, notify=False, ip=None):
 
 
 def receive(channel, code, target, result, data, notify):
-    if code == 0:
-        socket.emit('init status', data)
-        if current == 7:
+    if code:
+        if code == 1:
+            status.set_cluster_deinitialize_status(True)
+        elif code == 2:
+            status.set_cluster_deinitialize_status(False)
+            result and status.set_cluster_initialize_status(False)
+        elif code == 15 or code == 16:
+            target = data
+        elif code == 17:
+            status.set_snapshot_rollback_status(True)
+        elif code == 18:
+            status.set_snapshot_rollback_status(False)
+        else:
+            pass
+        socket.emit('event status', {'channel': channel, 'code': code,
+                                     'target': target, 'result': result, 'notify': notify})
+    else:
+        if data['current'] == 7:
             status.set_cluster_initialize_status(True)
             database.connect_database()
             schedule.start_scheduler()
-    elif code == 1:
-        status.set_cluster_deinitialize_status(True)
-        socket.emit('event status', {'channel': channel, 'code': code,
-                                     'target': target, 'result': result, 'notify': notify})
-    elif code == 2:
-        status.set_cluster_deinitialize_status(False)
-        result and status.set_cluster_initialize_status(False)
-        socket.emit('event status', {'channel': channel, 'code': code,
-                                     'target': target, 'result': result, 'notify': notify})
-    elif code == 15 or code == 16:
-        socket.emit('event status', {'channel': channel, 'code': code,
-                                     'target': data, 'result': result, 'notify': notify})
-    else:
-        socket.emit('event status', {'channel': channel, 'code': code,
-                                     'target': target, 'result': result, 'notify': notify})
+        else:
+            pass
+        socket.emit('init status', data)

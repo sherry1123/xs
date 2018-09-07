@@ -149,3 +149,7 @@ def delete_snapshot(name):
 
 def batch_delete_snapshot(names):
     return request.post('http://localhost:9090/cluster/batchdeletesnap', {'names': names}, get_token())
+
+
+def rollback_snapshot(name):
+    return request.post('http://localhost:9090/cluster/rollbacksnapshot', {'name': name}, get_token())

@@ -535,3 +535,18 @@ def batch_delete_snapshot(params):
                        {'total': len(names)}, True)
     except Exception as error:
         print(handler.error(error))
+
+
+def rollback_snapshot(params):
+    try:
+        name, = handler.request(params, name=str)
+        event.send('snapshot', 17, name, True, {}, True)
+        database.update_snapshot_status(name, False, False, True)
+        response = backend.rollback_snapshot(name)
+        database.update_snapshot_status(name)
+        if not response['errorId']:
+            event.send('snapshot', 18, name, True, {}, True)
+        else:
+            event.send('snapshot', 18, name, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))

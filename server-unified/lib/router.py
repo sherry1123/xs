@@ -193,3 +193,9 @@ def delete_snapshot():
 def batch_delete_snapshot():
     process.do(controller.batch_delete_snapshot, request.params)
     return jsonify(handler.response(0, 'Start to batch delete snapshots!'))
+
+
+@app.route('/api/rollbacksnapshot', methods=['GET', 'POST'])
+def rollback_snapshot():
+    process.do(controller.rollback_snapshot, request.params)
+    return jsonify(handler.response(0, 'Start to rollback the snapshot!'))
