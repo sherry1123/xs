@@ -151,6 +151,9 @@ def get_node_iops():
 def get_node_target():
     return jsonify(controller.get_node_target(request.params))
 
+@app.route('/api/getclusterserviceandclientip', methods=['GET', 'POST'])
+def get_cluster_service_and_client_ip():
+    return jsonify(controller.get_cluster_service_and_client_ip())
 
 @app.route('/api/getsnapshotsetting', methods=['GET', 'POST'])
 def get_snapshot_setting():

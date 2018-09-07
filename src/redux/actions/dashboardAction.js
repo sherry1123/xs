@@ -4,7 +4,7 @@ export const dashboardActionTypes = {
     SET_CLUSTER_TPS: 'SET_CLUSTER_TPS',
     SET_CLUSTER_IOPS: 'SET_CLUSTER_IOPS',
     SET_CLUSTER_PHYSICAL_NODE_LIST: 'SET_CLUSTER_PHYSICAL_NODE_LIST',
-    SET_CLUSTER_SERVICE_ROLE_IPS: 'SET_CLUSTER_SERVICE_ROLE_IPS',
+    SET_CLUSTER_SERVICE_AND_CLIENT_IPS: 'SET_CLUSTER_SERVICE_AND_CLIENT_IPS',
     SET_CUSTOM_RAID_LIST: 'SET_CUSTOM_RAID_LIST',
 };
 
@@ -35,7 +35,7 @@ export default {
     }),
 
     setClusterServiceAndClientIPs: clusterServiceAndClientIPs => ({
-        type: dashboardActionTypes.SET_CLUSTER_SERVICE_ROLE_IPS,
+        type: dashboardActionTypes.SET_CLUSTER_SERVICE_AND_CLIENT_IPS,
         clusterServiceAndClientIPs
     }),
 

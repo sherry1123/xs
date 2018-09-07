@@ -412,6 +412,19 @@ def get_node_target(params):
         response = handler.response(1, handler.error(error))
     return response
 
+def get_cluster_service_and_client_ip():
+    response = {}
+    try:
+        node_list = database.get_setting('NODE-LIST')
+        data = {}
+        data['metadataServerIPs'] = node_list['meta']
+        data['storageServerIPs'] = node_list['storage']
+        data['managementServerIPs'] = node_list['mgmt']
+        data['clientIPs'] = node_list['client']
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
 
 def get_snapshot_setting():
     response = {}
