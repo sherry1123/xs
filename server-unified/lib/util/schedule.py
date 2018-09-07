@@ -7,6 +7,8 @@ scheduler = None
 
 def create_scheduler():
     scheduler = BackgroundScheduler()
+    scheduler.add_job(task.send_change_password_message,
+                      'cron', minute='*/5', second=0)
     scheduler.add_job(task.get_cluster_throughput_and_iops,
                       'cron', second='*/15')
     scheduler.add_job(task.get_node_cpu_and_memory,

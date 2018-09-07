@@ -25,7 +25,7 @@ def receive(channel, code, target, result, data, notify):
         elif code == 2:
             status.set_cluster_deinitialize_status(False)
             result and status.set_cluster_initialize_status(False)
-        elif code == 15 or code == 16:
+        elif code == 15 or code == 16 or code == 21:
             target = data
         elif code == 17:
             status.set_snapshot_rollback_status(True)
