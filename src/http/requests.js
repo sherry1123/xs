@@ -21,8 +21,8 @@ import targetAction from 'Actions/targetAction';
  * own responsibility, render the view, calculate the state, or others. For the HTTP API calls,
  * they are used to get the data (state), so they should be encapsulated into a action. But
  * as we know, the dispatch only receive an action object, we can't give it a HTTP API async
- * function. So to reach this goal, we should use a middle ware named redux-thunk to rebuild
- * all the calls at some time of future.
+ * function. So to reach this goal, we should use a middleware named redux-thunk which can
+ * let use dispatch a async function to rebuild all the HTTP API calls at some time of future.
  */
 
 const requestHandler = fn => {
