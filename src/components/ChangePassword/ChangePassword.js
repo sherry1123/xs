@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
-import httpRequests from '../../http/requests';
+import httpRequests from 'Http/requests';
 import lang from '../Language/lang';
-import {validatePassword} from '../../services';
+import {validatePassword} from 'Services';
 import MD5 from 'crypto-js/md5';
 import TripleDES from 'crypto-js/tripledes';
 

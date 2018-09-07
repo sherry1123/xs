@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Popover, Select, message} from 'antd';
 import FSTransfer from '../FSTransfer/FSTransfer';
-import RAIDImage from '../../images/raid.png';
+import RAIDImage from 'Images/raid.png';
 import lang from '../Language/lang';
-import initializeAction from '../../redux/actions/initializeAction';
-import httpRequests from '../../http/requests';
-import {formatStorageSize} from '../../services/index';
+import initializeAction from 'Actions/initializeAction';
+import httpRequests from 'Http/requests';
+import {formatStorageSize} from 'Services';
 
 class CustomRAID extends Component {
     constructor (props){

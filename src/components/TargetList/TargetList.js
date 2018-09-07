@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Popover} from 'antd';
-import {formatStorageSize, getCapacityColour} from '../../services';
+import {formatStorageSize, getCapacityColour} from 'Services';
 import lang from '../Language/lang';
 
 class TargetUsageRateRanking extends Component {
