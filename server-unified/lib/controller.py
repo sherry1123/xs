@@ -378,3 +378,25 @@ def get_node_memory(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_node_throughput(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_throughput(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_node_iops(params):
+    response = {}
+    try:
+        hostname, = handler.request(params, hostname=str)
+        data = database.get_node_iops(hostname)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

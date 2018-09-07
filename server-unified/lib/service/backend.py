@@ -116,3 +116,7 @@ def get_node_cpu_and_memory(hostname):
     node_cpu_and_memory = backend_handler(request.get(
         'http://localhost:9090/cluster/getphysicresource', {'hostname': hostname}, get_token()))
     return {'cpu': round(node_cpu_and_memory['cpu'], 2), 'memory': round(node_cpu_and_memory['memory'], 2)}
+
+
+def get_node_throughput_and_iops(hostname):
+    return backend_handler(request.get('http://localhost:9090/cluster/getiostat', {'hostname': hostname}, get_token(), {'errorId': 0, 'data': {'throughput': [], 'iops': []}}))

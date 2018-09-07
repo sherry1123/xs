@@ -135,3 +135,13 @@ def get_node_cpu():
 @app.route('/api/getnodememory', methods=['GET', 'POST'])
 def get_node_memory():
     return jsonify(controller.get_node_memory(request.params))
+
+
+@app.route('/api/getnodethroughput', methods=['GET', 'POST'])
+def get_node_throughput():
+    return jsonify(controller.get_node_throughput(request.params))
+
+
+@app.route('/api/getnodeiops', methods=['GET', 'POST'])
+def get_node_iops():
+    return jsonify(controller.get_node_iops(request.params))
