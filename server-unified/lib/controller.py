@@ -67,17 +67,16 @@ def initialize_cluster(params):
                 current = status_res['data']['currentStep']
                 fs_total = status_res['data']['totalStep']
                 describle = status_res['data']['describle']
-                state = status_res['data']['status']
                 error_message = status_res['data']['errorMessage']
                 if not status_res['errorId']:
-                    if state:
+                    if status_res['data']['status']:
                         callback()
                         event.send('cluster', 0, 'cluster', False, {
-                                   'current': current, 'state': -1, 'total': total})
+                                   'current': current, 'status': -1, 'total': total})
                     elif current != fs_total:
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': state, 'total': total})
+                                   'current': current, 'status': status_res['data']['status'], 'total': total})
                     elif 'finish' in describle:
                         callback()
                         if data['enable_create_buddy_group']:
@@ -85,23 +84,23 @@ def initialize_cluster(params):
                         current = 5
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': 0, 'total': total})
+                                   'current': current, 'status': 0, 'total': total})
                         initialize.initialize_mongodb(data['mongodb_param'])
                         current = 6
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': 0, 'total': total})
+                                   'current': current, 'status': 0, 'total': total})
                         initialize.save_initialize_information(
                             data['param'], data['node_list'])
                         current = 7
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': 0, 'total': total})
+                                   'current': current, 'status': 0, 'total': total})
                         print('finish')
                 else:
                     callback()
                     event.send('cluster', 0, 'cluster', False, {
-                               'current': current, 'state': -1, 'total': total})
+                               'current': current, 'status': -1, 'total': total})
 
             def stop_get_initialize_status():
                 start_get_initialize_status.set()
@@ -109,12 +108,12 @@ def initialize_cluster(params):
                 stop_get_initialize_status)
         elif init_res['errorId'] != 111:
             event.send('cluster', 0, 'cluster', False, {
-                       'current': current, 'state': -1, 'total': total})
+                       'current': current, 'status': -1, 'total': total})
     except Exception as error:
         print(handler.error(error))
         deinitialize_cluster(2)
         event.send('cluster', 0, 'cluster', False, {
-                   'current': current, 'state': -1, 'total': total})
+                   'current': current, 'status': -1, 'total': total})
 
 
 def deinitialize_cluster(mode):

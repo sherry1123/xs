@@ -16,7 +16,7 @@ class DatabaseError(Exception):
 
 
 def connect_database(host='127.0.0.1', port=27017):
-    connect('orcafs', host=host, port=port)
+    connect('storage', host=host, port=port)
 
 
 def get_setting(key):
