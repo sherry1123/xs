@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, Popover, notification} from 'antd';
-import RAIDImage from '../../images/raid.png';
+import RAIDImage from 'Images/raid.png';
 import lang from '../Language/lang';
-import {formatStorageSize} from '../../services/index';
+import {formatStorageSize} from 'Services';
 
 class RecommendedRAID extends Component {
     constructor (props){
