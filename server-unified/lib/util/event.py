@@ -20,14 +20,11 @@ def send(channel, code, target, result, data={}, notify=False, ip=None):
 
 def receive(channel, code, target, result, data, notify):
     if code == 0:
-        current, state, total = handler.request(
-            data, current=int, state=int, total=int)
-        socket.emit('init status', {
-                    'current': current, 'status': state, 'total': total})
+        socket.emit('init status', data)
         if current == 7:
             status.set_cluster_initialize_status(True)
             database.connect_database()
-            # schedule.start_scheduler()
+            schedule.start_scheduler()
     elif code == 1:
         status.set_cluster_deinitialize_status(True)
         socket.emit('event status', {'channel': channel, 'code': code,
@@ -37,6 +34,9 @@ def receive(channel, code, target, result, data, notify):
         result and status.set_cluster_initialize_status(False)
         socket.emit('event status', {'channel': channel, 'code': code,
                                      'target': target, 'result': result, 'notify': notify})
+    elif code == 15 or code == 16:
+        socket.emit('event status', {'channel': channel, 'code': code,
+                                     'target': data, 'result': result, 'notify': notify})
     else:
         socket.emit('event status', {'channel': channel, 'code': code,
                                      'target': target, 'result': result, 'notify': notify})

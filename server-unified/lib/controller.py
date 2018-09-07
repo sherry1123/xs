@@ -412,6 +412,7 @@ def get_node_target(params):
         response = handler.response(1, handler.error(error))
     return response
 
+
 def get_cluster_service_and_client_ip():
     response = {}
     try:
@@ -425,6 +426,7 @@ def get_cluster_service_and_client_ip():
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
 
 def get_snapshot_setting():
     response = {}
@@ -519,14 +521,17 @@ def batch_delete_snapshot(params):
         names, = handler.request(params, names=list)
         for name in names:
             database.update_snapshot_status(name, False, True, False)
-        response = backend.batch_delete_snapshot(','.join(names))
+        names_str = ','.join(names)
+        response = backend.batch_delete_snapshot(names_str)
         if not response['errorId']:
             for name in names:
                 database.delete_snapshot(name)
-            event.send('snapshot', 15, {'total': len(names)}, True, {}, True)
+            event.send('snapshot', 15, names_str, True,
+                       {'total': len(names)}, True)
         else:
             for name in names:
                 database.update_snapshot_status(name)
-            event.send('snapshot', 16, {'total': len(names)}, False, {}, True)
+            event.send('snapshot', 16, names_str, False,
+                       {'total': len(names)}, True)
     except Exception as error:
         print(handler.error(error))
