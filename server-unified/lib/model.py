@@ -27,3 +27,8 @@ class NodeThroughputAndIops(Document):
     node_time = IntField()
     node_host_list = ListField()
     node_data_list = ListField()  # {'throughput': {'read', 'write'}, 'iops'}
+
+class StoragePool(Document):
+    poolId = IntField
+    name = StringField
+    description = StringField
