@@ -415,13 +415,9 @@ def get_node_target(params):
 def get_cluster_service_and_client_ip():
     response = {}
     try:
-        node_list = database.get_setting('NODE-LIST')
-        data = {}
-        data['metadataServerIPs'] = node_list['meta']
-        data['storageServerIPs'] = node_list['storage']
-        data['managementServerIPs'] = node_list['mgmt']
-        data['clientIPs'] = node_list['client']
-        response = handler.response(0, data)
+        data = database.get_setting('NODE-LIST')
+        response = handler.response(0, {'metadataServerIPs': data.meta, 'storageServerIPs': data.storage,
+                                        'managementServerIPs': data.mgmt, 'clientIPs': data.client})
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -430,7 +426,11 @@ def get_cluster_service_and_client_ip():
 def get_storage_pool(params):
     response = {}
     try:
-        data = database.get_setting('STORAGE_POOL')
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_storage_pool(name)
+        else:
+            data = database.list_storage_pool()
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -440,9 +440,62 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        name, description, targets, mirrorGroups = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
-        poolId = backend.create_storage_pool(name, description, targets, mirrorGroups)
-        database.create_storage_pool(poolId, name, description)
+        description, mirror_groups, name, targets = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
+        pool_id = backend.create_storage_pool(name, description, targets, mirror_groups)
+        database.create_storage_pool(pool_id, name, description)
+        response = handler.response(0, 'Create storagePool successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_storage_pool(params):
+    response = {}
+    try:
+        description, name, pool_id = handler.request(params, poolId=int, name=str, description=str)
+        backend.update_storage_pool_name(pool_id, name)
+        database.update_storage_pool_name_and_desc(name, description)
+        response = handler.response(0, 'Update storagePool successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_storage_pool(params):
+    response = {}
+    try:
+        name, pool_id = handler.request(params, poolId=int, name=str)
+        backend.delete_storage_pool(name)
+        database.delete_storage_pool(name)
+        response = handler(0, 'Delete storagePool successfully!')
+    except Exception as error:
+        print(handler.error(error))
+    return response
+
+
+def get_targets_in_storage_pool(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            pool_id, = handler.request(params, poolId=int)
+            data = backend.get_targets_in_storage_pool(pool_id)
+        else:
+            data = backend.get_targets_in_storage_pool()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_buddy_groups_in_storage_pool(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            pool_id, = handler.request(params, poolId=int)
+            data = backend.get_buddy_groups_in_storage_pool(pool_id)
+        else:
+            data = backend.get_buddy_groups_in_storage_pool()
+        response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
