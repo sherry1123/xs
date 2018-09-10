@@ -1,8 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {Button, Icon, Input, Table} from 'antd';
-import httpRequests from "../../http/requests";
+import EditStoragePool from './EditStoragePool';
+import CreateStoragePool from './CreateStoragePool';
+import StoragePoolTarget from './StoragePoolTarget';
+import BuddyMirror from './BuddyMirror';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
 class StoragePool extends Component {
     constructor (props){
@@ -42,14 +46,55 @@ class StoragePool extends Component {
     }
 
     create (){
-
+		this.createStoragePoolWrapper.getWrappedInstance().show();
     }
+
+	edit (storagePoolData){
+		this.editStoragePoolWrapper.getWrappedInstance().show(storagePoolData);
+	}
+
+	delete (storagePool){
+		Modal.confirm({
+			title: lang('警告', 'Warning'),
+			content: <div style={{fontSize: 12}}>
+				<p>{lang(`您将要执行删除存储池 ${storagePool.name} 的操作。`, `You are about to delete storage pool ${storagePool.name}.`)}</p>
+				<p>{lang(`该操作将会从系统中移除存储池${storagePool.name}。`, `This operation will delete storage pool ${storagePool.name} from the system. `)}</p>
+				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储池，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
+			</div>,
+			iconType: 'exclamation-circle-o',
+			okType: 'danger',
+			okText: lang('删除', 'Delete'),
+			cancelText: lang('取消', 'Cancel'),
+			onOk: async () => {
+				try {
+					await httpRequests.deleteStoragePool(storagePool);
+					httpRequests.getStoragePoolList();
+					message.success(lang(`已开始删除存储池 ${storagePool.name}!`, `Start deleting storage pool ${storagePool.name}!`));
+				} catch ({msg}){
+					message.error(lang(`删除快照 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
+				}
+			},
+			onCancel: () => {
+
+			}
+		});
+	}
+
+	buddymirror (storagePool){
+		this.buddyMirrorWrapper.getWrappedInstance().show(storagePool);
+	}
+
+	check (storagePool){
+		this.storagePoolTargetWrapper.getWrappedInstance().show(storagePool);
+	}
 
     render (){
         let {storagePoolList} = this.state;
-        // let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
+		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
+        let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
+		let storagePooHandling = storagePoolList.some(storagepool => storagepool.creating || storagepool.deleting || storagepool.buddymirror);
         let tableProps = {
-            size: 'normal',
+            size: 'default',
             dataSource: storagePoolList,
             pagination: storagePoolList.length > 12 && {
                 pageSize: 12,
@@ -63,22 +108,74 @@ class StoragePool extends Component {
             locale: {
                 emptyText: lang('暂无存储池', 'No Storage Pool')
             },
-            title: () => (<span className="fs-table-title"><Icon type="camera-o" />{lang('存储池', 'Storage Pool')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="appstore-o" />{lang('存储池', 'Storage Pool')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
+				{title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
+					render: text => text || '--'
+				},
+				{
+					title: lang('操作', 'Operations'), width: 80,
+					render: (text, record, index) => {
+						return (!record.creating && !record.deleting && !record.buddymirror) ?
+							<div>
+								<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+									<Button
+										{...buttonConf}
+										disabled={storagePooHandling}
+										onClick={this.edit.bind(this, record)}
+										icon="edit"
+									>
+									</Button>
+								</Popover>
+								<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
+									<Button
+										{...buttonConf}
+										disabled={storagePooHandling}
+										onClick={this.delete.bind(this, record, index)}
+										icon="delete"
+									>
+									</Button>
+								</Popover>
+								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Mirror')}>
+									<Button
+										{...buttonConf}
+										disabled={storagePooHandling}
+										onClick={this.buddymirror.bind(this, record, index)}
+										icon="copy"
+									>
+									</Button>
+								</Popover>
+								<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
+									<Button
+										{...buttonConf}
+										onClick={this.check.bind(this, record, index)}
+										icon="hdd"
+									>
+									</Button>
+								</Popover>
+							</div> :
+							<a disabled>
+								{
+									record.creating ? lang('创建中', 'Creating') :
+										record.deleting ? lang('删除中', 'Deleting') : ''
+								}
+							</a>;
+					}
+				}
             ],
         };
         return (
-            <div className="fs-page-content">
+			<div className="fs-page-content">
                 <div className="fs-table-operation-wrapper">
-                    <Input.Search
-                        size="small"
-                        placeholder={lang('存储池名称', 'Storage Name')}
-                        value={this.state.query}
-                        onChange={this.queryChange.bind(this)}
-                        onSearch={this.searchInTable.bind(this)}
-                    />
+					<Input.Search
+						size="small"
+						placeholder={lang('存储池名称', 'Storage Name')}
+						value={this.state.query}
+						onChange={this.queryChange.bind(this)}
+						onSearch={this.searchInTable.bind(this)}
+					/>
                     <div className="fs-table-operation-button-box">
                         <Button
                             type="primary"
@@ -89,10 +186,14 @@ class StoragePool extends Component {
                         </Button>
                     </div>
                 </div>
-                <div className="fs-main-content-wrapper">
-                    <Table {...tableProps} />
-                </div>
-            </div>
+				<div className="fs-main-content-wrapper">
+					<Table {...tableProps} />
+				</div>
+				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
+				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
+				<StoragePoolTarget ref={ref => this.storagePoolTargetWrapper = ref} />
+				<BuddyMirror ref={ref => this.buddyMirrorWrapper = ref} />
+			</div>
         );
     }
 }

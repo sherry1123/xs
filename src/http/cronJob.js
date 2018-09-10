@@ -96,7 +96,7 @@ const isRollingBack = ckGet('rollbacking');
 if (isInitialized === 'true'){
     // request every 15 seconds
     new CronJob('*/15 * * * * *', async () => {
-        fetchDataPer15s();
+        // fetchDataPer15s();
     }, null, true);
 
     // request immediately
