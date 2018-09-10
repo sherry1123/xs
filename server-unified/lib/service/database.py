@@ -3,7 +3,7 @@ import json
 from mongoengine import connect
 
 from lib.model import (ClusterThroughputAndIops, NodeCpuAndMemory,
-                       NodeThroughputAndIops, Setting, User)
+                       NodeThroughputAndIops, Setting, User, StoragePool)
 from lib.module import handler
 
 
@@ -210,3 +210,11 @@ def get_node_iops(hostname):
     total = map(lambda item: item[index]['iops']
                 if len(item) >= index and index != -1 else 0, data_list)
     return {'total': total, 'time': time}
+
+
+def create_storage_pool(poolId, name, description):
+    storagePool = StoragePool.objects(name=name).first()
+    if storagePool:
+        raise DatabaseError('StoragePool already exists!')
+    else:
+        StoragePool(poolId, name, description).save()
