@@ -134,20 +134,21 @@ export default {
             physicalNodeTPS: {read: [], write: [], time: []},
             physicalNodeIOPS: {total: [], time: []},
         },
+        // storage pool
+        storagePool: {
+            storagePoolList: [],
+            // targets or buddy groups in one storage pool
+            targetsOfStoragePool: [],
+            buddyGroupsOfStoragePool: [],
+            // for selecting in creation or update operations
+            targetsForStoragePool: [],
+            buddyGroupsForStoragePool: [],
+        },
         // snapshot, timed snapshot schedule and setting
         snapshot: {
             snapshotSetting: {total: 0, auto: 0, manual: 0,},
-            snapshotList: [
-                {name:"snapshot_1",description:"测试",createTime:"2018.9.3"}
-            ],
+            snapshotList: [],
             snapshotScheduleList: [],
-        },
-        //storage pool
-		storagePool: {
-			storagePoolList: [
-				{name:"storagepool_1", description:"测试1"},
-				{name:"storagepool_2", description:"测试2"},
-			],
         },
         // NAS server, NFS share and client, CIFS share
         share: {
