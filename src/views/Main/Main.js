@@ -84,6 +84,8 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
 
+						<Route path={`${Main}${routerPath.StoragePool}`} component={StoragePool} />
+
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
 
                         <Route path={`${Main}${routerPath.NASServer}`} component={NASServer} />

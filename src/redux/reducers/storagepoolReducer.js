@@ -1,14 +1,15 @@
 import State from '../state';
-import {storagepoolActionTypes} from '../actions/storagepoolAction';
+import {storagePoolActionTypes} from '../actions/storagePoolAction';
 
-const storagepoolReducer = (state = State.main.storagepool, action) => {
-	let {storagepoolList} = action;
-	switch (action.type){
-		case storagepoolActionTypes.SET_STORAGEPOOL_LIST:
-			return Object.assign({}, state, {storagepoolList});
-		default:
-			return state;
-	}
+const snapshotReducer = (state = State.main.snapshot, action) => {
+    let {storagePoolList,} = action;
+    switch (action.type){
+        case storagePoolActionTypes.SET_STORAGE_POOL_LIST:
+            return Object.assign({}, state, {storagePoolList});
+
+        default:
+            return state;
+    }
 };
 
-export default storagepoolReducer;
+export default snapshotReducer;

@@ -1,11 +1,10 @@
-export const storagepoolActionTypes = {
-	SET_STORAGEPOOL_LIST: 'SET_STORAGEPOOL_LIST',
+export const storagePoolActionTypes = {
+    SET_STORAGE_POOL_LIST: 'SET_STORAGE_POOL_LIST',
 };
 
 export default {
-	setStoragePoolList: storagepoolList => ({
-		type: storagepoolActionTypes.SET_STORAGEPOOL_LIST,
-		storagepoolList
-	}),
-
+    setStoragePoolList: storagePoolList => ({
+        type: storagePoolActionTypes.SET_STORAGE_POOL_LIST,
+        storagePoolList
+    }),
 };

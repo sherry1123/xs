@@ -211,8 +211,8 @@ export default  {
         await fetchPost('/api/createstoragepool', storagePool);
     },
 
-    async editStoragePool (storagePool){
-        await fetchPost('/api/editstoragepool', storagePool)
+    async updateStoragePool (storagePool){
+        await fetchPost('/api/updatestoragepool', storagePool)
     },
 
     async deleteStoragePool (storagePool){
