@@ -1,5 +1,5 @@
 import State from '../state';
-import {storagePoolActionTypes} from '../actions/storagePoolAction';
+import {storagePoolActionTypes} from 'Actions/storagePoolAction';
 
 const snapshotReducer = (state = State.main.snapshot, action) => {
     let {storagePoolList,} = action;
