@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, Select, Popover} from 'antd';
-import dataNodeAction from '../../redux/actions/dataNodeAction';
-import lang from '../../components/Language/lang';
-import {lsGet, lsSet} from '../../services';
-import httpRequests from '../../http/requests';
+import dataNodeAction from 'Actions/dataNodeAction';
+import lang from 'Components/Language/lang';
+import {lsGet, lsSet} from 'Services';
+import httpRequests from 'Http/requests';
 
 class PhysicalNodeInfo extends Component {
     constructor (props){

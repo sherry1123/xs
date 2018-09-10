@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Modal, Popover} from 'antd';
-import TargetList from '../../components/TargetList/TargetList';
-import lang from '../../components/Language/lang';
+import TargetList from 'Components/TargetList/TargetList';
+import lang from 'Components/Language/lang';
 
 class ClusterTargetsRanking extends Component {
     constructor (props){

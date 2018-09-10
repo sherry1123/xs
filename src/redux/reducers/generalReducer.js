@@ -1,5 +1,5 @@
 import State from '../state';
-import {generalActionTypes} from '../actions/generalAction';
+import {generalActionTypes} from 'Actions/generalAction';
 
 const generalReducer = (state = State.main.general, action) => {
     switch (action.type){

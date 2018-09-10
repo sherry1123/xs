@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon, Radio, Table, Popover} from 'antd';
-import lang from '../../components/Language/lang';
-import {formatStorageSize, getCapacityColour} from '../../services';
+import lang from 'Components/Language/lang';
+import {formatStorageSize, getCapacityColour} from 'Services';
 
 class PhysicalNodeTargetList extends Component {
     constructor (props){

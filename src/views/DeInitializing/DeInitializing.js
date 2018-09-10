@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import LanguageButton from '../../components/Language/LanguageButton';
-import lang from '../../components/Language/lang';
-import {ckGet} from '../../services';
+import LanguageButton from 'Components/Language/LanguageButton';
+import lang from 'Components/Language/lang';
+import {ckGet} from 'Services';
 import routerPath from '../routerPath';
 
 class DeInitializing extends PureComponent {

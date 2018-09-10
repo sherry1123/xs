@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Input, message, Modal, Table} from 'antd';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
 
 class AddLocalAuthUserToGroup extends Component {
     constructor (props){

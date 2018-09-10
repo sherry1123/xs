@@ -8,3 +8,7 @@ build
 www
 package-lock.json
 app
+venv
+**.pyc
+**.egg-info
+**__pycache__

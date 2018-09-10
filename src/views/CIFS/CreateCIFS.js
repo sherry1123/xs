@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover, Select, Switch, Table} from 'antd';
-import CatalogTree from '../../components/CatalogTree/CatalogTree';
+import CatalogTree from 'Components/CatalogTree/CatalogTree';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
-import lang from '../../components/Language/lang';
-import {validateFsName} from '../../services';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import {validateFsName} from 'Services';
+import httpRequests from 'Http/requests';
 
 class CreateCIFS extends Component {
     constructor (props){

@@ -1,8 +1,8 @@
 import React, {Component}from 'react';
 import {connect} from 'react-redux';
 import {Button} from 'antd';
-import languageAction from '../../redux/actions/languageAction';
-import {lsSet} from '../../services';
+import languageAction from 'Actions/languageAction';
+import {lsSet} from 'Services';
 import lang from './lang';
 
 class LanguageButton extends Component {

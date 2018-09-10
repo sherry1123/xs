@@ -6,7 +6,7 @@ import PhysicalNodeDRAM from './PhysicalNodeDRAM';
 import PhysicalNodeTPS from './PhysicalNodeTPS';
 import PhysicalNodeIOPS from './PhysicalNodeIOPS';
 import PhysicalNodeTargetList from './PhysicalNodeTargetList';
-import httpRequests from '../../http/requests';
+import httpRequests from 'Http/requests';
 
 class DataNode extends Component {
     constructor (props){

@@ -1,5 +1,5 @@
 import store from '../../redux';
-import {lsGet} from '../../services';
+import {lsGet} from 'Services';
 
 const lang = (chinese, english) => {
     let localLanguage = lsGet('language');

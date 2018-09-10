@@ -1,5 +1,5 @@
 import State from '../state';
-import {shareActionTypes} from '../actions/shareAction';
+import {shareActionTypes} from 'Actions/shareAction';
 
 const shareReducer = (state = State.main.share, action) => {
     let {clientListForNASServer, NASServerList, NFSList, clientListOfNFS, CIFSList, localAuthUserOrGroupListOfCIFS} = action;

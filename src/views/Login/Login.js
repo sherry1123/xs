@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import generalAction from '../../redux/actions/generalAction';
+import generalAction from 'Actions/generalAction';
 import {Button, Form, Icon, Input, message} from 'antd';
-import LanguageButton from '../../components/Language/LanguageButton';
-import lang from '../../components/Language/lang';
+import LanguageButton from 'Components/Language/LanguageButton';
+import lang from 'Components/Language/lang';
 import routerPath from '../routerPath';
-import {ckGet} from '../../services';
+import {ckGet} from 'Services';
 import MD5 from 'crypto-js/md5';
 import TripleDES from 'crypto-js/tripledes';
-import httpRequests from '../../http/requests';
+import httpRequests from 'Http/requests';
 
 class Login extends Component {
     constructor (props){

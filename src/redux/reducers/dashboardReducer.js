@@ -1,5 +1,5 @@
 import State from '../state';
-import {dashboardActionTypes} from '../actions/dashboardAction';
+import {dashboardActionTypes} from 'Actions/dashboardAction';
 
 const dashboardReducer = (state = State.main.dashboard, action) => {
     let {clusterInfo, clusterTargets, clusterTPS, clusterIOPS, clusterPhysicalNodeList, clusterServiceAndClientIPs, customRAIDList} = action;
@@ -20,7 +20,7 @@ const dashboardReducer = (state = State.main.dashboard, action) => {
         case dashboardActionTypes.SET_CLUSTER_PHYSICAL_NODE_LIST:
             return Object.assign({}, state, {clusterPhysicalNodeList});
 
-        case dashboardActionTypes.SET_CLUSTER_SERVICE_ROLE_IPS:
+        case dashboardActionTypes.SET_CLUSTER_SERVICE_AND_CLIENT_IPS:
             return Object.assign({}, state, {clusterServiceAndClientIPs});
 
         case dashboardActionTypes.SET_CUSTOM_RAID_LIST:

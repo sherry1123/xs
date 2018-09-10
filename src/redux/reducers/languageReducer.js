@@ -1,5 +1,5 @@
 import State from '../state';
-import {languageActionTypes} from '../actions/languageAction';
+import {languageActionTypes} from 'Actions/languageAction';
 
 const languageReducer = (state = State.language, action) => {
     switch (action.type){

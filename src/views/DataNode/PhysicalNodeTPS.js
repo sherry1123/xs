@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Icon} from 'antd';
-import FSLineChart from '../../components/FSLineChart/FSLineChart';
-import lang from '../../components/Language/lang';
-import {formatStorageSize} from '../../services';
+import FSLineChart from 'Components/FSLineChart/FSLineChart';
+import lang from 'Components/Language/lang';
+import {formatStorageSize} from 'Services';
 
 class physicalNodeTPS extends Component {
     render (){

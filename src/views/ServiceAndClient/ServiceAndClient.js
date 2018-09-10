@@ -4,8 +4,8 @@ import {Icon, message} from 'antd';
 import CreateMetadataOrStorageService from './CreateMetadataOrStorageService';
 import CreateManagementService from './CreateManagementService';
 import CreateClient from './CreateClient';
-import lang from '../../components/Language/lang';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import httpRequests from 'Http/requests';
 
 class ServiceAndClient extends Component {
     componentDidMount (){

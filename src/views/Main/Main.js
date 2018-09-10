@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
 import asyncLoad from '../asyncLoad';
-import {ckGet} from '../../services';
+import {ckGet} from 'Services';
 import routerPath from '../routerPath';
 
 // bar

@@ -4,9 +4,9 @@ import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
 import SetSnapshot from './SetSnapshot';
-import lang from '../../components/Language/lang';
-import {timeFormat} from '../../services';
-import httpRequests from '../../http/requests';
+import lang from 'Components/Language/lang';
+import {timeFormat} from 'Services';
+import httpRequests from 'Http/requests';
 
 class Snapshot extends Component {
     constructor (props){
