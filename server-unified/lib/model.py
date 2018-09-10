@@ -56,3 +56,9 @@ class SnapshotSchedule(Document):
     schedule_interval = IntField()
     schedule_delete_round = BooleanField()
     schedule_is_running = BooleanField()
+
+
+class NasServer(Document):
+    nas_server_ip = StringField(required=True)
+    nas_server_path = StringField()
+    nas_server_desc = StringField()

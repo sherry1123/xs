@@ -2,7 +2,7 @@ import json
 
 from mongoengine import connect
 
-from lib.model import (ClusterThroughputAndIops, NodeCpuAndMemory,
+from lib.model import (ClusterThroughputAndIops, NasServer, NodeCpuAndMemory,
                        NodeThroughputAndIops, Setting, Snapshot,
                        SnapshotSchedule, StoragePool, User)
 from lib.module import handler
@@ -395,3 +395,36 @@ def add_node_to_cluster(node_ip, node_type):
     node_list = get_setting('NODE-LIST')
     node_list[node_type].append(node_ip)
     update_setting('NODE-LIST', node_list)
+
+
+def list_nas_server():
+    nas_servers = []
+    for nas_server in NasServer.objects.order_by('-id'):
+        nas_servers.append({'ip': nas_server.nas_server_ip,
+                            'path': nas_server.nas_server_path, 'description': nas_server.nas_server_desc})
+    return nas_servers
+
+
+def get_nas_server(ip):
+    nas_server = NasServer.objects(nas_server_ip=ip).first()
+    if nas_server:
+        return {'ip': nas_server.nas_server_ip, 'path': nas_server.nas_server_path, 'description': nas_server.nas_server_desc}
+    else:
+        raise DatabaseError('No such nas server!')
+
+
+def create_nas_server(ip, path, desc):
+    nas_server = NasServer.objects(nas_server_ip=ip).first()
+    if nas_server:
+        raise DatabaseError('Nas server already exists!')
+    else:
+        NasServer(nas_server_ip=ip, nas_server_path=path,
+                  nas_server_desc=desc).save()
+
+
+def update_nas_server(ip, desc):
+    nas_server = NasServer.objects(nas_server_ip=ip).first()
+    if nas_server:
+        nas_server.update(set__nas_server_desc=desc)
+    else:
+        raise DatabaseError('No such nas server!')

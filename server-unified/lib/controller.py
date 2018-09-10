@@ -725,3 +725,89 @@ def add_client_to_cluster(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_client():
+    response = {}
+    try:
+        clients = backend.get_client() or []
+        nas_servers = database.list_nas_server()
+        nas_servers = map(lambda nas_server: nas_server['ip'], nas_servers)
+        data = map(lambda client: {
+                   'hostname': client['name'], 'ip': client['ip'], 'isUsed': client['ip'] in nas_servers}, clients)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_nas_server(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            ip, = handler.request(params, ip=str)
+            data = database.get_nas_server(ip)
+        else:
+            data = database.list_nas_server()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_nas_server(params):
+    response = {}
+    try:
+        description, ip, path = handler.request(
+            params, ip=str, path=str, description=str)
+        backend.create_nas_server(ip, path)
+        database.create_nas_server(ip, path, description)
+        response = handler.response(0, 'Create nas server successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_nas_server(params):
+    response = {}
+    try:
+        description, ip = handler.request(params, ip=str, description=str)
+        database.update_nas_server(ip, description)
+        response = handler.response(0, 'Update nas server successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_files(params):
+    response = {}
+    try:
+        path, = handler.request(params, dir=str)
+        data = backend.get_files(path)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_entry_info(params):
+    response = {}
+    try:
+        path, = handler.request(params, dir=str)
+        data = backend.get_entry_info(path)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def set_pattern(params):
+    response = {}
+    try:
+        buddyMirror, chunkSize, dirPath, numTargets = handler.request(
+            params, dirPath=str, numTargets=int, chunkSize=int, buddyMirror=int)
+        data = backend.set_pattern(dirPath, numTargets, chunkSize, buddyMirror)
+        response = handler.response(0, 'Set pattern successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

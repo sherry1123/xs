@@ -269,3 +269,38 @@ def batch_delete_snapshot_schedule():
 @app.route('/api/addclienttocluster', methods=['GET', 'POST'])
 def add_client_to_cluster():
     return jsonify(controller.add_client_to_cluster(request.params))
+
+
+@app.route('/api/getclient', methods=['GET', 'POST'])
+def get_client():
+    return jsonify(controller.get_client())
+
+
+@app.route('/api/getnasserver', methods=['GET', 'POST'])
+def get_nas_server():
+    return jsonify(controller.get_nas_server(request.params))
+
+
+@app.route('/api/createnasserver', methods=['GET', 'POST'])
+def create_nas_server():
+    return jsonify(controller.create_nas_server(request.params))
+
+
+@app.route('/api/updatenasserver', methods=['GET', 'POST'])
+def update_nas_server():
+    return jsonify(controller.update_nas_server(request.params))
+
+
+@app.route('/api/getfiles', methods=['GET', 'POST'])
+def get_files():
+    return jsonify(controller.get_files(request.params))
+
+
+@app.route('/api/getentryinfo', methods=['GET', 'POST'])
+def get_entry_info():
+    return jsonify(controller.get_entry_info(request.params))
+
+
+@app.route('/api/setpattern', methods=['GET', 'POST'])
+def set_pattern():
+    return jsonify(controller.set_pattern(request.params))

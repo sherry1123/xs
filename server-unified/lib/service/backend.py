@@ -29,7 +29,7 @@ def get_disk_list(ip):
         'http://localhost:9090/disk/list/' + ip, {}, get_token())) or []
 
     def revise_disk_space(disk):
-        disk['totalSpace'] = int(handler.toByte(float(handler.replace(
+        disk['totalSpace'] = int(handler.to_byte(float(handler.replace(
             '\SB', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0]))
         return disk
     disk_list = filter(lambda disk: not disk['isUsed'], disk_list)
@@ -181,3 +181,31 @@ def rollback_snapshot(name):
 
 def add_client_to_cluster(ip):
     return backend_handler(request.post('http://localhost:9090/cluster/addclientnode', {'ip': ip}, get_token()))
+
+
+def get_client():
+    return backend_handler(request.get('http://localhost:9090/cluster/getclientlist', {}, get_token()))
+
+
+def create_nas_server(ip, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasmanager', {'opt': 'nasAdd', 'nasServerList': [{'clientIp': ip, 'nasRoot': path}]}, get_token()))
+
+
+def get_files(path):
+    files = backend_handler(request.get(
+        'http://localhost:9090/cluster/getdirs', {'dir': path}, get_token())) or []
+    files = sorted(files, key=lambda f: f['name'])
+    return files
+
+
+def get_entry_info(path):
+    entry_info = backend_handler(request.get(
+        'http://localhost:9090/cluster/getentryinfo', {'dir': path}, get_token()))
+    entry_info['chunkSize'] = handler.to_byte(int(handler.replace(
+        '[a-zA-Z]', '', entry_info['chunkSize'])), handler.replace('\d+', '', entry_info['chunkSize']))
+    entry_info['numTargets'] = int(entry_info['numTargets'])
+    return entry_info
+
+
+def set_pattern(dir_path, num_targets, chunk_size, buddy_mirror):
+    return backend_handler(request.post('http://localhost:9090/cluster/setpattern', {'dirPath': dir_path, 'numTargets': str(num_targets), 'chunkSize': str(chunk_size), 'buddyMirror': buddy_mirror}, get_token()))
