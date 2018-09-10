@@ -136,7 +136,8 @@ def get_node_target(hostname):
 
 
 def create_storage_pool(name, targets, mirrorGroups):
-    data = backend_handler(request.post('http://localhost:9090/cluster/createpool', {'name': name, 'targets': targets, 'mirrorGroups': mirrorGroups}, get_token()))
+    data = backend_handler(request.post('http://localhost:9090/cluster/createpool', {
+                           'name': name, 'targets': targets, 'mirrorGroups': mirrorGroups}, get_token()))
     return data['poolId']
 
 

@@ -3,7 +3,8 @@ import json
 from mongoengine import connect
 
 from lib.model import (ClusterThroughputAndIops, NodeCpuAndMemory,
-                       NodeThroughputAndIops, Setting, User, Snapshot, StoragePool)
+                       NodeThroughputAndIops, Setting, Snapshot,
+                       SnapshotSchedule, StoragePool, User)
 from lib.module import handler
 
 
@@ -307,3 +308,67 @@ def delete_snapshot(name):
         snapshot.delete()
     else:
         raise DatabaseError('No such snapshot!')
+
+
+def list_snapshot_schedule():
+    schedules = []
+    for schedule in SnapshotSchedule.objects:
+        schedules.append({'name': schedule.schedule_name, 'description': schedule.schedule_desc, 'createTime': schedule.schedule_create_time, 'startTime': schedule.schedule_start_time,
+                          'autoDisableTime': schedule.schedule_auto_disable_time, 'interval': schedule.schedule_interval, 'deleteRound': schedule.schedule_delete_round, 'isRunning': schedule.schedule_is_running})
+    return schedules
+
+
+def get_snapshot_schedule(name):
+    schedule = SnapshotSchedule.objects(schedule_name=name).first()
+    if schedule:
+        return {'name': schedule.schedule_name, 'description': schedule.schedule_desc, 'createTime': schedule.schedule_create_time, 'startTime': schedule.schedule_start_time,
+                'autoDisableTime': schedule.schedule_auto_disable_time, 'interval': schedule.schedule_interval, 'deleteRound': schedule.schedule_delete_round, 'isRunning': schedule.schedule_is_running}
+    else:
+        raise DatabaseError('No such snapshot schedule!')
+
+
+def create_snapshot_schedule(name, desc, auto_disable_time, interval, delete_round):
+    schedule = SnapshotSchedule.objects(schedule_name=name).first()
+    if schedule:
+        raise DatabaseError('Snapshot schedule already exists!')
+    else:
+        SnapshotSchedule(schedule_name=name, schedule_desc=desc, schedule_create_time=handler.current_time(), schedule_start_time=handler.start_time(),
+                         schedule_auto_disable_time=auto_disable_time, schedule_interval=interval, schedule_delete_round=delete_round, schedule_is_running=False).save()
+
+
+def update_snapshot_schedule(name, desc):
+    schedule = SnapshotSchedule.objects(schedule_name=name).first()
+    if schedule:
+        schedule.update(set__schedule_desc=desc)
+    else:
+        raise DatabaseError('No such snapshot schedule!')
+
+
+def enable_snapshot_schedule(name):
+    schedule = SnapshotSchedule.objects(schedule_name=name).first()
+    if schedule:
+        schedule_is_running = SnapshotSchedule.objects(
+            schedule_is_running=True).first()
+        if schedule_is_running:
+            raise DatabaseError('There are already running schedules here!')
+        else:
+            schedule.update(set__schedule_start_time=handler.start_time(
+            ), set__schedule_is_running=True)
+    else:
+        raise DatabaseError('No such snapshot schedule!')
+
+
+def disable_snapshot_schedule(name):
+    schedule = SnapshotSchedule.objects(schedule_name=name).first()
+    if schedule:
+        schedule.update(set__schedule_is_running=False)
+    else:
+        raise DatabaseError('No such snapshot schedule!')
+
+
+def delete_snapshot_schedule(name):
+    schedule = SnapshotSchedule.objects(schedule_name=name).first()
+    if schedule:
+        schedule.delete()
+    else:
+        raise DatabaseError('No such snapshot schedule!')

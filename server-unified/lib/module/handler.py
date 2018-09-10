@@ -1,7 +1,8 @@
 import collections
+import datetime
 import math
 import re
-import datetime
+import time
 
 
 def request(params, **kwargs):
@@ -100,5 +101,9 @@ def replace(pattern, repl, string):
     return re.sub(pattern, repl, string)
 
 
-def create_iso_date():
+def current_time():
     return datetime.datetime.now().replace(microsecond=0).isoformat()
+
+
+def start_time():
+    return replace(':\d+$', ':00', datetime.datetime.fromtimestamp(int(time.time()) + 60).isoformat())
