@@ -3,6 +3,7 @@ from lib.util import initialize as initUtil
 
 initialize = False
 deinitialize = False
+rollback = False
 
 
 def get_cluster_status():
@@ -32,3 +33,13 @@ def get_cluster_deinitialize_status():
 def set_cluster_deinitialize_status(status):
     global deinitialize
     deinitialize = status
+
+
+def get_snapshot_rollback_status():
+    global rollback
+    return rollback
+
+
+def set_snapshot_rollback_status(status):
+    global rollback
+    rollback = status

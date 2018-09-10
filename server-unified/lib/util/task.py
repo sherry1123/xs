@@ -1,7 +1,16 @@
 import time
 
+import event
 from lib.module import process
 from lib.service import backend, database
+
+
+def send_change_password_message():
+    user = database.get_user('admin')
+    if user['password'] == 'e10adc3949ba59abbe56e057f20f883e':
+        event.send('user', 21, 'admin', False, user, True)
+    else:
+        pass
 
 
 def get_cluster_throughput_and_iops():

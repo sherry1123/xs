@@ -10,6 +10,7 @@ def create_app():
     def filter_request():
         initialize = status.get_cluster_initialize_status()
         deinitialize = status.get_cluster_deinitialize_status()
+        rollback = status.get_snapshot_rollback_status()
         login = handler.cookie(request.cookies.get('login'))
         api = handler.api(request.path)
         api_before_initialize = ['checkclusterenv', 'init']
@@ -20,6 +21,8 @@ def create_app():
         if initialize:
             if api in api_always_pass:
                 pass
+            elif rollback:
+                return jsonify(handler.response(1, 'The cluster is rollbacking!'))
             elif deinitialize:
                 return jsonify(handler.response(1, 'The cluster is de-initializing!'))
             elif api in api_login + api_after_initialize or login:
@@ -48,12 +51,16 @@ def create_app():
     def sync_status(response):
         initialize_cookie = handler.cookie(request.cookies.get('init'))
         deinitialize_cookie = handler.cookie(request.cookies.get('deinit'))
+        rollback_cookie = handler.cookie(request.cookies.get('rollbacking'))
         initialize_status = status.get_cluster_initialize_status()
         deinitialize_status = status.get_cluster_deinitialize_status()
+        rollback_status = status.get_snapshot_rollback_status()
         initialize_cookie != initialize_status and response.set_cookie(
             'init', str(initialize_status).lower())
         deinitialize_cookie != deinitialize_status and response.set_cookie(
             'deinit', str(deinitialize_status).lower())
+        rollback_cookie != rollback_status and response.set_cookie(
+            'rollbacking', str(rollback_status).lower())
         if not initialize_status:
             response.set_cookie('login', 'false')
             response.set_cookie('user', '')

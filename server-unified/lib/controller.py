@@ -67,17 +67,16 @@ def initialize_cluster(params):
                 current = status_res['data']['currentStep']
                 fs_total = status_res['data']['totalStep']
                 describle = status_res['data']['describle']
-                state = status_res['data']['status']
                 error_message = status_res['data']['errorMessage']
                 if not status_res['errorId']:
-                    if state:
+                    if status_res['data']['status']:
                         callback()
                         event.send('cluster', 0, 'cluster', False, {
-                                   'current': current, 'state': -1, 'total': total})
+                                   'current': current, 'status': -1, 'total': total})
                     elif current != fs_total:
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': state, 'total': total})
+                                   'current': current, 'status': status_res['data']['status'], 'total': total})
                     elif 'finish' in describle:
                         callback()
                         if data['enable_create_buddy_group']:
@@ -85,23 +84,23 @@ def initialize_cluster(params):
                         current = 5
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': 0, 'total': total})
+                                   'current': current, 'status': 0, 'total': total})
                         initialize.initialize_mongodb(data['mongodb_param'])
                         current = 6
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': 0, 'total': total})
+                                   'current': current, 'status': 0, 'total': total})
                         initialize.save_initialize_information(
                             data['param'], data['node_list'])
                         current = 7
                         print(current)
                         event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'state': 0, 'total': total})
+                                   'current': current, 'status': 0, 'total': total})
                         print('finish')
                 else:
                     callback()
                     event.send('cluster', 0, 'cluster', False, {
-                               'current': current, 'state': -1, 'total': total})
+                               'current': current, 'status': -1, 'total': total})
 
             def stop_get_initialize_status():
                 start_get_initialize_status.set()
@@ -109,12 +108,12 @@ def initialize_cluster(params):
                 stop_get_initialize_status)
         elif init_res['errorId'] != 111:
             event.send('cluster', 0, 'cluster', False, {
-                       'current': current, 'state': -1, 'total': total})
+                       'current': current, 'status': -1, 'total': total})
     except Exception as error:
         print(handler.error(error))
         deinitialize_cluster(2)
         event.send('cluster', 0, 'cluster', False, {
-                   'current': current, 'state': -1, 'total': total})
+                   'current': current, 'status': -1, 'total': total})
 
 
 def deinitialize_cluster(mode):
@@ -471,3 +470,103 @@ def update_snapshot_setting(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_snapshot(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_snapshot(name)
+        else:
+            data = database.list_snapshot()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_snapshot(params):
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        create_time = handler.create_iso_date()
+        setting = database.get_setting('SNAPSHOT-SETTING')
+        limit = setting['manual']
+        count = database.count_snapshot(False)
+        if count < limit:
+            database.create_snapshot(name, description, False, create_time)
+            event.send('snapshot', 11, name, True)
+            response = backend.create_snapshot(name, False)
+            if not response['errorId']:
+                database.update_snapshot_status(name)
+                event.send('snapshot', 12, name, True, {}, True)
+            else:
+                database.delete_snapshot(name)
+                event.send('snapshot', 12, name, False, {}, True)
+                print(response['message'])
+        else:
+            event.send('snapshot', 12, name, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))
+
+
+def update_snapshot(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        database.update_snapshot_desc(name, description)
+        response = handler.response(0, 'Update snapshot successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_snapshot(params):
+    try:
+        name, = handler.request(params, name=str)
+        database.update_snapshot_status(name, False, True, False)
+        response = backend.delete_snapshot(name)
+        if not response['errorId']:
+            database.delete_snapshot(name)
+            event.send('snapshot', 13, name, True, {}, True)
+        else:
+            database.update_snapshot_status(name)
+            event.send('snapshot', 14, name, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))
+
+
+def batch_delete_snapshot(params):
+    try:
+        names, = handler.request(params, names=list)
+        for name in names:
+            database.update_snapshot_status(name, False, True, False)
+        names_str = ','.join(names)
+        response = backend.batch_delete_snapshot(names_str)
+        if not response['errorId']:
+            for name in names:
+                database.delete_snapshot(name)
+            event.send('snapshot', 15, names_str, True,
+                       {'total': len(names)}, True)
+        else:
+            for name in names:
+                database.update_snapshot_status(name)
+            event.send('snapshot', 16, names_str, False,
+                       {'total': len(names)}, True)
+    except Exception as error:
+        print(handler.error(error))
+
+
+def rollback_snapshot(params):
+    try:
+        name, = handler.request(params, name=str)
+        event.send('snapshot', 17, name, True, {}, True)
+        database.update_snapshot_status(name, False, False, True)
+        response = backend.rollback_snapshot(name)
+        database.update_snapshot_status(name)
+        if not response['errorId']:
+            event.send('snapshot', 18, name, True, {}, True)
+        else:
+            event.send('snapshot', 18, name, False, {}, True)
+    except Exception as error:
+        print(handler.error(error))

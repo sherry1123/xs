@@ -3,7 +3,7 @@ import json
 from mongoengine import connect
 
 from lib.model import (ClusterThroughputAndIops, NodeCpuAndMemory,
-                       NodeThroughputAndIops, Setting, User, StoragePool)
+                       NodeThroughputAndIops, Setting, User, Snapshot, StoragePool)
 from lib.module import handler
 
 
@@ -16,7 +16,7 @@ class DatabaseError(Exception):
 
 
 def connect_database(host='127.0.0.1', port=27017):
-    connect('orcafs', host=host, port=port)
+    connect('storage', host=host, port=port)
 
 
 def get_setting(key):
@@ -218,3 +218,58 @@ def create_storage_pool(poolId, name, description):
         raise DatabaseError('StoragePool already exists!')
     else:
         StoragePool(poolId, name, description).save()
+
+
+def list_snapshot():
+    snapshots = []
+    for snapshot in Snapshot.objects:
+        snapshots.append({'name': snapshot.snapshot_name, 'description': snapshot.snapshot_desc, 'isAuto': snapshot.snapshot_is_auto, 'creating': snapshot.snapshot_is_creating,
+                          'deleting': snapshot.snapshot_is_deleting, 'rollbacking': snapshot.snapshot_is_rollbacking, 'createTime': snapshot.snapshot_create_time})
+    return snapshots
+
+
+def get_snapshot(name):
+    snapshot = Snapshot.objects(snapshot_name=name).first()
+    if snapshot:
+        return {'name': snapshot.snapshot_name, 'description': snapshot.snapshot_desc, 'isAuto': snapshot.snapshot_is_auto, 'creating': snapshot.snapshot_is_creating,
+                'deleting': snapshot.snapshot_is_deleting, 'rollbacking': snapshot.snapshot_is_rollbacking, 'createTime': snapshot.snapshot_create_time}
+    else:
+        raise DatabaseError('No such snapshot!')
+
+
+def count_snapshot(is_auto):
+    return Snapshot.objects(snapshot_is_auto=is_auto).count()
+
+
+def create_snapshot(name, desc, is_auto, create_time):
+    snapshot = Snapshot.objects(snapshot_name=name).first()
+    if snapshot:
+        raise DatabaseError('Snapshot already exists!')
+    else:
+        Snapshot(snapshot_name=name, snapshot_desc=desc, snapshot_is_auto=is_auto, snapshot_is_creating=True,
+                 snapshot_is_deleting=False, snapshot_is_rollbacking=False, snapshot_create_time=create_time).save()
+
+
+def update_snapshot_status(name, is_creating=False, is_deleting=False, is_rollbacking=False):
+    snapshot = Snapshot.objects(snapshot_name=name).first()
+    if snapshot:
+        snapshot.update(set__snapshot_is_creating=is_creating,
+                        set__snapshot_is_deleting=is_deleting, set__snapshot_is_rollbacking=is_rollbacking)
+    else:
+        raise DatabaseError('No such snapshot!')
+
+
+def update_snapshot_desc(name, desc):
+    snapshot = Snapshot.objects(snapshot_name=name).first()
+    if snapshot:
+        snapshot.update(set__snapshot_desc=desc)
+    else:
+        raise DatabaseError('No such snapshot!')
+
+
+def delete_snapshot(name):
+    snapshot = Snapshot.objects(snapshot_name=name).first()
+    if snapshot:
+        snapshot.delete()
+    else:
+        raise DatabaseError('No such snapshot!')
