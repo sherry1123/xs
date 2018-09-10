@@ -167,6 +167,26 @@ def create_storage_pool():
     return jsonify(controller.create_storage_pool(request.params))
 
 
+@app.route('/api/updatestoragepool', methods=['GET', 'POST'])
+def update_storage_pool():
+    return jsonify(controller.update_storage_pool(request.params))
+
+
+@app.route('/api/deletestoragepool', methods=['GET', 'POST'])
+def delete_storage_pool():
+    return jsonify(controller.delete_storage_pool(request.params))
+
+
+@app.route('/api/gettargetsinstoragepool', methods=['GET', 'POST'])
+def get_targets_in_storage_pool():
+    return jsonify(controller.get_targets_in_storage_pool(request.params))
+
+
+@app.route('/api/getbuddygroupsinstoragepool', methods=['GET', 'POST'])
+def get_buddy_groups_in_stoarge_pool():
+    return jsonify(controller.get_buddy_groups_in_storage_pool(request.params))
+
+
 @app.route('/api/getsnapshotsetting', methods=['GET', 'POST'])
 def get_snapshot_setting():
     return jsonify(controller.get_snapshot_setting())

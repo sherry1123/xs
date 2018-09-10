@@ -213,12 +213,46 @@ def get_node_iops(hostname):
     return {'total': total, 'time': time}
 
 
-def create_storage_pool(poolId, name, description):
-    storagePool = StoragePool.objects(name=name).first()
-    if storagePool:
+def list_storage_pool():
+    storage_pools = []
+    for storage_pool in StoragePool.objects:
+        storage_pools.append({'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
+                            'createTime': storage_pool.storage_pool_create_time})
+    return storage_pools
+
+
+def get_storage_pool(name):
+    storage_pool = StoragePool.objects(storage_pool_name=name).first()
+    if storage_pool:
+        return {'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
+                'createTime': storage_pool.storage_pool_create_time}
+    else:
+        raise DatabaseError('No such storagePool!')
+
+
+def create_storage_pool(pool_id, name, description):
+    storage_pool = StoragePool.objects(name=name).first()
+    if storage_pool:
         raise DatabaseError('StoragePool already exists!')
     else:
-        StoragePool(poolId, name, description).save()
+        StoragePool(storage_pool_id=pool_id, storage_pool_name=name, storage_pool_description=description,
+                    storage_pool_create_time=handler.current_time()).save()
+
+
+def update_storage_pool_name_and_desc(name, description):
+    storage_pool = StoragePool.objects(stoprage_pool_name=name).first()
+    if storage_pool:
+        storage_pool.update(set__stoprage_pool_description=description)
+    else:
+        raise DatabaseError('No such storagePool!')
+
+
+def delete_storage_pool(name):
+    storage_pool = StoragePool.objects(storage_pool_name=name).first()
+    if storage_pool:
+        storage_pool.delete()
+    else:
+        raise DatabaseError('No such storagePool!')
 
 
 def list_snapshot():

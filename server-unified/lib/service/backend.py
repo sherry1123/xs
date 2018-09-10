@@ -141,8 +141,22 @@ def create_storage_pool(name, targets, mirrorGroups):
     return data['poolId']
 
 
-def get_targets_bt_pool_id(param):
+def update_storage_pool_name(pool_id, name):
+    return backend_handler(request.post('http://localhost:9090/cluster/modifypooldesc', {'poolId': pool_id, 'nameDesc': name}, get_token()))
+
+
+def delete_storage_pool(pool_id):
+    return backend_handler(request.post('http://localhost:9090/cluster/deletePool', {'poolId': pool_id}, get_token()))
+
+
+def get_targets_in_storage_pool(pool_id):
+    param = {'poolId': pool_id} if pool_id is not None else {}
     return backend_handler(request.get('http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
+
+
+def get_buddy_groups_in_storage_pool(pool_id):
+    param = {'poolId': pool_id} if pool_id is not None else {}
+    return backend_handler(request.get('http://localhost:9090/cluster/getGroupsInfo', param, get_token()))
 
 
 def update_snapshot_setting(total, manual, auto):

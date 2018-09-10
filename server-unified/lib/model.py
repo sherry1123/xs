@@ -31,9 +31,10 @@ class NodeThroughputAndIops(Document):
 
 
 class StoragePool(Document):
-    poolId = IntField
-    name = StringField
-    description = StringField
+    storage_pool_id = IntField(required=True)
+    storage_pool_name = StringField(required=True)
+    storage_pool_description = StringField()
+    storage_pool_create_time = StringField()
 
 
 class Snapshot(Document):
