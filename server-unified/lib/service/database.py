@@ -217,7 +217,7 @@ def list_storage_pool():
     storage_pools = []
     for storage_pool in StoragePool.objects:
         storage_pools.append({'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
-                            'createTime': storage_pool.storage_pool_create_time})
+                              'createTime': storage_pool.storage_pool_create_time})
     return storage_pools
 
 
@@ -389,3 +389,9 @@ def delete_snapshot_schedule(name):
         schedule.delete()
     else:
         raise DatabaseError('No such snapshot schedule!')
+
+
+def add_node_to_cluster(node_ip, node_type):
+    node_list = get_setting('NODE-LIST')
+    node_list[node_type].append(node_ip)
+    update_setting('NODE-LIST', node_list)

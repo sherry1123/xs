@@ -713,3 +713,15 @@ def batch_delete_snapshot_schedule(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def add_client_to_cluster(params):
+    response = {}
+    try:
+        ip, = handler.request(params, ip=str)
+        backend.add_client_to_cluster(ip)
+        database.add_node_to_cluster(ip, 'client')
+        response = handler.response(0, 'add client to cluster successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

@@ -264,3 +264,8 @@ def delete_snapshot_schedule():
 @app.route('/api/batchdeletesnapshotschedule', methods=['GET', 'POST'])
 def batch_delete_snapshot_schedule():
     return jsonify(controller.batch_delete_snapshot_schedule(request.params))
+
+
+@app.route('/api/addclienttocluster', methods=['GET', 'POST'])
+def add_client_to_cluster():
+    return jsonify(controller.add_client_to_cluster(request.params))

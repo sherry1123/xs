@@ -24,8 +24,10 @@ def get_cluster_throughput_and_iops():
         value = value[0:15]
         return sum(value)
     if len(throughput_list) and len(iops_list):
-        total_throughput = calculate_the_sum(throughput_list)
-        total_iops = calculate_the_sum(iops_list)
+        total_throughput = calculate_the_sum(
+            map(lambda throughput: throughput['total'], throughput_list))
+        total_iops = calculate_the_sum(
+            map(lambda iops: iops['total'], iops_list))
     else:
         total_throughput = 0
         total_iops = 0

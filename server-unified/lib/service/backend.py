@@ -177,3 +177,7 @@ def batch_delete_snapshot(names):
 
 def rollback_snapshot(name):
     return request.post('http://localhost:9090/cluster/rollbacksnapshot', {'name': name}, get_token())
+
+
+def add_client_to_cluster(ip):
+    return backend_handler(request.post('http://localhost:9090/cluster/addclientnode', {'ip': ip}, get_token()))
