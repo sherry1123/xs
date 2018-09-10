@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal} from 'antd';
+import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
+import {Button, Modal, Form, Input, message} from 'antd';
+import {validateFsName} from "../../services";
+import update from "react-addons-update";
 
 class EditStoragePool extends Component {
     constructor (props){
@@ -12,6 +15,7 @@ class EditStoragePool extends Component {
             formSubmitting: false,
             storagePoolData: {
                 name: '',
+				description: '',
             },
             validation: {
                 name: {status: '', help: '', valid: false},
@@ -27,6 +31,25 @@ class EditStoragePool extends Component {
         });
     }
 
+	async editStoragePool (){
+		let storagePool = Object.assign({}, this.state.storagePoolData);
+		this.setState({formSubmitting: true});
+		try {
+			await httpRequests.updateStoragePool(storagePool);
+			httpRequests.getStoragePoolList();
+			await this.hide();
+			message.success(lang(`编辑存储池 ${storagePool.name} 成功!`, `Edit Storage Pool ${storagePool.name} successfully!`));
+		} catch ({msg}){
+			message.error(lang(`编辑存储池 ${storagePool.name} 失败, 原因: `, `Edit Storage Pool ${storagePool.name} failed, reason: `) + msg);
+		}
+		this.setState({formSubmitting: false});
+	}
+
+	formValueChange (key, value){
+		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
+		this.setState({storagePoolData});
+	}
+
     async hide (){
         this.setState({visible: false});
     }
@@ -35,12 +58,12 @@ class EditStoragePool extends Component {
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 6 : 8},
-                sm: {span: isChinese ? 6 : 8},
+                xs: {span: isChinese ? 5 : 7},
+                sm: {span: isChinese ? 5 : 7},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 18 : 16},
-                sm: {span: isChinese ? 18 : 16},
+                xs: {span: isChinese ? 19 : 17},
+                sm: {span: isChinese ? 19 : 17},
             }
         };
         return (
@@ -63,22 +86,59 @@ class EditStoragePool extends Component {
                             size="small"
                             type="primary"
                             loading={this.state.formSubmitting}
-                            onClick={this.edit.bind(this)}
+                            onClick={this.editStoragePool.bind(this)}
                         >
                             {lang('编辑', 'Edit')}
                         </Button>
                     </div>
                 }
             >
-                this is edit storage pool
+				<Form>
+					<Form.Item
+						{...formItemLayout}
+						label={lang('名称', 'Name')}
+					>
+						<Input
+							size="small"
+							style={{width: '100%'}}
+							value={this.state.storagePoolData.name}
+							onChange={({target: {value}}) => {
+								this.formValueChange.bind(this, 'name')(value);
+							}}
+						/>
+					</Form.Item>
+					<Form.Item
+						{...formItemLayout}
+						label={lang('描述', 'Description')}
+					>
+						<Input.TextArea
+							size="small"
+							autosize={{minRows: 4, maxRows: 6}}
+							placeholder={lang('描述为可选项', 'description is optional')}
+							value={this.state.storagePoolData.description}
+							maxLength={255}
+							onChange={({target: {value}}) => {
+								this.formValueChange.bind(this, 'description')(value);
+							}}
+						/>
+					</Form.Item>
+				</Form>
             </Modal>
         );
     }
 }
 
 const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
+    let {language, main: {storagePool: {storagePoolList}}} = state;
+    return {language, storagePoolList};
 };
 
-export default connect(mapStateToProps)(EditStoragePool);
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	return Object.assign({}, stateProps, ownProps);
+};
+
+const options = {withRef: true};
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditStoragePool);

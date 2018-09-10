@@ -416,8 +416,8 @@ def get_cluster_service_and_client_ip():
     response = {}
     try:
         data = database.get_setting('NODE-LIST')
-        response = handler.response(0, {'metadataServerIPs': data.meta, 'storageServerIPs': data.storage,
-                                        'managementServerIPs': data.mgmt, 'clientIPs': data.client})
+        response = handler.response(0, {'metadataServerIPs': data['meta'], 'storageServerIPs': data['storage'],
+                                        'managementServerIPs': data['mgmt'], 'clientIPs': data['client']})
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

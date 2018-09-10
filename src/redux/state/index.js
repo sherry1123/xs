@@ -137,6 +137,12 @@ export default {
         // storage pool
         storagePool: {
             storagePoolList: [],
+            // targets or buddy groups in one storage pool
+            targetsOfStoragePool: [],
+            buddyGroupsOfStoragePool: [],
+            // for selecting in creation or update operations
+            targetsForStoragePool: [],
+            buddyGroupsForStoragePool: [],
         },
         // snapshot, timed snapshot schedule and setting
         snapshot: {
