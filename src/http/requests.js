@@ -214,7 +214,7 @@ export default  {
     // storage pool
     async getStoragePoolList (){
         requestHandler(async () => {
-            let data = await fetchGet('/api/getstoragepools');
+            let data = await fetchGet('/api/getstoragepool');
             !!data && store.dispatch(storagePoolAction.setStoragePoolList(data));
         });
     },
@@ -223,12 +223,22 @@ export default  {
         await fetchPost('/api/createstoragepool', storagePool);
     },
 
-    async editStoragePool (storagePool){
-        await fetchPost('/api/editstoragepool', storagePool)
+    async updateStoragePool (storagePool){
+        await fetchPost('/api/updatestoragepool', storagePool)
     },
 
     async deleteStoragePool (storagePool){
         await fetchPost('/api/deletestoragepool', storagePool)
+    },
+
+    async getTargetsByStoragePoolId (poolId){
+        // '/api/gettargetsinstoragepool'
+
+    },
+
+    async getBudyGroupsByStoragePoolId (poolId){
+        // '/api/getbuddygroupsinstoragepool'
+
     },
 
     // service and client
