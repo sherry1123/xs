@@ -241,6 +241,17 @@ export default  {
 
     },
 
+	async getTargetsForStoargePool (){
+		// '/api/gettargetsinstoragepool'
+
+	},
+
+	async getBudyGroupsForStoargePool (){
+		// '/api/getbuddygroupsinstoragepool'
+
+	},
+
+
     // service and client
     async createMetadataServiceToCluster (service){
         await fetchPost('/api/addmetadatatocluster', service);

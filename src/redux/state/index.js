@@ -137,6 +137,7 @@ export default {
         // storage pool
         storagePool: {
             storagePoolList: [],
+            // targets or buddy groups in one storage pool
             targetsOfStoragePool: [],
             buddyGroupsOfStoragePool: [],
             // for selecting in creation or update operations
