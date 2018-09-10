@@ -427,6 +427,27 @@ def get_cluster_service_and_client_ip():
     return response
 
 
+def get_storage_pool(params):
+    response = {}
+    try:
+        data = database.get_setting('STORAGE_POOL')
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_storage_pool(params):
+    response = {}
+    try:
+        name, description, targets, mirrorGroups = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
+        poolId = backend.create_storage_pool(name, description, targets, mirrorGroups)
+        database.create_storage_pool(poolId, name, description)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
 def get_snapshot_setting():
     response = {}
     try:

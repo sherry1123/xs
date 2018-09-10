@@ -157,6 +157,16 @@ def get_cluster_service_and_client_ip():
     return jsonify(controller.get_cluster_service_and_client_ip())
 
 
+@app.route('/api/getstoragepool', methods=['GET', 'POST'])
+def get_storage_pool():
+    return jsonify(controller.get_storage_pool(request.params))
+
+
+@app.route('/api/createstoragepool', methods=['GET', 'POST'])
+def create_storage_pool():
+    return jsonify(controller.create_storage_pool(request.params))
+
+
 @app.route('/api/getsnapshotsetting', methods=['GET', 'POST'])
 def get_snapshot_setting():
     return jsonify(controller.get_snapshot_setting())

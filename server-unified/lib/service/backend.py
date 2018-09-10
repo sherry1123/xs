@@ -135,6 +135,16 @@ def get_node_target(hostname):
     return node_target
 
 
+def create_storage_pool(name, targets, mirrorGroups):
+    data = backend_handler(request.post('http://localhost:9090/cluster/createpool', {
+                           'name': name, 'targets': targets, 'mirrorGroups': mirrorGroups}, get_token()))
+    return data['poolId']
+
+
+def get_targets_bt_pool_id(param):
+    return backend_handler(request.get('http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
+
+
 def update_snapshot_setting(total, manual, auto):
     return backend_handler(request.post('http://localhost:9090/cluster/applysnapconf', {'total': total, 'manual': manual, 'schedule': auto}, get_token()))
 
