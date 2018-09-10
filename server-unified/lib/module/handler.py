@@ -4,6 +4,8 @@ import math
 import re
 import time
 
+import dateutil.parser
+
 
 def request(params, **kwargs):
     def handle_simple_dictionary(param, arg, parent=None):
@@ -53,7 +55,7 @@ def api(path):
 
 def unicode2str(data):
     if isinstance(data, basestring):
-        return str(data)
+        return str(data.encode('utf-8'))
     elif isinstance(data, collections.Mapping):
         return dict(map(unicode2str, data.iteritems()))
     elif isinstance(data, collections.Iterable):
@@ -107,3 +109,7 @@ def current_time():
 
 def start_time():
     return replace(':\d+$', ':00', datetime.datetime.fromtimestamp(int(time.time()) + 60).isoformat())
+
+
+def iso2stamp(iso):
+    return int(time.mktime(dateutil.parser.parse(iso).timetuple()))

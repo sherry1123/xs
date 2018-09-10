@@ -440,8 +440,10 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        name, description, targets, mirrorGroups = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
-        poolId = backend.create_storage_pool(name, description, targets, mirrorGroups)
+        name, description, targets, mirrorGroups = handler.request(
+            params, name=str, description=str, targets=list, mirrorGroups=list)
+        poolId = backend.create_storage_pool(
+            name, description, targets, mirrorGroups)
         database.create_storage_pool(poolId, name, description)
     except Exception as error:
         response = handler.response(1, handler.error(error))

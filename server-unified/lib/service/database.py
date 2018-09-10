@@ -60,7 +60,7 @@ def logout(username):
 
 def list_user():
     users = []
-    for user in User.objects:
+    for user in User.objects.order_by('-id'):
         users.append({'username': user.user_name,
                       'password': user.user_passwd})
     return users
@@ -223,7 +223,7 @@ def create_storage_pool(poolId, name, description):
 
 def list_snapshot():
     snapshots = []
-    for snapshot in Snapshot.objects:
+    for snapshot in Snapshot.objects.order_by('-id'):
         snapshots.append({'name': snapshot.snapshot_name, 'description': snapshot.snapshot_desc, 'isAuto': snapshot.snapshot_is_auto, 'creating': snapshot.snapshot_is_creating,
                           'deleting': snapshot.snapshot_is_deleting, 'rollbacking': snapshot.snapshot_is_rollbacking, 'createTime': snapshot.snapshot_create_time})
     return snapshots
@@ -236,6 +236,14 @@ def get_snapshot(name):
                 'deleting': snapshot.snapshot_is_deleting, 'rollbacking': snapshot.snapshot_is_rollbacking, 'createTime': snapshot.snapshot_create_time}
     else:
         raise DatabaseError('No such snapshot!')
+
+
+def get_auto_snapshot():
+    snapshots = []
+    for snapshot in Snapshot.objects(snapshot_is_auto=True):
+        snapshots.append({'name': snapshot.snapshot_name, 'description': snapshot.snapshot_desc, 'isAuto': snapshot.snapshot_is_auto, 'creating': snapshot.snapshot_is_creating,
+                          'deleting': snapshot.snapshot_is_deleting, 'rollbacking': snapshot.snapshot_is_rollbacking, 'createTime': snapshot.snapshot_create_time})
+    return snapshots
 
 
 def count_snapshot(is_auto):
@@ -278,7 +286,7 @@ def delete_snapshot(name):
 
 def list_snapshot_schedule():
     schedules = []
-    for schedule in SnapshotSchedule.objects:
+    for schedule in SnapshotSchedule.objects.order_by('-id'):
         schedules.append({'name': schedule.schedule_name, 'description': schedule.schedule_desc, 'createTime': schedule.schedule_create_time, 'startTime': schedule.schedule_start_time,
                           'autoDisableTime': schedule.schedule_auto_disable_time, 'interval': schedule.schedule_interval, 'deleteRound': schedule.schedule_delete_round, 'isRunning': schedule.schedule_is_running})
     return schedules
@@ -291,6 +299,15 @@ def get_snapshot_schedule(name):
                 'autoDisableTime': schedule.schedule_auto_disable_time, 'interval': schedule.schedule_interval, 'deleteRound': schedule.schedule_delete_round, 'isRunning': schedule.schedule_is_running}
     else:
         raise DatabaseError('No such snapshot schedule!')
+
+
+def get_is_running_snapshot_schedule():
+    schedule = SnapshotSchedule.objects(schedule_is_running=True).first()
+    if schedule:
+        return {'name': schedule.schedule_name, 'description': schedule.schedule_desc, 'createTime': schedule.schedule_create_time, 'startTime': schedule.schedule_start_time,
+                'autoDisableTime': schedule.schedule_auto_disable_time, 'interval': schedule.schedule_interval, 'deleteRound': schedule.schedule_delete_round, 'isRunning': schedule.schedule_is_running}
+    else:
+        return None
 
 
 def create_snapshot_schedule(name, desc, auto_disable_time, interval, delete_round):

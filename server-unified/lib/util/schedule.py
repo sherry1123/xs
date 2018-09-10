@@ -11,10 +11,9 @@ def create_scheduler():
                       'cron', minute='*/5', second=0)
     scheduler.add_job(task.get_cluster_throughput_and_iops,
                       'cron', second='*/15')
-    scheduler.add_job(task.get_node_cpu_and_memory,
-                      'cron', second='*/15')
-    scheduler.add_job(task.get_node_throughput_and_iops,
-                      'cron', second='*/15')
+    scheduler.add_job(task.get_node_cpu_and_memory, 'cron', second='*/15')
+    scheduler.add_job(task.get_node_throughput_and_iops, 'cron', second='*/15')
+    scheduler.add_job(task.run_snapshot_schedule, 'cron', second=0)
     return scheduler
 
 

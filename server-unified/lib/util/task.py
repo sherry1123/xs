@@ -1,7 +1,7 @@
 import time
 
 import event
-from lib.module import process
+from lib.module import handler, process
 from lib.service import backend, database
 
 
@@ -69,3 +69,55 @@ def get_node_throughput_and_iops():
     data_list = map(get_throughput_and_iops, host_list)
     database.create_node_throughput_and_iops(
         current_time, host_list, data_list)
+
+
+def run_snapshot_schedule():
+    current_time = handler.current_time()
+    schedule_is_running = database.get_is_running_snapshot_schedule()
+    if schedule_is_running is not None:
+        name = schedule_is_running['name']
+        start_time = schedule_is_running['startTime']
+        auto_disable_time = schedule_is_running['autoDisableTime']
+        interval = schedule_is_running['interval']
+        delete_round = schedule_is_running['deleteRound']
+        time_gap_in_second = handler.iso2stamp(
+            current_time) - handler.iso2stamp(start_time)
+        if time_gap_in_second >= interval and not (time_gap_in_second % interval) and (not auto_disable_time or time_gap_in_second <= auto_disable_time):
+            snapshot_setting = database.get_setting('SNAPSHOT-SETTING')
+            limit = snapshot_setting['auto']
+            count = database.count_snapshot(True)
+            name_to_create = name + '-' + process.run('date "+%Y%m%d%H%M%S"')
+            if count < limit:
+                database.create_snapshot(
+                    name_to_create, '', True, current_time)
+                event.send('snapshot', 11, name_to_create, True)
+                create_status = backend.create_snapshot(name_to_create, True)
+                if not create_status['errorId']:
+                    database.update_snapshot_status(name_to_create)
+                    event.send('snapshot', 12, name_to_create, True)
+                else:
+                    database.delete_snapshot(name_to_create)
+                    event.send('snapshot', 12, name_to_create, False)
+            elif delete_round:
+                auto_snapshots = database.get_auto_snapshot()
+                name_to_delete = auto_snapshots[0]['name']
+                database.update_snapshot_status(
+                    name_to_delete, False, True, False)
+                delete_status = backend.delete_snapshot(name_to_delete)
+                if not delete_status['errorId']:
+                    database.delete_snapshot(name_to_delete)
+                    database.create_snapshot(
+                        name_to_create, '', True, current_time)
+                    event.send('snapshot', 11, name_to_create, True)
+                    create_status = backend.create_snapshot(
+                        name_to_create, True)
+                    if not create_status['errorId']:
+                        database.update_snapshot_status(name_to_create)
+                        event.send('snapshot', 12, name_to_create, True)
+                    else:
+                        database.delete_snapshot(name_to_create)
+                        event.send('snapshot', 12, name_to_create, False)
+                else:
+                    database.update_snapshot_status(name_to_delete)
+        elif auto_disable_time and time_gap_in_second > auto_disable_time:
+            database.disable_snapshot_schedule(name)
