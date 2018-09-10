@@ -1,5 +1,5 @@
-from mongoengine import (BooleanField, Document, IntField,
-                         ListField, StringField)
+from mongoengine import (BooleanField, Document, IntField, ListField,
+                         StringField)
 
 
 class Setting(Document):
@@ -38,3 +38,14 @@ class Snapshot(Document):
     snapshot_is_deleting = BooleanField()
     snapshot_is_rollbacking = BooleanField()
     snapshot_create_time = StringField()
+
+
+class SnapshotSchedule(Document):
+    schedule_name = StringField(required=True)
+    schedule_desc = StringField()
+    schedule_create_time = StringField()
+    schedule_start_time = StringField()
+    schedule_auto_disable_time = IntField()
+    schedule_interval = IntField()
+    schedule_delete_round = BooleanField()
+    schedule_is_running = BooleanField()

@@ -468,7 +468,7 @@ def get_snapshot(params):
 def create_snapshot(params):
     try:
         description, name = handler.request(params, name=str, description=str)
-        create_time = handler.create_iso_date()
+        create_time = handler.current_time()
         setting = database.get_setting('SNAPSHOT-SETTING')
         limit = setting['manual']
         count = database.count_snapshot(False)
@@ -549,3 +549,93 @@ def rollback_snapshot(params):
             event.send('snapshot', 18, name, False, {}, True)
     except Exception as error:
         print(handler.error(error))
+
+
+def get_snapshot_schedule(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_snapshot_schedule(name)
+        else:
+            data = database.list_snapshot_schedule()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_snapshot_schedule(params):
+    response = {}
+    try:
+        autoDisable, autoDisableTime, deleteRound,  description, interval, name = handler.request(
+            params, name=str, description=str, autoDisable=bool, autoDisableTime=int, interval=int, deleteRound=bool)
+        autoDisableTime = autoDisableTime if autoDisable else 0
+        database.create_snapshot_schedule(
+            name, description, autoDisableTime, interval, deleteRound)
+        response = handler.response(
+            0, 'create snapshot schedule successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_snapshot_schedule(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        database.update_snapshot_schedule(name, description)
+        response = handler.response(
+            0, 'update snapshot schedule successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def enable_snapshot_schedule(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        database.enable_snapshot_schedule(name)
+        response = handler.response(
+            0, 'enable snapshot schedule successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def disable_snapshot_schedule(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        database.disable_snapshot_schedule(name)
+        response = handler.response(
+            0, 'disable snapshot schedule successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_snapshot_schedule(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        database.delete_snapshot_schedule(name)
+        response = handler.response(
+            0, 'delete snapshot schedule successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def batch_delete_snapshot_schedule(params):
+    response = {}
+    try:
+        names, = handler.request(params, names=list)
+        for name in names:
+            database.delete_snapshot_schedule(name)
+        response = handler.response(
+            0, 'batch delete snapshot schedules successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

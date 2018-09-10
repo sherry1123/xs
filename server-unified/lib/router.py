@@ -199,3 +199,38 @@ def batch_delete_snapshot():
 def rollback_snapshot():
     process.do(controller.rollback_snapshot, request.params)
     return jsonify(handler.response(0, 'Start to rollback the snapshot!'))
+
+
+@app.route('/api/getsnapshotschedule', methods=['GET', 'POST'])
+def get_snapshot_schedule():
+    return jsonify(controller.get_snapshot_schedule(request.params))
+
+
+@app.route('/api/createsnapshotschedule', methods=['GET', 'POST'])
+def create_snapshot_schedule():
+    return jsonify(controller.create_snapshot_schedule(request.params))
+
+
+@app.route('/api/updatesnapshotschedule', methods=['GET', 'POST'])
+def update_snapshot_schedule():
+    return jsonify(controller.update_snapshot_schedule(request.params))
+
+
+@app.route('/api/enablesnapshotschedule', methods=['GET', 'POST'])
+def enable_snapshot_schedule():
+    return jsonify(controller.enable_snapshot_schedule(request.params))
+
+
+@app.route('/api/disablesnapshotschedule', methods=['GET', 'POST'])
+def disable_snapshot_schedule():
+    return jsonify(controller.disable_snapshot_schedule(request.params))
+
+
+@app.route('/api/deletesnapshotschedule', methods=['GET', 'POST'])
+def delete_snapshot_schedule():
+    return jsonify(controller.delete_snapshot_schedule(request.params))
+
+
+@app.route('/api/batchdeletesnapshotschedule', methods=['GET', 'POST'])
+def batch_delete_snapshot_schedule():
+    return jsonify(controller.batch_delete_snapshot_schedule(request.params))
