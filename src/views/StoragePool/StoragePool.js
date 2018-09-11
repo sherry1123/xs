@@ -80,7 +80,7 @@ class StoragePool extends Component {
 		});
 	}
 
-	buddygroup (storagePool){
+	showBuddyGroup (storagePool){
 		this.buddyGroupWrapper.getWrappedInstance().show(storagePool);
 	}
 
@@ -92,7 +92,6 @@ class StoragePool extends Component {
         let {storagePoolList} = this.state;
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
-		let storagePooHandling = storagePoolList.some(storagepool => storagepool.creating || storagepool.deleting );
         let tableProps = {
             size: 'default',
             dataSource: storagePoolList,
@@ -123,7 +122,6 @@ class StoragePool extends Component {
 								<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
 									<Button
 										{...buttonConf}
-										disabled={storagePooHandling}
 										onClick={this.edit.bind(this, record)}
 										icon="edit"
 									>
@@ -132,7 +130,6 @@ class StoragePool extends Component {
 								<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
 									<Button
 										{...buttonConf}
-										disabled={storagePooHandling}
 										onClick={this.delete.bind(this, record, index)}
 										icon="delete"
 									>
@@ -141,8 +138,7 @@ class StoragePool extends Component {
 								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
 									<Button
 										{...buttonConf}
-										disabled={storagePooHandling}
-										onClick={this.buddygroup.bind(this, record, index)}
+										onClick={this.showBuddyGroup.bind(this, record, index)}
 										icon="copy"
 									>
 									</Button>
