@@ -231,7 +231,7 @@ def get_storage_pool(name):
 
 
 def create_storage_pool(pool_id, name, description):
-    storage_pool = StoragePool.objects(name=name).first()
+    storage_pool = StoragePool.objects(storage_pool_name=name).first()
     if storage_pool:
         raise DatabaseError('StoragePool already exists!')
     else:
@@ -239,16 +239,16 @@ def create_storage_pool(pool_id, name, description):
                     storage_pool_create_time=handler.current_time()).save()
 
 
-def update_storage_pool_name_and_desc(name, description):
-    storage_pool = StoragePool.objects(stoprage_pool_name=name).first()
+def update_storage_pool_name_and_desc(pool_id, name, description):
+    storage_pool = StoragePool.objects(storage_pool_id=pool_id).first()
     if storage_pool:
-        storage_pool.update(set__stoprage_pool_description=description)
+        storage_pool.update(set__storage_pool_name=name, set__storage_pool_description=description)
     else:
         raise DatabaseError('No such storagePool!')
 
 
-def delete_storage_pool(name):
-    storage_pool = StoragePool.objects(storage_pool_name=name).first()
+def delete_storage_pool(pool_id):
+    storage_pool = StoragePool.objects(storage_pool_id=pool_id).first()
     if storage_pool:
         storage_pool.delete()
     else:

@@ -137,7 +137,7 @@ def get_node_target(hostname):
 
 def create_storage_pool(name, targets, mirrorGroups):
     data = backend_handler(request.post('http://localhost:9090/cluster/createpool', {
-                           'name': name, 'targets': targets, 'mirrorGroups': mirrorGroups}, get_token()))
+                           'nameDesc': name, 'targets': targets, 'mirrorGroups': mirrorGroups}, get_token()))
     return data['poolId']
 
 
@@ -146,18 +146,27 @@ def update_storage_pool_name(pool_id, name):
 
 
 def delete_storage_pool(pool_id):
-    return backend_handler(request.post('http://localhost:9090/cluster/deletePool', {'poolId': pool_id}, get_token()))
+    return backend_handler(request.post('http://localhost:9090/cluster/deletepool', {'poolId': pool_id}, get_token()))
 
 
-def get_targets_in_storage_pool(pool_id):
+def get_targets_in_storage_pool(pool_id=None):
     param = {'poolId': pool_id} if pool_id is not None else {}
-    return backend_handler(request.get('http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
+    data = backend_handler(request.get('http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
+    def revise_capacity(item):
+        item['capacity'] = int(handler.to_byte(float(handler.replace('\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
+        return item
+    data = map(revise_capacity, data['poolInfoList'])
+    return data
 
 
-def get_buddy_groups_in_storage_pool(pool_id):
+def get_buddy_groups_in_storage_pool(pool_id=None):
     param = {'poolId': pool_id} if pool_id is not None else {}
-    return backend_handler(request.get('http://localhost:9090/cluster/getGroupsInfo', param, get_token()))
-
+    data = backend_handler(request.get('http://localhost:9090/cluster/getgroupsinfo', param, get_token()))
+    def revise_capacity(item):
+        item['capacity'] = int(handler.to_byte(float(handler.replace('\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
+        return item
+    data = map(revise_capacity, data['poolInfoList'])
+    return data
 
 def update_snapshot_setting(total, manual, auto):
     return backend_handler(request.post('http://localhost:9090/cluster/applysnapconf', {'total': total, 'manual': manual, 'schedule': auto}, get_token()))

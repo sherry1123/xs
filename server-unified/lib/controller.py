@@ -441,7 +441,9 @@ def create_storage_pool(params):
     response = {}
     try:
         description, mirror_groups, name, targets = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
-        pool_id = backend.create_storage_pool(name, description, targets, mirror_groups)
+        targets = ','.join(map(lambda target: str(target), targets))
+        mirror_groups = ','.join(map(lambda target: str(mirror_group), mirror_groups))
+        pool_id = backend.create_storage_pool(name, targets, mirror_groups)
         database.create_storage_pool(pool_id, name, description)
         response = handler.response(0, 'Create storagePool successfully!')
     except Exception as error:
@@ -454,7 +456,7 @@ def update_storage_pool(params):
     try:
         description, name, pool_id = handler.request(params, poolId=int, name=str, description=str)
         backend.update_storage_pool_name(pool_id, name)
-        database.update_storage_pool_name_and_desc(name, description)
+        database.update_storage_pool_name_and_desc(pool_id, name, description)
         response = handler.response(0, 'Update storagePool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -464,12 +466,12 @@ def update_storage_pool(params):
 def delete_storage_pool(params):
     response = {}
     try:
-        name, pool_id = handler.request(params, poolId=int, name=str)
-        backend.delete_storage_pool(name)
-        database.delete_storage_pool(name)
-        response = handler(0, 'Delete storagePool successfully!')
+        pool_id, = handler.request(params, poolId=int)
+        backend.delete_storage_pool(pool_id)
+        database.delete_storage_pool(pool_id)
+        response = handler.response(0, 'Delete storagePool successfully!')
     except Exception as error:
-        print(handler.error(error))
+        response = handler.response(1, handler.error(error))
     return response
 
 
