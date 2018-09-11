@@ -17,13 +17,13 @@ class CreateStoragePool extends Component {
                 name: '',
 				description: '',
 				targets: [],
-				buddygroups:[]
+				buddyGroups:[]
             },
             validation: {
                 name: {status: '', help: '', valid: false},
 				description: {status: '', help: '', valid: false},
 				targets: {status: '', help: '', valid: false},
-				buddygroups: {status: '', help: '', valid: false}
+				buddyGroups: {status: '', help: '', valid: false}
             }
         };
     }
@@ -38,8 +38,8 @@ class CreateStoragePool extends Component {
 		this.setState({formSubmitting: true});
 		try {
 			await httpRequests.createStoragePool(storagePoolData);
-			// move this operation to socket, and listen the snapshot start creating event
-			httpRequests.getTargetList();
+			httpRequests.getTargetsForStoargePool();
+			httpRequests.getBudyGroupsForStoargePool();
 			await this.hide();
 			message.success(lang(`开始创建存储池 ${storagePoolData.name}!`, `Start creating storage pool ${storagePoolData.name}!`));
 		} catch ({msg}){
@@ -91,7 +91,7 @@ class CreateStoragePool extends Component {
 		if (this.state.storagePoolData.targets){
 			this.validationUpdateState('targets', {cn: '请选择存储目标', en: 'please choose storage target(s)'}, false);
 		}
-		if (this.state.storagePoolData.buddygroups){
+		if (this.state.storagePoolData.buddyGroups){
 			this.validationUpdateState('buddygroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy group(s)'}, false);
 		}
 		// calculate whole form validation
@@ -110,13 +110,13 @@ class CreateStoragePool extends Component {
 				name: '',
 				description: '',
 				targets: [],
-				buddygroups:[]
+				buddyGroups:[]
 			},
 			validation: {
 				name: {status: '', help: '', valid: false},
 				description: {status: '', help: '', valid: false},
 				targets: {status: '', help: '', valid: false},
-				buddygroups: {status: '', help: '', valid: false}
+				buddyGroups: {status: '', help: '', valid: false}
 			}
         });
     }
@@ -214,9 +214,9 @@ class CreateStoragePool extends Component {
 							style={{width: '100%'}}
 							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
 							optionLabelProp="value"
-							value={this.state.storagePoolData.buddygroups}
+							value={this.state.storagePoolData.buddyGroups}
 							onChange={(value, option) => {
-								this.formValueChange.bind(this, 'buddygroups')(value);
+								this.formValueChange.bind(this, 'buddyGroups')(value);
 							}}
 						>
 							<Select.Option value='buddygroup_1'>buddygroup_1 /dev/xxx 500GB</Select.Option>

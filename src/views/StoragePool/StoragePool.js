@@ -5,7 +5,7 @@ import lang from 'Components/Language/lang';
 import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
 import StoragePoolTarget from './StoragePoolTarget';
-import BuddyGroup from './BuddyGroup';
+import ShowBuddyGroup from './ShowBuddyGroup';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
 class StoragePool extends Component {
@@ -81,10 +81,10 @@ class StoragePool extends Component {
 	}
 
 	showBuddyGroup (storagePool){
-		this.buddyGroupWrapper.getWrappedInstance().show(storagePool);
+		this.showbuddyGroupWrapper.getWrappedInstance().show(storagePool);
 	}
 
-	check (storagePool){
+	showStorageTarget (storagePool){
 		this.storagePoolTargetWrapper.getWrappedInstance().show(storagePool);
 	}
 
@@ -146,7 +146,7 @@ class StoragePool extends Component {
 								<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
 									<Button
 										{...buttonConf}
-										onClick={this.check.bind(this, record, index)}
+										onClick={this.showStorageTarget.bind(this, record, index)}
 										icon="hdd"
 									>
 									</Button>
@@ -188,7 +188,7 @@ class StoragePool extends Component {
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
 				<StoragePoolTarget ref={ref => this.storagePoolTargetWrapper = ref} />
-				<BuddyGroup ref={ref => this.buddyGroupWrapper = ref} />
+				<ShowBuddyGroup ref={ref => this.showbuddyGroupWrapper = ref} />
 			</div>
         );
     }
