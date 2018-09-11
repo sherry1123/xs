@@ -84,7 +84,7 @@ class StoragePool extends Component {
 		this.buddyGroupWrapper.getWrappedInstance().show(storagePool);
 	}
 
-	check (storagePool){
+	showStorageTarget (storagePool){
 		this.storagePoolTargetWrapper.getWrappedInstance().show(storagePool);
 	}
 
@@ -146,7 +146,7 @@ class StoragePool extends Component {
 								<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
 									<Button
 										{...buttonConf}
-										onClick={this.check.bind(this, record, index)}
+										onClick={this.showStorageTarget.bind(this, record, index)}
 										icon="hdd"
 									>
 									</Button>
