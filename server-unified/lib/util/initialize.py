@@ -44,7 +44,7 @@ def get_recommended_raid_configuration(metadatas, storages):
             disk_list.append(
                 {'diskName': '/dev/nvme%sn1' % i, 'totalSpace': 11489037516})
         return {'ip': ip, 'diskList': disk_list}
-    disk_group = map(create_mock_disk_group, ip_list)
+    disk_group = map(create_disk_group, ip_list)
     metadata_configuration = {}
     storage_configuration = {}
 
@@ -184,6 +184,7 @@ def save_initialize_information(param, node_list):
     database.create_setting(
         'SNAPSHOT-SETTING', {'total': 64, 'manual': 25, 'auto': 39})
     database.create_user('admin', 'e10adc3949ba59abbe56e057f20f883e')
+    database.create_local_auth_user_group('everyone', 'everyone')
 
 
 def deinitialize_mongodb(ip_list):

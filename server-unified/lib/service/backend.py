@@ -229,3 +229,39 @@ def get_entry_info(path):
 
 def set_pattern(dir_path, num_targets, chunk_size, buddy_mirror):
     return backend_handler(request.post('http://localhost:9090/cluster/setpattern', {'dirPath': dir_path, 'numTargets': str(num_targets), 'chunkSize': str(chunk_size), 'buddyMirror': buddy_mirror}, get_token()))
+
+
+def create_local_auth_user(name, desc, passwd, primary, secondary):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuseradd', 'userInfo': {'localUserList': [{'userName': name, 'passWord': passwd, 'desc': desc, 'primaryGroup': primary, 'secondaryGroup': secondary}]}}, get_token()))
+
+
+def update_local_auth_user_desc_and_primary_group(name, desc, primary):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserchange', 'userInfo': {'localUserList': [{'userName': name, 'desc': desc, 'primaryGroup': primary}]}}, get_token()))
+
+
+def update_local_auth_user_passwd(name, passwd):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserchange', 'userInfo': {'localUserList': [{'userName': name, 'passWord': passwd}]}}, get_token()))
+
+
+def delete_local_auth_user(name):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserdelete', 'userInfo': {'localUserList': [{'userName': name}]}}, get_token()))
+
+
+def create_local_auth_user_group(name, desc):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupadd', 'userInfo': {'localGroupList': [{'groupName': name, 'desc': desc}]}}, get_token()))
+
+
+def update_local_auth_user_group(name, desc):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupchange', 'userInfo': {'localGroupList': [{'groupName': name, 'desc': desc}]}}, get_token()))
+
+
+def delete_local_auth_user_group(name):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupdelete', 'userInfo': {'localGroupList': [{'groupName': name}]}}, get_token()))
+
+
+def add_local_auth_user_to_group(name, group):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupadduser', 'userInfo': {'localUserList': [{'userName': name, 'secondaryGroup': [group]}]}}, get_token()))
+
+
+def remove_local_auth_user_from_group(name, group):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupremoveuser', 'userInfo': {'localUserList': [{'userName': name, 'secondaryGroup': [group]}]}}, get_token()))

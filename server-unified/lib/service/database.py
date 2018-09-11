@@ -2,7 +2,8 @@ import json
 
 from mongoengine import connect
 
-from lib.model import (ClusterThroughputAndIops, NasServer, NodeCpuAndMemory,
+from lib.model import (ClusterThroughputAndIops, LocalAuthUser,
+                       LocalAuthUserGroup, NasServer, NodeCpuAndMemory,
                        NodeThroughputAndIops, Setting, Snapshot,
                        SnapshotSchedule, StoragePool, User)
 from lib.module import handler
@@ -428,3 +429,142 @@ def update_nas_server(ip, desc):
         nas_server.update(set__nas_server_desc=desc)
     else:
         raise DatabaseError('No such nas server!')
+
+
+def list_local_auth_user():
+    users = []
+    for user in LocalAuthUser.objects.order_by('user_name'):
+        users.append({'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd,
+                      'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group})
+    return users
+
+
+def get_local_auth_user(name):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        return {'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd, 'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group}
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def create_local_auth_user(name, desc, passwd, primary, secondary):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        raise DatabaseError('Local auth user already exists!')
+    else:
+        LocalAuthUser(user_name=name, user_desc=desc, user_passwd=passwd,
+                      user_primary_group=primary, user_secondary_group=secondary).save()
+
+
+def update_local_auth_user_desc(name, desc):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_desc=desc)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def update_local_auth_user_passwd(name, passwd):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_passwd=passwd)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def update_local_auth_user_primary_group(name, primary):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_primary_group=primary)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def update_local_auth_user_secondary_group(name, secondary):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_secondary_group=secondary)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def delete_local_auth_user(name):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.delete()
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def list_local_auth_user_group():
+    user_groups = []
+    for user_group in LocalAuthUserGroup.objects.order_by('user_group_name'):
+        user_groups.append({'name': user_group.user_group_name,
+                            'description': user_group.user_group_desc})
+    return user_groups
+
+
+def get_local_auth_user_group(name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        return {'name': user_group.user_group_name, 'description': user_group.user_group_desc}
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def create_local_auth_user_group(name, desc):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        raise DatabaseError('Local auth user group already exists!')
+    else:
+        LocalAuthUserGroup(user_group_name=name, user_group_desc=desc).save()
+
+
+def update_local_auth_user_group(name, desc):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        user_group.update(set__user_group_desc=desc)
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def delete_local_auth_user_group(name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        user_group.delete()
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def get_local_auth_user_from_group(group_name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=group_name).first()
+    if user_group:
+        users = list_local_auth_user()
+        user_in_primary_group = filter(
+            lambda user: user['primaryGroup'] == group_name, users)
+        user_in_secondary_group = filter(
+            lambda user: group_name in user['secondaryGroup'], users)
+        return user_in_primary_group + user_in_secondary_group
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def add_local_auth_user_to_group(name, group_name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=group_name).first()
+    if user_group:
+        user = get_local_auth_user(name)
+        secondary_group = user['secondaryGroup'] + [group_name]
+        update_local_auth_user_secondary_group(name, secondary_group)
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def remove_local_auth_user_from_group(name, group_name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=group_name).first()
+    if user_group:
+        user = get_local_auth_user(name)
+        secondary_group = filter(
+            lambda group: group != group_name, user['secondaryGroup'])
+        update_local_auth_user_secondary_group(name, secondary_group)
+    else:
+        raise DatabaseError('No such local auth user group!')

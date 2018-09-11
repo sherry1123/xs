@@ -319,3 +319,63 @@ def get_event_log():
 @app.route('/api/getauditlog', methods=['GET', 'POST'])
 def get_audit_log():
     return jsonify(controller.get_audit_log())
+
+
+@app.route('/api/getlocalauthuser', methods=['GET', 'POST'])
+def get_local_auth_user():
+    return jsonify(controller.get_local_auth_user(request.params))
+
+
+@app.route('/api/createlocalauthuser', methods=['GET', 'POST'])
+def create_local_auth_user():
+    return jsonify(controller.create_local_auth_user(request.params))
+
+
+@app.route('/api/updatelocalauthuser', methods=['GET', 'POST'])
+def update_local_auth_user():
+    return jsonify(controller.update_local_auth_user(request.params))
+
+
+@app.route('/api/deletelocalauthuser', methods=['GET', 'POST'])
+def delete_local_auth_user():
+    return jsonify(controller.delete_local_auth_user(request.params))
+
+
+@app.route('/api/batchdeletelocalauthuser', methods=['GET', 'POST'])
+def batch_delete_local_auth_user():
+    return jsonify(controller.batch_delete_local_auth_user(request.params))
+
+
+@app.route('/api/getlocalauthusergroup', methods=['GET', 'POST'])
+def get_local_auth_user_group():
+    return jsonify(controller.get_local_auth_user_group(request.params))
+
+
+@app.route('/api/createlocalauthusergroup', methods=['GET', 'POST'])
+def create_local_auth_user_group():
+    return jsonify(controller.create_local_auth_user_group(request.params))
+
+
+@app.route('/api/updatelocalauthusergroup', methods=['GET', 'POST'])
+def update_local_auth_user_group():
+    return jsonify(controller.update_local_auth_user_group(request.params))
+
+
+@app.route('/api/deletelocalauthusergroup', methods=['GET', 'POST'])
+def delete_local_auth_user_group():
+    return jsonify(controller.delete_local_auth_user_group(request.params))
+
+
+@app.route('/api/getlocalauthuserfromgroup', methods=['GET', 'POST'])
+def get_local_auth_user_from_group():
+    return jsonify(controller.get_local_auth_user_from_group(request.params))
+
+
+@app.route('/api/addlocalauthusertogroup', methods=['GET', 'POST'])
+def add_local_auth_user_to_group():
+    return jsonify(controller.add_local_auth_user_to_group(request.params))
+
+
+@app.route('/api/removelocalauthuserfromgroup', methods=['GET', 'POST'])
+def remove_local_auth_user_from_group():
+    return jsonify(controller.remove_local_auth_user_from_group(request.params))
