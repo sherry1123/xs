@@ -1,28 +1,27 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Popover, Table, Icon, Modal} from 'antd';
+import {Button, Table, Modal} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
 class StoragePoolTarget extends Component {
 	constructor (props){
 		super(props);
-		let {BuddyMirrorList} = this.props;
+		let {buddyGroupsOfStoragePool} = this.props;
 		this.state = {
 			visible: false,
+			poolId: '',
+			poolName: '',
 			// table
-			BuddyMirrorList,
-			targetListBackup: BuddyMirrorList,
+			buddyGroupsOfStoragePool,
 		};
 	}
 
-	async componentDidMount (){
-		httpRequests.getTargetList();
-	}
-
-	show (){
+	show ({poolId, name}){
 		this.setState({
 			visible: true,
+			poolId,
+			poolName: name,
 		});
 	}
 
@@ -33,18 +32,28 @@ class StoragePoolTarget extends Component {
 	}
 
 	render (){
-		let {BuddyMirrorList} = this.state;
+		let {buddyGroupsOfStoragePool, poolName} = this.state;
 		let tableProps = {
 			size: 'normal',
-			dataSource: BuddyMirrorList,
+			dataSource: buddyGroupsOfStoragePool,
 			rowKey: record => `${record.targetId}-${record.service}`,
 			locale: {
-				emptyText: lang('暂无伙伴组镜像', 'No Buddy Mirror')
+				emptyText: lang('暂无伙伴组镜像', 'No Buddy Group')
 			},
-			title: () => (<span className="fs-table-title"><Icon type="desktop" />{lang(`存储池的伙伴组镜像的信息`, '')}</span>),
+			title: () => (
+				<div className="fs-modal-table-title-bar">
+					<Button
+						size='small'
+						style={{float: 'right'}}
+						onClick={this.hide.bind(this)}
+					>
+						{lang('添加', 'Add')}
+					</Button>
+				</div>
+			),
 			rowClassName: () => 'ellipsis',
 			columns: [
-				{title: lang('伙伴组镜像 ID', 'Buddy Mirror ID'), width: 150, dataIndex: 'buddymirrorid',},
+				{title: lang('伙伴组镜像 ID', 'Buddy Group ID'), width: 150, dataIndex: 'buddyGroupId',},
 				{title: lang('路径', 'Path'), width: 200, dataIndex: 'mountPath',},
 				{title: lang('容量', 'Capacity'), width: 100, dataIndex: 'space'},
 				{title: lang('操作', 'Operations'), width: 150, dataIndex: 'Operations'}
@@ -53,6 +62,7 @@ class StoragePoolTarget extends Component {
 		return (
 			<Modal
 				width={800}
+				title={lang(`存储池 ${poolName} 的伙伴组信息`, `Buddy Groups of Storage Pool ${poolName}`)}
 				closable={false}
 				maskClosable={false}
 				visible={this.state.visible}
@@ -79,8 +89,8 @@ class StoragePoolTarget extends Component {
 }
 
 const mapStateToProps = state => {
-	const {language} = state;
-	return {language};
+	const {language, main: {storagePool: {buddyGroupsOfStoragePool}}} = state;
+	return {language, buddyGroupsOfStoragePool};
 };
 
 const mapDispatchToProps = [];

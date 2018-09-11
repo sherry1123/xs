@@ -29,7 +29,7 @@ def get_disk_list(ip):
         'http://localhost:9090/disk/list/' + ip, {}, get_token())) or []
 
     def revise_disk_space(disk):
-        disk['totalSpace'] = int(handler.toByte(float(handler.replace(
+        disk['totalSpace'] = int(handler.to_byte(float(handler.replace(
             '\SB', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0]))
         return disk
     disk_list = filter(lambda disk: not disk['isUsed'], disk_list)
@@ -186,3 +186,115 @@ def batch_delete_snapshot(names):
 
 def rollback_snapshot(name):
     return request.post('http://localhost:9090/cluster/rollbacksnapshot', {'name': name}, get_token())
+
+
+def add_client_to_cluster(ip):
+    return backend_handler(request.post('http://localhost:9090/cluster/addclientnode', {'ip': ip}, get_token()))
+
+
+def get_client():
+    return backend_handler(request.get('http://localhost:9090/cluster/getclientlist', {}, get_token()))
+
+
+def create_nas_server(ip, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasmanager', {'opt': 'nasAdd', 'nasServerList': [{'clientIp': ip, 'nasRoot': path}]}, get_token()))
+
+
+def get_buddy_group():
+    buddy_groups = backend_handler(request.get(
+        'http://localhost:9090/cluster/listmirrorgroup', {}, get_token())) or []
+
+    def modify_buddy_group_info(buddy_group):
+        group_type = buddy_group['type']
+        group_id = buddy_group['groupId']
+        primary_target = buddy_group['primary']
+        secondary_target = buddy_group['secondary']
+        primary_target = {'targetId': primary_target['targetId'], 'mountPath': primary_target['mountPath'], 'node': primary_target['hostname'], 'service': 'metadata' if primary_target['service'] == 'meta' else primary_target['service'], 'isUsed': primary_target['isUsed'],
+                          'nodeId': primary_target['nodeId'], 'space': {'total': primary_target['totalSpace'], 'used': primary_target['usedSpace'], 'free': primary_target['freeSpace'], 'usage': '%s%%' % round(float(primary_target['usedSpace']) / primary_target['totalSpace'] * 100, 2)}}
+        secondary_target = {'targetId': secondary_target['targetId'], 'mountPath': secondary_target['mountPath'], 'node': secondary_target['hostname'], 'service': 'metadata' if secondary_target['service'] == 'meta' else secondary_target['service'], 'isUsed': secondary_target['isUsed'],
+                            'nodeId': secondary_target['nodeId'], 'space': {'total': secondary_target['totalSpace'], 'used': secondary_target['usedSpace'], 'free': secondary_target['freeSpace'], 'usage': '%s%%' % round(float(secondary_target['usedSpace']) / secondary_target['totalSpace'] * 100, 2)}}
+        return {'type': group_type, 'groupId': group_id, 'primary': primary_target, 'secondary': secondary_target}
+    buddy_groups = map(modify_buddy_group_info, buddy_groups)
+    buddy_groups = sorted(
+        buddy_groups, key=lambda buddy_group: buddy_group['groupId'])
+    return buddy_groups
+
+
+def get_files(path):
+    files = backend_handler(request.get(
+        'http://localhost:9090/cluster/getdirs', {'dir': path}, get_token())) or []
+    files = sorted(files, key=lambda f: f['name'])
+    return files
+
+
+def get_entry_info(path):
+    entry_info = backend_handler(request.get(
+        'http://localhost:9090/cluster/getentryinfo', {'dir': path}, get_token()))
+    entry_info['chunkSize'] = handler.to_byte(int(handler.replace(
+        '[a-zA-Z]', '', entry_info['chunkSize'])), handler.replace('\d+', '', entry_info['chunkSize']))
+    entry_info['numTargets'] = int(entry_info['numTargets'])
+    return entry_info
+
+
+def set_pattern(dir_path, num_targets, chunk_size, buddy_mirror):
+    return backend_handler(request.post('http://localhost:9090/cluster/setpattern', {'dirPath': dir_path, 'numTargets': str(num_targets), 'chunkSize': str(chunk_size), 'buddyMirror': buddy_mirror}, get_token()))
+
+
+def create_local_auth_user(name, desc, passwd, primary, secondary):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuseradd', 'userInfo': {'localUserList': [{'userName': name, 'passWord': passwd, 'desc': desc, 'primaryGroup': primary, 'secondaryGroup': secondary}]}}, get_token()))
+
+
+def update_local_auth_user_desc_and_primary_group(name, desc, primary):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserchange', 'userInfo': {'localUserList': [{'userName': name, 'desc': desc, 'primaryGroup': primary}]}}, get_token()))
+
+
+def update_local_auth_user_passwd(name, passwd):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserchange', 'userInfo': {'localUserList': [{'userName': name, 'passWord': passwd}]}}, get_token()))
+
+
+def delete_local_auth_user(name):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserdelete', 'userInfo': {'localUserList': [{'userName': name}]}}, get_token()))
+
+
+def create_local_auth_user_group(name, desc):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupadd', 'userInfo': {'localGroupList': [{'groupName': name, 'desc': desc}]}}, get_token()))
+
+
+def update_local_auth_user_group(name, desc):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupchange', 'userInfo': {'localGroupList': [{'groupName': name, 'desc': desc}]}}, get_token()))
+
+
+def delete_local_auth_user_group(name):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupdelete', 'userInfo': {'localGroupList': [{'groupName': name}]}}, get_token()))
+
+
+def add_local_auth_user_to_group(name, group):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupadduser', 'userInfo': {'localUserList': [{'userName': name, 'secondaryGroup': [group]}]}}, get_token()))
+
+
+def remove_local_auth_user_from_group(name, group):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupremoveuser', 'userInfo': {'localUserList': [{'userName': name, 'secondaryGroup': [group]}]}}, get_token()))
+
+
+def create_nfs_share(server, path, description, client_list):
+    return backend_handler(request.post('http://localhost:9090/cluster/addshareinfo', {'server': server, 'path': path, 'description': description, 'clientList': client_list}, get_token()))
+
+
+def update_nfs_share(server, path, description):
+    return backend_handler(request.post('http://localhost:9090/cluster/nfsmodifyshare', {'server': server, 'path': path, 'description': description}, get_token()))
+
+
+def delete_nfs_share(server, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nfsdeleteshare', {'shareList': [{'server': server, 'path': path}]}, get_token()))
+
+
+def create_client_in_nfs_share(server, client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/addclientinfo', {'server': server, 'path': path, 'clientList': [{'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode, 'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint}]}, get_token()))
+
+
+def update_client_in_nfs_share(server, client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/modifyclientinfo', {'server': server, 'path': path, 'clientList': [{'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode, 'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint}]}, get_token()))
+
+
+def delete_client_in_nfs_share(server, ip, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nfsdeleteclient', {'server': server, 'path': path, 'clientList': [ip]}, get_token()))

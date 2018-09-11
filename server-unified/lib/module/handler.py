@@ -94,7 +94,7 @@ def remote_cmd(ip, cmd):
     return 'ssh -i /root/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet root@%s \'%s\'' % (ip, cmd)
 
 
-def toByte(value, unit):
+def to_byte(value, unit):
     unit_list = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     return math.floor(value * math.pow(1024, unit_list.index(unit)))
 
@@ -113,3 +113,7 @@ def start_time():
 
 def iso2stamp(iso):
     return int(time.mktime(dateutil.parser.parse(iso).timetuple()))
+
+
+def check_root(path, root):
+    return path.split('/')[1] == root.split('/')[1]

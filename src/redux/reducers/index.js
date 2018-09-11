@@ -7,6 +7,7 @@ import generalReducer from './generalReducer';
 import serviceReducer from './serviceReducer';
 import dashboardReducer from './dashboardReducer';
 import dataNodeReducer from './dataNodeReducer';
+import storagePoolReducer from './storagePoolReducer';
 import systemLogReducer from './systemLogReducer';
 import snapshotReducer from './snapshotReducer';
 import shareReducer from './shareReducer';
@@ -54,6 +55,10 @@ export default combineReducers({
                 case 'dataNode':
                     state[key] = dataNodeReducer(main[key], action);
                     break;
+
+				case 'storagePool':
+					state[key] = storagePoolReducer(main[key], action);
+					break;
 
                 case 'snapshot':
                     state[key] = snapshotReducer(main[key], action);

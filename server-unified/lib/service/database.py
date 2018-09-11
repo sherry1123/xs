@@ -2,9 +2,10 @@ import json
 
 from mongoengine import connect
 
-from lib.model import (ClusterThroughputAndIops, NodeCpuAndMemory,
-                       NodeThroughputAndIops, Setting, Snapshot,
-                       SnapshotSchedule, StoragePool, User)
+from lib.model import (CifsShare, ClusterThroughputAndIops, LocalAuthUser,
+                       LocalAuthUserGroup, NasServer, NfsShare,
+                       NodeCpuAndMemory, NodeThroughputAndIops, Setting,
+                       Snapshot, SnapshotSchedule, StoragePool, User)
 from lib.module import handler
 
 
@@ -217,7 +218,7 @@ def list_storage_pool():
     storage_pools = []
     for storage_pool in StoragePool.objects.order_by('-id'):
         storage_pools.append({'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
-                            'createTime': storage_pool.storage_pool_create_time})
+                              'createTime': storage_pool.storage_pool_create_time})
     return storage_pools
 
 
@@ -389,3 +390,286 @@ def delete_snapshot_schedule(name):
         schedule.delete()
     else:
         raise DatabaseError('No such snapshot schedule!')
+
+
+def add_node_to_cluster(node_ip, node_type):
+    node_list = get_setting('NODE-LIST')
+    node_list[node_type].append(node_ip)
+    update_setting('NODE-LIST', node_list)
+
+
+def list_nas_server():
+    nas_servers = []
+    for nas_server in NasServer.objects.order_by('-id'):
+        nas_servers.append({'ip': nas_server.nas_server_ip,
+                            'path': nas_server.nas_server_path, 'description': nas_server.nas_server_desc})
+    return nas_servers
+
+
+def get_nas_server(ip):
+    nas_server = NasServer.objects(nas_server_ip=ip).first()
+    if nas_server:
+        return {'ip': nas_server.nas_server_ip, 'path': nas_server.nas_server_path, 'description': nas_server.nas_server_desc}
+    else:
+        raise DatabaseError('No such nas server!')
+
+
+def create_nas_server(ip, path, desc):
+    nas_server = NasServer.objects(nas_server_ip=ip).first()
+    if nas_server:
+        raise DatabaseError('Nas server already exists!')
+    else:
+        NasServer(nas_server_ip=ip, nas_server_path=path,
+                  nas_server_desc=desc).save()
+
+
+def update_nas_server(ip, desc):
+    nas_server = NasServer.objects(nas_server_ip=ip).first()
+    if nas_server:
+        nas_server.update(set__nas_server_desc=desc)
+    else:
+        raise DatabaseError('No such nas server!')
+
+
+def list_local_auth_user():
+    users = []
+    for user in LocalAuthUser.objects.order_by('user_name'):
+        users.append({'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd,
+                      'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group})
+    return users
+
+
+def get_local_auth_user(name):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        return {'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd, 'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group}
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def create_local_auth_user(name, desc, passwd, primary, secondary):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        raise DatabaseError('Local auth user already exists!')
+    else:
+        LocalAuthUser(user_name=name, user_desc=desc, user_passwd=passwd,
+                      user_primary_group=primary, user_secondary_group=secondary).save()
+
+
+def update_local_auth_user_desc(name, desc):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_desc=desc)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def update_local_auth_user_passwd(name, passwd):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_passwd=passwd)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def update_local_auth_user_primary_group(name, primary):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_primary_group=primary)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def update_local_auth_user_secondary_group(name, secondary):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_secondary_group=secondary)
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def delete_local_auth_user(name):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.delete()
+    else:
+        raise DatabaseError('No such local auth user!')
+
+
+def list_local_auth_user_group():
+    user_groups = []
+    for user_group in LocalAuthUserGroup.objects.order_by('user_group_name'):
+        user_groups.append({'name': user_group.user_group_name,
+                            'description': user_group.user_group_desc})
+    return user_groups
+
+
+def get_local_auth_user_group(name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        return {'name': user_group.user_group_name, 'description': user_group.user_group_desc}
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def create_local_auth_user_group(name, desc):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        raise DatabaseError('Local auth user group already exists!')
+    else:
+        LocalAuthUserGroup(user_group_name=name, user_group_desc=desc).save()
+
+
+def update_local_auth_user_group(name, desc):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        user_group.update(set__user_group_desc=desc)
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def delete_local_auth_user_group(name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=name).first()
+    if user_group:
+        user_group.delete()
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def get_local_auth_user_from_group(group_name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=group_name).first()
+    if user_group:
+        users = list_local_auth_user()
+        user_in_primary_group = filter(
+            lambda user: user['primaryGroup'] == group_name, users)
+        user_in_secondary_group = filter(
+            lambda user: group_name in user['secondaryGroup'], users)
+        return user_in_primary_group + user_in_secondary_group
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def add_local_auth_user_to_group(name, group_name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=group_name).first()
+    if user_group:
+        user = get_local_auth_user(name)
+        secondary_group = user['secondaryGroup'] + [group_name]
+        update_local_auth_user_secondary_group(name, secondary_group)
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def remove_local_auth_user_from_group(name, group_name):
+    user_group = LocalAuthUserGroup.objects(user_group_name=group_name).first()
+    if user_group:
+        user = get_local_auth_user(name)
+        secondary_group = filter(
+            lambda group: group != group_name, user['secondaryGroup'])
+        update_local_auth_user_secondary_group(name, secondary_group)
+    else:
+        raise DatabaseError('No such local auth user group!')
+
+
+def list_nfs_share():
+    shares = []
+    for share in NfsShare.objects.order_by('path'):
+        shares.append({'path': share.share_path, 'description': share.share_desc,
+                       'clientList': share.share_client_list})
+    return shares
+
+
+def get_nfs_share(path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        return {'path': share.share_path, 'description': share.share_desc, 'clientList': share.share_client_list}
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def create_nfs_share(path, desc, client_list):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        raise DatabaseError('Nfs share already exists!')
+    else:
+        NfsShare(share_path=path, share_desc=desc,
+                 share_client_list=client_list).save()
+
+
+def update_nfs_share_desc(path, desc):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        share.update(set__share_desc=desc)
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def update_nfs_share_client_list(path, client_list):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        share.update(set__share_client_list=client_list)
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def delete_nfs_share(path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        share.delete()
+    else:
+        raise DatabaseError('No such nfs share user!')
+
+
+def get_client_in_nfs_share(path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        return share.share_client_list
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def create_client_in_nfs_share(client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        client_list = get_client_in_nfs_share(path)
+        client_ip_list = map(lambda client: client['ip'], client_list)
+        if ip in client_ip_list:
+            raise DatabaseError('Client already exists!')
+        else:
+            client_list.append({'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode,
+                                'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint})
+        update_nfs_share_client_list(path, client_list)
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def update_client_in_nfs_share(client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        client_list = get_client_in_nfs_share(path)
+        client_ip_list = map(lambda client: client['ip'], client_list)
+
+        def create_new_client():
+            return {'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode, 'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint}
+        if ip in client_ip_list:
+            client_list = map(
+                lambda client: client if client['ip'] != ip else create_new_client(), client_list)
+            update_nfs_share_client_list(path, client_list)
+        else:
+            raise DatabaseError('No such client share!')
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def delete_client_in_nfs_share(ip, path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        client_list = get_client_in_nfs_share(path)
+        client_ip_list = map(lambda client: client['ip'], client_list)
+        if ip in client_ip_list:
+            client_list = filter(
+                lambda client: client['ip'] != ip, client_list)
+            update_nfs_share_client_list(path, client_list)
+        else:
+            raise DatabaseError('No such client share!')
+    else:
+        raise DatabaseError('No such nfs share user!')

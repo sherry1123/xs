@@ -715,3 +715,439 @@ def batch_delete_snapshot_schedule(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def add_client_to_cluster(params):
+    response = {}
+    try:
+        ip, = handler.request(params, ip=str)
+        backend.add_client_to_cluster(ip)
+        database.add_node_to_cluster(ip, 'client')
+        response = handler.response(0, 'add client to cluster successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_client():
+    response = {}
+    try:
+        clients = backend.get_client() or []
+        nas_servers = database.list_nas_server()
+        nas_servers = map(lambda nas_server: nas_server['ip'], nas_servers)
+        data = map(lambda client: {
+                   'hostname': client['name'], 'ip': client['ip'], 'isUsed': client['ip'] in nas_servers}, clients)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_nas_server(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            ip, = handler.request(params, ip=str)
+            data = database.get_nas_server(ip)
+        else:
+            data = database.list_nas_server()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_nas_server(params):
+    response = {}
+    try:
+        description, ip, path = handler.request(
+            params, ip=str, path=str, description=str)
+        backend.create_nas_server(ip, path)
+        database.create_nas_server(ip, path, description)
+        response = handler.response(0, 'Create nas server successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_nas_server(params):
+    response = {}
+    try:
+        description, ip = handler.request(params, ip=str, description=str)
+        database.update_nas_server(ip, description)
+        response = handler.response(0, 'Update nas server successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_buddy_group():
+    response = {}
+    try:
+        data = backend.get_buddy_group()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_files(params):
+    response = {}
+    try:
+        path, = handler.request(params, dir=str)
+        data = backend.get_files(path)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_entry_info(params):
+    response = {}
+    try:
+        path, = handler.request(params, dir=str)
+        data = backend.get_entry_info(path)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def set_pattern(params):
+    response = {}
+    try:
+        buddyMirror, chunkSize, dirPath, numTargets = handler.request(
+            params, dirPath=str, numTargets=int, chunkSize=int, buddyMirror=int)
+        data = backend.set_pattern(dirPath, numTargets, chunkSize, buddyMirror)
+        response = handler.response(0, 'Set pattern successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_event_log():
+    response = {}
+    try:
+        data = []
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_audit_log():
+    response = {}
+    try:
+        data = []
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_local_auth_user(name)
+        else:
+            data = database.list_local_auth_user()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_local_auth_user(params):
+    response = {}
+    try:
+        description, name, password, primaryGroup, secondaryGroup = handler.request(
+            params, name=str, description=str, password=str, primaryGroup=str, secondaryGroup=list)
+        backend.create_local_auth_user(
+            name, description, password, primaryGroup, secondaryGroup)
+        database.create_local_auth_user(
+            name, description, password, primaryGroup, secondaryGroup)
+        response = handler.response(0, 'Create local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_local_auth_user(params):
+    response = {}
+    try:
+        changePassword, description, name, primaryGroup = handler.request(
+            params, name=str, description=str, primaryGroup=str, changePassword=bool)
+        backend.update_local_auth_user_desc_and_primary_group(
+            name, description, primaryGroup)
+        database.update_local_auth_user_desc(name, description)
+        database.update_local_auth_user_primary_group(name, primaryGroup)
+        if changePassword:
+            password, = handler.request(params, password=str)
+            backend.update_local_auth_user_passwd(name, password)
+            database.update_local_auth_user_passwd(name, password)
+        response = handler.response(0, 'Update local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_local_auth_user(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        backend.delete_local_auth_user(name)
+        database.delete_local_auth_user(name)
+        response = handler.response(0, 'Delete local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def batch_delete_local_auth_user(params):
+    response = {}
+    try:
+        names, = handler.request(params, names=list)
+        for name in names:
+            backend.delete_local_auth_user(name)
+            database.delete_local_auth_user(name)
+        response = handler.response(
+            0, 'Batch delete local auth users successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user_group(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_local_auth_user_group(name)
+        else:
+            data = database.list_local_auth_user_group()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_local_auth_user_group(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        backend.create_local_auth_user_group(name, description)
+        database.create_local_auth_user_group(name, description)
+        response = handler.response(
+            0, 'Create local auth user group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_local_auth_user_group(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        backend.update_local_auth_user_group(name, description)
+        database.update_local_auth_user_group(name, description)
+        response = handler.response(
+            0, 'Update local auth user group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_local_auth_user_group(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        backend.delete_local_auth_user_group(name)
+        database.delete_local_auth_user_group(name)
+        response = handler.response(
+            0, 'Delete local auth user group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user_from_group(params):
+    response = {}
+    try:
+        groupName, = handler.request(params, groupName=str)
+        data = database.get_local_auth_user_from_group(groupName)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_local_auth_user_to_group(params):
+    response = {}
+    try:
+        groupName, names = handler.request(params, names=list, groupName=str)
+        for name in names:
+            backend.add_local_auth_user_to_group(name, groupName)
+            database.add_local_auth_user_to_group(name, groupName)
+        response = handler.response(
+            0, 'Add local auth user to group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def remove_local_auth_user_from_group(params):
+    response = {}
+    try:
+        groupName, name = handler.request(params, name=str, groupName=str)
+        backend.remove_local_auth_user_from_group(name, groupName)
+        database.remove_local_auth_user_from_group(name, groupName)
+        response = handler.response(
+            0, 'Remove local auth user from group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_nfs_share(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            path, = handler.request(params, path=str)
+            data = database.get_nfs_share(path)
+        else:
+            data = database.list_nfs_share()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_nfs_share(params):
+    response = {}
+    try:
+        clientList, description, path = handler.request(
+            params, path=str, description=str, clientList=list)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.create_nfs_share(server, path, description, clientList)
+        database.create_nfs_share(path, description, clientList)
+        response = handler.response(0, 'Create nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_nfs_share(params):
+    response = {}
+    try:
+        description, path = handler.request(params, path=str, description=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.update_nfs_share(server, path, description)
+        database.update_nfs_share_desc(path, description)
+        response = handler.response(0, 'Update local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_nfs_share(params):
+    response = {}
+    try:
+        path, = handler.request(params, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.delete_nfs_share(server, path)
+        database.delete_nfs_share(path)
+        response = handler.response(0, 'Delete nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def batch_delete_nfs_share(params):
+    response = {}
+    try:
+        paths, = handler.request(params, paths=list)
+        nas_server_list = database.list_nas_server()
+        for path in paths:
+            server = filter(lambda nas_server: handler.check_root(
+                path, nas_server['path']), nas_server_list)[0]['ip']
+            backend.delete_nfs_share(server, path)
+            database.delete_nfs_share(path)
+        response = handler.response(0, 'Batch delete nfs shares successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_client_in_nfs_share(params):
+    response = {}
+    try:
+        path, = handler.request(params, path=str)
+        data = database.get_client_in_nfs_share(path)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_client_in_nfs_share(params):
+    response = {}
+    try:
+        ips, path, permission, permissionConstraint, rootPermissionConstraint, client_type, writeMode = handler.request(
+            params, type=str, ips=str, permission=str, writeMode=str, permissionConstraint=str, rootPermissionConstraint=str, path=str)
+        ips = ips.split(';')
+        nas_server_list = database.list_nas_server()
+        for ip in ips:
+            server = filter(lambda nas_server: handler.check_root(
+                path, nas_server['path']), nas_server_list)[0]['ip']
+            backend.create_client_in_nfs_share(
+                server, client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+            database.create_client_in_nfs_share(
+                client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+        response = handler.response(
+            0, 'Create client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_client_in_nfs_share(params):
+    response = {}
+    try:
+        ip, path, permission, permissionConstraint, rootPermissionConstraint, client_type, writeMode = handler.request(
+            params, type=str, ip=str, permission=str, writeMode=str, permissionConstraint=str, rootPermissionConstraint=str, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.update_client_in_nfs_share(
+            server, client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+        database.update_client_in_nfs_share(
+            client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+        response = handler.response(
+            0, 'Update client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_client_in_nfs_share(params):
+    response = {}
+    try:
+        ip, path = handler.request(params, ip=str, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.delete_client_in_nfs_share(server, ip, path)
+        database.delete_client_in_nfs_share(ip, path)
+        response = handler.response(
+            0, 'Delete client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
