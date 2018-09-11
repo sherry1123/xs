@@ -191,6 +191,26 @@ def create_nas_server(ip, path):
     return backend_handler(request.post('http://localhost:9090/cluster/nasmanager', {'opt': 'nasAdd', 'nasServerList': [{'clientIp': ip, 'nasRoot': path}]}, get_token()))
 
 
+def get_buddy_group():
+    buddy_groups = backend_handler(request.get(
+        'http://localhost:9090/cluster/listmirrorgroup', {}, get_token())) or []
+
+    def modify_buddy_group_info(buddy_group):
+        group_type = buddy_group['type']
+        group_id = buddy_group['groupId']
+        primary_target = buddy_group['primary']
+        secondary_target = buddy_group['secondary']
+        primary_target = {'targetId': primary_target['targetId'], 'mountPath': primary_target['mountPath'], 'node': primary_target['hostname'], 'service': 'metadata' if primary_target['service'] == 'meta' else primary_target['service'], 'isUsed': primary_target['isUsed'],
+                          'nodeId': primary_target['nodeId'], 'space': {'total': primary_target['totalSpace'], 'used': primary_target['usedSpace'], 'free': primary_target['freeSpace'], 'usage': '%s%%' % round(float(primary_target['usedSpace']) / primary_target['totalSpace'] * 100, 2)}}
+        secondary_target = {'targetId': secondary_target['targetId'], 'mountPath': secondary_target['mountPath'], 'node': secondary_target['hostname'], 'service': 'metadata' if secondary_target['service'] == 'meta' else secondary_target['service'], 'isUsed': secondary_target['isUsed'],
+                            'nodeId': secondary_target['nodeId'], 'space': {'total': secondary_target['totalSpace'], 'used': secondary_target['usedSpace'], 'free': secondary_target['freeSpace'], 'usage': '%s%%' % round(float(secondary_target['usedSpace']) / secondary_target['totalSpace'] * 100, 2)}}
+        return {'type': group_type, 'groupId': group_id, 'primary': primary_target, 'secondary': secondary_target}
+    buddy_groups = map(modify_buddy_group_info, buddy_groups)
+    buddy_groups = sorted(
+        buddy_groups, key=lambda buddy_group: buddy_group['groupId'])
+    return buddy_groups
+
+
 def get_files(path):
     files = backend_handler(request.get(
         'http://localhost:9090/cluster/getdirs', {'dir': path}, get_token())) or []

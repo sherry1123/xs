@@ -779,6 +779,16 @@ def update_nas_server(params):
     return response
 
 
+def get_buddy_group():
+    response = {}
+    try:
+        data = backend.get_buddy_group()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
 def get_files(params):
     response = {}
     try:
@@ -808,6 +818,26 @@ def set_pattern(params):
             params, dirPath=str, numTargets=int, chunkSize=int, buddyMirror=int)
         data = backend.set_pattern(dirPath, numTargets, chunkSize, buddyMirror)
         response = handler.response(0, 'Set pattern successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_event_log():
+    response = {}
+    try:
+        data = []
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_audit_log():
+    response = {}
+    try:
+        data = []
+        response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
