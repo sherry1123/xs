@@ -440,8 +440,10 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        description, mirror_groups, name, targets = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
-        pool_id = backend.create_storage_pool(name, description, targets, mirror_groups)
+        description, mirror_groups, name, targets = handler.request(
+            params, name=str, description=str, targets=list, mirrorGroups=list)
+        pool_id = backend.create_storage_pool(
+            name, description, targets, mirror_groups)
         database.create_storage_pool(pool_id, name, description)
         response = handler.response(0, 'Create storagePool successfully!')
     except Exception as error:
@@ -452,7 +454,8 @@ def create_storage_pool(params):
 def update_storage_pool(params):
     response = {}
     try:
-        description, name, pool_id = handler.request(params, poolId=int, name=str, description=str)
+        description, name, pool_id = handler.request(
+            params, poolId=int, name=str, description=str)
         backend.update_storage_pool_name(pool_id, name)
         database.update_storage_pool_name_and_desc(name, description)
         response = handler.response(0, 'Update storagePool successfully!')
@@ -838,6 +841,171 @@ def get_audit_log():
     try:
         data = []
         response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_local_auth_user(name)
+        else:
+            data = database.list_local_auth_user()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_local_auth_user(params):
+    response = {}
+    try:
+        description, name, password, primaryGroup, secondaryGroup = handler.request(
+            params, name=str, description=str, password=str, primaryGroup=str, secondaryGroup=list)
+        backend.create_local_auth_user(
+            name, description, password, primaryGroup, secondaryGroup)
+        database.create_local_auth_user(
+            name, description, password, primaryGroup, secondaryGroup)
+        response = handler.response(0, 'Create local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_local_auth_user(params):
+    response = {}
+    try:
+        changePassword, description, name, primaryGroup = handler.request(
+            params, name=str, description=str, primaryGroup=str, changePassword=bool)
+        backend.update_local_auth_user_desc_and_primary_group(
+            name, description, primaryGroup)
+        database.update_local_auth_user_desc(name, description)
+        database.update_local_auth_user_primary_group(name, primaryGroup)
+        if changePassword:
+            password, = handler.request(params, password=str)
+            backend.update_local_auth_user_passwd(name, password)
+            database.update_local_auth_user_passwd(name, password)
+        response = handler.response(0, 'Update local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_local_auth_user(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        backend.delete_local_auth_user(name)
+        database.delete_local_auth_user(name)
+        response = handler.response(0, 'Delete local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def batch_delete_local_auth_user(params):
+    response = {}
+    try:
+        names, = handler.request(params, names=list)
+        for name in names:
+            backend.delete_local_auth_user(name)
+            database.delete_local_auth_user(name)
+        response = handler.response(
+            0, 'Batch delete local auth users successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user_group(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_local_auth_user_group(name)
+        else:
+            data = database.list_local_auth_user_group()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_local_auth_user_group(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        backend.create_local_auth_user_group(name, description)
+        database.create_local_auth_user_group(name, description)
+        response = handler.response(
+            0, 'Create local auth user group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_local_auth_user_group(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=str, description=str)
+        backend.update_local_auth_user_group(name, description)
+        database.update_local_auth_user_group(name, description)
+        response = handler.response(
+            0, 'Update local auth user group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_local_auth_user_group(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=str)
+        backend.delete_local_auth_user_group(name)
+        database.delete_local_auth_user_group(name)
+        response = handler.response(
+            0, 'Delete local auth user group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user_from_group(params):
+    response = {}
+    try:
+        groupName, = handler.request(params, groupName=str)
+        data = database.get_local_auth_user_from_group(groupName)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_local_auth_user_to_group(params):
+    response = {}
+    try:
+        groupName, names = handler.request(params, names=list, groupName=str)
+        for name in names:
+            backend.add_local_auth_user_to_group(name, groupName)
+            database.add_local_auth_user_to_group(name, groupName)
+        response = handler.response(
+            0, 'Add local auth user to group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def remove_local_auth_user_from_group(params):
+    response = {}
+    try:
+        groupName, name = handler.request(params, name=str, groupName=str)
+        backend.remove_local_auth_user_from_group(name, groupName)
+        database.remove_local_auth_user_from_group(name, groupName)
+        response = handler.response(
+            0, 'Remove local auth user from group successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

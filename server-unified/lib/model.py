@@ -62,3 +62,16 @@ class NasServer(Document):
     nas_server_ip = StringField(required=True)
     nas_server_path = StringField()
     nas_server_desc = StringField()
+
+
+class LocalAuthUser(Document):
+    user_name = StringField(required=True)
+    user_desc = StringField()
+    user_passwd = StringField()
+    user_primary_group = StringField()
+    user_secondary_group = ListField()
+
+
+class LocalAuthUserGroup(Document):
+    user_group_name = StringField(required=True)
+    user_group_desc = StringField()
