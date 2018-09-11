@@ -81,7 +81,7 @@ class StoragePool extends Component {
 	}
 
 	buddygroup (storagePool){
-		this.buddyMirrorWrapper.getWrappedInstance().show(storagePool);
+		this.buddyGroupWrapper.getWrappedInstance().show(storagePool);
 	}
 
 	check (storagePool){
@@ -192,7 +192,7 @@ class StoragePool extends Component {
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
 				<StoragePoolTarget ref={ref => this.storagePoolTargetWrapper = ref} />
-				<BuddyMirror ref={ref => this.buddyMirrorWrapper = ref} />
+				<BuddyGroup ref={ref => this.buddyGroupWrapper = ref} />
 			</div>
         );
     }
