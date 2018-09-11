@@ -92,7 +92,7 @@ class StoragePool extends Component {
         let {storagePoolList} = this.state;
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
-		let storagePooHandling = storagePoolList.some(storagepool => storagepool.creating || storagepool.deleting || storagepool.buddymirror);
+		let storagePooHandling = storagePoolList.some(storagepool => storagepool.creating || storagepool.deleting );
         let tableProps = {
             size: 'default',
             dataSource: storagePoolList,
@@ -118,7 +118,7 @@ class StoragePool extends Component {
 				{
 					title: lang('操作', 'Operations'), width: 80,
 					render: (text, record, index) => {
-						return (!record.creating && !record.deleting && !record.buddymirror) ?
+						return (!record.creating && !record.deleting ) ?
 							<div>
 								<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
 									<Button
