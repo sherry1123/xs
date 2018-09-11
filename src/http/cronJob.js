@@ -94,6 +94,9 @@ const fetchDataPer15s = () => {
 // get current system and login status
 const isInitialized = ckGet('init');
 const isLogin = ckGet('login');
+const isDeInit = ckGet('deinit');
+const isReInit = ckGet('reinit');
+const isRollingBack = ckGet('rollbacking');
 
 if (isInitialized === 'true'){
     // request every 15 seconds
@@ -102,7 +105,7 @@ if (isInitialized === 'true'){
     }, null, true);
 
     // request immediately
-    if (isLogin === 'true'){
+    if (isLogin === 'true' && isDeInit !== 'true' && isReInit !== 'true' && isRollingBack !== 'true'){
         // for target, service and client pages, them need the services and client in cluster immediately
         httpRequests.getClusterServiceAndClientIPs();
     }
