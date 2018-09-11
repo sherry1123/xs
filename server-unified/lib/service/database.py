@@ -2,10 +2,10 @@ import json
 
 from mongoengine import connect
 
-from lib.model import (ClusterThroughputAndIops, LocalAuthUser,
-                       LocalAuthUserGroup, NasServer, NodeCpuAndMemory,
-                       NodeThroughputAndIops, Setting, Snapshot,
-                       SnapshotSchedule, StoragePool, User)
+from lib.model import (CifsShare, ClusterThroughputAndIops, LocalAuthUser,
+                       LocalAuthUserGroup, NasServer, NfsShare,
+                       NodeCpuAndMemory, NodeThroughputAndIops, Setting,
+                       Snapshot, SnapshotSchedule, StoragePool, User)
 from lib.module import handler
 
 
@@ -568,3 +568,108 @@ def remove_local_auth_user_from_group(name, group_name):
         update_local_auth_user_secondary_group(name, secondary_group)
     else:
         raise DatabaseError('No such local auth user group!')
+
+
+def list_nfs_share():
+    shares = []
+    for share in NfsShare.objects.order_by('path'):
+        shares.append({'path': share.share_path, 'description': share.share_desc,
+                       'clientList': share.share_client_list})
+    return shares
+
+
+def get_nfs_share(path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        return {'path': share.share_path, 'description': share.share_desc, 'clientList': share.share_client_list}
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def create_nfs_share(path, desc, client_list):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        raise DatabaseError('Nfs share already exists!')
+    else:
+        NfsShare(share_path=path, share_desc=desc,
+                 share_client_list=client_list).save()
+
+
+def update_nfs_share_desc(path, desc):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        share.update(set__share_desc=desc)
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def update_nfs_share_client_list(path, client_list):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        share.update(set__share_client_list=client_list)
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def delete_nfs_share(path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        share.delete()
+    else:
+        raise DatabaseError('No such nfs share user!')
+
+
+def get_client_in_nfs_share(path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        return share.share_client_list
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def create_client_in_nfs_share(client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        client_list = get_client_in_nfs_share(path)
+        client_ip_list = map(lambda client: client['ip'], client_list)
+        if ip in client_ip_list:
+            raise DatabaseError('Client already exists!')
+        else:
+            client_list.append({'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode,
+                                'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint})
+        update_nfs_share_client_list(path, client_list)
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def update_client_in_nfs_share(client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        client_list = get_client_in_nfs_share(path)
+        client_ip_list = map(lambda client: client['ip'], client_list)
+
+        def create_new_client():
+            return {'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode, 'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint}
+        if ip in client_ip_list:
+            client_list = map(
+                lambda client: client if client['ip'] != ip else create_new_client(), client_list)
+            update_nfs_share_client_list(path, client_list)
+        else:
+            raise DatabaseError('No such client share!')
+    else:
+        raise DatabaseError('No such nfs share!')
+
+
+def delete_client_in_nfs_share(ip, path):
+    share = NfsShare.objects(share_path=path).first()
+    if share:
+        client_list = get_client_in_nfs_share(path)
+        client_ip_list = map(lambda client: client['ip'], client_list)
+        if ip in client_ip_list:
+            client_list = filter(
+                lambda client: client['ip'] != ip, client_list)
+            update_nfs_share_client_list(path, client_list)
+        else:
+            raise DatabaseError('No such client share!')
+    else:
+        raise DatabaseError('No such nfs share user!')

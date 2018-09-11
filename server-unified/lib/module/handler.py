@@ -113,3 +113,7 @@ def start_time():
 
 def iso2stamp(iso):
     return int(time.mktime(dateutil.parser.parse(iso).timetuple()))
+
+
+def check_root(path, root):
+    return path.split('/')[1] == root.split('/')[1]

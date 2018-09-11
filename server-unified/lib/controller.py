@@ -1009,3 +1009,146 @@ def remove_local_auth_user_from_group(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_nfs_share(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            path, = handler.request(params, path=str)
+            data = database.get_nfs_share(path)
+        else:
+            data = database.list_nfs_share()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_nfs_share(params):
+    response = {}
+    try:
+        clientList, description, path = handler.request(
+            params, path=str, description=str, clientList=list)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.create_nfs_share(server, path, description, clientList)
+        database.create_nfs_share(path, description, clientList)
+        response = handler.response(0, 'Create nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_nfs_share(params):
+    response = {}
+    try:
+        description, path = handler.request(params, path=str, description=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.update_nfs_share(server, path, description)
+        database.update_nfs_share_desc(path, description)
+        response = handler.response(0, 'Update local auth user successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_nfs_share(params):
+    response = {}
+    try:
+        path, = handler.request(params, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.delete_nfs_share(server, path)
+        database.delete_nfs_share(path)
+        response = handler.response(0, 'Delete nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def batch_delete_nfs_share(params):
+    response = {}
+    try:
+        paths, = handler.request(params, paths=list)
+        nas_server_list = database.list_nas_server()
+        for path in paths:
+            server = filter(lambda nas_server: handler.check_root(
+                path, nas_server['path']), nas_server_list)[0]['ip']
+            backend.delete_nfs_share(server, path)
+            database.delete_nfs_share(path)
+        response = handler.response(0, 'Batch delete nfs shares successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_client_in_nfs_share(params):
+    response = {}
+    try:
+        path, = handler.request(params, path=str)
+        data = database.get_client_in_nfs_share(path)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_client_in_nfs_share(params):
+    response = {}
+    try:
+        ips, path, permission, permissionConstraint, rootPermissionConstraint, client_type, writeMode = handler.request(
+            params, type=str, ips=str, permission=str, writeMode=str, permissionConstraint=str, rootPermissionConstraint=str, path=str)
+        ips = ips.split(';')
+        nas_server_list = database.list_nas_server()
+        for ip in ips:
+            server = filter(lambda nas_server: handler.check_root(
+                path, nas_server['path']), nas_server_list)[0]['ip']
+            backend.create_client_in_nfs_share(
+                server, client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+            database.create_client_in_nfs_share(
+                client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+        response = handler.response(
+            0, 'Create client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_client_in_nfs_share(params):
+    response = {}
+    try:
+        ip, path, permission, permissionConstraint, rootPermissionConstraint, client_type, writeMode = handler.request(
+            params, type=str, ip=str, permission=str, writeMode=str, permissionConstraint=str, rootPermissionConstraint=str, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.update_client_in_nfs_share(
+            server, client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+        database.update_client_in_nfs_share(
+            client_type, ip, permission, writeMode, permissionConstraint, rootPermissionConstraint, path)
+        response = handler.response(
+            0, 'Update client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_client_in_nfs_share(params):
+    response = {}
+    try:
+        ip, path = handler.request(params, ip=str, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.delete_client_in_nfs_share(server, ip, path)
+        database.delete_client_in_nfs_share(ip, path)
+        response = handler.response(
+            0, 'Delete client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

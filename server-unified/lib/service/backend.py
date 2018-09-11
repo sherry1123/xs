@@ -265,3 +265,27 @@ def add_local_auth_user_to_group(name, group):
 
 def remove_local_auth_user_from_group(name, group):
     return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'localgroupremoveuser', 'userInfo': {'localUserList': [{'userName': name, 'secondaryGroup': [group]}]}}, get_token()))
+
+
+def create_nfs_share(server, path, description, client_list):
+    return backend_handler(request.post('http://localhost:9090/cluster/addshareinfo', {'server': server, 'path': path, 'description': description, 'clientList': client_list}, get_token()))
+
+
+def update_nfs_share(server, path, description):
+    return backend_handler(request.post('http://localhost:9090/cluster/nfsmodifyshare', {'server': server, 'path': path, 'description': description}, get_token()))
+
+
+def delete_nfs_share(server, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nfsdeleteshare', {'shareList': [{'server': server, 'path': path}]}, get_token()))
+
+
+def create_client_in_nfs_share(server, client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/addclientinfo', {'server': server, 'path': path, 'clientList': [{'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode, 'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint}]}, get_token()))
+
+
+def update_client_in_nfs_share(server, client_type, ip, permission, write_mode, permission_constraint, root_permission_constraint, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/modifyclientinfo', {'server': server, 'path': path, 'clientList': [{'type': client_type, 'ip': ip, 'permission': permission, 'writeMode': write_mode, 'permissionConstraint': permission_constraint, 'rootPermissionConstraint': root_permission_constraint}]}, get_token()))
+
+
+def delete_client_in_nfs_share(server, ip, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nfsdeleteclient', {'server': server, 'path': path, 'clientList': [ip]}, get_token()))
