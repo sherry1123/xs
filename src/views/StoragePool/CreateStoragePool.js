@@ -17,13 +17,13 @@ class CreateStoragePool extends Component {
                 name: '',
 				description: '',
 				targets: [],
-				buddymirrors:[]
+				buddygroups:[]
             },
             validation: {
                 name: {status: '', help: '', valid: false},
 				description: {status: '', help: '', valid: false},
 				targets: {status: '', help: '', valid: false},
-				buddymirrors: {status: '', help: '', valid: false}
+				buddygroups: {status: '', help: '', valid: false}
             }
         };
     }
@@ -91,8 +91,8 @@ class CreateStoragePool extends Component {
 		if (this.state.storagePoolData.targets){
 			this.validationUpdateState('targets', {cn: '请选择存储目标', en: 'please choose storage target(s)'}, false);
 		}
-		if (this.state.storagePoolData.buddymirrors){
-			this.validationUpdateState('buddymirrors', {cn: '请选择伙伴组镜像', en: 'please choose buddy mirror(s)'}, false);
+		if (this.state.storagePoolData.buddygroups){
+			this.validationUpdateState('buddygroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy mirror(s)'}, false);
 		}
 		// calculate whole form validation
 		let formValid = true;
@@ -110,13 +110,13 @@ class CreateStoragePool extends Component {
 				name: '',
 				description: '',
 				targets: [],
-				buddymirrors:[]
+				buddygroups:[]
 			},
 			validation: {
 				name: {status: '', help: '', valid: false},
 				description: {status: '', help: '', valid: false},
 				targets: {status: '', help: '', valid: false},
-				buddymirrors: {status: '', help: '', valid: false}
+				buddygroups: {status: '', help: '', valid: false}
 			}
         });
     }

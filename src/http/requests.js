@@ -232,25 +232,24 @@ export default  {
     },
 
     async getTargetsByStoragePoolId (poolId){
-        // '/api/gettargetsinstoragepool'
-
+        // '/api/gettargetsbystoragepool'
+		await fetchPost('/api/getTargetsByStoragePoolId', poolId);
     },
 
     async getBudyGroupsByStoragePoolId (poolId){
-        // '/api/getbuddygroupsinstoragepool'
-
+        // '/api/getbuddygroupsbystoragepool'
+		await fetchPost('/api/getBudyGroupsByStoragePoolId', poolId);
     },
 
 	async getTargetsForStoargePool (){
-		// '/api/gettargetsinstoragepool'
-
+		// '/api/gettargetsforstoragepool'
+		await fetchPost('/api/getTargetsForStoargePool');
 	},
 
 	async getBudyGroupsForStoargePool (){
-		// '/api/getbuddygroupsinstoragepool'
-
+		// '/api/getbuddygroupsforstoragepool'
+		await fetchPost('/api/getBudyGroupsForStoargePool');
 	},
-
 
     // service and client
     async createMetadataServiceToCluster (service){

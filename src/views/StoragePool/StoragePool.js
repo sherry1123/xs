@@ -5,7 +5,7 @@ import lang from 'Components/Language/lang';
 import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
 import StoragePoolTarget from './StoragePoolTarget';
-import BuddyMirror from './BuddyMirror';
+import BuddyGroup from './BuddyGroup';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
 class StoragePool extends Component {
@@ -80,7 +80,7 @@ class StoragePool extends Component {
 		});
 	}
 
-	buddymirror (storagePool){
+	buddygroup (storagePool){
 		this.buddyMirrorWrapper.getWrappedInstance().show(storagePool);
 	}
 
@@ -138,11 +138,11 @@ class StoragePool extends Component {
 									>
 									</Button>
 								</Popover>
-								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Mirror')}>
+								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
 									<Button
 										{...buttonConf}
 										disabled={storagePooHandling}
-										onClick={this.buddymirror.bind(this, record, index)}
+										onClick={this.buddygroup.bind(this, record, index)}
 										icon="copy"
 									>
 									</Button>
