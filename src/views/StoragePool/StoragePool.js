@@ -5,7 +5,7 @@ import lang from 'Components/Language/lang';
 import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
 import StoragePoolTarget from './StoragePoolTarget';
-import BuddyMirror from './BuddyMirror';
+import BuddyGroup from './BuddyGroup';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
 class StoragePool extends Component {
@@ -80,8 +80,8 @@ class StoragePool extends Component {
 		});
 	}
 
-	buddymirror (storagePool){
-		this.buddyMirrorWrapper.getWrappedInstance().show(storagePool);
+	showBuddyGroup (storagePool){
+		this.buddyGroupWrapper.getWrappedInstance().show(storagePool);
 	}
 
 	check (storagePool){
@@ -92,7 +92,6 @@ class StoragePool extends Component {
         let {storagePoolList} = this.state;
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
-		let storagePooHandling = storagePoolList.some(storagepool => storagepool.creating || storagepool.deleting || storagepool.buddymirror);
         let tableProps = {
             size: 'default',
             dataSource: storagePoolList,
@@ -118,12 +117,11 @@ class StoragePool extends Component {
 				{
 					title: lang('操作', 'Operations'), width: 80,
 					render: (text, record, index) => {
-						return (!record.creating && !record.deleting && !record.buddymirror) ?
+						return (!record.creating && !record.deleting ) ?
 							<div>
 								<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
 									<Button
 										{...buttonConf}
-										disabled={storagePooHandling}
 										onClick={this.edit.bind(this, record)}
 										icon="edit"
 									>
@@ -132,17 +130,15 @@ class StoragePool extends Component {
 								<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
 									<Button
 										{...buttonConf}
-										disabled={storagePooHandling}
 										onClick={this.delete.bind(this, record, index)}
 										icon="delete"
 									>
 									</Button>
 								</Popover>
-								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Mirror')}>
+								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
 									<Button
 										{...buttonConf}
-										disabled={storagePooHandling}
-										onClick={this.buddymirror.bind(this, record, index)}
+										onClick={this.showBuddyGroup.bind(this, record, index)}
 										icon="copy"
 									>
 									</Button>
@@ -192,7 +188,7 @@ class StoragePool extends Component {
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
 				<StoragePoolTarget ref={ref => this.storagePoolTargetWrapper = ref} />
-				<BuddyMirror ref={ref => this.buddyMirrorWrapper = ref} />
+				<BuddyGroup ref={ref => this.buddyGroupWrapper = ref} />
 			</div>
         );
     }

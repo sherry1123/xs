@@ -33,6 +33,11 @@ const fetchDataPer15s = () => {
         httpRequests.getPhysicalNodeIOPS();
     }
 
+    //storage pool
+	if (routerHash.match(main + routerPath.StoragePool)){
+		httpRequests.getStoragePoolList();
+	}
+
     // snapshot
     if (routerHash.match(main + routerPath.Snapshot)){
         httpRequests.getSnapshotList();
@@ -80,7 +85,7 @@ const fetchDataPer15s = () => {
     }
 
     // system log
-    if (routerHash.match(main + routerPath.ManagementSystemLog)){
+    if (routerHash.match(main + routerPath.SystemLog)){
         httpRequests.getEventLogs();
         httpRequests.getAuditLogs();
     }
