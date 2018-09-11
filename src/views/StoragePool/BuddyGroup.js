@@ -7,12 +7,12 @@ import httpRequests from 'Http/requests';
 class StoragePoolTarget extends Component {
 	constructor (props){
 		super(props);
-		let {BuddyMirrorList} = this.props;
+		let {BuddyGroupList} = this.props;
 		this.state = {
 			visible: false,
 			// table
-			BuddyMirrorList,
-			targetListBackup: BuddyMirrorList,
+			BuddyGroupList,
+			targetListBackup: BuddyGroupList,
 		};
 	}
 
@@ -33,18 +33,18 @@ class StoragePoolTarget extends Component {
 	}
 
 	render (){
-		let {BuddyMirrorList} = this.state;
+		let {BuddyGroupList} = this.state;
 		let tableProps = {
 			size: 'normal',
-			dataSource: BuddyMirrorList,
+			dataSource: BuddyGroupList,
 			rowKey: record => `${record.targetId}-${record.service}`,
 			locale: {
-				emptyText: lang('暂无伙伴组镜像', 'No Buddy Mirror')
+				emptyText: lang('暂无伙伴组镜像', 'No Buddy Group')
 			},
 			title: () => (<span className="fs-table-title"><Icon type="desktop" />{lang(`存储池的伙伴组镜像的信息`, '')}</span>),
 			rowClassName: () => 'ellipsis',
 			columns: [
-				{title: lang('伙伴组镜像 ID', 'Buddy Mirror ID'), width: 150, dataIndex: 'buddymirrorid',},
+				{title: lang('伙伴组镜像 ID', 'Buddy Group ID'), width: 150, dataIndex: 'buddygroupid',},
 				{title: lang('路径', 'Path'), width: 200, dataIndex: 'mountPath',},
 				{title: lang('容量', 'Capacity'), width: 100, dataIndex: 'space'},
 				{title: lang('操作', 'Operations'), width: 150, dataIndex: 'Operations'}

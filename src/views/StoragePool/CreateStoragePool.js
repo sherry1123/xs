@@ -92,7 +92,7 @@ class CreateStoragePool extends Component {
 			this.validationUpdateState('targets', {cn: '请选择存储目标', en: 'please choose storage target(s)'}, false);
 		}
 		if (this.state.storagePoolData.buddygroups){
-			this.validationUpdateState('buddygroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy mirror(s)'}, false);
+			this.validationUpdateState('buddygroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy group(s)'}, false);
 		}
 		// calculate whole form validation
 		let formValid = true;
@@ -207,24 +207,24 @@ class CreateStoragePool extends Component {
 					</Form.Item>
 					<Form.Item
 						{...formItemLayout}
-						label={lang('伙伴组镜像', 'Buddy Mirror')}
+						label={lang('伙伴组镜像', 'Buddy Group')}
 					>
 						<Select
 							mode="multiple"
 							style={{width: '100%'}}
-							placeholder={lang('请选择伙伴组镜像', 'please select buddy mirror(s)')}
+							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
 							optionLabelProp="value"
-							value={this.state.storagePoolData.buddymirrors}
+							value={this.state.storagePoolData.buddygroups}
 							onChange={(value, option) => {
-								this.formValueChange.bind(this, 'buddymirrors')(value);
+								this.formValueChange.bind(this, 'buddygroups')(value);
 							}}
 						>
-							<Select.Option value='buddymirror_1'>buddymirror_1 /dev/xxx 500GB</Select.Option>
-							<Select.Option value='buddymirror_2'>buddymirror_2 /dev/yyy 500GB</Select.Option>
-							<Select.Option value='buddymirror_3'>buddymirror_3 /dev/zzz 500GB</Select.Option>
-							<Select.Option value='buddymirror_4'>buddymirror_4 /dev/ttt 500GB</Select.Option>
-							<Select.Option value='buddymirror_5'>buddymirror_5 /dev/eee 500GB</Select.Option>
-							<Select.Option value='buddymirror_6'>buddymirror_6 /dev/hhh 500GB</Select.Option>
+							<Select.Option value='buddygroup_1'>buddygroup_1 /dev/xxx 500GB</Select.Option>
+							<Select.Option value='buddygroup_2'>buddygroup_2 /dev/yyy 500GB</Select.Option>
+							<Select.Option value='buddygroup_3'>buddygroup_3 /dev/zzz 500GB</Select.Option>
+							<Select.Option value='buddygroup_4'>buddygroup_4 /dev/ttt 500GB</Select.Option>
+							<Select.Option value='buddygroup_5'>buddygroup_5 /dev/eee 500GB</Select.Option>
+							<Select.Option value='buddygroup_6'>buddygroup_6 /dev/hhh 500GB</Select.Option>
 						</Select>
 					</Form.Item>
 					<Form.Item
