@@ -151,9 +151,12 @@ def delete_storage_pool(pool_id):
 
 def get_targets_in_storage_pool(pool_id=None):
     param = {'poolId': pool_id} if pool_id is not None else {}
-    data = backend_handler(request.get('http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
+    data = backend_handler(request.get(
+        'http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
+
     def revise_capacity(item):
-        item['capacity'] = int(handler.to_byte(float(handler.replace('\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
+        item['capacity'] = int(handler.to_byte(float(handler.replace(
+            '\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
         return item
     data = map(revise_capacity, data['poolInfoList'])
     return data
@@ -161,12 +164,16 @@ def get_targets_in_storage_pool(pool_id=None):
 
 def get_buddy_groups_in_storage_pool(pool_id=None):
     param = {'poolId': pool_id} if pool_id is not None else {}
-    data = backend_handler(request.get('http://localhost:9090/cluster/getgroupsinfo', param, get_token()))
+    data = backend_handler(request.get(
+        'http://localhost:9090/cluster/getgroupsinfo', param, get_token()))
+
     def revise_capacity(item):
-        item['capacity'] = int(handler.to_byte(float(handler.replace('\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
+        item['capacity'] = int(handler.to_byte(float(handler.replace(
+            '\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
         return item
     data = map(revise_capacity, data['poolInfoList'])
     return data
+
 
 def update_snapshot_setting(total, manual, auto):
     return backend_handler(request.post('http://localhost:9090/cluster/applysnapconf', {'total': total, 'manual': manual, 'schedule': auto}, get_token()))
@@ -298,3 +305,28 @@ def update_client_in_nfs_share(server, client_type, ip, permission, write_mode, 
 
 def delete_client_in_nfs_share(server, ip, path):
     return backend_handler(request.post('http://localhost:9090/cluster/nfsdeleteclient', {'server': server, 'path': path, 'clientList': [ip]}, get_token()))
+
+
+def create_cifs_share(server, share_name, path, desc, oplock, notify, offline_cache_mode):
+    return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifsaddshare', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'path': path, 'name': share_name, 'desc': desc, 'oplock': oplock, 'notify': notify, 'cacheMode': offline_cache_mode}]}}, get_token()))
+
+
+def update_cifs_share(server, share_name, desc, oplock, notify, offline_cache_mode):
+    return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifschangeshare', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'desc': desc, 'oplock': oplock, 'notify': notify, 'cacheMode': offline_cache_mode}]}}, get_token()))
+
+
+def delete_cifs_share(server, share_name):
+    return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifsdeleteshare', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name}]}}, get_token()))
+
+
+def add_user_or_group_to_cifs_share(server, share_name, user_or_group_list):
+    print({'opt': 'cifsaddclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': map(lambda user_or_group: {'name': user_or_group['name'], 'clientType': user_or_group['type'], 'permission': user_or_group['permission']}, user_or_group_list)}]}})
+    return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifsaddclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': map(lambda user_or_group: {'name': user_or_group['name'], 'clientType': user_or_group['type'], 'permission': user_or_group['permission']}, user_or_group_list)}]}}, get_token()))
+
+
+def update_user_or_group_in_cifs_share(server, share_name, name, user_or_group_type, permission):
+    return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifschangeclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': [{'name': name, 'clientType': user_or_group_type, 'permission': permission}]}]}}, get_token()))
+
+
+def remove_user_or_group_from_cifs_share(server, share_name, name, user_or_group_type):
+    return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifsdeleteclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': [{'name': name, 'clientType': user_or_group_type}]}]}}, get_token()))

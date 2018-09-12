@@ -1049,7 +1049,7 @@ def update_nfs_share(params):
             path, nas_server['path']), nas_server_list)[0]['ip']
         backend.update_nfs_share(server, path, description)
         database.update_nfs_share_desc(path, description)
-        response = handler.response(0, 'Update local auth user successfully!')
+        response = handler.response(0, 'Update nfs share successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -1148,6 +1148,157 @@ def delete_client_in_nfs_share(params):
         database.delete_client_in_nfs_share(ip, path)
         response = handler.response(
             0, 'Delete client in nfs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_cifs_share(params):
+    response = {}
+    try:
+        if params is not None and len(dict.keys(params)):
+            name, = handler.request(params, name=str)
+            data = database.get_cifs_share(name)
+        else:
+            data = database.list_cifs_share()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_cifs_share(params):
+    response = {}
+    try:
+        description, name, notify, offlineCacheMode, oplock, path, userOrGroupList = handler.request(
+            params, name=str, path=str, description=str, oplock=bool, notify=bool, offlineCacheMode=str, userOrGroupList=list)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.create_cifs_share(
+            server, name, path, description, oplock, notify, offlineCacheMode)
+        database.create_cifs_share(
+            name, path, description, oplock, notify, offlineCacheMode)
+        backend.add_user_or_group_to_cifs_share(server, name, userOrGroupList)
+        database.update_cifs_share_user_or_group_list(name, userOrGroupList)
+        response = handler.response(0, 'Create cifs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_cifs_share(params):
+    response = {}
+    try:
+        description, name, notify, offlineCacheMode, oplock, path = handler.request(
+            params, name=str, path=str, description=str, oplock=bool, notify=bool, offlineCacheMode=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.update_cifs_share(
+            server, name, description, oplock, notify, offlineCacheMode)
+        database.update_cifs_share_desc_and_permission(
+            name, description, oplock, notify, offlineCacheMode)
+        response = handler.response(0, 'Update cifs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_cifs_share(params):
+    response = {}
+    try:
+        name, path = handler.request(params, name=str, path=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            path, nas_server['path']), nas_server_list)[0]['ip']
+        backend.delete_cifs_share(server, name)
+        database.delete_cifs_share(name)
+        response = handler.response(0, 'Delete cifs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def batch_delete_cifs_share(params):
+    response = {}
+    try:
+        shares, = handler.request(params, shares=list)
+        nas_server_list = database.list_nas_server()
+        for share in shares:
+            server = filter(lambda nas_server: handler.check_root(
+                share['path'], nas_server['path']), nas_server_list)[0]['ip']
+            backend.delete_nfs_share(server, share['name'])
+            database.delete_cifs_share(share['name'])
+        response = handler.response(
+            0, 'Batch delete cifs shares successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_user_or_group_from_cifs_share(params):
+    response = {}
+    try:
+        shareName, = handler.request(params, shareName=str)
+        data = database.get_user_or_group_from_cifs_share(shareName)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_user_or_group_to_cifs_share(params):
+    response = {}
+    try:
+        items, shareName, sharePath = handler.request(
+            params, items=list, shareName=str, sharePath=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            sharePath, nas_server['path']), nas_server_list)[0]['ip']
+        backend.add_user_or_group_to_cifs_share(server, shareName, items)
+        for item in items:
+            database.add_user_or_group_to_cifs_share(shareName, item)
+        response = handler.response(
+            0, 'Add user or group to cifs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_user_or_group_in_cifs_share(params):
+    response = {}
+    try:
+        name, permission, shareName, sharePath, user_or_group_type = handler.request(
+            params, name=str, type=str, permission=str, shareName=str, sharePath=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            sharePath, nas_server['path']), nas_server_list)[0]['ip']
+        backend.update_user_or_group_in_cifs_share(
+            server, shareName, name, user_or_group_type, permission)
+        database.update_user_or_group_in_cifs_share(
+            shareName, name, user_or_group_type, permission)
+        response = handler.response(
+            0, 'Update user or group in cifs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def remove_user_or_group_from_cifs_share(params):
+    response = {}
+    try:
+        name, shareName, sharePath, user_or_group_type = handler.request(
+            params, name=str, type=str, shareName=str, sharePath=str)
+        nas_server_list = database.list_nas_server()
+        server = filter(lambda nas_server: handler.check_root(
+            sharePath, nas_server['path']), nas_server_list)[0]['ip']
+        backend.remove_user_or_group_from_cifs_share(
+            server, shareName, name, user_or_group_type)
+        database.remove_user_or_group_from_cifs_share(
+            shareName, name, user_or_group_type)
+        response = handler.response(
+            0, 'Remove user or group from cifs share successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

@@ -88,6 +88,6 @@ class CifsShare(Document):
     share_path = StringField()
     share_desc = StringField()
     share_oplock = BooleanField()
-    share_nitify = BooleanField()
+    share_notify = BooleanField()
     share_offline_cache_mode = StringField()
     share_user_or_group_list = ListField()
