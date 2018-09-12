@@ -98,7 +98,7 @@ class Login extends Component {
         if (!usernameStatus && !passwordStatus){
             await this.setState({doingLogin: true});
             password = MD5(password).toString();
-            password = TripleDES.encrypt(password, 'orcadt@xian').toString();
+            // password = TripleDES.encrypt(password, 'orcadt@xian').toString();
             try {
                 let user = await httpRequests.login({username, password});
                 this.props.setUser(user);
