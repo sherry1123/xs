@@ -1,29 +1,27 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Popover, Table, Icon, Modal} from 'antd';
+import {Button, Table, Modal} from 'antd';
 import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
-import {formatStorageSize, getCapacityColour} from '../../services';
+
 
 class StoragePoolTarget extends Component {
 	constructor (props){
 		super(props);
-		let {targetList} = this.props;
+		let {targetsOfStoragePool} = this.props;
 		this.state = {
 			visible: false,
+			poolId: '',
+			poolName: '',
 			// table
-			targetList,
-			targetListBackup: targetList,
+			targetsOfStoragePool,
 		};
 	}
 
-	async componentDidMount (){
-		httpRequests.getTargetList();
-	}
-
-	show (){
+	show ({poolId, name}){
 		this.setState({
 			visible: true,
+			poolId,
+			poolName: name,
 		});
 	}
 
@@ -34,11 +32,11 @@ class StoragePoolTarget extends Component {
 	}
 
 	render (){
-		let {targetList} = this.state;
+		let {targetsOfStoragePool, poolName} = this.state;
 		let tableProps = {
 			size: 'normal',
-			dataSource: targetList,
-			pagination: targetList.length > 12 && {
+			dataSource: targetsOfStoragePool,
+			pagination: targetsOfStoragePool.length > 12 && {
 				pageSize: 12,
 				showTotal: (total, range) => lang(
 					`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
@@ -50,40 +48,27 @@ class StoragePoolTarget extends Component {
 			locale: {
 				emptyText: lang('暂无存储目标', 'No Storage Target')
 			},
-			title: () => (<span className="fs-table-title"><Icon type="desktop" />{lang('存储目标', 'Storage Target')}</span>),
+			title: () => (<div className="fs-modal-table-title-bar">
+				<Button
+					size='small'
+					style={{float: 'right'}}
+					onClick={this.hide.bind(this)}
+				>
+					{lang('添加', 'Add')}
+				</Button>
+			</div>
+			),
 			rowClassName: () => 'ellipsis',
 			columns: [
 				{title: lang('目标', 'Target ID'), width: 100, dataIndex: 'targetId',},
 				{title: lang('挂载路径', 'Mount Path'), width: 220, dataIndex: 'mountPath',},
-				{title: lang('容量', 'Capacity'), width: 170, dataIndex: 'space',
-					render: text =>  text === '--' ? '--' : (
-						<Popover
-							placement="top"
-							trigger='click'
-							content={
-								<div className="fs-target-popover-content">
-									<p>{lang('总容量', 'Total Capacity')}: <span>{formatStorageSize(text.total)}</span></p>
-									<p>{lang('已使用容量', 'Used Capacity')}: <span>{formatStorageSize(text.used)}</span></p>
-									<p>{lang('剩余容量', 'Remaining Capacity')}: <span>{formatStorageSize(text.free)}</span></p>
-									<p>{lang('容量使用率', 'Capacity Usage Rate')}: <span>{text.usage}</span></p>
-								</div>
-							}
-						>
-							<div className="fs-capacity-bar small" style={{width: 100}}>
-								<div
-									className="fs-capacity-used-bar"
-									style={{width: text.usage > '1%' ? text.usage : '1px', background: getCapacityColour(text.usage)}}
-								/>
-							</div>
-							<span className="fs-physical-node-capacity">{formatStorageSize(text.total)}</span>
-						</Popover>
-					)
-				},
+				{title: lang('容量', 'Capacity'), width: 170, dataIndex: 'space'}
 			],
 		};
 		return (
 			<Modal
 				   width={800}
+				   title={lang(`存储池 ${poolName} 的存储目标信息`,`Storage Target of Storage Pool ${poolName}`)}
 				   closable={false}
 				   maskClosable={false}
 				   visible={this.state.visible}
@@ -111,8 +96,8 @@ class StoragePoolTarget extends Component {
 }
 
 const mapStateToProps = state => {
-	const {language, main: { target: {targetList}}} = state;
-	return {language, targetList};
+	const {language, main: { storagePool: {targetsOfStoragePool}}} = state;
+	return {language, targetsOfStoragePool};
 };
 
 const mapDispatchToProps = [];

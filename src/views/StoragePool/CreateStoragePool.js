@@ -3,16 +3,19 @@ import {connect} from 'react-redux';
 import update from 'react-addons-update';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {validateFsName} from '../../services/index';
+import {formatStorageSize, validateFsName} from 'Services';
 import {Button, Modal, message, Form, Input, Select} from 'antd';
 
 class CreateStoragePool extends Component {
     constructor (props){
         super(props);
+		let {targetsForStoragePool, buddyGroupsForStoragePool} = this.props;
         this.state = {
             visible: false,
             formValid: false,
             formSubmitting: false,
+			targetsForStoragePool,
+			buddyGroupsForStoragePool,
             storagePoolData: {
                 name: '',
 				description: '',
@@ -38,8 +41,7 @@ class CreateStoragePool extends Component {
 		this.setState({formSubmitting: true});
 		try {
 			await httpRequests.createStoragePool(storagePoolData);
-			httpRequests.getTargetsForStoargePool();
-			httpRequests.getBudyGroupsForStoargePool();
+			httpRequests.getStoragePoolList();
 			await this.hide();
 			message.success(lang(`开始创建存储池 ${storagePoolData.name}!`, `Start creating storage pool ${storagePoolData.name}!`));
 		} catch ({msg}){
@@ -92,7 +94,7 @@ class CreateStoragePool extends Component {
 			this.validationUpdateState('targets', {cn: '请选择存储目标', en: 'please choose storage target(s)'}, false);
 		}
 		if (this.state.storagePoolData.buddyGroups){
-			this.validationUpdateState('buddygroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy group(s)'}, false);
+			this.validationUpdateState('buddyGroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy group(s)'}, false);
 		}
 		// calculate whole form validation
 		let formValid = true;
@@ -119,6 +121,8 @@ class CreateStoragePool extends Component {
 				buddyGroups: {status: '', help: '', valid: false}
 			}
         });
+        httpRequests.getTargetsOfStoragePoolId();
+		httpRequests.getBuddyGroupsOfStoragePoolId();
     }
 
     async hide (){
@@ -195,14 +199,12 @@ class CreateStoragePool extends Component {
 							value={this.state.storagePoolData.targets}
 							onChange={(value, option) => {
 								this.formValueChange.bind(this, 'targets')(value);
+								console.info(value);
 							}}
 						>
-							<Select.Option value='target_1'>target_1 /dev/xxx 500GB</Select.Option>
-							<Select.Option value='target_2'>target_2 /dev/yyy 500GB</Select.Option>
-							<Select.Option value='target_3'>target_3 /dev/zzz 500GB</Select.Option>
-							<Select.Option value='target_4'>target_4 /dev/ttt 500GB</Select.Option>
-							<Select.Option value='target_5'>target_5 /dev/eee 500GB</Select.Option>
-							<Select.Option value='target_6'>target_6 /dev/hhh 500GB</Select.Option>
+							{
+								this.state.targetsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>{target.id} {target.targetPath} {formatStorageSize(target.capacity)}</Select.Option>)
+							}
 						</Select>
 					</Form.Item>
 					<Form.Item
@@ -217,14 +219,12 @@ class CreateStoragePool extends Component {
 							value={this.state.storagePoolData.buddyGroups}
 							onChange={(value, option) => {
 								this.formValueChange.bind(this, 'buddyGroups')(value);
+								console.info(value);
 							}}
 						>
-							<Select.Option value='buddygroup_1'>buddygroup_1 /dev/xxx 500GB</Select.Option>
-							<Select.Option value='buddygroup_2'>buddygroup_2 /dev/yyy 500GB</Select.Option>
-							<Select.Option value='buddygroup_3'>buddygroup_3 /dev/zzz 500GB</Select.Option>
-							<Select.Option value='buddygroup_4'>buddygroup_4 /dev/ttt 500GB</Select.Option>
-							<Select.Option value='buddygroup_5'>buddygroup_5 /dev/eee 500GB</Select.Option>
-							<Select.Option value='buddygroup_6'>buddygroup_6 /dev/hhh 500GB</Select.Option>
+							{
+								this.state.buddyGroupsForStoragePool.map((group, i) => <Select.Option key={i} value={group.id}>{group.id} {group.targetPath} {formatStorageSize(group.capacity)}</Select.Option>)
+							}
 						</Select>
 					</Form.Item>
 					<Form.Item
@@ -250,8 +250,8 @@ class CreateStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList}}} = state;
-    return {language, storagePoolList};
+    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
+    return {language, storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool};
 };
 
 const mapDispatchToProps = [];

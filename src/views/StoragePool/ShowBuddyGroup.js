@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Table, Modal} from 'antd';
 import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
 
 class StoragePoolTarget extends Component {
 	constructor (props){

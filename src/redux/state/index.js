@@ -136,13 +136,43 @@ export default {
         },
         // storage pool
         storagePool: {
-            storagePoolList: [],
+            storagePoolList: [
+				{poolId: 2, name: 'pool_2', description: 'pool_2 description'},
+				{poolId: 3, name: 'pool_3', description: 'pool_3 description'}
+            ],
             // targets or buddy groups in one storage pool
-            targetsOfStoragePool: [],
-            buddyGroupsOfStoragePool: [],
+            targetsOfStoragePool: [
+				{
+					"capacity": 21474836480,
+					"id": 201,
+					"targetPath": "/data/Orcafs-storage201"
+				},
+
+				{
+					"capacity": 21474836480,
+					"id": 302,
+					"targetPath": "/data/Orcafs-storage302"}
+            ],
+            buddyGroupsOfStoragePool: [
+				{"capacity": 21474836480, "id": 1, "targetPath": "/data/Orcafs-storage101,/data/Orcafs-storage301"}
+            ],
             // for selecting in creation or update operations
-            targetsForStoragePool: [],
-            buddyGroupsForStoragePool: [],
+            targetsForStoragePool: [
+				{
+					"capacity": 21474836480,
+					"id": 201,
+					"targetPath": "/data/Orcafs-storage201"
+				},
+
+				{
+					"capacity": 21474836480,
+					"id": 302,
+					"targetPath": "/data/Orcafs-storage302"}
+
+			],
+            buddyGroupsForStoragePool: [
+				{"capacity": 21474836480, "id": 1, "targetPath": "/data/Orcafs-storage101,/data/Orcafs-storage301"}
+            ],
         },
         // snapshot, timed snapshot schedule and setting
         snapshot: {

@@ -3,8 +3,6 @@ import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {Button, Modal, Form, Input, message} from 'antd';
-import {validateFsName} from "../../services";
-import update from "react-addons-update";
 
 class EditStoragePool extends Component {
     constructor (props){

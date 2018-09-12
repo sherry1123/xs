@@ -21,12 +21,15 @@ class StoragePool extends Component {
     }
 
     componentDidMount (){
-        httpRequests.getStoragePoolList();
+        // httpRequests.getStoragePoolList();
     }
 
     async componentWillReceiveProps (nextProps){
         let {storagePoolList} = nextProps;
-        await this.setState({storagePoolList, storagePoolListBackup: storagePoolList});
+        await this.setState({
+			storagePoolList,
+			storagePoolListBackup: storagePoolList
+        });
         await this.searchInTable(this.state.query, true);
     }
 
@@ -53,7 +56,7 @@ class StoragePool extends Component {
 		this.editStoragePoolWrapper.getWrappedInstance().show(storagePoolData);
 	}
 
-	delete (storagePool){
+	delete (storagePool, index){
 		Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
@@ -68,7 +71,9 @@ class StoragePool extends Component {
 			onOk: async () => {
 				try {
 					await httpRequests.deleteStoragePool(storagePool);
-					httpRequests.getStoragePoolList();
+					let storagePoolList = Object.assign([], this.state.storagePoolList);
+					storagePoolList.splice(index, 1);
+					this.setState({storagePoolList});
 					message.success(lang(`已开始删除存储池 ${storagePool.name}!`, `Start deleting storage pool ${storagePool.name}!`));
 				} catch ({msg}){
 					message.error(lang(`删除快照 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
@@ -81,7 +86,7 @@ class StoragePool extends Component {
 	}
 
 	showBuddyGroup (storagePool){
-		this.showbuddyGroupWrapper.getWrappedInstance().show(storagePool);
+		this.showBuddyGroupWrapper.getWrappedInstance().show(storagePool);
 	}
 
 	showStorageTarget (storagePool){
@@ -110,6 +115,7 @@ class StoragePool extends Component {
             title: () => (<span className="fs-table-title"><Icon type="appstore-o" />{lang('存储池', 'Storage Pool')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
+				{title: lang('Id', ''), width: 150, dataIndex: 'poolId',},
                 {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
 				{title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
 					render: text => text || '--'
@@ -188,7 +194,7 @@ class StoragePool extends Component {
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
 				<StoragePoolTarget ref={ref => this.storagePoolTargetWrapper = ref} />
-				<ShowBuddyGroup ref={ref => this.showbuddyGroupWrapper = ref} />
+				<ShowBuddyGroup ref={ref => this.showBuddyGroupWrapper = ref} />
 			</div>
         );
     }
