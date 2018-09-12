@@ -424,3 +424,48 @@ def update_client_in_nfs_share():
 @app.route('/api/deleteclientinnfsshare', methods=['GET', 'POST'])
 def delete_client_in_nfs_share():
     return jsonify(controller.delete_client_in_nfs_share(request.params))
+
+
+@app.route('/api/getcifsshare', methods=['GET', 'POST'])
+def get_cifs_share():
+    return jsonify(controller.get_cifs_share(request.params))
+
+
+@app.route('/api/createcifsshare', methods=['GET', 'POST'])
+def create_cifs_share():
+    return jsonify(controller.create_cifs_share(request.params))
+
+
+@app.route('/api/updatecifsshare', methods=['GET', 'POST'])
+def update_cifs_share():
+    return jsonify(controller.update_cifs_share(request.params))
+
+
+@app.route('/api/deletecifsshare', methods=['GET', 'POST'])
+def delete_cifs_share():
+    return jsonify(controller.delete_cifs_share(request.params))
+
+
+@app.route('/api/batchdeletecifsshare', methods=['GET', 'POST'])
+def batch_delete_cifs_share():
+    return jsonify(controller.batch_delete_cifs_share(request.params))
+
+
+@app.route('/api/getuserorgroupfromcifsshare', methods=['GET', 'POST'])
+def get_user_or_group_from_cifs_share():
+    return jsonify(controller.get_user_or_group_from_cifs_share(request.params))
+
+
+@app.route('/api/adduserorgrouptocifsshare', methods=['GET', 'POST'])
+def add_user_or_group_to_cifs_share():
+    return jsonify(controller.add_user_or_group_to_cifs_share(request.params))
+
+
+@app.route('/api/updateuserorgroupincifsshare', methods=['GET', 'POST'])
+def update_user_or_group_in_cifs_share():
+    return jsonify(controller.update_user_or_group_in_cifs_share(request.params))
+
+
+@app.route('/api/removeuserorgroupfromcifsshare', methods=['GET', 'POST'])
+def remove_user_or_group_from_cifs_share():
+    return jsonify(controller.remove_user_or_group_from_cifs_share(request.params))
