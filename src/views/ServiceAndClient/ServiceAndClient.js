@@ -74,7 +74,7 @@ class ServiceAndClient extends Component {
                                 {clientIPs.length}
                             </div>
                             <div className="fs-operation-info-item-label">
-                                {lang('客户端', 'Client Service')}
+                                {lang('客户端', 'Client')}
                             </div>
                         </div>
                     </div>

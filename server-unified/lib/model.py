@@ -33,7 +33,7 @@ class NodeThroughputAndIops(Document):
 class StoragePool(Document):
     storage_pool_id = IntField(required=True)
     storage_pool_name = StringField(required=True)
-    storage_pool_description = StringField()
+    storage_pool_description = StringField(max_length=255)
     storage_pool_create_time = StringField()
 
 
