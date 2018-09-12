@@ -35,6 +35,7 @@ class CreateStoragePool extends Component {
 
 	async createStoragePool (){
 		let storagePoolData = Object.assign({}, this.state.storagePoolData);
+		console.info(storagePoolData);
 		this.setState({formSubmitting: true});
 		try {
 			await httpRequests.createStoragePool(storagePoolData);
@@ -119,6 +120,7 @@ class CreateStoragePool extends Component {
 				buddyGroups: {status: '', help: '', valid: false}
 			}
         });
+        httpRequests.getTargetsByStoragePoolId();
     }
 
     async hide (){
@@ -137,7 +139,7 @@ class CreateStoragePool extends Component {
                 sm: {span: isChinese ? 19 : 17},
             }
         };
-
+		let {targetsForStoragePool} = this.props;
         return (
             <Modal
                 title={lang('创建存储池', 'Create Storage Pool')}
@@ -194,15 +196,13 @@ class CreateStoragePool extends Component {
 							optionLabelProp="value"
 							value={this.state.storagePoolData.targets}
 							onChange={(value, option) => {
+								console.info(value);
 								this.formValueChange.bind(this, 'targets')(value);
 							}}
 						>
-							<Select.Option value='target_1'>target_1 /dev/xxx 500GB</Select.Option>
-							<Select.Option value='target_2'>target_2 /dev/yyy 500GB</Select.Option>
-							<Select.Option value='target_3'>target_3 /dev/zzz 500GB</Select.Option>
-							<Select.Option value='target_4'>target_4 /dev/ttt 500GB</Select.Option>
-							<Select.Option value='target_5'>target_5 /dev/eee 500GB</Select.Option>
-							<Select.Option value='target_6'>target_6 /dev/hhh 500GB</Select.Option>
+							{
+								targetsForStoragePool.map(target => <Select.Option value='target_1'>xxxxx</Select.Option>)
+							}
 						</Select>
 					</Form.Item>
 					<Form.Item
@@ -219,6 +219,7 @@ class CreateStoragePool extends Component {
 								this.formValueChange.bind(this, 'buddyGroups')(value);
 							}}
 						>
+
 							<Select.Option value='buddygroup_1'>buddygroup_1 /dev/xxx 500GB</Select.Option>
 							<Select.Option value='buddygroup_2'>buddygroup_2 /dev/yyy 500GB</Select.Option>
 							<Select.Option value='buddygroup_3'>buddygroup_3 /dev/zzz 500GB</Select.Option>
@@ -250,8 +251,8 @@ class CreateStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList}}} = state;
-    return {language, storagePoolList};
+    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool}}} = state;
+    return {language, storagePoolList, targetsForStoragePool};
 };
 
 const mapDispatchToProps = [];

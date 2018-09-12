@@ -232,13 +232,19 @@ export default  {
     },
 
     async getTargetsByStoragePoolId (poolId){
-        // '/api/gettargetsbystoragepool'
-		await fetchPost('/api/getTargetsByStoragePoolId', poolId);
+		requestHandler(async () => {
+            let data = await fetchPost('/api/gettargetsinstoragepool', poolId);
+            console.info(data);
+            if (!!data){
+                !!poolId ?
+                    store.dispatch(storagePoolAction.setTargetsOfStoragePool(data)):
+                    store.dispatch(storagePoolAction.setTargetsForStoragePool(data));
+            }
+        });
     },
 
     async getBudyGroupsByStoragePoolId (poolId){
-        // '/api/getbuddygroupsbystoragepool'
-		await fetchPost('/api/getBudyGroupsByStoragePoolId', poolId);
+		await fetchPost('/api/getbuddygroupsinstoragepool', poolId);
     },
 
 	async getTargetsForStoargePool (){
