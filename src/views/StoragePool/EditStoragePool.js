@@ -21,6 +21,11 @@ class EditStoragePool extends Component {
         };
     }
 
+	formValueChange (key, value){
+		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
+		this.setState({storagePoolData});
+	}
+
     show (storagePoolData){
         this.setState({
             visible: true,
@@ -41,11 +46,6 @@ class EditStoragePool extends Component {
 			message.error(lang(`编辑存储池 ${storagePool.name} 失败, 原因: `, `Edit Storage Pool ${storagePool.name} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
-	}
-
-	formValueChange (key, value){
-		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
-		this.setState({storagePoolData});
 	}
 
     async hide (){

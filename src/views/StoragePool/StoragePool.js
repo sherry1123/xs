@@ -4,7 +4,7 @@ import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
-import StoragePoolTarget from './StoragePoolTarget';
+import ShowStoragePoolTarget from './ShowStoragePoolTarget';
 import ShowBuddyGroup from './ShowBuddyGroup';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
@@ -21,7 +21,7 @@ class StoragePool extends Component {
     }
 
     componentDidMount (){
-        // httpRequests.getStoragePoolList();
+         httpRequests.getStoragePoolList();
     }
 
     async componentWillReceiveProps (nextProps){
@@ -60,7 +60,7 @@ class StoragePool extends Component {
 		Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
-				<p>{lang(`您将要执行删除存储池 ${storagePool.name} 的操作。`, `You are about to delete storage pool ${storagePool.name}.`)}</p>
+				<p>{lang(`您将要执行删除存储池 ${storagePool.name}(ID: ${storagePool.poolId}) 的操作。`, `You are about to delete storage pool ${storagePool.name}(ID: ${storagePool.poolId}).`)}</p>
 				<p>{lang(`该操作将会从系统中移除存储池${storagePool.name}。`, `This operation will delete storage pool ${storagePool.name} from the system. `)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储池，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
 			</div>,
@@ -75,6 +75,7 @@ class StoragePool extends Component {
 					storagePoolList.splice(index, 1);
 					this.setState({storagePoolList});
 					message.success(lang(`已开始删除存储池 ${storagePool.name}!`, `Start deleting storage pool ${storagePool.name}!`));
+					httpRequests.getStoragePoolList();
 				} catch ({msg}){
 					message.error(lang(`删除快照 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
 				}
@@ -90,7 +91,7 @@ class StoragePool extends Component {
 	}
 
 	showStorageTarget (storagePool){
-		this.storagePoolTargetWrapper.getWrappedInstance().show(storagePool);
+		this.showStoragePoolTargetWrapper.getWrappedInstance().show(storagePool);
 	}
 
     render (){
@@ -115,7 +116,7 @@ class StoragePool extends Component {
             title: () => (<span className="fs-table-title"><Icon type="appstore-o" />{lang('存储池', 'Storage Pool')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
-				{title: lang('Id', ''), width: 150, dataIndex: 'poolId',},
+				{title: lang('ID', 'ID'), width: 150, dataIndex: 'poolId',},
                 {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
 				{title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
 					render: text => text || '--'
@@ -132,14 +133,6 @@ class StoragePool extends Component {
 								>
 								</Button>
 							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
-								<Button
-									{...buttonConf}
-									onClick={this.delete.bind(this, record, index)}
-									icon="delete"
-								>
-								</Button>
-							</Popover>
 							<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
 								<Button
 									{...buttonConf}
@@ -153,6 +146,14 @@ class StoragePool extends Component {
 									{...buttonConf}
 									onClick={this.showStorageTarget.bind(this, record, index)}
 									icon="hdd"
+								>
+								</Button>
+							</Popover>
+							<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
+								<Button
+									{...buttonConf}
+									onClick={this.delete.bind(this, record, index)}
+									icon="delete"
 								>
 								</Button>
 							</Popover>
@@ -186,7 +187,7 @@ class StoragePool extends Component {
 				</div>
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
-				<StoragePoolTarget ref={ref => this.storagePoolTargetWrapper = ref} />
+				<ShowStoragePoolTarget ref={ref => this.showStoragePoolTargetWrapper = ref} />
 				<ShowBuddyGroup ref={ref => this.showBuddyGroupWrapper = ref} />
 			</div>
         );
