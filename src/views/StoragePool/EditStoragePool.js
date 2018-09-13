@@ -3,8 +3,6 @@ import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {Button, Modal, Form, Input, message} from 'antd';
-import {validateFsName} from "../../services";
-import update from "react-addons-update";
 
 class EditStoragePool extends Component {
     constructor (props){
@@ -22,6 +20,11 @@ class EditStoragePool extends Component {
             }
         };
     }
+
+	formValueChange (key, value){
+		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
+		this.setState({storagePoolData});
+	}
 
     show (storagePoolData){
         this.setState({
@@ -43,11 +46,6 @@ class EditStoragePool extends Component {
 			message.error(lang(`编辑存储池 ${storagePool.name} 失败, 原因: `, `Edit Storage Pool ${storagePool.name} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
-	}
-
-	formValueChange (key, value){
-		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
-		this.setState({storagePoolData});
 	}
 
     async hide (){

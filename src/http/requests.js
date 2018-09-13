@@ -231,31 +231,29 @@ export default  {
         await fetchPost('/api/deletestoragepool', storagePool)
     },
 
-    async getTargetsByStoragePoolId (poolId){
+    async getTargetsOfStoragePoolId (poolId){
 		requestHandler(async () => {
-            let data = await fetchPost('/api/gettargetsinstoragepool', poolId);
-            console.info(data);
-            if (!!data){
-                !!poolId ?
-                    store.dispatch(storagePoolAction.setTargetsOfStoragePool(data)):
-                    store.dispatch(storagePoolAction.setTargetsForStoragePool(data));
+			let data = await fetchGet('/api/gettargetsinstoragepool');
+			if(!!data)
+			{
+				poolId?
+					store.dispatch(storagePoolAction.setTargetsOfStoragePool(data)):
+					store.dispatch(storagePoolAction.setTargetsForStoragePool(data));
+			}
+		});
+    },
+
+    async getBuddyGroupsOfStoragePoolId (poolId){
+		requestHandler(async () => {
+			let data = await fetchGet('/api/getbuddygroupsinstoragepool');
+			if(!!data)
+            {
+				poolId?
+					store.dispatch(storagePoolAction.setBuddyGroupsOfStoragePool(data)):
+					store.dispatch(storagePoolAction.setBuddyGroupsForStoragePool(data));
             }
-        });
+		});
     },
-
-    async getBudyGroupsByStoragePoolId (poolId){
-		await fetchPost('/api/getbuddygroupsinstoragepool', poolId);
-    },
-
-	async getTargetsForStoargePool (){
-		// '/api/gettargetsforstoragepool'
-		await fetchPost('/api/getTargetsForStoargePool');
-	},
-
-	async getBudyGroupsForStoargePool (){
-		// '/api/getbuddygroupsforstoragepool'
-		await fetchPost('/api/getBudyGroupsForStoargePool');
-	},
 
     // service and client
     async createMetadataServiceToCluster (service){

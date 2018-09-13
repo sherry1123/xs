@@ -3,19 +3,19 @@ import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {Button, Table, Modal, Popover} from 'antd';
-import AddNewTargetForStorage from './AddTargetToStoragePool';
+import AddTargetToStoragePool from './AddTargetToStoragePool';
 import {message} from "antd/lib/index";
 
-class ShowBuddyGroup extends Component {
+class ShowStoragePoolTarget extends Component {
 	constructor (props){
 		super(props);
-		let {buddyGroupsOfStoragePool} = this.props;
+		let {targetsOfStoragePool} = this.props;
 		this.state = {
 			visible: false,
 			poolId: '',
 			poolName: '',
 			// table
-			buddyGroupsOfStoragePool,
+			targetsOfStoragePool,
 		};
 	}
 
@@ -63,17 +63,18 @@ class ShowBuddyGroup extends Component {
 	}
 
 	addNewTarget (storageTarget){
-		this.addNewTargetForStorageWrapper.getWrappedInstance().show(storageTarget);
+		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(storageTarget);
 	}
 
+
 	render (){
-		let {buddyGroupsOfStoragePool, poolName} = this.state;
+		let {targetsOfStoragePool, poolName} = this.state;
 		let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
 		let tableProps = {
 			size: 'normal',
-			dataSource: buddyGroupsOfStoragePool,
-			pagination: buddyGroupsOfStoragePool.length > 12 && {
+			dataSource: targetsOfStoragePool,
+			pagination: targetsOfStoragePool.length > 12 && {
 				pageSize: 12,
 				showTotal: (total, range) => lang(
 					`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
@@ -86,15 +87,15 @@ class ShowBuddyGroup extends Component {
 				emptyText: lang('暂无存储目标', 'No Storage Target')
 			},
 			title: () => (<div className="fs-modal-table-title-bar">
-					<Button
-						size='small'
-						style={{float: 'right'}}
-						onClick={this.addNewTarget.bind(this)}
-					>
-						{lang('添加', 'Add')}
-					</Button>
-					<AddNewTargetForStorage ref={ref => this.addNewTargetForStorageWrapper = ref} />
-				</div>
+				<Button
+					size='small'
+					style={{float: 'right'}}
+					onClick={this.addNewTarget.bind(this)}
+				>
+					{lang('添加', 'Add')}
+				</Button>
+				<AddTargetToStoragePool ref={ref => this.addTargetToStoragePoolWrapper = ref} />
+			</div>
 			),
 			rowClassName: () => 'ellipsis',
 			columns: [
@@ -107,7 +108,7 @@ class ShowBuddyGroup extends Component {
 							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
 								<Button
 									{...buttonConf}
-									//onClick={this.edit.bind(this, record, index)}
+									//onClick={this..bind(this, record, index)}
 									icon="edit"
 								>
 								</Button>
@@ -126,22 +127,22 @@ class ShowBuddyGroup extends Component {
 		};
 		return (
 			<Modal
-				width={800}
-				title={lang(`存储池 ${poolName} 的存储目标信息`,`Storage Target of Storage Pool ${poolName}`)}
-				closable={false}
-				maskClosable={false}
-				visible={this.state.visible}
-				afterClose={this.close}
-				footer={
-					<div>
-						<Button
-							size='small'
-							onClick={this.hide.bind(this)}
-						>
-							{lang('取消', 'Cancel')}
-						</Button>
-					</div>
-				}
+				   width={800}
+				   title={lang(`存储池 ${poolName} 的存储目标信息`,`Storage Target of Storage Pool ${poolName}`)}
+				   closable={false}
+				   maskClosable={false}
+				   visible={this.state.visible}
+				   afterClose={this.close}
+				   footer={
+					   <div>
+						   <Button
+							   size='small'
+							   onClick={this.hide.bind(this)}
+						   >
+							   {lang('取消', 'Cancel')}
+						   </Button>
+					   </div>
+				   }
 			>
 				<div className="fs-page-content">
 					<div className="fs-main-content-wrapper">
@@ -155,8 +156,8 @@ class ShowBuddyGroup extends Component {
 }
 
 const mapStateToProps = state => {
-	const {language, main: { storagePool: {buddyGroupsOfStoragePool}}} = state;
-	return {language, buddyGroupsOfStoragePool};
+	const {language, main: { storagePool: {targetsOfStoragePool}}} = state;
+	return {language, targetsOfStoragePool};
 };
 
 const mapDispatchToProps = [];
@@ -167,4 +168,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(ShowBuddyGroup);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(ShowStoragePoolTarget);

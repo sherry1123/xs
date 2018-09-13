@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import update from 'react-addons-update';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {validateFsName} from '../../services/index';
+import {formatStorageSize, validateFsName} from 'Services';
 import {Button, Modal, message, Form, Input, Select} from 'antd';
 
 class CreateStoragePool extends Component {
@@ -21,9 +20,6 @@ class CreateStoragePool extends Component {
             },
             validation: {
                 name: {status: '', help: '', valid: false},
-				description: {status: '', help: '', valid: false},
-				targets: {status: '', help: '', valid: false},
-				buddyGroups: {status: '', help: '', valid: false}
             }
         };
     }
@@ -33,38 +29,23 @@ class CreateStoragePool extends Component {
 		this.setState({storagePoolData});
 	}
 
-	async createStoragePool (){
-		let storagePoolData = Object.assign({}, this.state.storagePoolData);
-		console.info(storagePoolData);
-		this.setState({formSubmitting: true});
-		try {
-			await httpRequests.createStoragePool(storagePoolData);
-			httpRequests.getTargetsForStoargePool();
-			httpRequests.getBudyGroupsForStoargePool();
-			await this.hide();
-			message.success(lang(`开始创建存储池 ${storagePoolData.name}!`, `Start creating storage pool ${storagePoolData.name}!`));
-		} catch ({msg}){
-			message.error(lang(`存储池 ${storagePoolData.name} 创建失败, 原因: `, `Create storage pool ${storagePoolData.name} failed, reason: `) + msg);
-		}
-		this.setState({formSubmitting: false});
-	}
-
 	async validationUpdateState (key, value, valid){
-		let obj = {validation: {}};
-		obj.validation[key] = {
-			status: {$set: (value.cn || value.en) ? 'error' : ''},
-			help: {$set: lang(value.cn, value.en)},
-			valid: {$set: valid}
+		let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: lang(cn, en),
+				valid
+			}
 		};
-		let newState = update(this.state, obj);
-		await this.setState(Object.assign(this.state, newState));
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
 	}
 
 	async validateForm (key){
-		let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
-		await this.setState({validation});
+		await this.validationUpdateState(key, {cn: '', en: ''}, true);
+		let {name} = this.state.storagePoolData;
 		if (key === 'name'){
-			let {name} = this.state.storagePoolData;
 			if (!name){
 				// no name enter
 				await this.validationUpdateState('name', {
@@ -89,12 +70,7 @@ class CreateStoragePool extends Component {
 			}
 		}
 
-		if (this.state.storagePoolData.targets){
-			this.validationUpdateState('targets', {cn: '请选择存储目标', en: 'please choose storage target(s)'}, false);
-		}
-		if (this.state.storagePoolData.buddyGroups){
-			this.validationUpdateState('buddygroups', {cn: '请选择伙伴组镜像', en: 'please choose buddy group(s)'}, false);
-		}
+
 		// calculate whole form validation
 		let formValid = true;
 		Object.keys(this.state.validation).forEach(key => {
@@ -103,9 +79,24 @@ class CreateStoragePool extends Component {
 		this.setState({formValid});
 	}
 
+	async createStoragePool (){
+		let storagePoolData = Object.assign({}, this.state.storagePoolData);
+		this.setState({formSubmitting: true});
+		try {
+			await httpRequests.createStoragePool(storagePoolData);
+			httpRequests.getStoragePoolList();
+			await this.hide();
+			message.success(lang(`开始创建存储池 ${storagePoolData.name}!`, `Start creating storage pool ${storagePoolData.name}!`));
+		} catch ({msg}){
+			message.error(lang(`存储池 ${storagePoolData.name} 创建失败, 原因: `, `Create storage pool ${storagePoolData.name} failed, reason: `) + msg);
+		}
+		this.setState({formSubmitting: false});
+	}
+
     show (){
         this.setState({
             visible: true,
+			formValid: false,
             formSubmitting: false,
 			storagePoolData: {
 				name: '',
@@ -115,12 +106,10 @@ class CreateStoragePool extends Component {
 			},
 			validation: {
 				name: {status: '', help: '', valid: false},
-				description: {status: '', help: '', valid: false},
-				targets: {status: '', help: '', valid: false},
-				buddyGroups: {status: '', help: '', valid: false}
 			}
         });
-        httpRequests.getTargetsByStoragePoolId();
+        httpRequests.getTargetsOfStoragePoolId();
+		httpRequests.getBuddyGroupsOfStoragePoolId();
     }
 
     async hide (){
@@ -129,6 +118,7 @@ class CreateStoragePool extends Component {
 
     render (){
         let isChinese = this.props.language === 'chinese';
+		let {targetsForStoragePool, buddyGroupsForStoragePool} = this.props;
         let formItemLayout = {
             labelCol: {
                 xs: {span: isChinese ? 5 : 7},
@@ -139,7 +129,6 @@ class CreateStoragePool extends Component {
                 sm: {span: isChinese ? 19 : 17},
             }
         };
-		let {targetsForStoragePool} = this.props;
         return (
             <Modal
                 title={lang('创建存储池', 'Create Storage Pool')}
@@ -159,6 +148,7 @@ class CreateStoragePool extends Component {
                         <Button
                             size="small"
                             type="primary"
+							disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.createStoragePool.bind(this)}
                         >
@@ -190,18 +180,18 @@ class CreateStoragePool extends Component {
 				   		label={lang('存储目标', 'Storage Pool Target')}
 					>
 						<Select
+							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
 							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
 							optionLabelProp="value"
 							value={this.state.storagePoolData.targets}
 							onChange={(value, option) => {
-								console.info(value);
 								this.formValueChange.bind(this, 'targets')(value);
 							}}
 						>
 							{
-								targetsForStoragePool.map(target => <Select.Option value='target_1'>xxxxx</Select.Option>)
+								targetsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>ID: {target.id} {lang('容量', 'Capacity:')} {formatStorageSize(target.capacity)} {lang('路径:', 'Path:')} {target.targetPath} </Select.Option>)
 							}
 						</Select>
 					</Form.Item>
@@ -210,6 +200,7 @@ class CreateStoragePool extends Component {
 						label={lang('伙伴组镜像', 'Buddy Group')}
 					>
 						<Select
+							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
 							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
@@ -219,13 +210,9 @@ class CreateStoragePool extends Component {
 								this.formValueChange.bind(this, 'buddyGroups')(value);
 							}}
 						>
-
-							<Select.Option value='buddygroup_1'>buddygroup_1 /dev/xxx 500GB</Select.Option>
-							<Select.Option value='buddygroup_2'>buddygroup_2 /dev/yyy 500GB</Select.Option>
-							<Select.Option value='buddygroup_3'>buddygroup_3 /dev/zzz 500GB</Select.Option>
-							<Select.Option value='buddygroup_4'>buddygroup_4 /dev/ttt 500GB</Select.Option>
-							<Select.Option value='buddygroup_5'>buddygroup_5 /dev/eee 500GB</Select.Option>
-							<Select.Option value='buddygroup_6'>buddygroup_6 /dev/hhh 500GB</Select.Option>
+							{
+								buddyGroupsForStoragePool.map((group, i) => <Select.Option key={i} value={group.id}>ID: {group.id} {lang('容量:', 'Capacity:')} {formatStorageSize(group.capacity)}</Select.Option>)
+							}
 						</Select>
 					</Form.Item>
 					<Form.Item
@@ -251,8 +238,8 @@ class CreateStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool}}} = state;
-    return {language, storagePoolList, targetsForStoragePool};
+    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
+    return {language, storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool};
 };
 
 const mapDispatchToProps = [];
