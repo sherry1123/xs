@@ -135,9 +135,9 @@ def get_node_target(hostname):
     return node_target
 
 
-def create_storage_pool(name, targets, mirrorGroups):
+def create_storage_pool(name, targets, buddy_groups):
     data = backend_handler(request.post('http://localhost:9090/cluster/createpool', {
-                           'nameDesc': name, 'targets': targets, 'mirrorGroups': mirrorGroups}, get_token()))
+                           'nameDesc': name, 'targets': targets, 'mirrorGroups': buddy_groups}, get_token()))
     return data['poolId']
 
 
@@ -153,26 +153,30 @@ def get_targets_in_storage_pool(pool_id=None):
     param = {'poolId': pool_id} if pool_id is not None else {}
     data = backend_handler(request.get(
         'http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
-
+    targets = data['poolInfoList']
     def revise_capacity(item):
         item['capacity'] = int(handler.to_byte(float(handler.replace(
             '\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
         return item
-    data = map(revise_capacity, data['poolInfoList'])
-    return data
+    if targets is None:
+        targets = []
+    targets = map(revise_capacity, targets)
+    return targets
 
 
 def get_buddy_groups_in_storage_pool(pool_id=None):
     param = {'poolId': pool_id} if pool_id is not None else {}
     data = backend_handler(request.get(
         'http://localhost:9090/cluster/getgroupsinfo', param, get_token()))
-
+    buddy_groups = data['poolInfoList']
     def revise_capacity(item):
         item['capacity'] = int(handler.to_byte(float(handler.replace(
             '\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
         return item
-    data = map(revise_capacity, data['poolInfoList'])
-    return data
+    if buddy_groups is None:
+        buddy_groups = []
+    buddy_groups = map(revise_capacity, buddy_groups)
+    return buddy_groups
 
 
 def update_snapshot_setting(total, manual, auto):

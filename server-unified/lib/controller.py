@@ -440,10 +440,10 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        description, mirror_groups, name, targets = handler.request(params, name=str, description=str, targets=list, mirrorGroups=list)
+        buddy_groups, description, name, targets = handler.request(params, name=str, description=str, targets=list, buddyGroups=list)
         targets = ','.join(map(lambda target: str(target), targets))
-        mirror_groups = ','.join(map(lambda target: str(mirror_group), mirror_groups))
-        pool_id = backend.create_storage_pool(name, targets, mirror_groups)
+        buddy_groups = ','.join(map(lambda buddy_group: str(buddy_group), buddy_groups))
+        pool_id = backend.create_storage_pool(name, targets, buddy_groups)
         database.create_storage_pool(pool_id, name, description)
         response = handler.response(0, 'Create storagePool successfully!')
     except Exception as error:
