@@ -122,49 +122,42 @@ class StoragePool extends Component {
 				},
 				{
 					title: lang('操作', 'Operations'), width: 80,
-					render: (text, record, index) => {
-						return (!record.creating && !record.deleting ) ?
-							<div>
-								<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
-									<Button
-										{...buttonConf}
-										onClick={this.edit.bind(this, record)}
-										icon="edit"
-									>
-									</Button>
-								</Popover>
-								<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
-									<Button
-										{...buttonConf}
-										onClick={this.delete.bind(this, record, index)}
-										icon="delete"
-									>
-									</Button>
-								</Popover>
-								<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
-									<Button
-										{...buttonConf}
-										onClick={this.showBuddyGroup.bind(this, record, index)}
-										icon="copy"
-									>
-									</Button>
-								</Popover>
-								<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
-									<Button
-										{...buttonConf}
-										onClick={this.showStorageTarget.bind(this, record, index)}
-										icon="hdd"
-									>
-									</Button>
-								</Popover>
-							</div> :
-							<a disabled>
-								{
-									record.creating ? lang('创建中', 'Creating') :
-										record.deleting ? lang('删除中', 'Deleting') : ''
-								}
-							</a>;
-					}
+					render: (text, record, index) =>
+						<div>
+							<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+								<Button
+									{...buttonConf}
+									onClick={this.edit.bind(this, record, index)}
+									icon="edit"
+								>
+								</Button>
+							</Popover>
+							<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
+								<Button
+									{...buttonConf}
+									onClick={this.delete.bind(this, record, index)}
+									icon="delete"
+								>
+								</Button>
+							</Popover>
+							<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
+								<Button
+									{...buttonConf}
+									onClick={this.showBuddyGroup.bind(this, record, index)}
+									icon="copy"
+								>
+								</Button>
+							</Popover>
+							<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
+								<Button
+									{...buttonConf}
+									onClick={this.showStorageTarget.bind(this, record, index)}
+									icon="hdd"
+								>
+								</Button>
+							</Popover>
+						</div>
+
 				}
             ],
         };
