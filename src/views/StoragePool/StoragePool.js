@@ -74,10 +74,10 @@ class StoragePool extends Component {
 					let storagePoolList = Object.assign([], this.state.storagePoolList);
 					storagePoolList.splice(index, 1);
 					this.setState({storagePoolList});
-					message.success(lang(`已开始删除存储池 ${storagePool.name}!`, `Start deleting storage pool ${storagePool.name}!`));
+					message.success(lang(`存储池 ${storagePool.name} 删除成功!`, `Delete storage pool ${storagePool.name} successfully!`));
 					httpRequests.getStoragePoolList();
 				} catch ({msg}){
-					message.error(lang(`删除快照 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
+					message.error(lang(`删除存储池 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
 				}
 			},
 			onCancel: () => {
