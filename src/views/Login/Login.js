@@ -7,7 +7,7 @@ import lang from 'Components/Language/lang';
 import routerPath from '../routerPath';
 import {ckGet} from 'Services';
 import MD5 from 'crypto-js/md5';
-import TripleDES from 'crypto-js/tripledes';
+// import TripleDES from 'crypto-js/tripledes';
 import httpRequests from 'Http/requests';
 
 class Login extends Component {

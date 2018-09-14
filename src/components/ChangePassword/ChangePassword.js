@@ -5,7 +5,7 @@ import httpRequests from 'Http/requests';
 import lang from '../Language/lang';
 import {validatePassword} from 'Services';
 import MD5 from 'crypto-js/md5';
-import TripleDES from 'crypto-js/tripledes';
+// import TripleDES from 'crypto-js/tripledes';
 
 class ChangePassword  extends Component {
     constructor (props){
