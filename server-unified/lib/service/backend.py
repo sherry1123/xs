@@ -30,7 +30,7 @@ def get_disk_list(ip):
 
     def revise_disk_space(disk):
         disk['totalSpace'] = int(handler.to_byte(float(handler.replace(
-            '\SB', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0]))
+            '\S[|i]B', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0]))
         return disk
     disk_list = filter(lambda disk: not disk['isUsed'], disk_list)
     disk_list = map(revise_disk_space, disk_list)
