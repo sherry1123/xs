@@ -1228,7 +1228,7 @@ def batch_delete_cifs_share(params):
         for share in shares:
             server = filter(lambda nas_server: handler.check_root(
                 share['path'], nas_server['path']), nas_server_list)[0]['ip']
-            backend.delete_nfs_share(server, share['name'])
+            backend.delete_cifs_share(server, share['name'])
             database.delete_cifs_share(share['name'])
         response = handler.response(
             0, 'Batch delete cifs shares successfully!')
