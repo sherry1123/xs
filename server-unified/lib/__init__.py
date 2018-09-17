@@ -1,8 +1,11 @@
 from flask import jsonify, request
+from flask_compress import Compress
 
 from lib.module import handler
 from lib.router import app
 from lib.util import status
+
+compress = Compress()
 
 
 def create_app():
@@ -66,4 +69,5 @@ def create_app():
             response.set_cookie('user', '')
         return response
 
+    compress.init_app(app)
     return app
