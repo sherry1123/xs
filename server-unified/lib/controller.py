@@ -818,7 +818,7 @@ def set_pattern(params):
     try:
         buddyMirror, chunkSize, dirPath, numTargets = handler.request(
             params, dirPath=str, numTargets=int, chunkSize=int, buddyMirror=int)
-        data = backend.set_pattern(dirPath, numTargets, chunkSize, buddyMirror)
+        backend.set_pattern(dirPath, numTargets, chunkSize, buddyMirror)
         response = handler.response(0, 'Set pattern successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
