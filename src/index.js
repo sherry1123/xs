@@ -6,9 +6,9 @@ import store from './redux';
 import App from './views/App';
 import './styleSheets/index.less';
 import './socket';
-import './http/cronJob';
+import 'Http/cronJob';
 import {lsGet} from './services';
-import httpRequests from './http/requests';
+import httpRequests from 'Http/requests';
 
 (async () => {
     // Each time when react app is accessed on browser, should firstly synchronized up system status with server side.
