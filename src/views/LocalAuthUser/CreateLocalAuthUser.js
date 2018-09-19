@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover} from 'antd';
 import SelectLocalAuthUserGroup from './SelectLocalAuthUserGroup';
 import lang from 'Components/Language/lang';
-import {validateFsName, validatePassword} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateLocalAuthUser extends Component {
@@ -13,6 +12,7 @@ class CreateLocalAuthUser extends Component {
             visible: false,
             formValid: false,
             formSubmitting: false,
+            strategyData: {},
             userData: {
                 name: '',
                 password: '',
@@ -36,6 +36,44 @@ class CreateLocalAuthUser extends Component {
         this.setState({userData});
     }
 
+    validateUsername (name){
+        let {userNameMinLen} = this.strategyData;
+        return /^[a-zA-Z0-9_]*$/.test(name) && name.length >= userNameMinLen;
+    }
+
+    validatePassword (password){
+        // validate invalid value like: null, undefined, NaN, empty string
+        if (!password){
+            return false;
+        }
+        let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.strategyData;
+        // validate complexity
+        const specialEnCharReg = /[`~!@#$%^&*()_+<>?:"{},.'/;[\]]/im;
+        const specialCnCharReg = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
+        const uppercaseReg = /[A-Z]/;
+        const lowercaseReg = /[a-z]/;
+        const digitReg = /[\d]/; // /[0-9]/
+        // must contain special characters whether passComplexity is 3 or 4
+        if (!specialEnCharReg.test(password) || !specialCnCharReg.test(password)){
+            return false;
+        }
+        if (passComplexity === 3){
+            // if passComplexity is 3, still needs contains any two types of uppercase letters, lowercase letters, and digits
+            if (uppercaseReg.test(password) + lowercaseReg.test(password) + digitReg.test(password) < 2){
+                return false;
+            }
+        } else {
+            // if passComplexity is 4, still needs contains uppercase letters, lowercase letters, and digits
+            if (uppercaseReg.test(password) + lowercaseReg.test(password) + digitReg.test(password) < 3){
+                return false;
+            }
+        }
+        // validate char duplication
+        console.info(passRepeatCharMax);
+        // validate length
+        return password.length >= passMinLen && password.length <= passMaxLen;
+    }
+
     async validationUpdateState (key, value, valid){
         let {cn, en} = value;
         let validation = {
@@ -55,10 +93,10 @@ class CreateLocalAuthUser extends Component {
         if (key === 'name'){
             if (!name){
                 this.validationUpdateState('name', {cn: '请输入用户姓名', en: 'Please enter username'}, false);
-            } else if (!validateFsName(name)){
+            } else if (!this.validateUsername(name)){
                 this.validationUpdateState('name', {
-                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
-                    en: 'Name can only contains letter, number and underscore(except for the first place), length is 3-30'
+                    cn: `用户仅允许以字母、数字以或划线开头，长度不少于${this.strategyData.userNameMinLen}位`,
+                    en: `Name can only start with a letter, number or underscore, length can't be less than ${this.strategyData.userNameMinLen}`
                 }, false);
             }
             let isNameDuplicated = this.props.localAuthUserList.some(user => user.name === name);
@@ -72,7 +110,7 @@ class CreateLocalAuthUser extends Component {
         if (key === 'password'){
             if (!password){
                 await this.validationUpdateState('password', {cn: '请输入新密码', en: 'Please enter new password'}, false);
-            } else if (!validatePassword(password)){
+            } else if (!this.validatePassword(password)){
                 await this.validationUpdateState('password', {
                     cn: '密码仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度6-18位',
                     en: 'Password can only contains letter, number and underscore(except for the first), length is 6-18'
@@ -139,11 +177,12 @@ class CreateLocalAuthUser extends Component {
         }
     }
 
-    show (){
+    async show (){
         this.setState({
             visible: true,
             formValid: false,
             formSubmitting: false,
+            strategyData: {},
             userData: {
                 name: '',
                 password: '',
@@ -159,9 +198,12 @@ class CreateLocalAuthUser extends Component {
                 primaryGroup: {status: '', help: '', valid: false},
             },
         });
+        this.setState({
+            strategyData: (await httpRequests.getLocalAuthUserSecurityStrategySetting())
+        });
     }
 
-    async hide (){
+    hide (){
         this.setState({visible: false});
     }
 

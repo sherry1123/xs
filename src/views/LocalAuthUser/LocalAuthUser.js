@@ -3,8 +3,10 @@ import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateLocalAuthUser from './CreateLocalAuthUser';
 import EditLocalAuthUser from './EditLocalAuthUser';
+import SecurityStrategySetting from './SecurityStrategySetting';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
+import {timeFormat} from 'Services';
 
 class LocalAuthUser extends Component {
     constructor (props){
@@ -51,6 +53,62 @@ class LocalAuthUser extends Component {
 
     edit (user){
         this.editLocalAuthUserWrapper.getWrappedInstance().show(user);
+    }
+
+    enableLocalAuthUser (userData){
+        let {name} = userData;
+        Modal.confirm({
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行启用本地认证用户 ${name} 的操作。`, `You are about to enable local authentication user ${name}.`)}</p>
+                <p>{lang(`该操作将该用户处于可用状态，在未过期状态下可以访问共享数据。`, `This operation will let user available, and can access share data without overdue status.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认是否需要启用他。`, `A suggestion: before executing this operation, determine whether the local authentication user needs to be enabled.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okType: 'warning',
+            okText: lang('启用', 'Enable'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.updateLocalAuthUserStatus(name, true);
+                    httpRequests.getLocalAuthUserList();
+                    message.success(lang(`启用本地认证用户 ${name} 成功!`, `Enable local authentication user ${name} successfully!`));
+                } catch ({msg}){
+                    message.error(lang(`启用本地认证用户 ${name} 失败, 原因: `, `Enable local authentication user ${name} failed, reason: `) + msg);
+                }
+            },
+            onCancel: () => {
+
+            }
+        });
+    }
+
+    disableLocalAuthUser (userData){
+        let {name} = userData;
+        Modal.confirm({
+            title: lang('警告', 'Warning'),
+            content: <div style={{fontSize: 12}}>
+                <p>{lang(`您将要执行禁用本地认证用户 ${name} 的操作。`, `You are about to disable local authentication user ${name}.`)}</p>
+                <p>{lang(`该操作将该用户处于不可用状态，不可以访问共享数据。`, `This operation will let user available, and can't access share data any more.`)}</p>
+                <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认是否需要禁用他。`, `A suggestion: before executing this operation, determine whether the local authentication user needs to be disabled.`)}</p>
+            </div>,
+            iconType: 'exclamation-circle-o',
+            okType: 'warning',
+            okText: lang('禁用', 'Disable'),
+            cancelText: lang('取消', 'Cancel'),
+            onOk: async () => {
+                try {
+                    await httpRequests.updateLocalAuthUserStatus(name, true);
+                    httpRequests.getLocalAuthUserList();
+                    message.success(lang(`禁用本地认证用户 ${name} 成功!`, `Disable local authentication user ${name} successfully!`));
+                } catch ({msg}){
+                    message.error(lang(`禁用本地认证用户 ${name} 失败, 原因: `, `Disable local authentication user ${name} failed, reason: `) + msg);
+                }
+            },
+            onCancel: () => {
+
+            }
+        });
     }
 
     delete (userData){
@@ -109,6 +167,10 @@ class LocalAuthUser extends Component {
         });
     }
 
+    securityStrategySetting (){
+        this.securityStrategySettingWrapper.getWrappedInstance().show();
+    }
+
     hide (){
         this.setState({visible: false});
     }
@@ -148,6 +210,9 @@ class LocalAuthUser extends Component {
                 {title: lang('附属组', 'Secondary Group'), width: '20%', dataIndex: 'secondaryGroup',
                     render: text => !text.length ? '--' : text.join(',')
                 },
+                {title: lang('有效期', 'Validity Period'), width: 125, dataIndex: 'validityPeriod',
+                    render: text => timeFormat(text)
+                },
                 {title: lang('描述', 'Description'), width: '20%', dataIndex: 'description',
                     render: text => !text ? '--' : text
                 },
@@ -161,6 +226,22 @@ class LocalAuthUser extends Component {
                                     icon="edit"
                                 />
                             </Popover>
+                            {
+                                record.status ? <Popover {...buttonPopoverConf} content={lang('禁用', 'Disable')}>
+                                    <Button
+                                        {...buttonConf}
+                                        onClick={this.disableLocalAuthUser.bind(this, record, index)}
+                                        icon="frown"
+                                    />
+                                </Popover> :
+                                <Popover {...buttonPopoverConf} content={lang('启用', 'Enable')}>
+                                    <Button
+                                        {...buttonConf}
+                                        onClick={this.enableLocalAuthUser.bind(this, record, index)}
+                                        icon="smile"
+                                    />
+                                </Popover>
+                            }
                             <Popover {...buttonPopoverConf} content={lang('删除', 'Delete')}>
                                 <Button
                                     {...buttonConf}
@@ -192,6 +273,13 @@ class LocalAuthUser extends Component {
                             {lang('创建', 'Create')}
                         </Button>
                         <Button
+                            type="warning"
+                            size="small"
+                            onClick={this.securityStrategySetting.bind(this)}
+                        >
+                            {lang('安全策略', 'Security Strategy')}
+                        </Button>
+                        <Button
                             type="danger"
                             size="small"
                             disabled={!batchDeleteNames.length}
@@ -206,6 +294,7 @@ class LocalAuthUser extends Component {
                 </div>
                 <CreateLocalAuthUser ref={ref => this.createLocalAuthUserWrapper = ref} />
                 <EditLocalAuthUser ref={ref => this.editLocalAuthUserWrapper = ref} />
+                <SecurityStrategySetting ref={ref => this.securityStrategySettingWrapper = ref} />
             </div>
         );
     }

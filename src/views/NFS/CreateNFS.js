@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover, Table} from 'antd';
-import CatalogTree from 'Components/CatalogTree/CatalogTree';
+import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import CreateClientToNFS from './CreateClientToNFS';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
@@ -73,8 +73,8 @@ class CreateNFS extends Component {
         this.setState({formValid});
     }
 
-    showCatalogTree (){
-        this.catalogTreeWrapper.getWrappedInstance().show(this.state.shareData.path ? [this.state.shareData.path] : []);
+    showDirectoryTree (){
+        this.directoryTreeWrapper.getWrappedInstance().show(this.state.shareData.path ? [this.state.shareData.path] : [], 'share');
     }
 
     async selectPath (path){
@@ -258,7 +258,7 @@ class CreateNFS extends Component {
                                         <Icon
                                             type="folder-open"
                                             style={{cursor: 'pointer'}}
-                                            onClick={this.showCatalogTree.bind(this)}
+                                            onClick={this.showDirectoryTree.bind(this)}
                                         />
                                     }
                                 />
@@ -299,7 +299,7 @@ class CreateNFS extends Component {
                         </div>
                     }
                 </Form>
-                <CatalogTree onSelect={this.selectPath.bind(this)} ref={ref => this.catalogTreeWrapper = ref} />
+                <DirectoryTree onSelect={this.selectPath.bind(this)} ref={ref => this.directoryTreeWrapper = ref} />
                 <CreateClientToNFS onAdd={this.addClient.bind(this)} ref={ref => this.createClientToNFSWrapper = ref} />
             </Modal>
         );

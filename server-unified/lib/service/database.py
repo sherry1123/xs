@@ -436,14 +436,14 @@ def list_local_auth_user():
     users = []
     for user in LocalAuthUser.objects.order_by('user_name'):
         users.append({'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd,
-                      'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group})
+                      'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group, 'status': user.user_status})
     return users
 
 
 def get_local_auth_user(name):
     user = LocalAuthUser.objects(user_name=name).first()
     if user:
-        return {'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd, 'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group}
+        return {'name': user.user_name, 'description': user.user_desc, 'password': user.user_passwd, 'primaryGroup': user.user_primary_group, 'secondaryGroup': user.user_secondary_group, 'status': user.user_status}
     else:
         raise DatabaseError('No such local auth user!')
 
@@ -454,7 +454,7 @@ def create_local_auth_user(name, desc, passwd, primary, secondary):
         raise DatabaseError('Local auth user already exists!')
     else:
         LocalAuthUser(user_name=name, user_desc=desc, user_passwd=passwd,
-                      user_primary_group=primary, user_secondary_group=secondary).save()
+                      user_primary_group=primary, user_secondary_group=secondary, user_status=True).save()
 
 
 def update_local_auth_user_desc(name, desc):
@@ -785,3 +785,11 @@ def remove_user_or_group_from_cifs_share(share_name, name, user_or_group_type):
             raise DatabaseError('No such user or group hare!')
     else:
         raise DatabaseError('No such cifs share!')
+
+
+def update_local_auth_user_status(name, status):
+    user = LocalAuthUser.objects(user_name=name).first()
+    if user:
+        user.update(set__user_status=status)
+    else:
+        raise DatabaseError('No such local auth user!')

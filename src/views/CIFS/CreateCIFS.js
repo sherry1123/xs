@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover, Select, Switch, Table} from 'antd';
-import CatalogTree from 'Components/CatalogTree/CatalogTree';
+import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
 import lang from 'Components/Language/lang';
@@ -105,8 +105,8 @@ class CreateCIFS extends Component {
         this.setState({formValid});
     }
 
-    showCatalogTree (){
-        this.catalogTreeWrapper.getWrappedInstance().show();
+    showDirectoryTree (){
+        this.directoryTreeWrapper.getWrappedInstance().show([], 'share');
     }
 
     async selectPath (path){
@@ -297,7 +297,7 @@ class CreateCIFS extends Component {
                                         <Icon
                                             type="folder-open"
                                             style={{cursor: 'pointer'}}
-                                            onClick={this.showCatalogTree.bind(this)}
+                                            onClick={this.showDirectoryTree.bind(this)}
                                         />
                                     }
                                 />
@@ -417,7 +417,7 @@ class CreateCIFS extends Component {
                         </div>
                     }
                 </Form>
-                <CatalogTree onSelect={this.selectPath.bind(this)} ref={ref => this.catalogTreeWrapper = ref} />
+                <DirectoryTree onSelect={this.selectPath.bind(this)} ref={ref => this.directoryTreeWrapper = ref} />
                 <AddLocalAuthUserToCIFS onAdd={this.addUserOrGroup.bind(this)} ref={ref => this.addLocalAuthUserToCIFSWrapper = ref} />
                 <AddLocalAuthUserGroupToCIFS onAdd={this.addUserOrGroup.bind(this)} ref={ref => this.addLocalAuthUserGroupToCIFSWrapper = ref} />
             </Modal>

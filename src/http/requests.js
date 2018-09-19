@@ -469,12 +469,24 @@ export default  {
         await fetchPost('/api/updatelocalauthuser', userData);
     },
 
+    async updateLocalAuthUserStatus (name, status){
+        await fetchPost('/api/updatelocalauthuserstatus', {name, status});
+    },
+
     async deleteLocalAuthUser (userData){
         await fetchPost('/api/deletelocalauthuser', userData);
     },
 
     async deleteLocalAuthUserInBatch (names){
         await fetchPost('/api/batchdeletelocalauthuser', {names});
+    },
+
+    async getLocalAuthUserSecurityStrategySetting (){
+        return await fetchPost('/api/getlocalauthusersetting');
+    },
+
+    async updateLocalAuthUserSecurityStrategySetting (strategyData){
+        await fetchPost('/api/updatelocalauthusersetting', strategyData);
     },
 
     // local authentication user group
@@ -546,6 +558,11 @@ export default  {
 
     async saveEntryInfo (data){
         await fetchPost('/api/setpattern', data)
+    },
+
+    async createDirectory (dirData){
+        console.info(dirData);
+        await fetchPost('/api/createdir', dirData)
     },
 
     // system log

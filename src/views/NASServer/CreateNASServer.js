@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal} from 'antd';
 import SelectClient from './SelectClient';
-import CatalogTree from 'Components/CatalogTree/CatalogTree';
+import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import lang from 'Components/Language/lang';
 import {validateIpv4} from 'Services';
 import httpRequests from 'Http/requests';
@@ -36,10 +36,10 @@ class CreateNASServer extends Component {
         this.validateForm('ip');
     }
 
-    showCatalogTree (){
+    showDirectoryTree (){
         let {path} = this.state.NASServerData;
-        let selectedCatalog = !path ? [] : [path];
-        this.catalogTreeWrapper.getWrappedInstance().show(selectedCatalog, 'NASServer');
+        let selectedDirectory = !path ? [] : [path];
+        this.directoryTreeWrapper.getWrappedInstance().show(selectedDirectory, 'NASServer');
     }
 
     async selectPath (path){
@@ -215,7 +215,7 @@ class CreateNASServer extends Component {
                                 <Icon
                                     type="folder-open"
                                     style={{cursor: 'pointer'}}
-                                    onClick={this.showCatalogTree.bind(this)}
+                                    onClick={this.showDirectoryTree.bind(this)}
                                 />
                             }
                         />
@@ -234,7 +234,7 @@ class CreateNASServer extends Component {
                     </Form.Item>
                 </Form>
                 <SelectClient ref={ref => this.selectClientWrapper= ref} onSelect={this.selectClient.bind(this)} />
-                <CatalogTree ref={ref => this.catalogTreeWrapper = ref} onSelect={this.selectPath.bind(this)} />
+                <DirectoryTree ref={ref => this.directoryTreeWrapper = ref} onSelect={this.selectPath.bind(this)} />
             </Modal>
         );
     }

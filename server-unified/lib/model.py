@@ -70,7 +70,7 @@ class LocalAuthUser(Document):
     user_passwd = StringField()
     user_primary_group = StringField()
     user_secondary_group = ListField()
-
+    user_status = BooleanField()
 
 class LocalAuthUserGroup(Document):
     user_group_name = StringField(required=True)

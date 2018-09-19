@@ -557,7 +557,7 @@ class Initialize extends Component {
         return (
             <section className="fs-initialize-wrapper">
                 <div>
-                    {Object.keys(Array.apply(null, {length: 6})).map(i => (
+                    {Object.keys(Array.apply(null, {length: 6})).map((val, i) => (
                         <i className={`fs-initialize-background-stone b-${parseInt(i, 10) + 1}`} key={i}>
                             <i className="fs-sand" />
                             <i className="fs-earth-layer"><i className="fs-satellite" /></i>
