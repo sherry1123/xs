@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Table, Popover} from 'antd';
 import StripeSetting from './StripeSetting';
+import CreateDirectory from './CreateDirectory';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
@@ -34,7 +35,7 @@ class FSOperation extends Component {
         } catch (e){
             // if query path error, need to remove previous one in directoryStack
             needBackIfError && this.directoryStack.shift();
-            // should use code to distinguish it's network error or actually no such catalog
+            // should use code to distinguish it's network error or actually no such directory
             message.warning(lang('该路径不存在', 'This path is not existed'));
         }
         this.queryDirLock = false;
@@ -98,6 +99,10 @@ class FSOperation extends Component {
         this.stripeSettingWrapper.getWrappedInstance().show(path);
     }
 
+    createDirectory ({path}){
+        this.createDirectoryWrapper.getWrappedInstance().show(path);
+    }
+
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
@@ -111,10 +116,10 @@ class FSOperation extends Component {
             // loading: this.queryDirLock,
             rowKey: 'path',
             locale: {
-                emptyText: lang('暂无文件目录', 'No File Catalog')
+                emptyText: lang('暂无文件目录', 'No File Directory')
             },
             scroll: {y: 500},
-            title: () => (<span className="fs-table-title"><Icon type="setting" />{lang('文件系统操作', 'File System Operation')}</span>),
+            title: () => (<span className="fs-table-title"><Icon type="folder" />{lang('文件系统操作', 'File System Operation')}</span>),
             columns: [
                 {title: lang('名称', 'Name'), width: 225, dataIndex: 'name',
                     render: (text, record) => (
@@ -133,7 +138,7 @@ class FSOperation extends Component {
                             </a>
                     )
                 },
-                {title: lang('目录数量', 'Catalog Number'), width: 80, dataIndex: 'size', render: text => text},
+                {title: lang('目录数量', 'Directory Number'), width: 80, dataIndex: 'size', render: text => text},
                 {title: lang('用户', 'User'), width: 100, dataIndex: 'user'},
                 {title: lang('组', 'Group'), width: 100, dataIndex: 'group'},
                 {title: lang('系统级权限', 'System Level Permission'), width: 100, dataIndex: 'permissions'},
@@ -151,13 +156,22 @@ class FSOperation extends Component {
                 {title: lang('操作', 'Operation'), width: 60,
                     render: (text, record) => (
                         record.hasOwnProperty('user') ?
-                            <Popover {...buttonPopoverConf} content={lang('条带设置', 'Stripe Setting')}>
-                                <Button
-                                    {...buttonConf}
-                                    icon="setting"
-                                    onClick={this.stripeSetting.bind(this, record)}
-                                />
-                            </Popover> :
+                            <React.Fragment>
+                                <Popover {...buttonPopoverConf} content={lang('条带设置', 'Stripe Setting')}>
+                                    <Button
+                                        {...buttonConf}
+                                        icon="setting"
+                                        onClick={this.stripeSetting.bind(this, record)}
+                                    />
+                                </Popover>
+                                <Popover {...buttonPopoverConf} content={lang('创建目录', 'Create Directory')}>
+                                    <Button
+                                        {...buttonConf}
+                                        icon="folder-add"
+                                        onClick={this.createDirectory.bind(this, record)}
+                                    />
+                                </Popover>
+                            </React.Fragment> :
                             <Popover {...buttonPopoverConf} content={lang('返回上层目录', 'Return Upper Directory')}>
                                 <Button
                                     {...buttonConf}
@@ -178,13 +192,23 @@ class FSOperation extends Component {
                         placeholder={lang('请输入文件目录路径', 'Please enter file directory path')}
                         value={this.state.dirPath}
                         onChange={({target: {value}}) => this.setState({dirPath: value})}
-                        onSearch={() => {this.queryDirPath.bind(this)()}}
+                        onSearch={() => this.queryDirPath.bind(this)()}
                     />
+                    <div className="fs-table-operation-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={() => this.createDirectory.bind(this)({path: '/'})}
+                            >
+                            {lang('创建目录', 'Create Directory')}
+                        </Button>
+                    </div>
                 </div>
                 <div className="fs-main-content-wrapper">
                     <Table {...tableProps} />
                 </div>
                 <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
+                <CreateDirectory ref={ref => this.createDirectoryWrapper = ref} queryDirPath={this.queryDirPath.bind(this)} />
             </section>
         );
     }

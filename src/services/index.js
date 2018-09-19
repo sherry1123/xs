@@ -23,7 +23,7 @@ export {someUpperCase} from './format/toUpperCase';
 export {cutString} from './format/cutString';
 
 // validation
-export {validateIpv4, validateIpv4Segment, validateFsName, validateEmail, validatePassword, validateNotZeroInteger, validatePositiveInteger} from './validation';
+export {validateIpv4, validateIpv4Segment, validateFsName, validatePathname, validateEmail, validatePassword, validateNotZeroInteger, validatePositiveInteger} from './validation';
 
 // key press filter
 export {KeyPressFilter} from './keyPressFilter';
