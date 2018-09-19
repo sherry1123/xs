@@ -8,7 +8,7 @@ const storagePoolReducer = (state = State.main.storagePool, action) => {
             return Object.assign({}, state, {storagePoolList});
 
 		case storagePoolActionTypes.SET_TARGET_OF_STORAGE_POOL:
-			return Object.assign({}, state, {targetsOfStoragePool});
+			return Object.assign({}, state, {targetsOfStoragePool: targetsOfStoragePool});
 
 		case storagePoolActionTypes.SET_BUDDY_GROUP_OF_STORAGE_POOL:
 			return Object.assign({}, state, {buddyGroupsOfStoragePool});

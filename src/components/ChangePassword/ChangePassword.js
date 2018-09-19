@@ -94,7 +94,7 @@ class ChangePassword  extends Component {
         let {username} = this.props.user;
         let {password} = this.state.formData;
         password = MD5(password).toString();
-        password  = TripleDES.encrypt(password, 'orcadt@xian').toString();
+        // password  = TripleDES.encrypt(password, 'orcadt@xian').toString();
         await this.setState({formSubmitting: true});
         try {
             await httpRequests.updateUser({username, password});

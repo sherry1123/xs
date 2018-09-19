@@ -47,7 +47,7 @@ class RecommendedRAID extends Component {
 
     changeServiceIP (currentServiceNode){
         let currentRAIDConfList = this.props.recommendedRAID[currentServiceNode.type + 'ServerIPs'][currentServiceNode.ip];
-        if (!!currentRAIDConfList){
+        if (!!currentRAIDConfList && !!currentRAIDConfList.length){
             let currentRAIDConf = currentRAIDConfList[0];
             currentRAIDConf['i'] = 0;
             this.setState({currentServiceNode, currentRAIDConfList, currentRAIDConf});
