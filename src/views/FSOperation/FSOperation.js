@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Table, Popover} from 'antd';
 import StripeSetting from './StripeSetting';
+import CreateDirectory from './CreateDirectory';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
@@ -98,6 +99,10 @@ class FSOperation extends Component {
         this.stripeSettingWrapper.getWrappedInstance().show(path);
     }
 
+    createDirectory ({path}){
+        this.createDirectoryWrapper.getWrappedInstance().show(path);
+    }
+
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
@@ -151,13 +156,22 @@ class FSOperation extends Component {
                 {title: lang('操作', 'Operation'), width: 60,
                     render: (text, record) => (
                         record.hasOwnProperty('user') ?
-                            <Popover {...buttonPopoverConf} content={lang('条带设置', 'Stripe Setting')}>
-                                <Button
-                                    {...buttonConf}
-                                    icon="setting"
-                                    onClick={this.stripeSetting.bind(this, record)}
-                                />
-                            </Popover> :
+                            <React.Fragment>
+                                <Popover {...buttonPopoverConf} content={lang('条带设置', 'Stripe Setting')}>
+                                    <Button
+                                        {...buttonConf}
+                                        icon="setting"
+                                        onClick={this.stripeSetting.bind(this, record)}
+                                    />
+                                </Popover>
+                                <Popover {...buttonPopoverConf} content={lang('创建目录', 'Create Directory')}>
+                                    <Button
+                                        {...buttonConf}
+                                        icon="folder-add"
+                                        onClick={this.createDirectory.bind(this, record)}
+                                    />
+                                </Popover>
+                            </React.Fragment> :
                             <Popover {...buttonPopoverConf} content={lang('返回上层目录', 'Return Upper Directory')}>
                                 <Button
                                     {...buttonConf}
@@ -185,6 +199,7 @@ class FSOperation extends Component {
                     <Table {...tableProps} />
                 </div>
                 <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
+                <CreateDirectory ref={ref => this.createDirectoryWrapper = ref} />
             </section>
         );
     }

@@ -4,15 +4,15 @@ import {Button, Icon, message, Modal, Spin, Tree} from 'antd';
 import lang from '../Language/lang';
 import httpRequests from '../../http/requests';
 
-class CatalogTree extends Component {
+class DirectoryTree extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
             selectValid: false,
-            pathType: 'share', // NASServer or share
+            pathType: 'share', // NASServer, share
             treeNodes: [],
-            selectedCatalog: [],
+            selectedDirectory: [],
         };
     }
 
@@ -65,9 +65,9 @@ class CatalogTree extends Component {
         if (!!path){
             let selectValid = this.pathValidationCheck(path);
             if (selectValid){
-                this.setState({selectValid, selectedCatalog: selectedKeys});
+                this.setState({selectValid, selectedDirectory: selectedKeys});
             } else {
-                this.setState({selectValid, selectedCatalog: []});
+                this.setState({selectValid, selectedDirectory: []});
             }
         }
     }
@@ -113,7 +113,7 @@ class CatalogTree extends Component {
     }
 
     outputCatalog (){
-        let {selectedCatalog: [path]} = this.state;
+        let {selectedDirectory: [path]} = this.state;
         if (this.pathValidationCheck(path)){
             let {onSelect} = this.props;
             onSelect && onSelect(path);
@@ -121,13 +121,13 @@ class CatalogTree extends Component {
         }
     }
 
-    async show (selectedCatalog = [], pathType = 'share'){
+    async show (selectedDirectory = [], pathType = 'share'){
         await this.setState({
             visible: true,
-            selectValid: this.pathValidationCheck(selectedCatalog[0]),
+            selectValid: this.pathValidationCheck(selectedDirectory[0]),
             pathType,
             treeNodes: [],
-            selectedCatalog
+            selectedDirectory
         });
         // this is the root path
         let rootNode = {title: '/', key: '/'};
@@ -149,7 +149,7 @@ class CatalogTree extends Component {
     }
 
     render (){
-        let {pathType, treeNodes, selectValid, selectedCatalog} = this.state;
+        let {pathType, treeNodes, selectValid, selectedDirectory} = this.state;
         return (
             <Modal
                 title={lang('选择目录', 'Select Catalog')}
@@ -168,7 +168,7 @@ class CatalogTree extends Component {
                         </Button>
                         <Button
                             type="primary"
-                            disabled={!(!!selectedCatalog.length && selectValid)}
+                            disabled={!(!!selectedDirectory.length && selectValid)}
                             size='small'
                             onClick={this.outputCatalog.bind(this)}
                         >
@@ -193,7 +193,7 @@ class CatalogTree extends Component {
                     }
                     {
                         !!treeNodes.length && <div style={{marginBottom: 10, fontSize: 12}}>
-                            {lang('已选目录路径：', 'Selected Catalog Path: ')}{this.state.selectedCatalog[0] || lang('无', 'Nothing')}
+                            {lang('已选目录路径：', 'Selected Catalog Path: ')}{this.state.selectedDirectory[0] || lang('无', 'Nothing')}
                         </div>
                     }
                     {
@@ -201,7 +201,7 @@ class CatalogTree extends Component {
                             showIcon
                             multiple={false}
                             defaultExpandedKeys={['/']}
-                            selectedKeys={selectedCatalog}
+                            selectedKeys={selectedDirectory}
                             loadData={this.loadNode.bind(this)}
                             onSelect={this.selectNode.bind(this)}
                         >
@@ -227,4 +227,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CatalogTree);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(DirectoryTree);

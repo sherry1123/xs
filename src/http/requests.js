@@ -552,6 +552,10 @@ export default  {
         await fetchPost('/api/setpattern', data)
     },
 
+    async createDirectory (dirData){
+        await fetchPost('/api/createdir', dirData)
+    },
+
     // system log
     getEventLogs (){
         requestHandler(async () => {

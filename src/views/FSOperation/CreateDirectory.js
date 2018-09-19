@@ -1,48 +1,114 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Icon, Input, Modal, message, Select, Spin, Popover} from 'antd';
+import {Button, Form, Icon, Input, Modal, message, Select, Spin, Popover, Switch} from 'antd';
+import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
+import {validateFsName} from 'Services';
 
 class CreateDirectory extends Component {
     constructor (props){
         super(props);
-        this.minChunkSize = 65536;
         this.state = {
             visible: false,
-            entryInfo: {},
-            formSubmitting: false
+            formSubmitting: false,
+            dirData: {
+                parentPath: '',
+                name: '',
+                noMirror: 0
+            },
+            validation: {
+                parentPath: {status: '', help: '', valid: false},
+                name: {status: '', help: '', valid: false},
+            }
         };
     }
 
+    showDirectoryTree (){
+        this.directoryTreeWrapper.getWrappedInstance().show();
+    }
+
+    async selectParentPath (parentPath){
+        let dirData = Object.assign(this.state.shareData, {parentPath});
+        await this.setState({dirData});
+        this.validateForm('parentPath');
+    }
+
     formValueChange (key, value){
-        let entryInfo = Object.assign({}, this.state.entryInfo);
-        entryInfo[key] = value;
-        this.setState({entryInfo});
+        let dirData = Object.assign({}, this.state.dirData);
+        dirData[key] = value;
+        this.setState({dirData});
+    }
+
+    async validationUpdateState (key, value, valid){
+        let {cn, en} = value;
+        let validation = {
+            [key]: {
+                status: (cn || en) ? 'error' : '',
+                help: lang(cn, en),
+                valid
+            }
+        };
+        validation = Object.assign({}, this.state.validation, validation);
+        await this.setState({validation});
+    }
+
+    async validateForm (key){
+        await this.validationUpdateState(key, {cn: '', en: ''}, true);
+        let {parentPath, name} = this.state.dirData;
+        if (key === 'parentPath'){
+            if (!parentPath){
+                this.validationUpdateState('path', {cn: '请选择新目录的父级目录', en: 'Please select parent dir of the new dir'}, false);
+            }
+        }
+        if (key === 'name'){
+            if (!name){
+                await this.validationUpdateState('name', {
+                    cn: '请输入新目录名称',
+                    en: 'Please enter the name of new dir'
+                }, false);
+            }
+            if (!validateFsName(name)){
+                await this.validationUpdateState('name', {
+                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
+                    en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
+                }, false);
+            }
+            // 文件夹重名检测
+
+
+        }
+
+        // calculate whole form validation
+        let formValid = true;
+        Object.keys(this.state.validation).forEach(key => {
+            formValid = formValid && this.state.validation[key].valid;
+        });
+        this.setState({formValid});
     }
 
     async create (){
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.saveEntryInfo(this.state.entryInfo);
+            await httpRequests.createDirectory(this.state.dirData);
             this.hide();
-            message.success(lang('条带设置保存成功！', 'Stripe setting has been saved successfully!'));
+            message.success(lang('创建目录成功！', 'Stripe setting has been saved successfully!'));
         } catch ({msg}){
-            message.error(lang('条带设置保存失败，原因：', 'Stripe setting saving failed, reason: ') + msg);
+            message.error(lang('创建目录失败，原因：', 'Stripe setting saving failed, reason: ') + msg);
         }
         this.setState({formSubmitting: false});
     }
 
-    async show (path){
+    async show (parentPath = ''){
         await this.setState({
             visible: true,
             formSubmitting: false,
-            entryInfo: {
-                dirPath: path,
+            dirData: {
+                parentPath,
+                name: '',
+                noMirror: 0
             }
         });
-        let entryInfo = await httpRequests.getEntryInfo(path);
-        this.setState({entryInfo});
     }
 
     hide (){
@@ -50,23 +116,23 @@ class CreateDirectory extends Component {
     }
 
     render (){
-        let {entryInfo} = this.state;
+        let {dirData} = this.state;
         let {language} = this.props;
         let isChinese = language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 8 : 8},
-                sm: {span: isChinese ? 8 : 8},
+                xs: {span: isChinese ? 6 : 6},
+                sm: {span: isChinese ? 6 : 6},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 16 : 16},
-                sm: {span: isChinese ? 16 : 16},
+                xs: {span: isChinese ? 18 : 18},
+                sm: {span: isChinese ? 18 : 18},
             }
         };
         return (
             <Modal
-                title={lang('条带设置', 'Stripe Setting')}
-                width={400}
+                title={lang('创建目录', 'Create Directory')}
+                width={450}
                 visible={this.state.visible}
                 closable={false}
                 maskClosable={false}
@@ -80,86 +146,54 @@ class CreateDirectory extends Component {
                         </Button>
                         <Button
                             type="primary"
-                            loading={!entryInfo.hasOwnProperty('numTargets') || this.state.formSubmitting}
-                            size='small' onClick={this.editStripeSetting.bind(this)}
+                            size='small'
+                            onClick={this.create.bind(this)}
                         >
-                            {lang('编辑', 'Edit')}
+                            {lang('创建', 'Create')}
                         </Button>
                     </div>
                 }
             >
-                <Spin
-                    indicator={<Icon type="loading" style={{fontSize: 18}} spin />}
-                    spinning={!entryInfo.hasOwnProperty('numTargets')}
-                >
-                    <Form className="fs-stripe-form">
-                        <Form.Item {...formItemLayout} label={lang('路径', 'Path')}>
-                            <span>{entryInfo.dirPath}</span>
-                        </Form.Item>
-                        <Form.Item {...formItemLayout} label={lang('默认目标数', 'Default Targets')}>
-                            <Input
-                                style={{width: 140}}
-                                size="small"
-                                placeholder={lang('请输入默认目标数', 'enter default targets number')}
-                                value={entryInfo.numTargets}
-                                onChange={({target: {value}}) => this.formValueChange.bind(this, 'numTargets', value)()}
-                            />
-                        </Form.Item>
-                        <Form.Item {...formItemLayout} label={lang('块大小', 'Block Size')}>
-                            <Input
-                                style={{width: 140}}
-                                size="small"
-                                placeholder={lang('请输入块大小', 'enter block size')}
-                                value={entryInfo.chunkSize}
-                                onChange={({target: {value}}) => this.formValueChange.bind(this, 'chunkSize', value)()}
-                            /><span style={{marginLeft: 12}}>Byte</span>
-                            <Popover
-                                placement="right"
-                                content={lang(
-                                    '块大小不能小于 65536 Bytes，并且必须是2的幂',
-                                    'Chunk size can not be less than 65536 Bytes, and must be power of 2'
-                                )}
-                            >
-                                <Icon type="question-circle-o" className="fs-info-icon m-l" />
-                            </Popover>
-                        </Form.Item>
-                        <Form.Item {...formItemLayout} label={lang('条带模式', 'Stripe Mode')}>
-                            <Select
-                                style={{width: 140}}
-                                size="small"
-                                placeholder={lang('请选择条带模式', 'select stripe mode')}
-                                value={entryInfo.buddyMirror === 1 ? 'buddyMirror' : 'raid0'}
-                                onChange={value => this.formValueChange.bind(this, 'buddyMirror', value)()}
-                            >
-                                <Select.Option value="raid0">RAID 0</Select.Option>
-                                <Select.Option value="buddyMirror">BuddyMirror</Select.Option>
-                            </Select>
-                        </Form.Item>
-                        {/*
-                        <Form.Item {...formItemLayout} label={lang('元数据镜像', 'Metadata Image')}>
-                            <Checkbox checked={stripe.isMetadataImage}
-                                onChange={({target: {checked}}) => this.formValueChange.bind(this, 'isMetadataImage', checked)()}
-                            />
-                        </Form.Item>
-                        */}
-                        <Form.Item {...formItemLayout} label={lang('存储池ID', 'Storage Pool ID')}>
-                            <Input
-                                style={{width: 140}}
-                                size="small"
-                                readOnly
-                                value={entryInfo.stoargePoolId}
-                            />
-                        </Form.Item>
-                        <Form.Item {...formItemLayout} label={lang('存储池名称', 'Storage Pool Name')}>
-                            <Input
-                                style={{width: 140}}
-                                size="small"
-                                readOnly
-                                value={entryInfo.stoargePoolName}
-                            />
-                        </Form.Item>
-                    </Form>
-                </Spin>
+                <Form className="fs-stripe-form">
+                    <Form.Item {...formItemLayout} label={lang('父级目录', 'Parent Directory')}>
+                        <Input
+                            size="small"
+                            placeholder={lang('请选择新目录的父级目录', 'Select parent dir for this new dir')}
+                            readOnly
+                            value={dirData.parentPath}
+                            addonAfter={
+                                <Icon
+                                    type="folder-open"
+                                    style={{cursor: 'pointer'}}
+                                    onClick={this.showDirectoryTree.bind(this)}
+                                />
+                            }
+                        />
+                    </Form.Item>
+                    <Form.Item {...formItemLayout} label={lang('新目录名称', 'New Dir Name')}>
+                        <Input
+                            size="small"
+                            placeholder={lang('请输入新目录的名称', 'Please enter the name of new dir')}
+                            value={dirData.name}
+                            onChange={({target: {value}}) => {
+                                this.formValueChange.bind(this, 'name')(value);
+                                this.validateForm.bind(this, 'name')(value);
+                            }}
+                        />
+                    </Form.Item>
+                    <Form.Item {...formItemLayout} label={lang('伙伴组', 'Buddy Group')}>
+                        <Switch
+                            style={{marginRight: 10}} size="small"
+                            checked={!dirData.noMirror}
+                            onChange={checked => this.formValueChange.bind(this, 'noMirror')(checked + 0)}
+                        />
+                        {!dirData.noMirror ? lang('启用', 'Enable') : lang('不启用', 'Enable')}
+                    </Form.Item>
+                    <Form.Item {...formItemLayout} label={lang('路径预览', 'Path Preview')}>
+                        <span>{dirData.parentPath + '/' + dirData.name}</span>
+                    </Form.Item>
+                </Form>
+                <DirectoryTree onSelect={this.selectParentPath.bind(this)} ref={ref => this.directoryTreeWrapper = ref} />
             </Modal>
         );
     }
