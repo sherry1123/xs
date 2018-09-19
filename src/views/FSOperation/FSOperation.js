@@ -200,7 +200,7 @@ class FSOperation extends Component {
                             size="small"
                             onClick={() => this.createDirectory.bind(this)({path: '/'})}
                             >
-                            {lang('创建', 'Create')}
+                            {lang('创建目录', 'Create Directory')}
                         </Button>
                     </div>
                 </div>

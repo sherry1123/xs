@@ -9,6 +9,7 @@ import {validatePathname} from 'Services';
 class CreateDirectory extends Component {
     constructor (props){
         super(props);
+        this.exitedPathnames = [];
         this.state = {
             visible: false,
             formSubmitting: false,
@@ -63,10 +64,7 @@ class CreateDirectory extends Component {
         }
         if (key === 'name'){
             if (!name){
-                await this.validationUpdateState('name', {
-                    cn: '请输入新目录名称',
-                    en: 'Please enter the name of new dir'
-                }, false);
+                await this.validationUpdateState('name', {cn: '请输入新目录名称', en: 'Please enter the name of new dir'}, false);
             }
             if (!validatePathname(name)){
                 await this.validationUpdateState('name', {
@@ -75,8 +73,10 @@ class CreateDirectory extends Component {
                 }, false);
             }
             // 文件夹重名检测
-
-
+            let pathnameDuplicated = this.exitedPathnames.includes(name);
+            if (pathnameDuplicated){
+                this.validationUpdateState('name', {cn: '该目录名已存在', en: 'This directory is already existed'}, false);
+            }
         }
 
         // calculate whole form validation
@@ -102,8 +102,8 @@ class CreateDirectory extends Component {
         this.setState({formSubmitting: false});
     }
 
-    async show (parentPath = ''){
-        await this.setState({
+    async show (parentPath = '/'){
+        this.setState({
             visible: true,
             formSubmitting: false,
             dirData: {
@@ -112,6 +112,8 @@ class CreateDirectory extends Component {
                 noMirror: 0
             }
         });
+        this.exitedPathnames = (await httpRequests.getFiles(parentPath)).map(dir => dir.name);
+        console.info(this.exitedPathnames);
     }
 
     hide (){
@@ -119,7 +121,7 @@ class CreateDirectory extends Component {
     }
 
     render (){
-        let {dirData} = this.state;
+        let {dirData, validation} = this.state;
         let {language} = this.props;
         let isChinese = language === 'chinese';
         let formItemLayout = {
@@ -174,7 +176,11 @@ class CreateDirectory extends Component {
                             }
                         />
                     </Form.Item>
-                    <Form.Item {...formItemLayout} label={lang('新目录名称', 'New Dir Name')}>
+                    <Form.Item {...formItemLayout}
+                        label={lang('新目录名称', 'New Dir Name')}
+                        validateStatus={validation.name.status}
+                        help={validation.name.help}
+                    >
                         <Input
                             size="small"
                             placeholder={lang('请输入新目录的名称', 'Please enter the name of new dir')}
