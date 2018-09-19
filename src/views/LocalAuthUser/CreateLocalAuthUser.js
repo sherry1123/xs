@@ -161,7 +161,7 @@ class CreateLocalAuthUser extends Component {
         });
     }
 
-    async hide (){
+    hide (){
         this.setState({visible: false});
     }
 

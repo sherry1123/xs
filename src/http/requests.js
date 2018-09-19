@@ -481,6 +481,14 @@ export default  {
         await fetchPost('/api/batchdeletelocalauthuser', {names});
     },
 
+    async getLocalAuthUserSecurityStrategySetting (){
+        return await fetchPost('/api/getlocalauthusersetting');
+    },
+
+    async updateLocalAuthUserSecurityStrategySetting (strategyData){
+        await fetchPost('/api/updatelocalauthusersetting', strategyData);
+    },
+
     // local authentication user group
     async getLocalAuthUserGroupList (){
         requestHandler(async () => {

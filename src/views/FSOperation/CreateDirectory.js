@@ -36,21 +36,12 @@ class CreateDirectory extends Component {
     }
 
     formValueChange (key, value){
-        let dirData = Object.assign({}, this.state.dirData);
-        dirData[key] = value;
+        let dirData = Object.assign({}, this.state.dirData, {[key]: value});
         this.setState({dirData});
     }
 
     async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
+        let validation = Object.assign({}, this.state.validation, {[key]: {status: (value.cn || value.en) ? 'error' : '', help: lang(value.cn, value.en), valid: valid}});
         await this.setState({validation});
     }
 
@@ -113,7 +104,6 @@ class CreateDirectory extends Component {
             }
         });
         this.exitedPathnames = (await httpRequests.getFiles(parentPath)).map(dir => dir.name);
-        console.info(this.exitedPathnames);
     }
 
     hide (){

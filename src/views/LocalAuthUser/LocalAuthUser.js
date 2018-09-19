@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateLocalAuthUser from './CreateLocalAuthUser';
 import EditLocalAuthUser from './EditLocalAuthUser';
+import SecurityStrategySetting from './SecurityStrategySetting';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {timeFormat} from 'Services';
@@ -166,6 +167,10 @@ class LocalAuthUser extends Component {
         });
     }
 
+    securityStrategySetting (){
+        this.securityStrategySettingWrapper.getWrappedInstance().show();
+    }
+
     hide (){
         this.setState({visible: false});
     }
@@ -268,6 +273,13 @@ class LocalAuthUser extends Component {
                             {lang('创建', 'Create')}
                         </Button>
                         <Button
+                            type="warning"
+                            size="small"
+                            onClick={this.securityStrategySetting.bind(this)}
+                        >
+                            {lang('安全策略', 'Security Strategy')}
+                        </Button>
+                        <Button
                             type="danger"
                             size="small"
                             disabled={!batchDeleteNames.length}
@@ -282,6 +294,7 @@ class LocalAuthUser extends Component {
                 </div>
                 <CreateLocalAuthUser ref={ref => this.createLocalAuthUserWrapper = ref} />
                 <EditLocalAuthUser ref={ref => this.editLocalAuthUserWrapper = ref} />
+                <SecurityStrategySetting ref={ref => this.securityStrategySettingWrapper = ref} />
             </div>
         );
     }

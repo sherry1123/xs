@@ -122,7 +122,7 @@ class Login extends Component {
             <section className="fs-login-wrapper">
                 <LanguageButton width={80} border="none" login pureText />
                 <div>
-                    {Object.keys(Array.apply(null, {length: 5})).map(i => (
+                    {Object.keys(Array.apply(null, {length: 5})).map((val, i) => (
                         <i className={`fs-login-background-bubble b-${parseInt(i, 10) + 1}`} key={i} />
                     ))}
                 </div>
@@ -132,7 +132,7 @@ class Login extends Component {
                         <div>{lang('满足各类存储和高性能计算的需求', 'Meets the needs of storage and high performance computing')}</div>
                     </div>
                     <section className="fs-bubble-logo-wrapper">
-                        {Object.keys(Array.apply(null, {length: 120})).map(i => (
+                        {Object.keys(Array.apply(null, {length: 120})).map((val, i) => (
                             <i className={`fs-b-b b-${parseInt(i, 10) + 1}`} key={i}><i className="fs-b"/></i>
                         ))}
                     </section>
