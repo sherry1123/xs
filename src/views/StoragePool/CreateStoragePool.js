@@ -16,7 +16,7 @@ class CreateStoragePool extends Component {
                 name: '',
 				description: '',
 				targets: [],
-				buddyGroups:[]
+				buddyGroups: []
             },
             validation: {
                 name: {status: '', help: '', valid: false},
@@ -108,8 +108,8 @@ class CreateStoragePool extends Component {
 				name: {status: '', help: '', valid: false},
 			}
         });
-        httpRequests.getTargetsOfStoragePoolId();
-		httpRequests.getBuddyGroupsOfStoragePoolId();
+        httpRequests.getTargetsOfStoragePoolById();
+		httpRequests.getBuddyGroupsOfStoragePoolById();
     }
 
     async hide (){
@@ -223,9 +223,9 @@ class CreateStoragePool extends Component {
 							size="small"
 							style={{width: '100%'}}
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为可选项', 'description is optional')}
+                            placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
                             value={this.state.storagePoolData.description}
-                            maxLength={255}
+                            maxLength={200}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                             }}
@@ -238,8 +238,8 @@ class CreateStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
-    return {language, storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool};
+    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool, targetsOfStoragePool, buddyGroupsOfStoragePool}}} = state;
+    return {language, storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool, targetsOfStoragePool, buddyGroupsOfStoragePool};
 };
 
 const mapDispatchToProps = [];

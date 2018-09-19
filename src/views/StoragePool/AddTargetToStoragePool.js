@@ -8,13 +8,12 @@ import {Button, Modal, Form, Select} from 'antd';
 class AddTargetToStoragePool extends Component {
 	constructor (props){
 		super(props);
-		let {targetsForStoragePool } = this.props;
 		this.state = {
+			poolName: '',
 			visible: false,
 			formValid: false,
 			formSubmitting: false,
-			targetsForStoragePool,
-			storagePoolData: {
+			targetData: {
 				name: '',
 				targets: [],
 			},
@@ -25,13 +24,21 @@ class AddTargetToStoragePool extends Component {
 		};
 	}
 
-	show ({poolId, name}){
+	formValueChange (key, value){
+		let targetData = Object.assign({}, this.state.targetData, {[key]: value});
+		this.setState({targetData});
+	}
+
+	show (poolName){
 		this.setState({
 			visible: true,
-			poolId,
-			poolName: name,
+			poolName,
+			targetData: {
+				name: '',
+				targets: [],
+			},
 		});
-		httpRequests.getTargetsOfStoragePoolId();
+		httpRequests.getTargetsOfStoragePoolById();
 	}
 
 	async hide (){
@@ -39,6 +46,7 @@ class AddTargetToStoragePool extends Component {
 	}
 
 	render (){
+		let {targetsForStoragePool } = this.props;
 		let isChinese = this.props.language === 'chinese';
 		let formItemLayout = {
 			labelCol: {
@@ -53,7 +61,7 @@ class AddTargetToStoragePool extends Component {
 
 		return (
 			<Modal
-				title={lang('为存储池  添加存储目标', 'Add New Storage Target for  ')}
+				title={lang(`为存储池 ${this.state.poolName} 添加存储目标`, `Add New Storage Target for ${this.state.poolName} `)}
 				width={480}
 				closable={false}
 				maskClosable={false}
@@ -84,14 +92,18 @@ class AddTargetToStoragePool extends Component {
 						label={lang('存储目标', 'Storage Pool Target')}
 					>
 						<Select
+							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
 							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
 							optionLabelProp="value"
-							value={this.state.storagePoolData.targets}
+							value={this.state.targetData.targets}
+							onChange={(value, option) => {
+								this.formValueChange.bind(this, 'targets')(value);
+							}}
 						>
 							{
-								this.state.targetsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>{target.id} {target.targetPath} {formatStorageSize(target.capacity)}</Select.Option>)
+								targetsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>{target.id} {target.targetPath} {formatStorageSize(target.capacity)}</Select.Option>)
 							}
 						</Select>
 					</Form.Item>
