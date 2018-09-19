@@ -30,7 +30,7 @@ def get_disk_list(ip):
 
     def revise_disk_space(disk):
         disk['totalSpace'] = int(handler.to_byte(float(handler.replace(
-            '\S[|i]B', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0]))
+            '\Si{0,1}B', '', disk['totalSpace'])), handler.replace('\S+\d', '', disk['totalSpace'])[0]))
         return disk
     disk_list = filter(lambda disk: not disk['isUsed'], disk_list)
     disk_list = map(revise_disk_space, disk_list)
@@ -154,9 +154,10 @@ def get_targets_in_storage_pool(pool_id=None):
     data = backend_handler(request.get(
         'http://localhost:9090/cluster/gettargetsinfo', param, get_token()))
     targets = data['poolInfoList']
+
     def revise_capacity(item):
         item['capacity'] = int(handler.to_byte(float(handler.replace(
-            '\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
+            '\Si{0,1}B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
         return item
     if targets is None:
         targets = []
@@ -169,9 +170,10 @@ def get_buddy_groups_in_storage_pool(pool_id=None):
     data = backend_handler(request.get(
         'http://localhost:9090/cluster/getgroupsinfo', param, get_token()))
     buddy_groups = data['poolInfoList']
+
     def revise_capacity(item):
         item['capacity'] = int(handler.to_byte(float(handler.replace(
-            '\S[|i]B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
+            '\Si{0,1}B', '', item['capacity'])), handler.replace('\S+\d', '', item['capacity'])[0]))
         return item
     if buddy_groups is None:
         buddy_groups = []
@@ -244,6 +246,7 @@ def get_entry_info(path):
     entry_info['chunkSize'] = handler.to_byte(int(handler.replace(
         '[a-zA-Z]', '', entry_info['chunkSize'])), handler.replace('\d+', '', entry_info['chunkSize']))
     entry_info['numTargets'] = int(entry_info['numTargets'])
+    entry_info['storagePoolName'] = entry_info['storagePoolDesc']
     return entry_info
 
 
@@ -324,7 +327,6 @@ def delete_cifs_share(server, share_name):
 
 
 def add_user_or_group_to_cifs_share(server, share_name, user_or_group_list):
-    print({'opt': 'cifsaddclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': map(lambda user_or_group: {'name': user_or_group['name'], 'clientType': user_or_group['type'], 'permission': user_or_group['permission']}, user_or_group_list)}]}})
     return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifsaddclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': map(lambda user_or_group: {'name': user_or_group['name'], 'clientType': user_or_group['type'], 'permission': user_or_group['permission']}, user_or_group_list)}]}}, get_token()))
 
 
@@ -334,3 +336,39 @@ def update_user_or_group_in_cifs_share(server, share_name, name, user_or_group_t
 
 def remove_user_or_group_from_cifs_share(server, share_name, name, user_or_group_type):
     return backend_handler(request.post('http://localhost:9090/cluster/nascifssharemanager', {'opt': 'cifsdeleteclient', 'clientCifsInfo': {'serverIp': server, 'cifsShareList': [{'name': share_name, 'userList': [{'name': name, 'clientType': user_or_group_type}]}]}}, get_token()))
+
+
+def create_dir(path, no_mirror):
+    return backend_handler(request.post('http://localhost:9090/cluster/createdir', {'dirInfos': [{'path': path, 'noMirror': no_mirror}]}, get_token()))
+
+
+def update_local_auth_user_status(name, status):
+    opt = 'locallockuserrecover' if status else 'localuserlock'
+    return backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': opt, 'userInfo': {'localUserList': [{'userName': name}]}}, get_token()))
+
+
+def get_local_auth_user_validity_period(name):
+    users = backend_handler(request.post(
+        'http://localhost:9090/cluster/nasusermanager', {'opt': 'localuserquery'}, get_token()))
+    users = map(lambda user: {
+                'name': user['userName'], 'validityPeriod': user['passwdindate']}, users)
+    user = filter(lambda user: user['name'] == name, users)[0]
+    return user['validityPeriod']
+
+
+def get_local_auth_user_setting():
+    user_name_setting = backend_handler(request.post(
+        'http://localhost:9090/cluster/nasusermanager', {'opt': 'globaluserattrquery'}, get_token()))
+    user_passwd_setting = backend_handler(request.post(
+        'http://localhost:9090/cluster/nasusermanager', {'opt': 'globalpasswordattrquery'}, get_token()))
+    user_setting = {}
+    user_setting.update(user_name_setting)
+    user_setting.update(user_passwd_setting)
+    return user_setting
+
+
+def update_local_auth_user_setting(user_name_min_len, pass_min_len, pass_max_len, pass_complexity, pass_repeat_char_max, pass_available_day, pass_change_interval_minute):
+    backend_handler(request.post('http://localhost:9090/cluster/nasusermanager',
+                                 {'opt': 'globaluserattrset', 'userInfo': {'gUserAttr': {'userNameMinLen': user_name_min_len}}}, get_token()))
+    backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'globalpasswordattrset', 'userInfo': {'gUserPasswordAttr': {'passMinLen': pass_min_len, 'passMaxLen': pass_max_len,
+                                                                                                                                                     'passComplexity': pass_complexity, 'passRepeatCharMax': pass_repeat_char_max, 'passAvailableDay': pass_available_day, 'passChangeIntervalMinute': pass_change_interval_minute}}}, get_token()))

@@ -469,3 +469,23 @@ def update_user_or_group_in_cifs_share():
 @app.route('/api/removeuserorgroupfromcifsshare', methods=['GET', 'POST'])
 def remove_user_or_group_from_cifs_share():
     return jsonify(controller.remove_user_or_group_from_cifs_share(request.params))
+
+
+@app.route('/api/createdir', methods=['GET', 'POST'])
+def create_dir():
+    return jsonify(controller.create_dir(request.params))
+
+
+@app.route('/api/updatelocalauthuserstatus', methods=['GET', 'POST'])
+def update_local_auth_user_status():
+    return jsonify(controller.update_local_auth_user_status(request.params))
+
+
+@app.route('/api/getlocalauthusersetting', methods=['GET', 'POST'])
+def get_local_auth_user_setting():
+    return jsonify(controller.get_local_auth_user_setting())
+
+
+@app.route('/api/updatelocalauthusersetting', methods=['GET', 'POST'])
+def update_local_auth_user_setting():
+    return jsonify(controller.update_local_auth_user_setting(request.params))
