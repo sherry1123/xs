@@ -207,7 +207,7 @@ def get_default_user():
 def get_user(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             username, = handler.request(params, username=str)
             data = database.get_user(username)
         else:
@@ -426,7 +426,7 @@ def get_cluster_service_and_client_ip():
 def get_storage_pool(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             name, = handler.request(params, name=str)
             data = database.get_storage_pool(name)
         else:
@@ -440,9 +440,11 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        buddy_groups, description, name, targets = handler.request(params, name=str, description=str, targets=list, buddyGroups=list)
+        buddy_groups, description, name, targets = handler.request(
+            params, name=str, description=str, targets=list, buddyGroups=list)
         targets = ','.join(map(lambda target: str(target), targets))
-        buddy_groups = ','.join(map(lambda buddy_group: str(buddy_group), buddy_groups))
+        buddy_groups = ','.join(
+            map(lambda buddy_group: str(buddy_group), buddy_groups))
         pool_id = backend.create_storage_pool(name, targets, buddy_groups)
         database.create_storage_pool(pool_id, name, description)
         response = handler.response(0, 'Create storagePool successfully!')
@@ -454,7 +456,8 @@ def create_storage_pool(params):
 def update_storage_pool(params):
     response = {}
     try:
-        description, name, pool_id = handler.request(params, poolId=int, name=str, description=str)
+        description, name, pool_id = handler.request(
+            params, poolId=int, name=str, description=str)
         backend.update_storage_pool_name(pool_id, name)
         database.update_storage_pool_name_and_desc(pool_id, name, description)
         response = handler.response(0, 'Update storagePool successfully!')
@@ -478,7 +481,7 @@ def delete_storage_pool(params):
 def get_targets_in_storage_pool(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             pool_id, = handler.request(params, poolId=int)
             data = backend.get_targets_in_storage_pool(pool_id)
         else:
@@ -492,7 +495,7 @@ def get_targets_in_storage_pool(params):
 def get_buddy_groups_in_storage_pool(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             pool_id, = handler.request(params, poolId=int)
             data = backend.get_buddy_groups_in_storage_pool(pool_id)
         else:
@@ -530,7 +533,7 @@ def update_snapshot_setting(params):
 def get_snapshot(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             name, = handler.request(params, name=str)
             data = database.get_snapshot(name)
         else:
@@ -630,7 +633,7 @@ def rollback_snapshot(params):
 def get_snapshot_schedule(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             name, = handler.request(params, name=str)
             data = database.get_snapshot_schedule(name)
         else:
@@ -746,7 +749,7 @@ def get_client():
 def get_nas_server(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             ip, = handler.request(params, ip=str)
             data = database.get_nas_server(ip)
         else:
@@ -848,11 +851,16 @@ def get_audit_log():
 def get_local_auth_user(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             name, = handler.request(params, name=str)
             data = database.get_local_auth_user(name)
+            data['validityPeriod'] = backend.get_local_auth_user_validity_period(
+                name)
         else:
             data = database.list_local_auth_user()
+            for user in data:
+                user['validityPeriod'] = backend.get_local_auth_user_validity_period(
+                    user['name'])
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -922,7 +930,7 @@ def batch_delete_local_auth_user(params):
 def get_local_auth_user_group(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             name, = handler.request(params, name=str)
             data = database.get_local_auth_user_group(name)
         else:
@@ -1013,7 +1021,7 @@ def remove_local_auth_user_from_group(params):
 def get_nfs_share(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             path, = handler.request(params, path=str)
             data = database.get_nfs_share(path)
         else:
@@ -1156,7 +1164,7 @@ def delete_client_in_nfs_share(params):
 def get_cifs_share(params):
     response = {}
     try:
-        if params is not None and len(dict.keys(params)):
+        if params:
             name, = handler.request(params, name=str)
             data = database.get_cifs_share(name)
         else:
@@ -1299,6 +1307,54 @@ def remove_user_or_group_from_cifs_share(params):
             shareName, name, user_or_group_type)
         response = handler.response(
             0, 'Remove user or group from cifs share successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_dir(params):
+    response = {}
+    try:
+        noMirror, path = handler.request(params, path=str, noMirror=int)
+        backend.create_dir(path, noMirror)
+        response = handler.response(0, 'Create directory successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_local_auth_user_status(params):
+    response = {}
+    try:
+        name, status = handler.request(params, name=str, status=bool)
+        backend.update_local_auth_user_status(name, status)
+        database.update_local_auth_user_status(name, status)
+        response = handler.response(
+            0, 'Update local auth user status successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_local_auth_user_setting():
+    response = {}
+    try:
+        data = backend.get_local_auth_user_setting()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_local_auth_user_setting(params):
+    response = {}
+    try:
+        passAvailableDay, passChangeIntervalMinute, passComplexity, passMaxLen, passMinLen, passRepeatCharMax, userNameMinLen = handler.request(
+            params, userNameMinLen=int, passMinLen=int, passMaxLen=int, passComplexity=int, passRepeatCharMax=int, passAvailableDay=int, passChangeIntervalMinute=int)
+        backend.update_local_auth_user_setting(
+            userNameMinLen, passMinLen, passMaxLen, passComplexity, passRepeatCharMax, passAvailableDay, passChangeIntervalMinute)
+        response = handler.response(
+            0, 'Update local auth user setting successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
