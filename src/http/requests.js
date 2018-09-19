@@ -469,6 +469,10 @@ export default  {
         await fetchPost('/api/updatelocalauthuser', userData);
     },
 
+    async updateLocalAuthUserStatus (name, status){
+        await fetchPost('/api/updatelocalauthuserstatus', {name, status});
+    },
+
     async deleteLocalAuthUser (userData){
         await fetchPost('/api/deletelocalauthuser', userData);
     },

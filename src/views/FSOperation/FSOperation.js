@@ -34,7 +34,7 @@ class FSOperation extends Component {
         } catch (e){
             // if query path error, need to remove previous one in directoryStack
             needBackIfError && this.directoryStack.shift();
-            // should use code to distinguish it's network error or actually no such catalog
+            // should use code to distinguish it's network error or actually no such directory
             message.warning(lang('该路径不存在', 'This path is not existed'));
         }
         this.queryDirLock = false;
@@ -111,7 +111,7 @@ class FSOperation extends Component {
             // loading: this.queryDirLock,
             rowKey: 'path',
             locale: {
-                emptyText: lang('暂无文件目录', 'No File Catalog')
+                emptyText: lang('暂无文件目录', 'No File Directory')
             },
             scroll: {y: 500},
             title: () => (<span className="fs-table-title"><Icon type="folder" />{lang('文件系统操作', 'File System Operation')}</span>),
@@ -133,7 +133,7 @@ class FSOperation extends Component {
                             </a>
                     )
                 },
-                {title: lang('目录数量', 'Catalog Number'), width: 80, dataIndex: 'size', render: text => text},
+                {title: lang('目录数量', 'Directory Number'), width: 80, dataIndex: 'size', render: text => text},
                 {title: lang('用户', 'User'), width: 100, dataIndex: 'user'},
                 {title: lang('组', 'Group'), width: 100, dataIndex: 'group'},
                 {title: lang('系统级权限', 'System Level Permission'), width: 100, dataIndex: 'permissions'},
