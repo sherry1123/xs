@@ -3,8 +3,7 @@ import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {formatStorageSize} from 'Services';
-import {Button, Modal, Form, Select} from 'antd';
-import {message} from "antd/lib/index";
+import {Button, Modal, message, Form, Select} from 'antd';
 
 class AddBuddyGroupToStoragePool extends Component {
 	constructor (props){
