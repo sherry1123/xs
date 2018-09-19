@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {Button, Table, Modal, Popover} from 'antd';
+import {Button, Table, Modal, message, Popover} from 'antd';
 import AddTargetToStoragePool from './AddTargetToStoragePool';
-import {message} from "antd/lib/index";
+import AddDiskToTarget from './AddDiskToTarget';
 
 class TargetOfStoragePool extends Component {
 	constructor (props){
@@ -59,10 +59,13 @@ class TargetOfStoragePool extends Component {
 		});
 	}
 
-	addNewTarget (storageTarget){
+	addTargetToStoragePool (storageTarget){
 		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(this.state.poolName);
 	}
 
+	addDiskToTarget (storagePoolTarget){
+		this.addDiskToTargetWrapper.getWrappedInstance().show(storagePoolTarget);
+	}
 
 	render (){
 		let {targetsOfStoragePool} = this.props;
@@ -88,7 +91,7 @@ class TargetOfStoragePool extends Component {
 				<Button
 					size='small'
 					style={{float: 'right'}}
-					onClick={this.addNewTarget.bind(this)}
+					onClick={this.addTargetToStoragePool.bind(this)}
 				>
 					{lang('添加', 'Add')}
 				</Button>
@@ -106,7 +109,7 @@ class TargetOfStoragePool extends Component {
 							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
 								<Button
 									{...buttonConf}
-									//onClick={this..bind(this, record, index)}
+									onClick={this.addDiskToTarget.bind(this, record, index)}
 									icon="edit"
 								>
 								</Button>
@@ -119,6 +122,7 @@ class TargetOfStoragePool extends Component {
 								>
 								</Button>
 							</Popover>
+							<AddDiskToTarget ref={ref => this.addDiskToTargetWrapper = ref} />
 						</div>
 				}
 			],

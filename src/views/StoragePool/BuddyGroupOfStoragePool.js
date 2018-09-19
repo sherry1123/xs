@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {Button, Table, Modal, Popover, message} from 'antd';
+import AddDiskToBuddyGroup from './AddDiskToBuddyGroup';
 import AddBuddyGroupToStoragePool from './AddBuddyGroupToStoragePool';
 
 class BuddyGroupOfStoragePool extends Component {
@@ -58,8 +59,12 @@ class BuddyGroupOfStoragePool extends Component {
 		});
 	}
 
-	addBuddyGroup (storageBuddyGroup){
+	addBuddyGroup (){
 		this.addBuddyGroupToStorageWrapper.getWrappedInstance().show(this.state.poolName);
+	}
+
+	addDiskToBuddyGroup (storageBuddyGroup){
+		this.addDiskToBuddyGroupWrapper.getWrappedInstance().show(storageBuddyGroup);
 	}
 
 	render (){
@@ -105,7 +110,7 @@ class BuddyGroupOfStoragePool extends Component {
 							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
 								<Button
 									{...buttonConf}
-									//onClick={this.Add.bind(this, record, index)}
+									onClick={this.addDiskToBuddyGroup.bind(this, record, index)}
 									icon="edit"
 								>
 								</Button>
@@ -118,6 +123,7 @@ class BuddyGroupOfStoragePool extends Component {
 								>
 								</Button>
 							</Popover>
+							<AddDiskToBuddyGroup ref={ref => this.addDiskToBuddyGroupWrapper = ref} />
 						</div>
 				}
 			],

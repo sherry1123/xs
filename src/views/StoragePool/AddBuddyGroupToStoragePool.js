@@ -74,13 +74,14 @@ class AddBuddyGroupToStoragePool extends Component {
 	}
 
 	async addBuddyGroupToStoragePool (){
+		let buddyGroupData = Object.assign({}, this.state.buddyGroupData);
 		this.setState({formSubmitting: true});
 		try {
 			httpRequests.getBuddyGroupsOfStoragePoolById();
 			await this.hide();
-			message.success(lang(`开始添加伙伴组镜像 !`, `Start adding buddy group  !`));
+			message.success(lang(`开始添加伙伴组镜像 ${buddyGroupData.name}!`, `Start adding buddy group ${buddyGroupData.name} !`));
 		} catch ({msg}){
-			message.error(lang(`伙伴组镜像 添加失败, 原因: `, `Add buddy group failed, reason: `) + msg);
+			message.error(lang(`伙伴组镜像 ${buddyGroupData.name} 添加失败, 原因: `, `Add buddy group failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}

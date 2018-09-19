@@ -4,6 +4,7 @@ import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {formatStorageSize} from 'Services';
 import {Button, Modal, Form, Select} from 'antd';
+import {message} from "antd/lib/index";
 
 class AddTargetToStoragePool extends Component {
 	constructor (props){
@@ -45,6 +46,19 @@ class AddTargetToStoragePool extends Component {
 		this.setState({visible: false});
 	}
 
+	async addTargetToStoragePool (){
+		let targetData = Object.assign({}, this.state.targetData);
+		this.setState({formSubmitting: true});
+		try {
+			httpRequests.getTargetsOfStoragePoolById();
+			await this.hide();
+			message.success(lang(`开始添加存储目标 ${targetData.name}!`, `Start adding storage target ${targetData.name} !`));
+		} catch ({msg}){
+			message.error(lang(`存储目标 ${targetData.name} 添加失败, 原因: `, `Add storage target failed, reason: `) + msg);
+		}
+		this.setState({formSubmitting: false});
+	}
+
 	render (){
 		let {targetsForStoragePool } = this.props;
 		let isChinese = this.props.language === 'chinese';
@@ -80,6 +94,7 @@ class AddTargetToStoragePool extends Component {
 							type="primary"
 							disabled={!this.state.formValid}
 							loading={this.state.formSubmitting}
+							onClick={this.addTargetToStoragePool.bind(this)}
 						>
 							{lang('添加', 'Add')}
 						</Button>
