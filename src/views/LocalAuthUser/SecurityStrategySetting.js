@@ -5,13 +5,6 @@ import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
 class SecurityStrategySetting extends Component {
-    /*
-        {
-            3: '特殊字符+大写小写数字（3选2）',
-            4: '特殊字符大写小写数字'
-        }
-        99999
-    */
     constructor (props){
         super(props);
         this.state = {
@@ -143,7 +136,7 @@ class SecurityStrategySetting extends Component {
     async show (){
         this.setState({
             visible: true,
-            formValid: false,
+            formValid: true,
             formSubmitting: false,
             strategyData: {
                 // username strategy
@@ -158,14 +151,14 @@ class SecurityStrategySetting extends Component {
             },
             validation: {
                 // username strategy
-                userNameMinLen: {status: '', help: '', valid: false},
+                userNameMinLen: {status: '', help: '', valid: true},
                 // password strategy
-                passMinLen: {status: '', help: '', valid: false},
-                passMaxLen: {status: '', help: '', valid: false},
-                passComplexity: {status: '', help: '', valid: false},
-                passRepeatCharMax: {status: '', help: '', valid: false},
-                passAvailableDay: {status: '', help: '', valid: false},
-                passChangeIntervalMinute: {status: '', help: '', valid: false},
+                passMinLen: {status: '', help: '', valid: true},
+                passMaxLen: {status: '', help: '', valid: true},
+                passComplexity: {status: '', help: '', valid: true},
+                passRepeatCharMax: {status: '', help: '', valid: true},
+                passAvailableDay: {status: '', help: '', valid: true},
+                passChangeIntervalMinute: {status: '', help: '', valid: true},
             }
         });
         this.setState({
@@ -201,6 +194,7 @@ class SecurityStrategySetting extends Component {
                     <div>
                         <Button
                             size="small"
+                            type="primary"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.setStrategy.bind(this)}
@@ -343,18 +337,22 @@ class SecurityStrategySetting extends Component {
                             checked={this.state.strategyData.passAvailableDay !== 99999}
                             onChange={checked => this.formValueChange.bind(this, 'passAvailableDay')(checked ? 30 : 99999)}
                         />
-                        <InputNumber
-                            size="small"
-                            style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                            min={1}
-                            max={999}
-                            value={this.state.strategyData.passAvailableDay}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'passAvailableDay', value)();
-                                this.validateForm.bind(this, 'passAvailableDay')();
-                            }}
-                        />
-                        1-999 {lang('天', 'Day(s)')}
+                        {
+                            this.state.strategyData.passAvailableDay !== 99999 && <React.Fragment>
+                                <InputNumber
+                                    size="small"
+                                    style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                    min={1}
+                                    max={999}
+                                    value={this.state.strategyData.passAvailableDay}
+                                    onChange={value => {
+                                        this.formValueChange.bind(this, 'passAvailableDay', value)();
+                                        this.validateForm.bind(this, 'passAvailableDay')();
+                                    }}
+                                />
+                                1-999 {lang('天', 'Day(s)')}
+                            </React.Fragment>
+                        }
                     </Form.Item>
                     <Form.Item
                         {...formItemLayout}
@@ -365,20 +363,24 @@ class SecurityStrategySetting extends Component {
                         <Switch
                             style={{marginRight: 10}} size="small"
                             checked={this.state.strategyData.passChangeIntervalMinute !== 99999}
-                            onChange={checked => this.formValueChange.bind(this, 'passAvailableDay')(checked ? 2 : 99999)}
+                            onChange={checked => this.formValueChange.bind(this, 'passChangeIntervalMinute')(checked ? 2 : 99999)}
                         />
-                        <InputNumber
-                            size="small"
-                            style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                            min={1}
-                            max={9999}
-                            value={this.state.strategyData.passChangeIntervalMinute}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'passChangeIntervalMinute', value)();
-                                this.validateForm.bind(this, 'passChangeIntervalMinute')();
-                            }}
-                        />
-                        1-9999 {lang('分钟', 'Minute(s)')}
+                        {
+                            this.state.strategyData.passChangeIntervalMinute !== 99999 && <React.Fragment>
+                                <InputNumber
+                                    size="small"
+                                    style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                    min={1}
+                                    max={9999}
+                                    value={this.state.strategyData.passChangeIntervalMinute}
+                                    onChange={value => {
+                                        this.formValueChange.bind(this, 'passChangeIntervalMinute', value)();
+                                        this.validateForm.bind(this, 'passChangeIntervalMinute')();
+                                    }}
+                                />
+                                1-9999 {lang('分钟', 'Minute(s)')}
+                            </React.Fragment>
+                        }
                     </Form.Item>
                 </Form>
              </Modal>
