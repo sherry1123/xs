@@ -74,7 +74,7 @@ class CreateNFS extends Component {
     }
 
     showDirectoryTree (){
-        this.directoryTreeWrapper.getWrappedInstance().show(this.state.shareData.path ? [this.state.shareData.path] : []);
+        this.directoryTreeWrapper.getWrappedInstance().show(this.state.shareData.path ? [this.state.shareData.path] : [], 'share');
     }
 
     async selectPath (path){

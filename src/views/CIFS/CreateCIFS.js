@@ -106,7 +106,7 @@ class CreateCIFS extends Component {
     }
 
     showDirectoryTree (){
-        this.directoryTreeWrapper.getWrappedInstance().show();
+        this.directoryTreeWrapper.getWrappedInstance().show([], 'share');
     }
 
     async selectPath (path){

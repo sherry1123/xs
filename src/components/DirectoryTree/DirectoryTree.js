@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Icon, message, Modal, Spin, Tree} from 'antd';
 import lang from '../Language/lang';
-import httpRequests from '../../http/requests';
+import httpRequests from 'Http/requests';
 
 class DirectoryTree extends Component {
     constructor (props){
@@ -10,7 +10,7 @@ class DirectoryTree extends Component {
         this.state = {
             visible: false,
             selectValid: false,
-            pathType: 'share', // NASServer, share
+            pathType: 'normal', // NASServer, share, normal
             treeNodes: [],
             selectedDirectory: [],
         };
@@ -22,37 +22,40 @@ class DirectoryTree extends Component {
             let {pathType} = this.state;
             let levels = path.split('/').filter(level => !!level);
             if (pathType === 'NASServer'){
-                // NASServer can only select the direct sub-catalog of root '/'
+                // NASServer can only select the direct sub-directory of root '/'
                 if (levels.length !== 1){
                     message.warning(lang(
                         'NAS服务器管理的目录只能是根目录的直接子目录，请正确选择！',
-                        'The catalog path that managed by NAS server must be the direct sub-catalog of root path, please select correctly.'
+                        'The directory path that managed by NAS server must be the direct sub-directory of root path, please select correctly.'
                     ));
                     checkOk = false;
                 } else if (this.props.NASServerList.some(NASServer => NASServer.path === '/' + levels[0])){
-                    // this catalog is already used by a existing NAS server
+                    // this directory is already used by a existing NAS server
                     message.warning(lang(
                         '该目录已被某NAS服务器管理，请重新选择！',
-                        'This catalog path is already used by another existing NAS server, please select another one.'
+                        'This directory path is already used by another existing NAS server, please select another one.'
                     ));
                     checkOk = false;
                 }
-            } else {
-                // Share can only select NASServer's sub-catalog
+            } else if (pathType === 'share'){
+                // Share can only select NASServer's sub-directory
                 if (levels.length < 2){
                     message.warning(lang(
                         '共享的目录必须是NAS服务器所管理目录的子目录，请正确选择！',
-                        'The share catalog must be the sub-catalog that managed by NAS server, please select correctly.'
+                        'The share directory must be the sub-directory that managed by NAS server, please select correctly.'
                     ));
                     checkOk = false;
                 } else if (!this.props.NASServerList.some(NASServer => NASServer.path === '/' + levels[0])){
-                    // this catalog's ancestor catalog is managed by a NAS server
+                    // this directory's ancestor directory is managed by a NAS server
                     message.warning(lang(
                         '该目录无法做共享，因为其所属的顶层父级目录未被任何NAS服务器管理，请重新选择！',
-                        'This catalog path can not be used for sharing, because of it\' top level parent path is not managed by any NAS server, please select another one. '
+                        'This directory path can not be used for sharing, because of it\' top level parent path is not managed by any NAS server, please select another one. '
                     ));
                     checkOk = false;
                 }
+            } else if (pathType === 'normal'){
+                // Normal type allows to select only one path
+
             }
             return checkOk;
         } else {
@@ -112,7 +115,7 @@ class DirectoryTree extends Component {
         });
     }
 
-    outputCatalog (){
+    outputDirectory (){
         let {selectedDirectory: [path]} = this.state;
         if (this.pathValidationCheck(path)){
             let {onSelect} = this.props;
@@ -121,7 +124,7 @@ class DirectoryTree extends Component {
         }
     }
 
-    async show (selectedDirectory = [], pathType = 'share'){
+    async show (selectedDirectory = [], pathType = 'normal'){
         await this.setState({
             visible: true,
             selectValid: this.pathValidationCheck(selectedDirectory[0]),
@@ -131,7 +134,7 @@ class DirectoryTree extends Component {
         });
         // this is the root path
         let rootNode = {title: '/', key: '/'};
-        // get the catalogs under root path
+        // get the directorys under root path
         let children = await httpRequests.getFiles(rootNode.key);
         children.forEach(node => this.convertNode(node));
         rootNode.children = children;
@@ -152,7 +155,7 @@ class DirectoryTree extends Component {
         let {pathType, treeNodes, selectValid, selectedDirectory} = this.state;
         return (
             <Modal
-                title={lang('选择目录', 'Select Catalog')}
+                title={lang('选择目录', 'Select Directory')}
                 width={400}
                 visible={this.state.visible}
                 mask={!!this.props.mask}
@@ -170,7 +173,7 @@ class DirectoryTree extends Component {
                             type="primary"
                             disabled={!(!!selectedDirectory.length && selectValid)}
                             size='small'
-                            onClick={this.outputCatalog.bind(this)}
+                            onClick={this.outputDirectory.bind(this)}
                         >
                             {lang('确定', 'Ok')}
                         </Button>
@@ -184,16 +187,16 @@ class DirectoryTree extends Component {
                     {
                         !!treeNodes.length && (pathType === 'NASServer' ?
                             <div style={{marginBottom: 10, fontSize: 12}}>
-                                {lang('请选择根目录的直接子目录作为NAS服务器管理的目录', 'Please select the direct sub-catalog as the catalog that managed by NAS server')}
+                                {lang('请选择根目录的直接子目录作为NAS服务器管理的目录', 'Please select the direct sub-directory as the directory that managed by NAS server')}
                             </div> :
                             <div style={{marginBottom: 10, fontSize: 12}}>
-                                {lang('请选择NAS服务器所管理目录的子目录作为共享的目录', 'Please select the the sub-catalog that managed by NAS server as share catalog')}
+                                {lang('请选择NAS服务器所管理目录的子目录作为共享的目录', 'Please select the the sub-directory that managed by NAS server as share directory')}
                             </div>
                         )
                     }
                     {
                         !!treeNodes.length && <div style={{marginBottom: 10, fontSize: 12}}>
-                            {lang('已选目录路径：', 'Selected Catalog Path: ')}{this.state.selectedDirectory[0] || lang('无', 'Nothing')}
+                            {lang('已选目录路径：', 'Selected directory Path: ')}{this.state.selectedDirectory[0] || lang('无', 'Nothing')}
                         </div>
                     }
                     {

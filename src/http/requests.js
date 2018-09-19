@@ -553,6 +553,7 @@ export default  {
     },
 
     async createDirectory (dirData){
+        console.info(dirData);
         await fetchPost('/api/createdir', dirData)
     },
 

@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Icon, Input, Modal, message, Select, Spin, Popover, Switch} from 'antd';
+import {Button, Form, Icon, Input, Modal, message, Popover, Switch} from 'antd';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {validateFsName} from 'Services';
+import {validatePathname} from 'Services';
 
 class CreateDirectory extends Component {
     constructor (props){
@@ -25,11 +25,11 @@ class CreateDirectory extends Component {
     }
 
     showDirectoryTree (){
-        this.directoryTreeWrapper.getWrappedInstance().show();
+        this.directoryTreeWrapper.getWrappedInstance().show([this.state.dirData.parentPath], 'normal');
     }
 
     async selectParentPath (parentPath){
-        let dirData = Object.assign(this.state.shareData, {parentPath});
+        let dirData = Object.assign(this.state.dirData, {parentPath});
         await this.setState({dirData});
         this.validateForm('parentPath');
     }
@@ -68,10 +68,10 @@ class CreateDirectory extends Component {
                     en: 'Please enter the name of new dir'
                 }, false);
             }
-            if (!validateFsName(name)){
+            if (!validatePathname(name)){
                 await this.validationUpdateState('name', {
-                    cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
-                    en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
+                    cn: '路径名称只能以字母数字或下划线开头，长度为1-30位',
+                    en: 'Pathname can only start with a letter, number or underline, length is 1-30'
                 }, false);
             }
             // 文件夹重名检测
@@ -88,9 +88,12 @@ class CreateDirectory extends Component {
     }
 
     async create (){
+        let {parentPath, name, noMirror} = Object.assign({}, this.state.dirData);
+        let dirData = {path: (parentPath !== '/' ? parentPath + '/': parentPath) + name, noMirror};
         this.setState({formSubmitting: true});
         try {
-            await httpRequests.createDirectory(this.state.dirData);
+            await httpRequests.createDirectory(dirData);
+            typeof this.props.queryDirPath === 'function' && this.props.queryDirPath();
             this.hide();
             message.success(lang('创建目录成功！', 'Stripe setting has been saved successfully!'));
         } catch ({msg}){
@@ -147,6 +150,7 @@ class CreateDirectory extends Component {
                         <Button
                             type="primary"
                             size='small'
+                            loading={this.state.formSubmitting}
                             onClick={this.create.bind(this)}
                         >
                             {lang('创建', 'Create')}
@@ -185,12 +189,18 @@ class CreateDirectory extends Component {
                         <Switch
                             style={{marginRight: 10}} size="small"
                             checked={!dirData.noMirror}
-                            onChange={checked => this.formValueChange.bind(this, 'noMirror')(checked + 0)}
+                            onChange={checked => this.formValueChange.bind(this, 'noMirror')(checked ? 0 : 1)}
                         />
                         {!dirData.noMirror ? lang('启用', 'Enable') : lang('不启用', 'Enable')}
+                        <Popover
+                            placement="right"
+                            content={lang('当该目录的父级目录启用伙伴组以后，该目录是否启用伙伴组取决于该项设置。', 'After this dir\'s parent enable buddy group, whether to enable buddy group for this dir is determined by this setting.')}
+                        >
+                            <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                        </Popover>
                     </Form.Item>
                     <Form.Item {...formItemLayout} label={lang('路径预览', 'Path Preview')}>
-                        <span>{dirData.parentPath + '/' + dirData.name}</span>
+                        <span>{(dirData.parentPath !== '/' ? dirData.parentPath + '/' : dirData.parentPath) + dirData.name}</span>
                     </Form.Item>
                 </Form>
                 <DirectoryTree onSelect={this.selectParentPath.bind(this)} ref={ref => this.directoryTreeWrapper = ref} />

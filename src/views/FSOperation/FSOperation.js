@@ -192,14 +192,23 @@ class FSOperation extends Component {
                         placeholder={lang('请输入文件目录路径', 'Please enter file directory path')}
                         value={this.state.dirPath}
                         onChange={({target: {value}}) => this.setState({dirPath: value})}
-                        onSearch={() => {this.queryDirPath.bind(this)()}}
+                        onSearch={() => this.queryDirPath.bind(this)()}
                     />
+                    <div className="fs-table-operation-button-box">
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={() => this.createDirectory.bind(this)({path: '/'})}
+                            >
+                            {lang('创建', 'Create')}
+                        </Button>
+                    </div>
                 </div>
                 <div className="fs-main-content-wrapper">
                     <Table {...tableProps} />
                 </div>
                 <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
-                <CreateDirectory ref={ref => this.createDirectoryWrapper = ref} />
+                <CreateDirectory ref={ref => this.createDirectoryWrapper = ref} queryDirPath={this.queryDirPath.bind(this)} />
             </section>
         );
     }
