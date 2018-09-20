@@ -153,20 +153,10 @@ class StripeSetting extends Component {
                         </Form.Item>
                         */}
                         <Form.Item {...formItemLayout} label={lang('存储池ID', 'Storage Pool ID')}>
-                            <Input
-                                style={{width: 140}}
-                                size="small"
-                                readOnly
-                                value={entryInfo.stoargePoolId}
-                            />
+                            <span>{entryInfo.storagePoolId}</span>
                         </Form.Item>
                         <Form.Item {...formItemLayout} label={lang('存储池名称', 'Storage Pool Name')}>
-                            <Input
-                                style={{width: 140}}
-                                size="small"
-                                readOnly
-                                value={entryInfo.stoargePoolName}
-                            />
+                            <span>{entryInfo.storagePoolName}</span>
                         </Form.Item>
                     </Form>
                 </Spin>

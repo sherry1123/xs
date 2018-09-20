@@ -41,6 +41,16 @@ class CreateLocalAuthUser extends Component {
         return /^[a-zA-Z0-9_]*$/.test(name) && name.length >= userNameMinLen;
     }
 
+    validateUsernameCharDuplication (name, times){
+        let duplicationReg = /(.)\1*/g;
+        let matchRes = name.match(duplicationReg);
+        if (!matchRes){
+            return true;
+        } else {
+            return matchRes.reduce((prev, current) => prev && !(current.length > times), true);
+        }
+    }
+
     validatePassword (password){
         // validate invalid value like: null, undefined, NaN, empty string
         if (!password){
@@ -54,7 +64,7 @@ class CreateLocalAuthUser extends Component {
         const lowercaseReg = /[a-z]/;
         const digitReg = /[\d]/; // /[0-9]/
         // must contain special characters whether passComplexity is 3 or 4
-        if (!specialEnCharReg.test(password) || !specialCnCharReg.test(password)){
+        if (!specialEnCharReg.test(password) && !specialCnCharReg.test(password)){
             return false;
         }
         if (passComplexity === 3){
@@ -69,7 +79,9 @@ class CreateLocalAuthUser extends Component {
             }
         }
         // validate char duplication
-        console.info(passRepeatCharMax);
+        if (!this.validateUsernameCharDuplication(password, passRepeatCharMax)){
+            return false;
+        }
         // validate length
         return password.length >= passMinLen && password.length <= passMaxLen;
     }
@@ -95,15 +107,15 @@ class CreateLocalAuthUser extends Component {
                 this.validationUpdateState('name', {cn: '请输入用户姓名', en: 'Please enter username'}, false);
             } else if (!this.validateUsername(name)){
                 this.validationUpdateState('name', {
-                    cn: `用户仅允许以字母、数字以或划线开头，长度不少于${this.strategyData.userNameMinLen}位`,
-                    en: `Name can only start with a letter, number or underscore, length can't be less than ${this.strategyData.userNameMinLen}`
+                    cn: `安全策略要求用户名仅能以字母、数字以或划线开头，长度不少于${this.strategyData.userNameMinLen}位`,
+                    en: `The security strategy only allow username starts with a letter, number or underscore, length can't be less than ${this.strategyData.userNameMinLen}`
                 }, false);
             }
             let isNameDuplicated = this.props.localAuthUserList.some(user => user.name === name);
             if (isNameDuplicated){
                 this.validationUpdateState('name', {
-                    cn: '该名称已被使用',
-                    en: 'This name has already been used'
+                    cn: '该用户名已被使用',
+                    en: 'This username has already been used'
                 }, false);
             }
         }
@@ -111,9 +123,18 @@ class CreateLocalAuthUser extends Component {
             if (!password){
                 await this.validationUpdateState('password', {cn: '请输入新密码', en: 'Please enter new password'}, false);
             } else if (!this.validatePassword(password)){
+                let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.strategyData;
+                let complexityTip = {
+                    cn: passComplexity === 3 ? '还需包含小写、大写字母、数字的至少2种组合，' : '还必须包含小写、大写字母和数字，',
+                    en: passComplexity === 3 ? 'still needs contains any two types of uppercase letters, lowercase letters, and digits,' : 'still needs contains uppercase letters, lowercase letters, and digits,'
+                };
+                let duplicationTip = {
+                    cn: passRepeatCharMax === 99999 ? '' : `字符连续重复次数不能超过${passRepeatCharMax}次，`,
+                    en: passRepeatCharMax === 99999 ? '' : `number of characters can‘t be duplicated more than ${passRepeatCharMax} times,`
+                };
                 await this.validationUpdateState('password', {
-                    cn: '密码仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度6-18位',
-                    en: 'Password can only contains letter, number and underscore(except for the first), length is 6-18'
+                    cn: `安全策略要求密码包含特殊字符，${complexityTip.cn} ${duplicationTip.cn} 长度为${passMinLen}-${passMaxLen}位`,
+                    en: `Security strategy allow contains special char, ${complexityTip.en} ${duplicationTip.cn} length is ${passMinLen}-${passMaxLen}`
                 }, false);
             } else {
                 if (password !== rePassword){
@@ -198,9 +219,7 @@ class CreateLocalAuthUser extends Component {
                 primaryGroup: {status: '', help: '', valid: false},
             },
         });
-        this.setState({
-            strategyData: (await httpRequests.getLocalAuthUserSecurityStrategySetting())
-        });
+        this.strategyData = await httpRequests.getLocalAuthUserSecurityStrategySetting()
     }
 
     hide (){
@@ -232,6 +251,7 @@ class CreateLocalAuthUser extends Component {
                     <div>
                         <Button
                             size="small"
+                            type="primary"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.create.bind(this)}

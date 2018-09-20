@@ -7,7 +7,7 @@ const IPV4_VALIDATE_REG = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0
 module.exports = function(proxy) {
     if (serverPath){
         console.log(chalk.cyan('Validate server path ... \n'));
-        if (!(PROTOCOL_VALIDATE_REG.test(serverPath))){
+        if (!PROTOCOL_VALIDATE_REG.test(serverPath)){
             console.error(chalk.red(`Validate server path failed: server path "${serverPath}" provided in "npm start" command needs a valid protocol, like "http", "https" or "ws". \n`));
             process.exit(1);
         } else {

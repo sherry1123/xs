@@ -44,8 +44,8 @@ class ClusterPhysicalNodeList extends Component {
                 },
                 {title: lang('节点状态', 'Node Status'), width: '10%', dataIndex: 'status',
                     render: text => text ?
-                        <span className="fs-physical-node-normal">{lang('正常', 'Normal')}</span> :
-                        <span className="fs-physical-node-abnormal">{lang('异常', 'Abnormal')}</span>
+                        <span className="fs-green">{lang('正常', 'Normal')}</span> :
+                        <span className="fs-red">{lang('异常', 'Abnormal')}</span>
                 },
                 {title: lang('CPU使用率', 'CPU'), width: '12%', dataIndex: 'cpuUsage'},
                 {title: lang('内存使用率', 'DRAM'), width: '12%', dataIndex: 'memoryUsage'},
