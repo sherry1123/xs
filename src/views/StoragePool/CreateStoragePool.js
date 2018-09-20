@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {Button, Modal, message, Form, Icon, Input, Select} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {formatStorageSize, validateFsName} from 'Services';
-import {Button, Modal, message, Form, Input, Select} from 'antd';
 
 class CreateStoragePool extends Component {
     constructor (props){
@@ -12,6 +12,7 @@ class CreateStoragePool extends Component {
             visible: false,
             formValid: false,
             formSubmitting: false,
+			dataPreparing: true,
             storagePoolData: {
                 name: '',
 				description: '',
@@ -93,11 +94,12 @@ class CreateStoragePool extends Component {
 		this.setState({formSubmitting: false});
 	}
 
-    show (){
+    async show (){
         this.setState({
             visible: true,
 			formValid: false,
             formSubmitting: false,
+			dataPreparing: true,
 			storagePoolData: {
 				name: '',
 				description: '',
@@ -108,8 +110,9 @@ class CreateStoragePool extends Component {
 				name: {status: '', help: '', valid: false},
 			}
         });
-        httpRequests.getTargetsOfStoragePoolId();
-		httpRequests.getBuddyGroupsOfStoragePoolId();
+        await httpRequests.getTargetsOfStoragePoolId();
+		await httpRequests.getBuddyGroupsOfStoragePoolId();
+		this.setState({dataPreparing: false});
     }
 
     async hide (){
@@ -131,7 +134,12 @@ class CreateStoragePool extends Component {
         };
         return (
             <Modal
-                title={lang('创建存储池', 'Create Storage Pool')}
+				title={
+                    <span>
+                        {lang('创建存储池', 'Create Storage Pool')}
+                        {this.state.dataPreparing && <Icon type="loading" style={{marginLeft: 10}} />}
+                    </span>
+                }
                 width={480}
                 closable={false}
                 maskClosable={false}

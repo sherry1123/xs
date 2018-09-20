@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Divider, Form, Icon, InputNumber, message, Modal, Popover, Select, Switch} from 'antd';
+import {Button, Divider, Form, Icon, InputNumber, message, Modal, Popover, Select, Spin, Switch} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
@@ -11,17 +11,7 @@ class SecurityStrategySetting extends Component {
             visible: false,
             formValid: false,
             formSubmitting: false,
-            strategyData: {
-                // username strategy
-                userNameMinLen: '',
-                // password strategy
-                passMinLen: '',
-                passMaxLen: '',
-                passComplexity: '',
-                passRepeatCharMax: '',
-                passAvailableDay: '',
-                passChangeIntervalMinute: '',
-            },
+            strategyData: {},
             validation: {
                 // username strategy
                 userNameMinLen: {status: '', help: '', valid: false},
@@ -46,9 +36,10 @@ class SecurityStrategySetting extends Component {
         await this.setState({validation});
         let {userNameMinLen, passMinLen, passMaxLen, passAvailableDay, passChangeIntervalMinute} = this.state.strategyData;
         if (key === 'userNameMinLen'){
-            if (userNameMinLen.length < 3 || userNameMinLen.length > 31){
+            console.info(userNameMinLen);
+            if (userNameMinLen < 3 || userNameMinLen > 31){
                 // length allow 3-31
-                await this.validationUpdateState('name', {
+                await this.validationUpdateState('userNameMinLen', {
                     cn: '用户名最小长度允许设置为3-31位',
                     en: 'Minimum length of username allows to be set between 3-31'
                 }, false);
@@ -138,17 +129,7 @@ class SecurityStrategySetting extends Component {
             visible: true,
             formValid: true,
             formSubmitting: false,
-            strategyData: {
-                // username strategy
-                userNameMinLen: '',
-                // password strategy
-                passMinLen: '',
-                passMaxLen: '',
-                passComplexity: '',
-                passRepeatCharMax: '',
-                passAvailableDay: '',
-                passChangeIntervalMinute: '',
-            },
+            strategyData: {},
             validation: {
                 // username strategy
                 userNameMinLen: {status: '', help: '', valid: true},
@@ -194,198 +175,203 @@ class SecurityStrategySetting extends Component {
                     <div>
                         <Button
                             size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
                             type="primary"
-                            disabled={!this.state.formValid}
+                            disabled={!(this.state.formValid && this.state.strategyData.hasOwnProperty('userNameMinLen'))}
                             loading={this.state.formSubmitting}
                             onClick={this.setStrategy.bind(this)}
                         >
                             {lang('保存', 'Create')}
                         </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
-                        </Button>
                     </div>
                 }
             >
-                <Form>
-                    <Divider dashed style={{marginTop: 0}} orientation="left">{lang('用户名策略', 'Username Strategy')}</Divider>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('最小长度', 'Minimum Length')}
-                        validateStatus={this.state.validation.userNameMinLen.status}
-                        help={this.state.validation.userNameMinLen.help}
-                    >
-                        <InputNumber
-                            size="small"
-                            style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                            min={3}
-                            max={31}
-                            value={this.state.strategyData.userNameMinLen}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'userNameMinLen', value)();
-                                this.validateForm.bind(this, 'userNameMinLen')();
-                            }}
-                        />
-                        3-31
-                    </Form.Item>
-                    <Divider dashed orientation="left">{lang('密码策略', 'Password Strategy')}</Divider>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('最小长度', 'Minimum Length')}
-                        validateStatus={this.state.validation.passMinLen.status}
-                        help={this.state.validation.passMinLen.help}
-                    >
-                        <InputNumber
-                            size="small"
-                            style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                            min={8}
-                            max={32}
-                            value={this.state.strategyData.passMinLen}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'passMinLen', value)();
-                                this.validateForm.bind(this, 'passMinLen')();
-                            }}
-                        />
-                        8-32
-                    </Form.Item>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('最大长度', 'Maximum Length')}
-                        validateStatus={this.state.validation.passMaxLen.status}
-                        help={this.state.validation.passMaxLen.help}
-                    >
-                        <InputNumber
-                            size="small"
-                            style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                            min={8}
-                            max={32}
-                            value={this.state.strategyData.passMaxLen}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'passMaxLen', value)();
-                                this.validateForm.bind(this, 'passMaxLen')();
-                            }}
-                        />
-                        8-32
-                    </Form.Item>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('复杂度', 'Complexity')}
-                        validateStatus={this.state.validation.passComplexity.status}
-                        help={this.state.validation.passComplexity.help}
-                    >
-                        <Select
-                            size="small"
-                            value={this.state.strategyData.passComplexity}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'passComplexity')(value);
-                            }}
+                <Spin
+                    indicator={<Icon type="loading" style={{fontSize: 18}} spin />}
+                    spinning={!this.state.strategyData.hasOwnProperty('userNameMinLen')}
+                >
+                    <Form>
+                        <Divider dashed style={{marginTop: 0}} orientation="left">{lang('用户名策略', 'Username Strategy')}</Divider>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('最小长度', 'Minimum Length')}
+                            validateStatus={this.state.validation.userNameMinLen.status}
+                            help={this.state.validation.userNameMinLen.help}
                         >
-                            <Select.Option value={3}>
-                                <Popover
-                                    placement="right"
-                                    content={lang('必须包含特殊字符，并且至少包含大写字母、小写字母以及数字中的两种组合', 'Must contain special characters and any two types of uppercase letters, lowercase letters, and digits')}
-                                >
-                                    {lang('必须包含特殊字符，并且至少包含大写字母、小写字母以及数字中的两种组合', 'Must contain special characters and any two types of uppercase letters, lowercase letters, and digits')}
-                                </Popover>
-                            </Select.Option>
-                            <Select.Option value={4}>
-                                <Popover
-                                    placement="right"
-                                    content={lang('必须包含特殊字符、大写字母、小写字母和数字', 'Must contain special characters, uppercase letters, lowercase letters, and digits')}
-                                >
-                                    {lang('必须包含特殊字符、大写字母、小写字母和数字', 'Must contain special characters, uppercase letters, lowercase letters, and digits')}</Popover>
-                            </Select.Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('字符重复次数', 'Duplicated Chars')}
-                        validateStatus={this.state.validation.passRepeatCharMax.status}
-                        help={this.state.validation.passRepeatCharMax.help}
-                    >
-                        <Select
-                            style={{width: isChinese ? 100 : 100}}
-                            size="small"
-                            value={this.state.strategyData.passRepeatCharMax}
-                            onChange={value => {
-                                this.formValueChange.bind(this, 'passRepeatCharMax')(value);
-                            }}
+                            <InputNumber
+                                size="small"
+                                style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                min={3}
+                                max={31}
+                                value={this.state.strategyData.userNameMinLen}
+                                onChange={value => {
+                                    this.formValueChange.bind(this, 'userNameMinLen', value)();
+                                    this.validateForm.bind(this, 'userNameMinLen')();
+                                }}
+                            />
+                            3-31
+                        </Form.Item>
+                        <Divider dashed orientation="left">{lang('密码策略', 'Password Strategy')}</Divider>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('最小长度', 'Minimum Length')}
+                            validateStatus={this.state.validation.passMinLen.status}
+                            help={this.state.validation.passMinLen.help}
                         >
-                            <Select.Option key={99999} value={99999}>{lang('不限制', 'Unlimited')}</Select.Option>
-                            {Object.keys(Array.apply(null, {length: 9})).map((val, i) => (
-                                <Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
-                            ))}
-                        </Select>
-                        <Popover
-                            placement="right"
-                            content={lang('某字符连续出现的次数', 'Number of consecutive occurrences of a char')}
+                            <InputNumber
+                                size="small"
+                                style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                min={8}
+                                max={32}
+                                value={this.state.strategyData.passMinLen}
+                                onChange={value => {
+                                    this.formValueChange.bind(this, 'passMinLen', value)();
+                                    this.validateForm.bind(this, 'passMinLen')();
+                                }}
+                            />
+                            8-32
+                        </Form.Item>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('最大长度', 'Maximum Length')}
+                            validateStatus={this.state.validation.passMaxLen.status}
+                            help={this.state.validation.passMaxLen.help}
                         >
-                            <Icon type="question-circle-o" className="fs-info-icon m-l" />
-                        </Popover>
-                    </Form.Item>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('密码有效期', 'Password Validity Period')}
-                        validateStatus={this.state.validation.passAvailableDay.status}
-                        help={this.state.validation.passAvailableDay.help}
-                    >
-                        <Switch
-                            style={{marginRight: 10}} size="small"
-                            checked={this.state.strategyData.passAvailableDay !== 99999}
-                            onChange={checked => this.formValueChange.bind(this, 'passAvailableDay')(checked ? 30 : 99999)}
-                        />
-                        {
-                            this.state.strategyData.passAvailableDay !== 99999 ? <React.Fragment>
-                                <InputNumber
-                                    size="small"
-                                    style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                                    min={1}
-                                    max={999}
-                                    value={this.state.strategyData.passAvailableDay}
-                                    onChange={value => {
-                                        this.formValueChange.bind(this, 'passAvailableDay', value)();
-                                        this.validateForm.bind(this, 'passAvailableDay')();
-                                    }}
-                                />
-                                1-999 {lang('天', 'Day(s)')}
-                            </React.Fragment> :
-                            <React.Fragment>{lang('不启用', 'Disabled')}</React.Fragment>
-                        }
-                    </Form.Item>
-                    <Form.Item
-                        {...formItemLayout}
-                        label={lang('密码修改间隔时间', 'Password Change Interval')}
-                        validateStatus={this.state.validation.passChangeIntervalMinute.status}
-                        help={this.state.validation.passChangeIntervalMinute.help}
-                    >
-                        <Switch
-                            style={{marginRight: 10}} size="small"
-                            checked={this.state.strategyData.passChangeIntervalMinute !== 99999}
-                            onChange={checked => this.formValueChange.bind(this, 'passChangeIntervalMinute')(checked ? 2 : 99999)}
-                        />
-                        {
-                            this.state.strategyData.passChangeIntervalMinute !== 99999 ? <React.Fragment>
-                                <InputNumber
-                                    size="small"
-                                    style={{width: isChinese ? 80 : 80, marginRight: 10}}
-                                    min={1}
-                                    max={9999}
-                                    value={this.state.strategyData.passChangeIntervalMinute}
-                                    onChange={value => {
-                                        this.formValueChange.bind(this, 'passChangeIntervalMinute', value)();
-                                        this.validateForm.bind(this, 'passChangeIntervalMinute')();
-                                    }}
-                                />
-                                1-9999 {lang('分钟', 'Minute(s)')}
-                            </React.Fragment> :
-                            <React.Fragment>{lang('不启用', 'Disabled')}</React.Fragment>
-                        }
-                    </Form.Item>
-                </Form>
-             </Modal>
+                            <InputNumber
+                                size="small"
+                                style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                min={8}
+                                max={32}
+                                value={this.state.strategyData.passMaxLen}
+                                onChange={value => {
+                                    this.formValueChange.bind(this, 'passMaxLen', value)();
+                                    this.validateForm.bind(this, 'passMaxLen')();
+                                }}
+                            />
+                            8-32
+                        </Form.Item>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('复杂度', 'Complexity')}
+                            validateStatus={this.state.validation.passComplexity.status}
+                            help={this.state.validation.passComplexity.help}
+                        >
+                            <Select
+                                size="small"
+                                value={this.state.strategyData.passComplexity}
+                                onChange={value => {
+                                    this.formValueChange.bind(this, 'passComplexity')(value);
+                                }}
+                            >
+                                <Select.Option value={3}>
+                                    <Popover
+                                        placement="right"
+                                        content={lang('必须包含特殊字符，并且至少包含大写字母、小写字母以及数字中的两种组合', 'Must contain special characters and any two types of uppercase letters, lowercase letters, and digits')}
+                                    >
+                                        {lang('必须包含特殊字符，并且至少包含大写字母、小写字母以及数字中的两种组合', 'Must contain special characters and any two types of uppercase letters, lowercase letters, and digits')}
+                                    </Popover>
+                                </Select.Option>
+                                <Select.Option value={4}>
+                                    <Popover
+                                        placement="right"
+                                        content={lang('必须包含特殊字符、大写字母、小写字母和数字', 'Must contain special characters, uppercase letters, lowercase letters, and digits')}
+                                    >
+                                        {lang('必须包含特殊字符、大写字母、小写字母和数字', 'Must contain special characters, uppercase letters, lowercase letters, and digits')}</Popover>
+                                </Select.Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('字符重复次数', 'Duplicated Chars')}
+                            validateStatus={this.state.validation.passRepeatCharMax.status}
+                            help={this.state.validation.passRepeatCharMax.help}
+                        >
+                            <Select
+                                style={{width: isChinese ? 100 : 100}}
+                                size="small"
+                                value={this.state.strategyData.passRepeatCharMax}
+                                onChange={value => {
+                                    this.formValueChange.bind(this, 'passRepeatCharMax')(value);
+                                }}
+                            >
+                                <Select.Option key={99999} value={99999}>{lang('不限制', 'Unlimited')}</Select.Option>
+                                {Object.keys(Array.apply(null, {length: 9})).map((val, i) => (
+                                    <Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+                                ))}
+                            </Select>
+                            <Popover
+                                placement="right"
+                                content={lang('某字符连续出现的次数', 'Number of consecutive occurrences of a char')}
+                            >
+                                <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                            </Popover>
+                        </Form.Item>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('密码有效期', 'Password Validity Period')}
+                            validateStatus={this.state.validation.passAvailableDay.status}
+                            help={this.state.validation.passAvailableDay.help}
+                        >
+                            <Switch
+                                style={{marginRight: 10}} size="small"
+                                checked={this.state.strategyData.passAvailableDay !== 99999}
+                                onChange={checked => this.formValueChange.bind(this, 'passAvailableDay')(checked ? 30 : 99999)}
+                            />
+                            {
+                                this.state.strategyData.passAvailableDay !== 99999 ? <React.Fragment>
+                                    <InputNumber
+                                        size="small"
+                                        style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                        min={1}
+                                        max={999}
+                                        value={this.state.strategyData.passAvailableDay}
+                                        onChange={value => {
+                                            this.formValueChange.bind(this, 'passAvailableDay', value)();
+                                            this.validateForm.bind(this, 'passAvailableDay')();
+                                        }}
+                                    />
+                                    1-999 {lang('天', 'Day(s)')}
+                                </React.Fragment> :
+                                <React.Fragment>{lang('不启用', 'Disabled')}</React.Fragment>
+                            }
+                        </Form.Item>
+                        <Form.Item
+                            {...formItemLayout}
+                            label={lang('密码修改间隔时间', 'Password Change Interval')}
+                            validateStatus={this.state.validation.passChangeIntervalMinute.status}
+                            help={this.state.validation.passChangeIntervalMinute.help}
+                        >
+                            <Switch
+                                style={{marginRight: 10}} size="small"
+                                checked={this.state.strategyData.passChangeIntervalMinute !== 99999}
+                                onChange={checked => this.formValueChange.bind(this, 'passChangeIntervalMinute')(checked ? 2 : 99999)}
+                            />
+                            {
+                                this.state.strategyData.passChangeIntervalMinute !== 99999 ? <React.Fragment>
+                                    <InputNumber
+                                        size="small"
+                                        style={{width: isChinese ? 80 : 80, marginRight: 10}}
+                                        min={1}
+                                        max={9999}
+                                        value={this.state.strategyData.passChangeIntervalMinute}
+                                        onChange={value => {
+                                            this.formValueChange.bind(this, 'passChangeIntervalMinute', value)();
+                                            this.validateForm.bind(this, 'passChangeIntervalMinute')();
+                                        }}
+                                    />
+                                    1-9999 {lang('分钟', 'Minute(s)')}
+                                </React.Fragment> :
+                                <React.Fragment>{lang('不启用', 'Disabled')}</React.Fragment>
+                            }
+                        </Form.Item>
+                    </Form>
+                </Spin>
+            </Modal>
         );
     }
 }

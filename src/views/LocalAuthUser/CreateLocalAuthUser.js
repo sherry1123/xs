@@ -37,7 +37,7 @@ class CreateLocalAuthUser extends Component {
     }
 
     validateUsername (name){
-        let {userNameMinLen} = this.strategyData;
+        let {userNameMinLen} = this.state.strategyData;
         return /^[a-zA-Z0-9_]*$/.test(name) && name.length >= userNameMinLen;
     }
 
@@ -46,8 +46,8 @@ class CreateLocalAuthUser extends Component {
         if (times === 99999){
             return true;
         }
-        let duplicationReg = /(.)\1*/g;
-        let matchRes = name.match(duplicationReg);
+        let CHAR_DUPLICATION_REG = /(.)\1*/g;
+        let matchRes = name.match(CHAR_DUPLICATION_REG);
         if (!matchRes){
             return true;
         } else {
@@ -60,7 +60,7 @@ class CreateLocalAuthUser extends Component {
         if (!password){
             return false;
         }
-        let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.strategyData;
+        let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.state.strategyData;
         // validate complexity
         const SPECIAL_EN_CHAR_REG = /[`~!@#$%^&*()_+<>?:"{},.'/;[\]]/im;
         const SPECIAL_CN_CHAR_REG = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
@@ -223,7 +223,7 @@ class CreateLocalAuthUser extends Component {
                 primaryGroup: {status: '', help: '', valid: false},
             },
         });
-        this.strategyData = await httpRequests.getLocalAuthUserSecurityStrategySetting()
+        this.setState({strategyData: await httpRequests.getLocalAuthUserSecurityStrategySetting()});
     }
 
     hide (){
@@ -245,7 +245,12 @@ class CreateLocalAuthUser extends Component {
         };
         return (
             <Modal
-                title={lang('创建本地认证用户', 'Create Local Authentication User')}
+                title={
+                    <span>
+                        {lang('创建本地认证用户', 'Create Local Authentication User')}
+                        {!this.state.strategyData.hasOwnProperty('userNameMinLen') && <Icon type="loading" style={{marginLeft: 10}} />}
+                    </span>
+                }
                 width={400}
                 closable={false}
                 maskClosable={false}
@@ -255,18 +260,18 @@ class CreateLocalAuthUser extends Component {
                     <div>
                         <Button
                             size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
                             type="primary"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.create.bind(this)}
                         >
                             {lang('创建', 'Create')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }
