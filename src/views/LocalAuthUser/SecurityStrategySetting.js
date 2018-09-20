@@ -338,7 +338,7 @@ class SecurityStrategySetting extends Component {
                             onChange={checked => this.formValueChange.bind(this, 'passAvailableDay')(checked ? 30 : 99999)}
                         />
                         {
-                            this.state.strategyData.passAvailableDay !== 99999 && <React.Fragment>
+                            this.state.strategyData.passAvailableDay !== 99999 ? <React.Fragment>
                                 <InputNumber
                                     size="small"
                                     style={{width: isChinese ? 80 : 80, marginRight: 10}}
@@ -351,7 +351,8 @@ class SecurityStrategySetting extends Component {
                                     }}
                                 />
                                 1-999 {lang('天', 'Day(s)')}
-                            </React.Fragment>
+                            </React.Fragment> :
+                            <React.Fragment>{lang('不启用', 'Disabled')}</React.Fragment>
                         }
                     </Form.Item>
                     <Form.Item
@@ -366,7 +367,7 @@ class SecurityStrategySetting extends Component {
                             onChange={checked => this.formValueChange.bind(this, 'passChangeIntervalMinute')(checked ? 2 : 99999)}
                         />
                         {
-                            this.state.strategyData.passChangeIntervalMinute !== 99999 && <React.Fragment>
+                            this.state.strategyData.passChangeIntervalMinute !== 99999 ? <React.Fragment>
                                 <InputNumber
                                     size="small"
                                     style={{width: isChinese ? 80 : 80, marginRight: 10}}
@@ -379,7 +380,8 @@ class SecurityStrategySetting extends Component {
                                     }}
                                 />
                                 1-9999 {lang('分钟', 'Minute(s)')}
-                            </React.Fragment>
+                            </React.Fragment> :
+                            <React.Fragment>{lang('不启用', 'Disabled')}</React.Fragment>
                         }
                     </Form.Item>
                 </Form>
