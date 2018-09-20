@@ -6,7 +6,6 @@ import EditLocalAuthUser from './EditLocalAuthUser';
 import SecurityStrategySetting from './SecurityStrategySetting';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {timeFormat} from 'Services';
 
 class LocalAuthUser extends Component {
     constructor (props){
@@ -98,7 +97,7 @@ class LocalAuthUser extends Component {
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
                 try {
-                    await httpRequests.updateLocalAuthUserStatus(name, true);
+                    await httpRequests.updateLocalAuthUserStatus(name, false);
                     httpRequests.getLocalAuthUserList();
                     message.success(lang(`禁用本地认证用户 ${name} 成功!`, `Disable local authentication user ${name} successfully!`));
                 } catch ({msg}){
@@ -203,18 +202,20 @@ class LocalAuthUser extends Component {
             rowClassName: () => 'ellipsis',
             columns: [
                 {title: lang('名称', 'Name'), width: 120, dataIndex: 'name',},
-                {title: lang('状态', 'Status'), width: 70, dataIndex: 'type',
-                    render: () => lang('正常', 'Normal')
-                },
                 {title: lang('主组', 'Primary Group'), width: 100, dataIndex: 'primaryGroup',},
                 {title: lang('附属组', 'Secondary Group'), width: '20%', dataIndex: 'secondaryGroup',
                     render: text => !text.length ? '--' : text.join(',')
                 },
-                {title: lang('有效期', 'Validity Period'), width: 125, dataIndex: 'validityPeriod',
-                    render: text => timeFormat(text)
-                },
                 {title: lang('描述', 'Description'), width: '20%', dataIndex: 'description',
                     render: text => !text ? '--' : text
+                },
+                {title: lang('状态', 'Status'), width: 70, dataIndex: 'status',
+                    render: text => text ?
+                        <span className="fs-green">{lang('已启用', 'Enabled')}</span> :
+                        <span className="fs-red">{lang('已禁用', 'Disabled')}</span>
+                },
+                {title: lang('有效期', 'Validity Period'), width: 125, dataIndex: 'validityPeriod',
+                    render: text => `${text}${lang('天', 'Day(s)')}`
                 },
                 {title: lang('操作', 'Operations'), width: 80,
                     render: (text, record, index) => {
