@@ -171,7 +171,7 @@ class DirectoryTree extends Component {
                         </Button>
                         <Button
                             type="primary"
-                            disabled={!(!!selectedDirectory.length && selectValid)}
+                            disabled={!(!!selectedDirectory.length && selectValid && !!treeNodes.length)}
                             size='small'
                             onClick={this.outputDirectory.bind(this)}
                         >

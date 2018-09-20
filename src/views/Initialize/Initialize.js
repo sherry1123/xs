@@ -995,6 +995,15 @@ class Initialize extends Component {
                             size="small"
                             type="primary"
                             style={{marginLeft: this.state.currentStep !== 0 ? 10 : 0}}
+                            disabled={this.state.currentStep === 1 && !(recommendedRAID => {
+                                // every of metadata and storage servers, must have at least one recommended RAID configuration,
+                                // if not, user can't click the next button on step 1
+                                let metadataServerIPs = recommendedRAID['metadataServerIPs'];
+                                let storageServerIPs = recommendedRAID['storageServerIPs'];
+                                let metadataServerIPHasNoRAID = Object.keys(metadataServerIPs).every(ip => !!metadataServerIPs[ip].length);
+                                let storageServerIPHasNoRAID = Object.keys(storageServerIPs).every(ip => !!storageServerIPs[ip].length);
+                                return metadataServerIPHasNoRAID && storageServerIPHasNoRAID;
+                            })(this.props.recommendedRAID)}
                             onClick={this.next.bind(this)} loading={this.state.checking}
                         >
                             {!this.state.checking && <span>{lang('下一步', 'Next')}</span>}

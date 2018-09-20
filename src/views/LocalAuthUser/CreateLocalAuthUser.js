@@ -37,13 +37,17 @@ class CreateLocalAuthUser extends Component {
     }
 
     validateUsername (name){
-        let {userNameMinLen} = this.strategyData;
+        let {userNameMinLen} = this.state.strategyData;
         return /^[a-zA-Z0-9_]*$/.test(name) && name.length >= userNameMinLen;
     }
 
     validateUsernameCharDuplication (name, times){
-        let duplicationReg = /(.)\1*/g;
-        let matchRes = name.match(duplicationReg);
+        // if times is 99999 means there's no limitation
+        if (times === 99999){
+            return true;
+        }
+        let CHAR_DUPLICATION_REG = /(.)\1*/g;
+        let matchRes = name.match(CHAR_DUPLICATION_REG);
         if (!matchRes){
             return true;
         } else {
@@ -56,25 +60,25 @@ class CreateLocalAuthUser extends Component {
         if (!password){
             return false;
         }
-        let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.strategyData;
+        let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.state.strategyData;
         // validate complexity
-        const specialEnCharReg = /[`~!@#$%^&*()_+<>?:"{},.'/;[\]]/im;
-        const specialCnCharReg = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
-        const uppercaseReg = /[A-Z]/;
-        const lowercaseReg = /[a-z]/;
-        const digitReg = /[\d]/; // /[0-9]/
+        const SPECIAL_EN_CHAR_REG = /[`~!@#$%^&*()_+<>?:"{},.'/;[\]]/im;
+        const SPECIAL_CN_CHAR_REG = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
+        const UPPERCASE_LETTER_REG = /[A-Z]/;
+        const LOWERCASE_LETTER_REG = /[a-z]/;
+        const DIGIT_REG = /[\d]/; // /[0-9]/
         // must contain special characters whether passComplexity is 3 or 4
-        if (!specialEnCharReg.test(password) && !specialCnCharReg.test(password)){
+        if (!SPECIAL_EN_CHAR_REG.test(password) && !SPECIAL_CN_CHAR_REG.test(password)){
             return false;
         }
         if (passComplexity === 3){
             // if passComplexity is 3, still needs contains any two types of uppercase letters, lowercase letters, and digits
-            if (uppercaseReg.test(password) + lowercaseReg.test(password) + digitReg.test(password) < 2){
+            if (UPPERCASE_LETTER_REG.test(password) + LOWERCASE_LETTER_REG.test(password) + DIGIT_REG.test(password) < 2){
                 return false;
             }
         } else {
             // if passComplexity is 4, still needs contains uppercase letters, lowercase letters, and digits
-            if (uppercaseReg.test(password) + lowercaseReg.test(password) + digitReg.test(password) < 3){
+            if (UPPERCASE_LETTER_REG.test(password) + LOWERCASE_LETTER_REG.test(password) + DIGIT_REG.test(password) < 3){
                 return false;
             }
         }
@@ -219,7 +223,7 @@ class CreateLocalAuthUser extends Component {
                 primaryGroup: {status: '', help: '', valid: false},
             },
         });
-        this.strategyData = await httpRequests.getLocalAuthUserSecurityStrategySetting()
+        this.setState({strategyData: await httpRequests.getLocalAuthUserSecurityStrategySetting()});
     }
 
     hide (){
@@ -241,7 +245,12 @@ class CreateLocalAuthUser extends Component {
         };
         return (
             <Modal
-                title={lang('创建本地认证用户', 'Create Local Authentication User')}
+                title={
+                    <span>
+                        {lang('创建本地认证用户', 'Create Local Authentication User')}
+                        {!this.state.strategyData.hasOwnProperty('userNameMinLen') && <Icon type="loading" style={{marginLeft: 10}} />}
+                    </span>
+                }
                 width={400}
                 closable={false}
                 maskClosable={false}
@@ -251,18 +260,18 @@ class CreateLocalAuthUser extends Component {
                     <div>
                         <Button
                             size="small"
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
                             type="primary"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.create.bind(this)}
                         >
                             {lang('创建', 'Create')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }
