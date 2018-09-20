@@ -42,6 +42,10 @@ class CreateLocalAuthUser extends Component {
     }
 
     validateUsernameCharDuplication (name, times){
+        // if times is 99999 means there's no limitation
+        if (times === 99999){
+            return true;
+        }
         let duplicationReg = /(.)\1*/g;
         let matchRes = name.match(duplicationReg);
         if (!matchRes){
@@ -58,23 +62,23 @@ class CreateLocalAuthUser extends Component {
         }
         let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.strategyData;
         // validate complexity
-        const specialEnCharReg = /[`~!@#$%^&*()_+<>?:"{},.'/;[\]]/im;
-        const specialCnCharReg = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
-        const uppercaseReg = /[A-Z]/;
-        const lowercaseReg = /[a-z]/;
-        const digitReg = /[\d]/; // /[0-9]/
+        const SPECIAL_EN_CHAR_REG = /[`~!@#$%^&*()_+<>?:"{},.'/;[\]]/im;
+        const SPECIAL_CN_CHAR_REG = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
+        const UPPERCASE_LETTER_REG = /[A-Z]/;
+        const LOWERCASE_LETTER_REG = /[a-z]/;
+        const DIGIT_REG = /[\d]/; // /[0-9]/
         // must contain special characters whether passComplexity is 3 or 4
-        if (!specialEnCharReg.test(password) && !specialCnCharReg.test(password)){
+        if (!SPECIAL_EN_CHAR_REG.test(password) && !SPECIAL_CN_CHAR_REG.test(password)){
             return false;
         }
         if (passComplexity === 3){
             // if passComplexity is 3, still needs contains any two types of uppercase letters, lowercase letters, and digits
-            if (uppercaseReg.test(password) + lowercaseReg.test(password) + digitReg.test(password) < 2){
+            if (UPPERCASE_LETTER_REG.test(password) + LOWERCASE_LETTER_REG.test(password) + DIGIT_REG.test(password) < 2){
                 return false;
             }
         } else {
             // if passComplexity is 4, still needs contains uppercase letters, lowercase letters, and digits
-            if (uppercaseReg.test(password) + lowercaseReg.test(password) + digitReg.test(password) < 3){
+            if (UPPERCASE_LETTER_REG.test(password) + LOWERCASE_LETTER_REG.test(password) + DIGIT_REG.test(password) < 3){
                 return false;
             }
         }
