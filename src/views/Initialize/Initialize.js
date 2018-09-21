@@ -43,6 +43,8 @@ class Initialize extends Component {
                 type: 'metadata',
                 ip: metadataServerIPs[0]
             },
+            // no recommended RAID configuration
+            noRecommendedRAIDConfiguration: false,
             // RAID conf
             enableCustomRAID: false,
             // running initialization
@@ -352,7 +354,7 @@ class Initialize extends Component {
     validateRecommendedRAID (){
         // a temporary way of choosing disk handling:
         // every metadata and storage servers must have at least one recommended RAID
-        // configuration, if not, user can't click the next button on step 1
+        // configuration, if not, user can only custom RAID configuration to initialize.
         let {recommendedRAID} = this.props;
         let metadataServerIPs = recommendedRAID['metadataServerIPs'];
         let storageServerIPs = recommendedRAID['storageServerIPs'];
@@ -444,15 +446,22 @@ class Initialize extends Component {
                     if (result){
                         // IP availability check successfully
                         await httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
+                        let noRecommendedRAIDConfiguration = !this.validateRecommendedRAID();
+                        await this.setState({
+                            currentStep: next,
+                            noRecommendedRAIDConfiguration,
+                            enableCustomRAID: noRecommendedRAIDConfiguration,
+                        });
                         // validate recommended RAID configuration existing
-                        if (!this.validateRecommendedRAID()){
+                        if (noRecommendedRAIDConfiguration){
                             // give out some tips
-                            message.error(lang(
-                                '某些元数据服务或存储服务没有可用的RAID推荐配置，暂无法进行初始化',
-                                'Some metadata service or storage service has no available RAID recommended configuration, unable to initialize temporarily'
-                            ));
-                        } else {
-                            this.setState({currentStep: next});
+                            notification.warning({
+                                message: lang('RAID推荐配置不可用', 'RAID Recommended configuration is not available'),
+                                description: lang(
+                                    '某些元数据服务或存储服务没有可用的RAID推荐配置，暂无法使用推荐配置进行初始化，已为您选择自定义的方式，请手动为每一个元数据和存储服务配置RAID。',
+                                    'Some metadata service or storage service has no available RAID recommended configuration, unable to recommended way to do initialization and use custom way instead. Please configure RAID for each metadata and storage service.'
+                                 )
+                            }, 5000);
                         }
                     } else {
                         // IP availability check failed
@@ -475,8 +484,8 @@ class Initialize extends Component {
             case 2:
                 if (this.state.enableCustomRAID && !this.checkCustomRAID()){
                     message.warning(lang(
-                        '您已开始自定义RAID配置，请正确配置所有元数据和存储服务所在节点的RAID，否则请选择使用推荐RAID配置。',
-                        'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the recommended RAID configuration.')
+                        '您已开启自定义RAID配置模式，请正确配置所有元数据和存储服务所在节点的RAID，否则请选择使用RAID推荐配置。',
+                        'You have enabled custom RAID configuration, please configure the RAIDs of nodes that all metadata and storage service run on. Otherwise please select the RAID recommended configuration.')
                     );
                 } else {
                     Modal.confirm({
@@ -898,7 +907,16 @@ class Initialize extends Component {
                                                     key={i}
                                                     onClick={this.setCurrentServiceNode.bind(this, ip, i)}
                                                 >
-                                                    {ip}
+                                                    {
+                                                        (this.state.currentServiceType === 'management' || this.state.currentServiceType === 'client') ?
+                                                        <Popover
+                                                            placement="right"
+                                                            content={lang('管理服务和客户端节点无需配置RAID。', 'Management service and client don\'s need to make RAID configuration.')}
+                                                        >
+                                                        {ip}
+                                                        </Popover> :
+                                                        <span>{ip}</span>
+                                                    }
                                                 </div>
                                             ))
                                         }
@@ -912,6 +930,7 @@ class Initialize extends Component {
                                         /> :
                                         <CustomRAID
                                             ref={ref => this.customRAIDWrapper = ref}
+                                            noRecommendedRAIDConfiguration={this.state.noRecommendedRAIDConfiguration}
                                             enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
                                         />
                                 }
@@ -1020,7 +1039,6 @@ class Initialize extends Component {
                             size="small"
                             type="primary"
                             style={{marginLeft: this.state.currentStep !== 0 ? 10 : 0}}
-                            disabled={this.state.currentStep === 1 && !this.validateRecommendedRAID()}
                             onClick={this.next.bind(this)} loading={this.state.checking}
                         >
                             {!this.state.checking && <span>{lang('下一步', 'Next')}</span>}

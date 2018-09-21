@@ -76,7 +76,7 @@ class TopBar extends Component {
                 let removeServices = [];
                 abnormalServices.forEach(abnormalNode => {
                     if (`${node.type}-${node.hostname}` === abnormalNode){
-                        notification.open({
+                        notification.success({
                             message: lang('服务恢复', 'Service Recovery'),
                             description: lang(`运行在节点 ${node.hostname} 上的 ${node.type === 'metadata' ? '元数据服务' : '存储服务' }(ID: ${node.nodeId}) 的状态已恢复正常!`, `The status of ${node.type} service(ID: ${node.nodeId}) which runs on ${node.hostname} has recovered to normal!`)
                         });
@@ -89,7 +89,7 @@ class TopBar extends Component {
                 }
             } else {
                 if (!abnormalServices.includes(`${node.type}-${node.hostname}`)){
-                    notification.open({
+                    notification.warning({
                         message: lang('服务异常', 'Service Abnormally'),
                         description: lang(`运行在节点 ${node.hostname} 上的 ${node.type === 'metadata' ? '元数据服务' : '存储服务' }(ID: ${node.nodeId}) 现处于异常状态!`, `The ${node.type} service(ID: ${node.nodeId}) which runs on ${node.hostname} is abnormal now!`)
                     });

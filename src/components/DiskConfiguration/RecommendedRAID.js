@@ -169,7 +169,7 @@ class RecommendedRAID extends Component {
                     <div className="fs-raid-disk-wrapper">
                         {
                             currentRAIDConf.i !== -1 && <div className="fs-raid-disk-title">
-                                {lang('该RAID预配置所包含的磁盘', 'Disks In This RAID Pre-Configuration')}
+                                {lang('该RAID预配置所包含的SSD', 'SSDs In This RAID Pre-Configuration')}
                             </div>
                         }
                         {
