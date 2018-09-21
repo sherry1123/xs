@@ -2,30 +2,26 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {Button, Table, Modal, Popover} from 'antd';
+import {Button, Table, Modal, message, Popover} from 'antd';
 import AddTargetToStoragePool from './AddTargetToStoragePool';
-import {message} from "antd/lib/index";
+import AddDiskToTarget from './AddDiskToTarget';
 
-class ShowStoragePoolTarget extends Component {
+class TargetOfStoragePool extends Component {
 	constructor (props){
 		super(props);
-		let {targetsOfStoragePool} = this.props;
 		this.state = {
 			visible: false,
-			poolId: '',
 			poolName: '',
-			// table
-			targetsOfStoragePool,
 		};
 	}
 
-	delete (storagePool, index){
+	delete (storagePoolTarget, index){
 		Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
-				<p>{lang(`您将要执行从存储池 ${storagePool.name} 移除存储目标  的操作。`, `You are about to remove storage target from storage pool ${storagePool.name}.`)}</p>
-				<p>{lang(`该操作将会从存储池${storagePool.name}中移除  ，将会导致该存储池的容量减少，并且。`, `This operation will delete storage pool ${storagePool.name} from the system. `)}</p>
-				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储目标，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
+				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除存储目标 ID:${storagePoolTarget.id} 的操作。`, `You are about to remove target ID:${storagePoolTarget.id} from storage pool ${this.state.poolName}.`)}</p>
+				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除存储目标 ID:${storagePoolTarget.id}，将会导致该存储池的容量减少，并且。`, `This operation will delete target ID:${storagePoolTarget.id} from storage pool ${this.state.poolName}. `)}</p>
+				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储目标，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right target and it's no longer necessary.`)}</p>
 			</div>,
 			iconType: 'exclamation-circle-o',
 			okType: 'danger',
@@ -33,13 +29,13 @@ class ShowStoragePoolTarget extends Component {
 			cancelText: lang('取消', 'Cancel'),
 			onOk: async () => {
 				try {
-					await httpRequests.deleteStoragePool(storagePool);
-					let storagePoolList = Object.assign([], this.state.storagePoolList);
-					storagePoolList.splice(index, 1);
-					this.setState({storagePoolList});
-					message.success(lang(`已开始删除存储池 ${storagePool.name}!`, `Start deleting storage pool ${storagePool.name}!`));
+					await httpRequests.deleteStoragePool(storagePoolTarget);
+					let targetsOfStoragePool = Object.assign([], this.state.targetsOfStoragePool);
+					targetsOfStoragePool.splice(index, 1);
+					this.setState({targetsOfStoragePool});
+					message.success(lang(`已开始删除存储池目标 ID:${storagePoolTarget.id}!`, `Start deleting storage pool ${storagePoolTarget.id}!`));
 				} catch ({msg}){
-					message.error(lang(`删除快照 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
+					message.error(lang(`删除存储池目标 ID:${storagePoolTarget.id} 失败, 原因: `, `Delete storage pool target ${storagePoolTarget.id} failed, reason: `) + msg);
 				}
 			},
 			onCancel: () => {
@@ -54,6 +50,7 @@ class ShowStoragePoolTarget extends Component {
 			poolId,
 			poolName: name,
 		});
+		httpRequests.getTargetsOfStoragePoolById(poolId);
 	}
 
 	hide (){
@@ -62,13 +59,17 @@ class ShowStoragePoolTarget extends Component {
 		});
 	}
 
-	addNewTarget (storageTarget){
-		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(storageTarget);
+	addTargetToStoragePool (storageTarget){
+		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(this.state.poolName);
 	}
 
+	addDiskToTarget (storagePoolTarget){
+		this.addDiskToTargetWrapper.getWrappedInstance().show(storagePoolTarget);
+	}
 
 	render (){
-		let {targetsOfStoragePool, poolName} = this.state;
+		let {targetsOfStoragePool} = this.props;
+		let {poolName} = this.state;
 		let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
 		let tableProps = {
@@ -90,7 +91,7 @@ class ShowStoragePoolTarget extends Component {
 				<Button
 					size='small'
 					style={{float: 'right'}}
-					onClick={this.addNewTarget.bind(this)}
+					onClick={this.addTargetToStoragePool.bind(this)}
 				>
 					{lang('添加', 'Add')}
 				</Button>
@@ -108,7 +109,7 @@ class ShowStoragePoolTarget extends Component {
 							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
 								<Button
 									{...buttonConf}
-									//onClick={this..bind(this, record, index)}
+									onClick={this.addDiskToTarget.bind(this, record, index)}
 									icon="edit"
 								>
 								</Button>
@@ -121,6 +122,7 @@ class ShowStoragePoolTarget extends Component {
 								>
 								</Button>
 							</Popover>
+							<AddDiskToTarget ref={ref => this.addDiskToTargetWrapper = ref} />
 						</div>
 				}
 			],
@@ -168,4 +170,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(ShowStoragePoolTarget);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(TargetOfStoragePool);

@@ -231,7 +231,7 @@ export default  {
         await fetchPost('/api/deletestoragepool', storagePool)
     },
 
-    async getTargetsOfStoragePoolId (poolId){
+    async getTargetsOfStoragePoolById (poolId){
 		requestHandler(async () => {
 			let data = await fetchGet('/api/gettargetsinstoragepool');
 			if(!!data)
@@ -243,7 +243,7 @@ export default  {
 		});
     },
 
-    async getBuddyGroupsOfStoragePoolId (poolId){
+    async getBuddyGroupsOfStoragePoolById (poolId){
 		requestHandler(async () => {
 			let data = await fetchGet('/api/getbuddygroupsinstoragepool');
 			if(!!data)

@@ -3,42 +3,91 @@ import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {formatStorageSize} from 'Services';
-import {Button, Modal, Form, Select} from 'antd';
+import {Button, Modal, message, Form, Select} from 'antd';
 
 class AddBuddyGroupToStoragePool extends Component {
 	constructor (props){
 		super(props);
-		let {buddyGroupsForStoragePool } = this.props;
 		this.state = {
+			poolName: '',
 			visible: false,
 			formValid: false,
 			formSubmitting: false,
-			buddyGroupsForStoragePool,
-			storagePoolData: {
+			buddyGroupData: {
 				name: '',
 				buddyGroups:[],
 			},
 			validation: {
-				name: {status: '', help: '', valid: false},
 				buddyGroups: {status: '', help: '', valid: false},
 			}
 		};
 	}
 
-	show ({poolId, name}){
+	formValueChange (key, value){
+		let buddyGroupData = Object.assign({}, this.state.buddyGroupData, {[key]: value});
+		this.setState({buddyGroupData});
+	}
+
+	async validationUpdateState (key, value, valid){
+		let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: lang(cn, en),
+				valid
+			}
+		};
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
+	}
+
+	async validateForm (key){
+		await this.validationUpdateState(key, {cn: '', en: ''}, true);
+
+		// calculate whole form validation
+		let formValid = true;
+		Object.keys(this.state.validation).forEach(key => {
+			formValid = formValid && this.state.validation[key].valid;
+		});
+		this.setState({formValid});
+	}
+
+	show (poolName){
 		this.setState({
 			visible: true,
-			poolId,
-			poolName: name,
+			formValid: false,
+			formSubmitting: false,
+			poolName,
+			buddyGroupData: {
+				name: '',
+				buddyGroups:[],
+			},
+			validation: {
+				buddyGroups: {status: '', help: '', valid: false},
+			}
 		});
-		httpRequests.getTargetsOfStoragePoolId();
+		httpRequests.getTargetsOfStoragePoolById();
 	}
 
 	async hide (){
 		this.setState({visible: false});
 	}
 
+	async addBuddyGroupToStoragePool (){
+		let buddyGroupData = Object.assign({}, this.state.buddyGroupData);
+		this.setState({formSubmitting: true});
+		try {
+			httpRequests.getBuddyGroupsOfStoragePoolById();
+			await this.hide();
+			message.success(lang(`开始添加伙伴组镜像 ${buddyGroupData.name}!`, `Start adding buddy group ${buddyGroupData.name} !`));
+		} catch ({msg}){
+			message.error(lang(`伙伴组镜像 ${buddyGroupData.name} 添加失败, 原因: `, `Add buddy group ${buddyGroupData.name} failed, reason: `) + msg);
+		}
+		this.setState({formSubmitting: false});
+	}
+
 	render (){
+		let {buddyGroupsForStoragePool} = this.props;
 		let isChinese = this.props.language === 'chinese';
 		let formItemLayout = {
 			labelCol: {
@@ -53,7 +102,7 @@ class AddBuddyGroupToStoragePool extends Component {
 
 		return (
 			<Modal
-				title={lang('为存储池  添加存储目标', 'Add New Storage Target for  ')}
+				title={lang(`为存储池 ${this.state.poolName} 添加伙伴组镜像`, `Add New Storage Target for Storage Pool ${this.state.poolName} `)}
 				width={480}
 				closable={false}
 				maskClosable={false}
@@ -72,6 +121,7 @@ class AddBuddyGroupToStoragePool extends Component {
 							type="primary"
 							disabled={!this.state.formValid}
 							loading={this.state.formSubmitting}
+							onClick={this.addBuddyGroupToStoragePool.bind(this)}
 						>
 							{lang('添加', 'Add')}
 						</Button>
@@ -81,17 +131,21 @@ class AddBuddyGroupToStoragePool extends Component {
 				<Form>
 					<Form.Item
 						{...formItemLayout}
-						label={lang('存储目标', 'Storage Pool Target')}
+						label={lang('伙伴组镜像', 'Buddy Group')}
 					>
 						<Select
+							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
-							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
+							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
 							optionLabelProp="value"
-							value={this.state.storagePoolData.targets}
+							value={this.state.buddyGroupData.buddyGroups}
+							onChange={(value) => {
+								this.formValueChange.bind(this, 'buddyGroups')(value);
+							}}
 						>
 							{
-								this.state.buddyGroupsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>{target.id} {target.targetPath} {formatStorageSize(target.capacity)}</Select.Option>)
+								buddyGroupsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>{target.id} {target.targetPath} {formatStorageSize(target.capacity)}</Select.Option>)
 							}
 						</Select>
 					</Form.Item>
@@ -102,8 +156,8 @@ class AddBuddyGroupToStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-	let {language, main: {storagePool: {storagePoolList, buddyGroupsForStoragePool}}} = state;
-	return {language, storagePoolList, buddyGroupsForStoragePool};
+	let {language, main: {storagePool: {buddyGroupsForStoragePool}}} = state;
+	return {language, buddyGroupsForStoragePool};
 };
 
 const mapDispatchToProps = [];

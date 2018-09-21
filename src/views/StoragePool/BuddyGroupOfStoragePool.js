@@ -2,30 +2,26 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {Button, Table, Modal, Popover} from 'antd';
-import AddNewTargetForStorage from './AddTargetToStoragePool';
-import {message} from "antd/lib/index";
+import {Button, Table, Modal, Popover, message} from 'antd';
+import AddDiskToBuddyGroup from './AddDiskToBuddyGroup';
+import AddBuddyGroupToStoragePool from './AddBuddyGroupToStoragePool';
 
-class ShowBuddyGroup extends Component {
+class BuddyGroupOfStoragePool extends Component {
 	constructor (props){
 		super(props);
-		let {buddyGroupsOfStoragePool} = this.props;
 		this.state = {
 			visible: false,
-			poolId: '',
 			poolName: '',
-			// table
-			buddyGroupsOfStoragePool,
 		};
 	}
 
-	delete (storagePool, index){
+	delete (storageBuddyGroup, index){
 		Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
-				<p>{lang(`您将要执行从存储池 ${storagePool.name} 移除存储目标  的操作。`, `You are about to remove storage target from storage pool ${storagePool.name}.`)}</p>
-				<p>{lang(`该操作将会从存储池${storagePool.name}中移除  ，将会导致该存储池的容量减少，并且。`, `This operation will delete storage pool ${storagePool.name} from the system. `)}</p>
-				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储目标，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
+				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除伙伴组镜像 ID:${storageBuddyGroup.id} 的操作。`, `You are about to remove storage pool buddy group ID:${storageBuddyGroup.id} from storage pool ${this.state.poolName}.`)}</p>
+				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除伙伴组镜像 ID:${storageBuddyGroup.id}，将会导致该存储池的容量减少，并且。`, `This operation will delete storage pool buddy group ID:${storageBuddyGroup.id} from storage pool ${this.state.poolName}. `)}</p>
+				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的伙伴组镜像，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
 			</div>,
 			iconType: 'exclamation-circle-o',
 			okType: 'danger',
@@ -33,13 +29,13 @@ class ShowBuddyGroup extends Component {
 			cancelText: lang('取消', 'Cancel'),
 			onOk: async () => {
 				try {
-					await httpRequests.deleteStoragePool(storagePool);
-					let storagePoolList = Object.assign([], this.state.storagePoolList);
-					storagePoolList.splice(index, 1);
-					this.setState({storagePoolList});
-					message.success(lang(`已开始删除存储池 ${storagePool.name}!`, `Start deleting storage pool ${storagePool.name}!`));
+					await httpRequests.deleteStoragePool(storageBuddyGroup);
+					let buddyGroupsOfStoragePool = Object.assign([], this.state.buddyGroupsOfStoragePool);
+					buddyGroupsOfStoragePool.splice(index, 1);
+					this.setState({buddyGroupsOfStoragePool});
+					message.success(lang(`已开始删除伙伴组镜像 ID:${storageBuddyGroup.id}!`, `Start deleting storage pool buddy group ID:${storageBuddyGroup.id}!`));
 				} catch ({msg}){
-					message.error(lang(`删除快照 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
+					message.error(lang(`删除伙伴组镜像 ID:${storageBuddyGroup.id} 失败, 原因: `, `Delete storage pool buddy group ID:${storageBuddyGroup.id} failed, reason: `) + msg);
 				}
 			},
 			onCancel: () => {
@@ -54,6 +50,7 @@ class ShowBuddyGroup extends Component {
 			poolId,
 			poolName: name,
 		});
+		httpRequests.getBuddyGroupsOfStoragePoolById(poolId);
 	}
 
 	hide (){
@@ -62,12 +59,17 @@ class ShowBuddyGroup extends Component {
 		});
 	}
 
-	addNewTarget (storageTarget){
-		this.addNewTargetForStorageWrapper.getWrappedInstance().show(storageTarget);
+	addBuddyGroup (){
+		this.addBuddyGroupToStorageWrapper.getWrappedInstance().show(this.state.poolName);
+	}
+
+	addDiskToBuddyGroup (storageBuddyGroup){
+		this.addDiskToBuddyGroupWrapper.getWrappedInstance().show(storageBuddyGroup);
 	}
 
 	render (){
-		let {buddyGroupsOfStoragePool, poolName} = this.state;
+		let {buddyGroupsOfStoragePool} = this.props;
+		let {poolName} = this.state;
 		let buttonConf = {size: 'small', shape: 'circle', style: {height: 18, width: 18, marginRight: 5}};
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
 		let tableProps = {
@@ -83,17 +85,18 @@ class ShowBuddyGroup extends Component {
 			},
 			rowKey: record => `${record.targetId}-${record.service}`,
 			locale: {
-				emptyText: lang('暂无存储目标', 'No Storage Target')
+				emptyText: lang('暂无伙伴组镜像', 'No Storage Target')
 			},
-			title: () => (<div className="fs-modal-table-title-bar">
+			title: () => (
+				<div className="fs-modal-table-title-bar">
 					<Button
 						size='small'
 						style={{float: 'right'}}
-						onClick={this.addNewTarget.bind(this)}
+						onClick={this.addBuddyGroup.bind(this)}
 					>
 						{lang('添加', 'Add')}
 					</Button>
-					<AddNewTargetForStorage ref={ref => this.addNewTargetForStorageWrapper = ref} />
+					<AddBuddyGroupToStoragePool ref={ref => this.addBuddyGroupToStorageWrapper = ref} />
 				</div>
 			),
 			rowClassName: () => 'ellipsis',
@@ -107,7 +110,7 @@ class ShowBuddyGroup extends Component {
 							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
 								<Button
 									{...buttonConf}
-									//onClick={this.edit.bind(this, record, index)}
+									onClick={this.addDiskToBuddyGroup.bind(this, record, index)}
 									icon="edit"
 								>
 								</Button>
@@ -120,6 +123,7 @@ class ShowBuddyGroup extends Component {
 								>
 								</Button>
 							</Popover>
+							<AddDiskToBuddyGroup ref={ref => this.addDiskToBuddyGroupWrapper = ref} />
 						</div>
 				}
 			],
@@ -127,7 +131,7 @@ class ShowBuddyGroup extends Component {
 		return (
 			<Modal
 				width={800}
-				title={lang(`存储池 ${poolName} 的存储目标信息`,`Storage Target of Storage Pool ${poolName}`)}
+				title={lang(`存储池 ${poolName} 的伙伴组镜像信息`,`Buddy Group of Storage Pool ${poolName}`)}
 				closable={false}
 				maskClosable={false}
 				visible={this.state.visible}
@@ -167,4 +171,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(ShowBuddyGroup);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(BuddyGroupOfStoragePool);

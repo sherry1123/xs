@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
+import {validateFsName} from 'Services';
 import {Button, Modal, Form, Input, message} from 'antd';
 
 class EditStoragePool extends Component {
@@ -24,6 +25,56 @@ class EditStoragePool extends Component {
 	formValueChange (key, value){
 		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
 		this.setState({storagePoolData});
+	}
+
+	async validationUpdateState (key, value, valid){
+		let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: lang(cn, en),
+				valid
+			}
+		};
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
+	}
+
+	async validateForm (key){
+		await this.validationUpdateState(key, {cn: '', en: ''}, true);
+		let {name} = this.state.storagePoolData;
+		if (key === 'name'){
+			if (!name){
+				// no name enter
+				await this.validationUpdateState('name', {
+					cn: '请输入存储池名称',
+					en: 'please enter storage pool name'
+				}, false);
+			} else if (!validateFsName(name)){
+				// name validate failed
+				await this.validationUpdateState('name', {
+					cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
+					en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
+				}, false);
+			} else {
+				let isNameDuplicated = this.props.storagePoolList.some(storagePool => storagePool.name === name);
+				if (isNameDuplicated){
+					// this name is duplicated with an existing storage pool's name
+					await this.validationUpdateState('name', {
+						cn: '该存储池名称已经存在',
+						en: 'The storage pool name has already existed'
+					}, false);
+				}
+			}
+		}
+
+
+		// calculate whole form validation
+		let formValid = true;
+		Object.keys(this.state.validation).forEach(key => {
+			formValid = formValid && this.state.validation[key].valid;
+		});
+		this.setState({formValid});
 	}
 
     show (storagePoolData){
@@ -83,6 +134,7 @@ class EditStoragePool extends Component {
                         <Button
                             size="small"
                             type="primary"
+							disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.editStoragePool.bind(this)}
                         >
@@ -95,6 +147,8 @@ class EditStoragePool extends Component {
 					<Form.Item
 						{...formItemLayout}
 						label={lang('名称', 'Name')}
+						validateStatus={this.state.validation.name.status}
+						help={this.state.validation.name.help}
 					>
 						<Input
 							size="small"
@@ -102,6 +156,7 @@ class EditStoragePool extends Component {
 							value={this.state.storagePoolData.name}
 							onChange={({target: {value}}) => {
 								this.formValueChange.bind(this, 'name')(value);
+								this.validateForm.bind(this)('name');
 							}}
 						/>
 					</Form.Item>
@@ -112,9 +167,9 @@ class EditStoragePool extends Component {
 						<Input.TextArea
 							size="small"
 							autosize={{minRows: 4, maxRows: 6}}
-							placeholder={lang('描述为可选项', 'description is optional')}
+							placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
 							value={this.state.storagePoolData.description}
-							maxLength={255}
+							maxLength={200}
 							onChange={({target: {value}}) => {
 								this.formValueChange.bind(this, 'description')(value);
 							}}

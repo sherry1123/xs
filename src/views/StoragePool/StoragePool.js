@@ -4,8 +4,8 @@ import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
-import ShowStoragePoolTarget from './ShowStoragePoolTarget';
-import ShowBuddyGroup from './ShowBuddyGroup';
+import TargetOfStoragePool from './TargetOfStoragePool';
+import BuddyGroupOfStoragePool from './BuddyGroupOfStoragePool';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
 class StoragePool extends Component {
@@ -116,13 +116,13 @@ class StoragePool extends Component {
             title: () => (<span className="fs-table-title"><Icon type="appstore-o" />{lang('存储池', 'Storage Pool')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
-				{title: lang('ID', 'ID'), width: 150, dataIndex: 'poolId',},
+				{title: lang('ID', 'ID'), width: 100, dataIndex: 'poolId',},
                 {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
 				{title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
 					render: text => text || '--'
 				},
 				{
-					title: lang('操作', 'Operations'), width: 80,
+					title: lang('操作', 'Operations'), width: 150,
 					render: (text, record, index) =>
 						<div>
 							<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
@@ -130,6 +130,14 @@ class StoragePool extends Component {
 									{...buttonConf}
 									onClick={this.edit.bind(this, record, index)}
 									icon="edit"
+								>
+								</Button>
+							</Popover>
+							<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
+								<Button
+									{...buttonConf}
+									onClick={this.showStorageTarget.bind(this, record, index)}
+									icon="hdd"
 								>
 								</Button>
 							</Popover>
@@ -141,11 +149,19 @@ class StoragePool extends Component {
 								>
 								</Button>
 							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
+							<Popover {...buttonPopoverConf} content={lang('用户配额', '')}>
 								<Button
 									{...buttonConf}
-									onClick={this.showStorageTarget.bind(this, record, index)}
-									icon="hdd"
+									// onClick={this.showLocalAuthUser.bind(this, record, index)}
+									icon="user"
+								>
+								</Button>
+							</Popover>
+							<Popover {...buttonPopoverConf} content={lang('用户组配额', '')}>
+								<Button
+									{...buttonConf}
+									//onClick={this.showStorageTarget.bind(this, record, index)}
+									icon="team"
 								>
 								</Button>
 							</Popover>
@@ -187,8 +203,8 @@ class StoragePool extends Component {
 				</div>
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
-				<ShowStoragePoolTarget ref={ref => this.showStoragePoolTargetWrapper = ref} />
-				<ShowBuddyGroup ref={ref => this.showBuddyGroupWrapper = ref} />
+				<TargetOfStoragePool ref={ref => this.showStoragePoolTargetWrapper = ref} />
+				<BuddyGroupOfStoragePool ref={ref => this.showBuddyGroupWrapper = ref} />
 			</div>
         );
     }
