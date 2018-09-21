@@ -24,6 +24,8 @@ def create_app():
         if initialize:
             if api in api_always_pass:
                 pass
+            elif 'snapshot' in api:
+                return jsonify(handler.response(1, 'The cluster does not support the snapshot function at this time!'))
             elif rollback:
                 return jsonify(handler.response(1, 'The cluster is rollbacking!'))
             elif deinitialize:
