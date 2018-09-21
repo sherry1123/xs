@@ -60,7 +60,7 @@ class CreateStoragePool extends Component {
 					en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
 				}, false);
 			} else {
-				let isNameDuplicated = this.props.storagePoolList.some(storagepool => storagepool.name === name);
+				let isNameDuplicated = this.props.storagePoolList.some(storagePool => storagePool.name === name);
 				if (isNameDuplicated){
 					// this name is duplicated with an existing storage pool's name
 					await this.validationUpdateState('name', {
@@ -110,8 +110,8 @@ class CreateStoragePool extends Component {
 				name: {status: '', help: '', valid: false},
 			}
         });
-        await httpRequests.getTargetsOfStoragePoolId();
-		await httpRequests.getBuddyGroupsOfStoragePoolId();
+        await httpRequests.getTargetsOfStoragePoolById();
+		await httpRequests.getBuddyGroupsOfStoragePoolById();
 		this.setState({dataPreparing: false});
     }
 
@@ -194,7 +194,7 @@ class CreateStoragePool extends Component {
 							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
 							optionLabelProp="value"
 							value={this.state.storagePoolData.targets}
-							onChange={(value, option) => {
+							onChange={(value) => {
 								this.formValueChange.bind(this, 'targets')(value);
 							}}
 						>
@@ -231,9 +231,9 @@ class CreateStoragePool extends Component {
 							size="small"
 							style={{width: '100%'}}
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为可选项', 'description is optional')}
+                            placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
                             value={this.state.storagePoolData.description}
-                            maxLength={255}
+                            maxLength={200}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                             }}
