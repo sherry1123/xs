@@ -1,11 +1,11 @@
 export const socketEventChannel = {
     snapshot: () => ({
-        chinese: '快照操作',
+        chinese: '快照信息',
         english: 'Snapshot Operation'
     }),
 
     cluster: () => ({
-        chinese: '集群操作',
+        chinese: '集群信息',
         english: 'Cluster Operation'
     }),
 
