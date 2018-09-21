@@ -232,14 +232,14 @@ class LocalAuthUser extends Component {
                                     <Button
                                         {...buttonConf}
                                         onClick={this.disableLocalAuthUser.bind(this, record, index)}
-                                        icon="close-circle"
+                                        icon="close"
                                     />
                                 </Popover> :
                                 <Popover {...buttonPopoverConf} content={lang('启用', 'Enable')}>
                                     <Button
                                         {...buttonConf}
                                         onClick={this.enableLocalAuthUser.bind(this, record, index)}
-                                        icon="check-circle"
+                                        icon="check"
                                     />
                                 </Popover>
                             }
