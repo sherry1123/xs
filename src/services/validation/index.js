@@ -39,10 +39,10 @@ const VALIDATE_USERNAME = /^[a-zA-Z0-9]{1,15}([-_.]?[a-zA-Z0-9]){2,15}$/;
 // Path name can't start with a splash or point.
 const VALIDATE_PATHNAME = /^[a-zA-Z0-9_]{1,30}$/;
 // Name can only contains letter, number and underscore(except for the first),  length is 3-30.
-const VALIDATE_FS_NAME = /^([a-zA-Z0-9]){3,30}$/;
+const VALIDATE_FS_NAME = /^([a-zA-Z0-9])\w{2,29}$/;
 //First name and Last name can only contain letter, no special characters allowed except hyphen or space.
 const VALIDATE_FIRSTLASTNAME = /^[a-zA-Z]+([-|\s]?[a-zA-Z])*$/;
-const VALIDATE_PASSWORD = /^([a-zA-Z0-9]){6,18}$/;
+const VALIDATE_PASSWORD = /^([a-zA-Z0-9])\w{5,17}$/;
 const VALIDATE_NOT_ZERO_INTEGER = /^[1-9]\d*$/;
 const VALIDATE_TARGETNAME = /^[a-zA-Z0-9]{3,30}$/;
 const VALIDATE_FC_INITIATOR = /^(?:(?:[0-9]|[a-f]){2}:){7}(?:[0-9]|[a-f]){2}$/;
