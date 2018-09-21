@@ -291,7 +291,7 @@ class CustomRAID extends Component {
             currentServiceNode = {}, currentRAIDConf = {},
             enableApplyButton, RAIDLevels, arrayLevel, arrayStripeSize, arrayCapacity, stripeSize, RAIDList, selectedDisks,
         } = this.state;
-        let {noRecommendedRAIDConfiguration} = this.props;
+        let {noRAIDRecommendedConfiguration} = this.props;
         let serviceRoleMap = {
             metadata: lang('元数据服务', 'Metadata'),
             storage: lang('存储服务', 'Storage'),
@@ -304,7 +304,7 @@ class CustomRAID extends Component {
                         {lang('自定义RAID', 'Custom RAID')}
                         <span className="fs-raid-custom">
                             {
-                                !noRecommendedRAIDConfiguration && currentServiceNode.ip && currentServiceNode.type &&
+                                !noRAIDRecommendedConfiguration && currentServiceNode.ip && currentServiceNode.type &&
                                 <span onClick={this.enableRecommendedRAID.bind(this)}>{lang('推荐配置', 'Recommended')}</span>
                             }
                             <Popover

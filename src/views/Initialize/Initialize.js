@@ -43,8 +43,8 @@ class Initialize extends Component {
                 type: 'metadata',
                 ip: metadataServerIPs[0]
             },
-            // no recommended RAID configuration
-            noRecommendedRAIDConfiguration: false,
+            // no RAID recommended  configuration
+            noRAIDRecommendedConfiguration: false,
             // RAID conf
             enableCustomRAID: false,
             // running initialization
@@ -351,20 +351,18 @@ class Initialize extends Component {
         }
     }
 
-    validateRecommendedRAID (){
+    validateRAIDRecommendedConfiguration (RAIDRecommendedConfiguration){
         // a temporary way of choosing disk handling:
         // every metadata and storage servers must have at least one recommended RAID
         // configuration, if not, user can only custom RAID configuration to initialize.
-        let {recommendedRAID} = this.props;
-        let metadataServerIPs = recommendedRAID['metadataServerIPs'];
-        let storageServerIPs = recommendedRAID['storageServerIPs'];
+        let metadataServerIPs = RAIDRecommendedConfiguration['metadataServerIPs'];
+        let storageServerIPs = RAIDRecommendedConfiguration['storageServerIPs'];
         if (!metadataServerIPs.length || !storageServerIPs.length){
             return false;
         }
-        let metadataServerIPHasNoRAID = Object.keys(metadataServerIPs).every(ip => !!metadataServerIPs[ip].length);
-        let storageServerIPHasNoRAID = Object.keys(storageServerIPs).every(ip => !!storageServerIPs[ip].length);
-        console.info(metadataServerIPHasNoRAID && storageServerIPHasNoRAID);
-        return metadataServerIPHasNoRAID && storageServerIPHasNoRAID;
+        let metadataServerIPHasNoRAIDRecConf = Object.keys(metadataServerIPs).every(ip => !!metadataServerIPs[ip].length);
+        let storageServerIPHasNoRAIDRecConf = Object.keys(storageServerIPs).every(ip => !!storageServerIPs[ip].length);
+        return metadataServerIPHasNoRAIDRecConf && storageServerIPHasNoRAIDRecConf;
     }
 
     enableCustomRAID (){
@@ -445,21 +443,22 @@ class Initialize extends Component {
                     let {result, metadataServerIPsError, storageServerIPsError} = await httpRequests.checkIPs({metadataServerIPs, storageServerIPs});
                     if (result){
                         // IP availability check successfully
-                        await httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
-                        let noRecommendedRAIDConfiguration = !this.validateRecommendedRAID();
+                        await httpRequests.getRIADRecommendedConfiguration(this.props.metadataServerIPs, this.props.storageServerIPs);
+                        let {recommendedRAID} = this.props;
+                        let noRAIDRecommendedConfiguration = !this.validateRAIDRecommendedConfiguration(recommendedRAID);
                         await this.setState({
                             currentStep: next,
-                            noRecommendedRAIDConfiguration,
-                            enableCustomRAID: noRecommendedRAIDConfiguration,
+                            noRAIDRecommendedConfiguration,
+                            enableCustomRAID: noRAIDRecommendedConfiguration,
                         });
                         // validate recommended RAID configuration existing
-                        if (noRecommendedRAIDConfiguration){
+                        if (noRAIDRecommendedConfiguration){
                             // give out some tips
                             notification.warning({
                                 message: lang('RAID推荐配置不可用', 'RAID Recommended configuration is not available'),
                                 description: lang(
                                     '某些元数据服务或存储服务没有可用的RAID推荐配置，暂无法使用推荐配置进行初始化，已为您选择自定义的方式，请手动为每一个元数据和存储服务配置RAID。',
-                                    'Some metadata service or storage service has no available RAID recommended configuration, unable to recommended way to do initialization and use custom way instead. Please configure RAID for each metadata and storage service.'
+                                    'Some metadata service or storage service has no available RAID recommended configuration, unable to recommended way to do initialization and use custom way instead. Please custom RAID for each metadata and storage service.'
                                  )
                             }, 5000);
                         }
@@ -930,7 +929,7 @@ class Initialize extends Component {
                                         /> :
                                         <CustomRAID
                                             ref={ref => this.customRAIDWrapper = ref}
-                                            noRecommendedRAIDConfiguration={this.state.noRecommendedRAIDConfiguration}
+                                            noRAIDRecommendedConfiguration={this.state.noRAIDRecommendedConfiguration}
                                             enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
                                         />
                                 }

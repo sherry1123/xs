@@ -59,9 +59,9 @@ export default  {
         return requestHandler(async () => await fetchPost('/api/checkclusterenv', IPs));
     },
 
-    // get recommended RAID of a node
-    getRecommendedRIAD (metadataServerIPs, storageServerIPs){
-        requestHandler(async () => {
+    // get RAID recommended configurations of a node
+    getRIADRecommendedConfiguration (metadataServerIPs, storageServerIPs){
+        return requestHandler(async () => {
             let data = await fetchPost('/api/getraidrecommendedconfiguration', {metadataServerIPs, storageServerIPs});
             // console.info('recommended RAID config', data);
             !!data && store.dispatch(initializeAction.setRecommendedRAID(data));

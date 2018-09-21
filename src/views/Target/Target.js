@@ -20,7 +20,7 @@ class Target extends Component {
 
     async componentDidMount (){
         httpRequests.getTargetList();
-        httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
+        httpRequests.getRIADRecommendedConfiguration(this.props.metadataServerIPs, this.props.storageServerIPs);
     }
 
     async componentWillReceiveProps (nextProps){
