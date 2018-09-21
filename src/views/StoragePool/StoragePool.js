@@ -21,7 +21,7 @@ class StoragePool extends Component {
     }
 
     componentDidMount (){
-         // httpRequests.getStoragePoolList();
+         httpRequests.getStoragePoolList();
     }
 
     async componentWillReceiveProps (nextProps){

@@ -54,7 +54,7 @@ class AddTargetToStoragePool extends Component {
 			await this.hide();
 			message.success(lang(`开始添加存储目标 ${targetData.name}!`, `Start adding storage target ${targetData.name} !`));
 		} catch ({msg}){
-			message.error(lang(`存储目标 ${targetData.name} 添加失败, 原因: `, `Add storage target failed, reason: `) + msg);
+			message.error(lang(`存储目标 ${targetData.name} 添加失败, 原因: `, `Add storage target ${targetData.name} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}
@@ -75,7 +75,7 @@ class AddTargetToStoragePool extends Component {
 
 		return (
 			<Modal
-				title={lang(`为存储池 ${this.state.poolName} 添加存储目标`, `Add New Storage Target for ${this.state.poolName} `)}
+				title={lang(`为存储池 ${this.state.poolName} 添加存储目标`, `Add New Storage Target for Storage Pool ${this.state.poolName} `)}
 				width={480}
 				closable={false}
 				maskClosable={false}
@@ -113,7 +113,7 @@ class AddTargetToStoragePool extends Component {
 							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
 							optionLabelProp="value"
 							value={this.state.targetData.targets}
-							onChange={(value, option) => {
+							onChange={(value) => {
 								this.formValueChange.bind(this, 'targets')(value);
 							}}
 						>

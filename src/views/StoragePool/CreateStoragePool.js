@@ -60,7 +60,7 @@ class CreateStoragePool extends Component {
 					en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
 				}, false);
 			} else {
-				let isNameDuplicated = this.props.storagePoolList.some(storagepool => storagepool.name === name);
+				let isNameDuplicated = this.props.storagePoolList.some(storagePool => storagePool.name === name);
 				if (isNameDuplicated){
 					// this name is duplicated with an existing storage pool's name
 					await this.validationUpdateState('name', {
@@ -110,8 +110,8 @@ class CreateStoragePool extends Component {
 				name: {status: '', help: '', valid: false},
 			}
         });
-        await httpRequests.getTargetsOfStoragePoolId();
-		await httpRequests.getBuddyGroupsOfStoragePoolId();
+        await httpRequests.getTargetsOfStoragePoolById();
+		await httpRequests.getBuddyGroupsOfStoragePoolById();
 		this.setState({dataPreparing: false});
     }
 
@@ -194,7 +194,7 @@ class CreateStoragePool extends Component {
 							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
 							optionLabelProp="value"
 							value={this.state.storagePoolData.targets}
-							onChange={(value, option) => {
+							onChange={(value) => {
 								this.formValueChange.bind(this, 'targets')(value);
 							}}
 						>

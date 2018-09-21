@@ -81,7 +81,7 @@ class AddBuddyGroupToStoragePool extends Component {
 			await this.hide();
 			message.success(lang(`开始添加伙伴组镜像 ${buddyGroupData.name}!`, `Start adding buddy group ${buddyGroupData.name} !`));
 		} catch ({msg}){
-			message.error(lang(`伙伴组镜像 ${buddyGroupData.name} 添加失败, 原因: `, `Add buddy group failed, reason: `) + msg);
+			message.error(lang(`伙伴组镜像 ${buddyGroupData.name} 添加失败, 原因: `, `Add buddy group ${buddyGroupData.name} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}
@@ -102,7 +102,7 @@ class AddBuddyGroupToStoragePool extends Component {
 
 		return (
 			<Modal
-				title={lang(`为存储池 ${this.state.poolName} 添加伙伴组镜像`, `Add New Storage Target for ${this.state.poolName} `)}
+				title={lang(`为存储池 ${this.state.poolName} 添加伙伴组镜像`, `Add New Storage Target for Storage Pool ${this.state.poolName} `)}
 				width={480}
 				closable={false}
 				maskClosable={false}
@@ -140,7 +140,7 @@ class AddBuddyGroupToStoragePool extends Component {
 							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
 							optionLabelProp="value"
 							value={this.state.buddyGroupData.buddyGroups}
-							onChange={(value, option) => {
+							onChange={(value) => {
 								this.formValueChange.bind(this, 'buddyGroups')(value);
 							}}
 						>

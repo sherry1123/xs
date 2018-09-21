@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 // import httpRequests from 'Http/requests';
 // import {formatStorageSize} from 'Services';
-import {Button, Modal, message, Form, Select} from 'antd';
+import {Button, Modal, } from 'antd';
 
 class AddDiskToTarget extends Component {
 	constructor (props){
@@ -52,7 +52,6 @@ class AddDiskToTarget extends Component {
 							type="primary"
 							disabled={!this.state.formValid}
 							loading={this.state.formSubmitting}
-							//onClick={this.addBuddyGroupToStoragePool.bind(this)}
 						>
 							{lang('添加', 'Add')}
 						</Button>
