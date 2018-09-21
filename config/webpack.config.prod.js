@@ -238,25 +238,38 @@ module.exports = {
                     },
                     {
                         test: /\.less$/,
+                        // Extract text from js codes, will extract css string computed and injected by
+                        // css-loader to a independent css file. Here we use it to promote the render
+                        // performance instead of using style-loader. It's quite different with dev conf.
                         loader: ExtractTextPlugin.extract(
                             Object.assign(
                                 {
                                     fallback: {
+                                        // Assign a fallback handler:
+                                        // If extract text action failed, we can only choose style-loader, that's sad :(
                                         loader: require.resolve('style-loader'),
                                         options: {
                                             hmr: false,
                                         },
                                     },
                                     use: [
+                                        // css-loader will let you to use @import and url() just like import or require method
+                                        // to import a css file, and it will translate these files to plain string into js code.
+                                        // These js codes are prepared for style-loader and extract-text-webpack-plugin. Also
+                                        // it supports css scope, and if you need this, you can set the related configurations in
+                                        // options. If so, you can write your css codes use ':global' or ':local' decorator.
                                         {
                                             loader: require.resolve('css-loader'),
                                         },
+                                        // A css post-handler
                                         {
                                             loader: require.resolve('postcss-loader'),
                                             options: {
                                                 ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
                                                 plugins: () => [
+                                                    // add flex bug fix codes
                                                     require('postcss-flexbugs-fixes'),
+                                                    // add vendor prefix
                                                     autoprefixer({
                                                         browsers: [
                                                             '>1%',
@@ -270,11 +283,12 @@ module.exports = {
                                                 ],
                                             },
                                         },
+                                        // A less pre-handler, will translate less codes to pure css codes
                                         {
                                             loader: require.resolve('less-loader'),
                                             // options: {
-                                            // your can custom the antd theme like below
-                                            // modifyVars: { "@primary-color": "#1DA57A" },
+                                                // your can custom the antd theme like below
+                                                // modifyVars: { "@primary-color": "#1DA57A" },
                                             // },
 
                                         },

@@ -349,6 +349,22 @@ class Initialize extends Component {
         }
     }
 
+    validateRecommendedRAID (){
+        // a temporary way of choosing disk handling:
+        // every metadata and storage servers must have at least one recommended RAID
+        // configuration, if not, user can't click the next button on step 1
+        let {recommendedRAID} = this.props;
+        let metadataServerIPs = recommendedRAID['metadataServerIPs'];
+        let storageServerIPs = recommendedRAID['storageServerIPs'];
+        if (!metadataServerIPs.length || !storageServerIPs.length){
+            return false;
+        }
+        let metadataServerIPHasNoRAID = Object.keys(metadataServerIPs).every(ip => !!metadataServerIPs[ip].length);
+        let storageServerIPHasNoRAID = Object.keys(storageServerIPs).every(ip => !!storageServerIPs[ip].length);
+        console.info(metadataServerIPHasNoRAID && storageServerIPHasNoRAID);
+        return metadataServerIPHasNoRAID && storageServerIPHasNoRAID;
+    }
+
     enableCustomRAID (){
         // switch to custom RAID mode
         let currentServiceNode = {
@@ -428,7 +444,16 @@ class Initialize extends Component {
                     if (result){
                         // IP availability check successfully
                         await httpRequests.getRecommendedRIAD(this.props.metadataServerIPs, this.props.storageServerIPs);
-                        this.setState({currentStep: next});
+                        // validate recommended RAID configuration existing
+                        if (!this.validateRecommendedRAID()){
+                            // give out some tips
+                            message.error(lang(
+                                '某些元数据服务或存储服务没有可用的RAID推荐配置，暂无法进行初始化',
+                                'Some metadata service or storage service has no available RAID recommended configuration, unable to initialize temporarily'
+                            ));
+                        } else {
+                            this.setState({currentStep: next});
+                        }
                     } else {
                         // IP availability check failed
                         // change help code to exact error description
@@ -439,7 +464,7 @@ class Initialize extends Component {
                             metadataServerIPsError,
                             storageServerIPsError
                         });
-                        // give out tips
+                        // give out some tips
                         message.error(lang('经检测有IP不能正常使用，请更换', 'Some IPs seem can not be used properly through the validations，please replace them'));
                     }
                 } else {
@@ -995,15 +1020,7 @@ class Initialize extends Component {
                             size="small"
                             type="primary"
                             style={{marginLeft: this.state.currentStep !== 0 ? 10 : 0}}
-                            disabled={this.state.currentStep === 1 && !(recommendedRAID => {
-                                // every of metadata and storage servers, must have at least one recommended RAID configuration,
-                                // if not, user can't click the next button on step 1
-                                let metadataServerIPs = recommendedRAID['metadataServerIPs'];
-                                let storageServerIPs = recommendedRAID['storageServerIPs'];
-                                let metadataServerIPHasNoRAID = Object.keys(metadataServerIPs).every(ip => !!metadataServerIPs[ip].length);
-                                let storageServerIPHasNoRAID = Object.keys(storageServerIPs).every(ip => !!storageServerIPs[ip].length);
-                                return metadataServerIPHasNoRAID && storageServerIPHasNoRAID;
-                            })(this.props.recommendedRAID)}
+                            disabled={this.state.currentStep === 1 && !this.validateRecommendedRAID()}
                             onClick={this.next.bind(this)} loading={this.state.checking}
                         >
                             {!this.state.checking && <span>{lang('下一步', 'Next')}</span>}

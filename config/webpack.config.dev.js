@@ -183,6 +183,9 @@ module.exports = {
                     {
                         test: /\.css$/,
                         use: [
+                            // Webpack's handle sequence is from bottom to top, from right to left
+                            // style-loader will inject the computed css code into js bundle, and create
+                            // <style> tag at <head> when js bundle running.
                             require.resolve('style-loader'),
                             {
                                 loader: require.resolve('css-loader'),
@@ -190,6 +193,7 @@ module.exports = {
                                     importLoaders: 1,
                                 },
                             },
+                            // A post-css handler
                             {
                                 loader: require.resolve('postcss-loader'),
                                 options: {
@@ -355,18 +359,29 @@ module.exports = {
             threadPool: happyThreadPool,
             verbose: true,
             loaders: [
+                // Webpack's handle sequence is from bottom to top, from right to left style-loader
+                // will read the computed css string in js code and create <style> tag inside of <head>
+                // use these css strings when js bundle is running.
                 {
                     loader: require.resolve('style-loader'),
                 },
+                // css-loader will let you to use @import and url() just like import or require method
+                // to import a css file, and it will translate these files to plain string into js code.
+                // These js codes are prepared for style-loader and extract-text-webpack-plugin. Also
+                // it supports css scope, and if you need this, you can set the related configurations in
+                // options. If so, you can write your css codes use ':global' or ':local' decorator.
                 {
                     loader:require.resolve('css-loader'),
                 },
+                // A css post-handler
                 {
                     loader: require.resolve('postcss-loader'),
                     options: {
                         ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
                         plugins: () => [
+                            // add flex bug fix codes
                             require('postcss-flexbugs-fixes'),
+                            // add vendor prefix
                             autoprefixer({
                                 browsers: [
                                     '>1%',
@@ -380,6 +395,7 @@ module.exports = {
                         ],
                     },
                 },
+                // A less pre-handler, will translate less codes to pure css codes
                 {
                     loader: require.resolve('less-loader'),
                     options: {

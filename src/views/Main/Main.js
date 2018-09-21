@@ -18,8 +18,8 @@ const DataNode = asyncLoad(() => import('../DataNode/DataNode'));
 const StoragePool = asyncLoad(() => import('../StoragePool/StoragePool'));
 
 // snapshot
-const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
-const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
+// const Snapshot = asyncLoad(() => import('../Snapshot/Snapshot'));
+// const SnapshotSchedule = asyncLoad(() => import('../SnapshotSchedule/SnapshotSchedule'));
 
 // share
 const NASServer = asyncLoad(() => import('../NASServer/NASServer'));
@@ -82,11 +82,15 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.DataNode}`} component={DataNode} />
 
-                        <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
+                        <Route path={`${Main}${routerPath.ServiceAndClient}`} component={ServiceAndClient} />
 
 						<Route path={`${Main}${routerPath.StoragePool}`} component={StoragePool} />
 
+                        {/*
+                        <Route path={`${Main}${routerPath.Snapshot}`} component={Snapshot} />
+
                         <Route path={`${Main}${routerPath.SnapshotSchedule}`} component={SnapshotSchedule} />
+                        */}
 
                         <Route path={`${Main}${routerPath.NASServer}`} component={NASServer} />
 
@@ -97,8 +101,6 @@ export default class Main extends Component {
                         <Route path={`${Main}${routerPath.LocalAuthUser}`} component={LocalAuthUser} />
 
                         <Route path={`${Main}${routerPath.LocalAuthUserGroup}`} component={LocalAuthUserGroup} />
-
-                        <Route path={`${Main}${routerPath.ServiceAndClient}`} component={ServiceAndClient} />
 
                         <Route path={`${Main}${routerPath.Target}`} component={Target} />
 

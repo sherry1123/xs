@@ -76,6 +76,7 @@ class SideBar extends Component {
                     <Menu.Item key={routerPath.StoragePool}>
                         <Icon type="appstore-o" />{lang('存储池', 'Storage Pool')}
                     </Menu.Item>
+                    {/*
                     <Menu.SubMenu
                         key="Snapshot"
                         title={
@@ -92,6 +93,7 @@ class SideBar extends Component {
                             <Icon type="schedule" />{lang('定时快照计划', 'Timed Schedule')}
                         </Menu.Item>
                     </Menu.SubMenu>
+                    */}
                     <Menu.SubMenu
                         key="Share"
                         title={
