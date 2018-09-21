@@ -239,8 +239,9 @@ module.exports = {
                     {
                         test: /\.less$/,
                         // Extract text from js codes, will extract css string computed and injected by css-loader
-                        // to a independent css file. And use these css files through the way of External link.
-                        // Here we use it to promote the render performance instead of using style-loader.
+                        // (the raw style file imported in the entry) to a separate css file. And use these
+                        // css files through the way of External link. We use it to promote the render performance
+                        // instead of using style-loader. Because css files and js files are loaded in parallel.
                         // It's quite different with dev conf.
                         loader: ExtractTextPlugin.extract(
                             Object.assign(
@@ -299,6 +300,7 @@ module.exports = {
                             )
                         ),
                     },
+                    // Instructs webpack to emit the required object as file and to return its public URL.
                     // "file" loader makes sure assets end up in the `build` folder.
                     // When you `import` an asset, you get its filename.
                     // This loader doesn't use a "test" so it will catch all modules

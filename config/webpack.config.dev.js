@@ -346,6 +346,7 @@ module.exports = {
             verbose: true,
             loaders: [
                 {
+                    // Instructs webpack to emit the required object as file and to return its public URL
                     loader: require.resolve('file-loader'),
                     options: {
                         name: 'static/media/[name].[hash:8].[ext]',
@@ -366,14 +367,14 @@ module.exports = {
                     loader: require.resolve('style-loader'),
                 },
                 // css-loader will let you to use @import and url() just like import or require method to import
-                // a css file just like a module, and it will translate these files to plain strings into js bundle.
+                // a css file just like a module, and it will translate these files to plain js strings in CommonJS way.
                 // These string codes are prepared for style-loader and extract-text-webpack-plugin. Also it supports
                 // css scope, and if you need this, you can set the related configurations in options. If so, you
                 // can write your css codes use ':global' or ':local' decorator.
                 {
                     loader:require.resolve('css-loader'),
                 },
-                // A css post-handler
+                // A css post-handler.
                 {
                     loader: require.resolve('postcss-loader'),
                     options: {
@@ -395,7 +396,7 @@ module.exports = {
                         ],
                     },
                 },
-                // A less pre-handler, will translate less codes to pure css codes
+                // A less pre-handler, will translate less codes to pure css codes.
                 {
                     loader: require.resolve('less-loader'),
                     options: {
