@@ -358,18 +358,18 @@ module.exports = {
             id: 'less',
             threadPool: happyThreadPool,
             verbose: true,
+            // Webpack's loader handle sequence is from bottom to top, from right to left.
             loaders: [
-                // Webpack's handle sequence is from bottom to top, from right to left style-loader
-                // will read the computed css string in js code and create <style> tag inside of <head>
-                // use these css strings when js bundle is running.
+                // style-loader will read the computed css string in js code and use these css strings to
+                // create <style> tag inside of <head> when js bundle is running.
                 {
                     loader: require.resolve('style-loader'),
                 },
-                // css-loader will let you to use @import and url() just like import or require method
-                // to import a css file, and it will translate these files to plain string into js code.
-                // These js codes are prepared for style-loader and extract-text-webpack-plugin. Also
-                // it supports css scope, and if you need this, you can set the related configurations in
-                // options. If so, you can write your css codes use ':global' or ':local' decorator.
+                // css-loader will let you to use @import and url() just like import or require method to import
+                // a css file just like a module, and it will translate these files to plain strings into js bundle.
+                // These string codes are prepared for style-loader and extract-text-webpack-plugin. Also it supports
+                // css scope, and if you need this, you can set the related configurations in options. If so, you
+                // can write your css codes use ':global' or ':local' decorator.
                 {
                     loader:require.resolve('css-loader'),
                 },
