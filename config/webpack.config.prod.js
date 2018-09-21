@@ -238,9 +238,10 @@ module.exports = {
                     },
                     {
                         test: /\.less$/,
-                        // Extract text from js codes, will extract css string computed and injected by
-                        // css-loader to a independent css file. Here we use it to promote the render
-                        // performance instead of using style-loader. It's quite different with dev conf.
+                        // Extract text from js codes, will extract css string computed and injected by css-loader
+                        // to a independent css file. And use these css files through the way of External link.
+                        // Here we use it to promote the render performance instead of using style-loader.
+                        // It's quite different with dev conf.
                         loader: ExtractTextPlugin.extract(
                             Object.assign(
                                 {
