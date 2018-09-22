@@ -6,7 +6,7 @@ import store from './redux';
 import App from './views/App';
 import './styleSheets/index.less';
 import './socket';
-import 'Http/cronJob';
+import runCronJob from 'Http/cronJob';
 import {lsGet} from './services';
 import httpRequests from 'Http/requests';
 
@@ -19,6 +19,9 @@ import httpRequests from 'Http/requests';
     } catch ({msg}){
         console.error('Sync up system status failed: ', msg);
     }
+
+    // run cron job
+    runCronJob();
 
     // Create react app
     const render = Component => {

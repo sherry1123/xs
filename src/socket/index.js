@@ -16,7 +16,9 @@ import routerPath from '../views/routerPath';
 // establish connection with another server assigned by load balancing policy will be failed absolutely.
 // Further:
 // Out of consideration for communication security, we can do handshake by ourselves by some special ways.
-const socket = io({transports: ['websocket']});
+// const socket = io({transports: ['websocket']});
+
+const socket = io();
 
 // some pre-configs
 const {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd, reInitializationStart, reInitializationEnd} = eventCodeForEventChannel;
