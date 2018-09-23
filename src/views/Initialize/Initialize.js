@@ -241,12 +241,16 @@ class Initialize extends Component {
             } else {
                 // duplicate validate successfully
                 await this.setErrorArr(category, i, {status: '', help: ''});
-
                 if (!this.state[category + 'Error'][i].status){
                     // if it's management server IP or heartbeat IP need to do HA validation
                     if ((category === 'managementServerIPs' || category === 'hbIPs') && this.props.enableHA){
                         await this.validateIPForHA();
                         await this.validateNetworkSegmentForMgmtAndHAIPs();
+                    } else if ((category === 'clientIPs') && this.state.enableClient){
+                        // since storage deep layer create a default client for its business, so can't create a new client on it again
+                        if (this.props.managementServerIPs.includes(value)){
+                            await this.setErrorArr(category, i, {status: 'error', help: lang('该IP已被一个已存在的管理节点使用', 'This IP has been used by a existing management server')});
+                        }
                     }
                 }
             }

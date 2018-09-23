@@ -65,6 +65,8 @@ choosePort(HOST, DEFAULT_PORT)
             proxyConfig,
             urls.lanUrlForConfig
         );
+        // All required assets will be compiled into RAM instead of created at your disk.
+        // When you import an asset, you get its virtual filename.
         const devServer = new WebpackDevServer(compiler, serverConfig);
         // Launch WebpackDevServer.
         devServer.listen(port, HOST, err => {
