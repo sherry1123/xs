@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, Input, message, Table, Popover} from 'antd';
+import {Button, Icon, Input, message, Spin, Table, Popover} from 'antd';
 import StripeSetting from './StripeSetting';
 import CreateDirectory from './CreateDirectory';
 import lang from 'Components/Language/lang';
@@ -11,11 +11,11 @@ class FSOperation extends Component {
         super(props);
         this.minChunkSize = 65536;
         // directory table
-        this.queryDirLock = false;
         this.directoryStack = [];
         this.state = {
             dirPath: '/',
             files: [],
+            queryingDirectory: false,
         };
     }
 
@@ -28,9 +28,13 @@ class FSOperation extends Component {
     }
 
     async getFilesByPath (dirPath, needBackIfError){
-        this.queryDirLock = true;
+        await this.setState({queryingDirectory: true});
         try {
             let files = await httpRequests.getFiles(dirPath);
+            // if the directory stack goes deeper, should add a back upper directory placeholder
+            if (this.directoryStack.length > 1){
+                files.unshift({name: '..', path: '..'});
+            }
             await this.setState({files, dirPath});
         } catch (e){
             // if query path error, need to remove previous one in directoryStack
@@ -38,7 +42,7 @@ class FSOperation extends Component {
             // should use code to distinguish it's network error or actually no such directory
             message.warning(lang('该路径不存在', 'This path is not existed'));
         }
-        this.queryDirLock = false;
+        this.setState({queryingDirectory: false});
     }
 
     async queryDirPath (dirPath = this.state.dirPath){
@@ -55,19 +59,15 @@ class FSOperation extends Component {
     }
 
     async returnUpperDirectory (){
-        if (!this.queryDirLock){
-            this.directoryStack.shift();
-            let lastDirPath = this.backTrackDirectoryStack(); // state => render
-            this.getFilesByPath(lastDirPath); // props => render
-        }
+        this.directoryStack.shift();
+        let lastDirPath = this.backTrackDirectoryStack(); // state => render
+        this.getFilesByPath(lastDirPath); // props => render
     }
 
     async enterDirectory (dirPath){
-        if (!this.queryDirLock){
-            this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
-            let nextDirPath = this.backTrackDirectoryStack();
-            this.getFilesByPath(nextDirPath, true);
-        }
+        this.directoryStack.unshift((this.directoryStack.length > 1 ? '/' : '') + dirPath);
+        let nextDirPath = this.backTrackDirectoryStack();
+        this.getFilesByPath(nextDirPath, true);
     }
 
     entryInfoFormChange (key, value){
@@ -106,14 +106,10 @@ class FSOperation extends Component {
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
-        let {files} = this.state;
-        if (this.directoryStack.length > 1){
-            files.unshift({name: '..', path: '..'});
-        }
+        let {files, queryingDirectory} = this.state;
         let tableProps = {
             dataSource: files,
             pagination: false,
-            // loading: this.queryDirLock,
             rowKey: 'path',
             locale: {
                 emptyText: lang('暂无文件目录', 'No File Directory')
@@ -199,13 +195,19 @@ class FSOperation extends Component {
                             type="primary"
                             size="small"
                             onClick={() => this.createDirectory.bind(this)({path: '/'})}
-                            >
+                        >
                             {lang('创建目录', 'Create Directory')}
                         </Button>
                     </div>
                 </div>
                 <div className="fs-main-content-wrapper">
-                    <Table {...tableProps} />
+                    <Spin
+                        indicator={<Icon type="loading" style={{fontSize: 18}} spin />}
+                        spinning={queryingDirectory}
+                        delay={500}
+                    >
+                        <Table {...tableProps} />
+                    </Spin>
                 </div>
                 <StripeSetting ref={ref => this.stripeSettingWrapper = ref} />
                 <CreateDirectory ref={ref => this.createDirectoryWrapper = ref} queryDirPath={this.queryDirPath.bind(this)} />
