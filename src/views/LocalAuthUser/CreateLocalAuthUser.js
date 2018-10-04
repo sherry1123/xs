@@ -251,7 +251,7 @@ class CreateLocalAuthUser extends Component {
                         {!this.state.strategyData.hasOwnProperty('userNameMinLen') && <Icon type="loading" style={{marginLeft: 10}} />}
                     </span>
                 }
-                width={400}
+                width={420}
                 closable={false}
                 maskClosable={false}
                 visible={this.state.visible}
