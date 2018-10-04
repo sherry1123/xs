@@ -111,8 +111,8 @@ class CreateLocalAuthUser extends Component {
                 this.validationUpdateState('name', {cn: '请输入用户姓名', en: 'Please enter username'}, false);
             } else if (!this.validateUsername(name)){
                 this.validationUpdateState('name', {
-                    cn: `安全策略要求用户名仅能以字母、数字以或划线开头，长度不少于${this.strategyData.userNameMinLen}位`,
-                    en: `The security strategy only allow username starts with a letter, number or underscore, length can't be less than ${this.strategyData.userNameMinLen}`
+                    cn: `安全策略要求用户名仅能以字母、数字以或划线开头，长度不少于${this.state.strategyData.userNameMinLen}位`,
+                    en: `The security strategy only allow username starts with a letter, number or underscore, length can't be less than ${this.state.strategyData.userNameMinLen}`
                 }, false);
             }
             let isNameDuplicated = this.props.localAuthUserList.some(user => user.name === name);
@@ -127,7 +127,7 @@ class CreateLocalAuthUser extends Component {
             if (!password){
                 await this.validationUpdateState('password', {cn: '请输入新密码', en: 'Please enter new password'}, false);
             } else if (!this.validatePassword(password)){
-                let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.strategyData;
+                let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.state.strategyData;
                 let complexityTip = {
                     cn: passComplexity === 3 ? '还需包含小写、大写字母、数字的至少2种组合，' : '还必须包含小写、大写字母和数字，',
                     en: passComplexity === 3 ? 'still needs contains any two types of uppercase letters, lowercase letters, and digits,' : 'still needs contains uppercase letters, lowercase letters, and digits,'
