@@ -192,7 +192,7 @@ class CreateLocalAuthUser extends Component {
     }
 
     selectGroup ({type, groupNames}){
-        console.info(type, groupNames);
+        // console.info(type, groupNames);
         if (type === 'primaryGroup'){
             groupNames = groupNames[0];
         }
