@@ -16,12 +16,16 @@
 APP_NAME="OrcaFS GUI"
 SERVICE_NAME=orcafs-gui
 
+. /etc/init.d/functions
 
-APP_BIN=/var/${SERVICE_NAME}/server
-test -x $APP_BIN || { echo "$APP_BIN not installed"; 
-   if [ "$1" = "stop" ]; then exit 0;
-   else exit 3; fi; }
+APP_BIN=/var/${SERVICE_NAME}/server-unified/start.py
+APP_SCRIPT=/var/${SERVICE_NAME}/server-unified/shell/start.sh
 
+test -x $APP_SCRIPT || { echo "$APP_SCRIPT not installed"; 
+    if [ "$1" = "stop" ]; then exit 0;
+    else exit 3; fi; }
+
+PIDFILE=/var/run/${SERVICE_NAME}.pid
 
 RETVAL=0
 # Return values acc. to LSB for all commands but status:
@@ -30,28 +34,34 @@ RETVAL=0
 # 2       - unimplemented feature (e.g. "reload")
 # 3       - program is not installed
 
-
 case "$1" in
-   start)
-      mkdir -p /var/lock/subsys
-      pm2 start $APP_BIN --name ${SERVICE_NAME} -s && touch /var/lock/subsys/${SERVICE_NAME}
-      RETVAL=$?
-      ;;
-   stop)
-      pm2 stop ${SERVICE_NAME} -s && rm -f /var/lock/subsys/${SERVICE_NAME}
-      RETVAL=$?
-      ;;
-   restart)
-      pm2 restart ${SERVICE_NAME} -s
-      RETVAL=$?
-      ;;
-   status)
-      pm2 status ${SERVICE_NAME}
-      RETVAL=$?
-      ;;
-   *)
-      echo "Usage: $0 {start|stop|restart|status}"
-      exit 2
-      ;;
-   esac
+    start)
+        echo -n "Starting ${APP_NAME}: "
+        mkdir -p /var/lock/subsys
+        daemon $APP_SCRIPT && touch /var/lock/subsys/${SERVICE_NAME}
+        RETVEL=$?
+        PID=$(ps aux|grep $APP_BIN|grep grep -v|awk '{print $2}')
+        echo ${PID} > ${PIDFILE}
+        ;;
+    stop)
+        echo -n "Shutting down ${APP_NAME}: "
+        killproc -p $PIDFILE && rm -f /var/lock/subsys/${SERVICE_NAME}
+        RETVAL=$?
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        RETVAL=$?
+        ;;
+    status)
+        echo -n "Checking for service ${APP_NAME}: "
+        status -p $PIDFILE
+        RETVAL=$?
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+        exit 2
+        ;;
+    esac
+
 exit $RETVAL
