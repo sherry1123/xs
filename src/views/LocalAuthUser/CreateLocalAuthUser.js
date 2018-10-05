@@ -62,7 +62,7 @@ class CreateLocalAuthUser extends Component {
         }
         let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.state.strategyData;
         // validate complexity
-        const SPECIAL_EN_CHAR_REG = /[`~!@#$%^&*()_\-+=<>?:"{},.'/;[\]]/im;
+        const SPECIAL_EN_CHAR_REG = /[`~!@#$%^&*()_\\\-+=|<>?:"{},.'/;[\]]/im;
         // const SPECIAL_CN_CHAR_REG = /[·！#￥（——）：；“”‘、，|《。》？、【】]/im;
         const UPPERCASE_LETTER_REG = /[A-Z]/;
         const LOWERCASE_LETTER_REG = /[a-z]/;
