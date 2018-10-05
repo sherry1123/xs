@@ -1,9 +1,9 @@
 from flask import jsonify, request
 from flask_compress import Compress
 
-from lib.module import handler
-from lib.router import app
-from lib.util import status
+from api.module import handler
+from api.router import app
+from api.util import status
 
 compress = Compress()
 

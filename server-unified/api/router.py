@@ -1,8 +1,8 @@
 from flask import jsonify, make_response, request
 
-from lib import controller
-from lib.module import handler, process
-from lib.util.socket import app
+from api import controller
+from api.module import handler, process
+from api.util.socket import app
 
 
 @app.route('/api/syncsystemstatus', methods=['GET', 'POST'])

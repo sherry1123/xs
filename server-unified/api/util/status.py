@@ -1,5 +1,5 @@
-from lib.module import handler
-from lib.util import initialize as initUtil
+from api.module import handler
+from api.util import initialize as initUtil
 
 initialize = False
 deinitialize = False

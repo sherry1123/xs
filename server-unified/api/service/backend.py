@@ -1,4 +1,4 @@
-from lib.module import handler, request
+from api.module import handler, request
 
 
 class BackendError(Exception):

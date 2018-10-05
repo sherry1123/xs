@@ -1,6 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from lib.util import task
+from api.util import task
 
 scheduler = None
 

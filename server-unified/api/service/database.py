@@ -2,11 +2,11 @@ import json
 
 from mongoengine import connect
 
-from lib.model import (CifsShare, ClusterThroughputAndIops, LocalAuthUser,
+from api.model import (CifsShare, ClusterThroughputAndIops, LocalAuthUser,
                        LocalAuthUserGroup, NasServer, NfsShare,
                        NodeCpuAndMemory, NodeThroughputAndIops, Setting,
                        Snapshot, SnapshotSchedule, StoragePool, User)
-from lib.module import handler
+from api.module import handler
 
 
 class DatabaseError(Exception):

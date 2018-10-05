@@ -1,8 +1,8 @@
 import time
 
 import event
-from lib.module import handler, process
-from lib.service import backend, database
+from api.module import handler, process
+from api.service import backend, database
 
 
 def send_change_password_message():

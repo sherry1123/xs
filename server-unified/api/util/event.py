@@ -1,6 +1,6 @@
-from lib.module import handler, request
-from lib.service import database
-from lib.util import schedule, socket, status
+from api.module import handler, request
+from api.service import database
+from api.util import schedule, socket, status
 
 
 def send(channel, code, target, result, data={}, notify=False, ip=None):

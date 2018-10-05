@@ -1,8 +1,8 @@
 import json
 import math
 
-from lib.module import handler, process, request
-from lib.service import backend, database
+from api.module import handler, process, request
+from api.service import backend, database
 
 
 def get_orcafs_status():

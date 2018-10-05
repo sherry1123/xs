@@ -1,7 +1,7 @@
-from lib.module import handler
-from lib.module.process import setinterval
-from lib.service import backend, database
-from lib.util import event, initialize, schedule, status
+from api.module import handler
+from api.module.process import setinterval
+from api.service import backend, database
+from api.util import event, initialize, schedule, status
 
 
 def sync_status():

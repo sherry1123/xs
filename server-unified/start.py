@@ -2,11 +2,11 @@ import logging
 import signal
 import sys
 
-from lib import create_app
-from lib.service.database import connect_database
-from lib.util import status
-from lib.util.schedule import start_scheduler
-from lib.util.socket import create_socketio
+from api import create_app
+from api.service.database import connect_database
+from api.util import status
+from api.util.schedule import start_scheduler
+from api.util.socket import create_socketio
 
 logging.basicConfig()
 
