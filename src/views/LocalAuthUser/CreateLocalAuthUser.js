@@ -68,6 +68,7 @@ class CreateLocalAuthUser extends Component {
         const LOWERCASE_LETTER_REG = /[a-z]/;
         const DIGIT_REG = /[\d]/; // /[0-9]/
         // must contain special characters whether passComplexity is 3 or 4
+        // only validate english special chars temporarily
         if (!SPECIAL_EN_CHAR_REG.test(password)/* && !SPECIAL_CN_CHAR_REG.test(password)*/){
             return false;
         }
@@ -127,6 +128,7 @@ class CreateLocalAuthUser extends Component {
             if (!password){
                 await this.validationUpdateState('password', {cn: '请输入新密码', en: 'Please enter new password'}, false);
             } else if (!this.validatePassword(password)){
+                let specialChars = `\`~!@#$%^&*()_\\-+=|<>?:"}{,.'/;][`;
                 let {passMinLen, passMaxLen, passComplexity, passRepeatCharMax} = this.state.strategyData;
                 let complexityTip = {
                     cn: passComplexity === 3 ? '还需包含小写、大写字母、数字的至少2种组合，' : '还必须包含小写、大写字母和数字，',
@@ -137,8 +139,8 @@ class CreateLocalAuthUser extends Component {
                     en: passRepeatCharMax === 99999 ? '' : `number of characters can‘t be duplicated more than ${passRepeatCharMax} times,`
                 };
                 await this.validationUpdateState('password', {
-                    cn: `安全策略要求密码包含特殊字符，${complexityTip.cn} ${duplicationTip.cn} 长度为${passMinLen}-${passMaxLen}位`,
-                    en: `Security strategy allow contains special char, ${complexityTip.en} ${duplicationTip.cn} length is ${passMinLen}-${passMaxLen}`
+                    cn: `安全策略要求密码包含特殊字符例如: ${specialChars}，${complexityTip.cn} ${duplicationTip.cn} 长度为${passMinLen}-${passMaxLen}位`,
+                    en: `Security strategy requires to contain special chars like: ${specialChars}, ${complexityTip.en} ${duplicationTip.cn} length is ${passMinLen}-${passMaxLen}`
                 }, false);
             } else {
                 if (password !== rePassword){
@@ -248,7 +250,14 @@ class CreateLocalAuthUser extends Component {
                 title={
                     <span>
                         {lang('创建本地认证用户', 'Create Local Authentication User')}
-                        {!this.state.strategyData.hasOwnProperty('userNameMinLen') && <Icon type="loading" style={{marginLeft: 10}} />}
+                        {!this.state.strategyData.hasOwnProperty('userNameMinLen') &&
+                            <Popover
+                                {...buttonPopoverConf}
+                                content={lang('加载安全策略中...', 'Loading security strategy...')}
+                            >
+                                <Icon type="loading" style={{marginLeft: 10}} />
+                            </Popover>
+                        }
                     </span>
                 }
                 width={420}
