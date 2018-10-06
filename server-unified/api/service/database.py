@@ -1,7 +1,5 @@
 import json
 
-from mongoengine import connect
-
 from api.model import (CifsShare, ClusterThroughputAndIops, LocalAuthUser,
                        LocalAuthUserGroup, NasServer, NfsShare,
                        NodeCpuAndMemory, NodeThroughputAndIops, Setting,
@@ -15,10 +13,6 @@ class DatabaseError(Exception):
 
     def __str__(self):
         return self.errorinfo
-
-
-def connect_database(host='127.0.0.1', port=27017):
-    connect('storage', host=host, port=port)
 
 
 def get_setting(key):

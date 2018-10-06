@@ -36,6 +36,7 @@ def response(code, result):
     response = {}
     if code:
         response = {'code': code, 'msg': result}
+        print(result)
     else:
         response = {'code': code, 'data': result}
     return response

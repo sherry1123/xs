@@ -8,7 +8,7 @@ socketio = SocketIO(app)
 def create_socketio():
     @socketio.on('connect')
     def connect_handle():
-        print('Connect client successfully!')
+        print('Connect to the client via websocket successfully!')
 
     return socketio
 

@@ -11,7 +11,7 @@ def get_cluster_status():
     try:
         initialize = initUtil.get_orcafs_status()
     except Exception as error:
-        print(handler.error(error))
+        print('Get cluster status failed! Message: %s' % handler.error(error))
     return initialize
 
 
