@@ -269,5 +269,5 @@ def connect_database():
         else:
             connect(host='mongodb://localhost/storage')
     except Exception as error:
-        print('Connect to the database failed! Message: %s' %
-              handler.error(error))
+        handler.log(handler.error(error), 2)
+        handler.log('Connect to the database failed!')

@@ -51,7 +51,7 @@ def get_disk_list(params):
 
 
 def initialize_cluster(params):
-    print('Start initializing the cluster!')
+    handler.log('Start initializing the cluster!')
     current = 0
     total = 8
     try:
@@ -72,14 +72,15 @@ def initialize_cluster(params):
                 if not status_res['errorId']:
                     if status_res['data']['status']:
                         callback()
-                        print('Step: %s, description: %s, message: %s' % (
-                            current, 'initialization of the cluster failed', error_message))
+                        handler.log(handler.error(error_message), 2)
+                        handler.log('Step: %s, description: %s' % (
+                            current, 'initialization of the cluster failed'))
                         for ip in mgmt:
                             event.send('cluster', 0, 'cluster', False, {
                                        'current': current, 'status': -1, 'total': total}, False, ip)
                     elif current != fs_total:
-                        print('Step: %s, description: %s' %
-                              (current, describle))
+                        handler.log('Step: %s, description: %s' %
+                                    (current, describle))
                         for ip in mgmt:
                             event.send('cluster', 0, 'cluster', True, {
                                        'current': current, 'status': status_res['data']['status'], 'total': total}, False, ip)
@@ -88,32 +89,33 @@ def initialize_cluster(params):
                         if data['enable_create_buddy_group']:
                             backend.create_buddy_group({})
                         current = 5
-                        print('Step: %s, description: %s' %
-                              (current, 'initialize the database'))
+                        handler.log('Step: %s, description: %s' %
+                                    (current, 'initialize the database'))
                         for ip in mgmt:
                             event.send('cluster', 0, 'cluster', True, {
                                        'current': current, 'status': 0, 'total': total}, False, ip)
                         initialize.initialize_mongodb(data['mongodb_param'])
                         current = 6
-                        print('Step: %s, description: %s' %
-                              (current, 'save initialization information'))
+                        handler.log('Step: %s, description: %s' %
+                                    (current, 'save initialization information'))
                         for ip in mgmt:
                             event.send('cluster', 0, 'cluster', True, {
                                        'current': current, 'status': 0, 'total': total}, False, ip)
                         initialize.save_initialize_information(
                             data['param'], data['node_list'])
                         current = 7
-                        print('Step: %s, description: %s' %
-                              (current, 'finish all steps'))
+                        handler.log('Step: %s, description: %s' %
+                                    (current, 'finish all steps'))
                         for ip in mgmt:
                             event.send('cluster', 0, 'cluster', True, {
                                        'current': current, 'status': 0, 'total': total}, False, ip)
                         initialize.disable_node_service(data['node_list'])
-                        print('Complete cluster initialization!')
+                        handler.log('Complete cluster initialization!')
                 else:
                     callback()
-                    print('Step: %s, description: %s, message: %s' % (
-                        current, 'initialization of the cluster failed', error_message))
+                    handler.log(handler.error(error_message), 2)
+                    handler.log('Step: %s, description: %s' % (
+                        current, 'initialization of the cluster failed'))
                     for ip in mgmt:
                         event.send('cluster', 0, 'cluster', False, {
                                    'current': current, 'status': -1, 'total': total}, False, ip)
@@ -123,21 +125,23 @@ def initialize_cluster(params):
             start_get_initialize_status = send_initialize_status(
                 stop_get_initialize_status)
         elif init_res['errorId'] != 111:
-            print('Step: %s, description: %s, message: %s' % (
-                current, 'initialization of the cluster failed', handler.error(init_res['message'])))
+            handler.log(handler.error(init_res['message']), 2)
+            handler.log('Step: %s, description: %s' %
+                        (current, 'initialization of the cluster failed'))
             for ip in mgmt:
                 event.send('cluster', 0, 'cluster', False, {
                            'current': current, 'status': -1, 'total': total}, False, ip)
     except Exception as error:
-        print('Step: %s, description: %s, message: %s' % (
-            current, 'initialization of the cluster failed', handler.error(error)))
+        handler.log(handler.error(error), 2)
+        handler.log('Step: %s, description: %s' %
+                    (current, 'initialization of the cluster failed'))
         deinitialize_cluster(2)
         event.send('cluster', 0, 'cluster', False, {
                    'current': current, 'status': -1, 'total': total})
 
 
 def deinitialize_cluster(mode):
-    print('Start deinitializing the cluster!')
+    handler.log('Start deinitializing the cluster!')
     try:
         mongodb_status = initialize.get_mongodb_status()
         node_list = []
@@ -158,11 +162,12 @@ def deinitialize_cluster(mode):
             state = status_res['data']['status']
             error_message = status_res['data']['errorMessage']
             if not status_res['errorId']:
-                print('Step: %s, description: %s' % (current, describle))
+                handler.log('Step: %s, description: %s' % (current, describle))
                 if state:
                     callback()
-                    print('Step: %s, description: %s, message: %s' % (
-                        current, 'Deinitialization of the cluster failed!', error_message))
+                    handler.log(handler.error(error_message), 2)
+                    handler.log('Step: %s, description: %s' % (
+                        current, 'deinitialization of the cluster failed'))
                     for ip in mgmt:
                         event.send('cluster', 2, 'cluster',
                                    False, {}, True, ip)
@@ -175,15 +180,15 @@ def deinitialize_cluster(mode):
                         initialize.enable_node_service(node_list)
                     for ip in mgmt:
                         event.send('cluster', 2, 'cluster', True, {}, True, ip)
-                    print('Complete cluster deinitialization!')
+                    handler.log('Complete cluster deinitialization!')
 
         def stop_get_deinitialize_status():
             start_get_deinitialize_status.set()
         start_get_deinitialize_status = send_deinitialize_status(
             stop_get_deinitialize_status)
     except Exception as error:
-        print('%s, message: %s' %
-              ('deinitialization of the cluster failed', handler.error(error)))
+        handler.log(handler.error(error), 2)
+        handler.log('Deinitialization of the cluster failed!')
         event.send('cluster', 2, 'cluster', False, {}, True)
 
 
@@ -592,11 +597,11 @@ def create_snapshot(params):
             else:
                 database.delete_snapshot(name)
                 event.send('snapshot', 12, name, False, {}, True)
-                print(response['message'])
+                handler.log(hanlder.error(response['message']), 2)
         else:
             event.send('snapshot', 12, name, False, {}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def update_snapshot(params):
@@ -622,7 +627,7 @@ def delete_snapshot(params):
             database.update_snapshot_status(name)
             event.send('snapshot', 14, name, False, {}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def batch_delete_snapshot(params):
@@ -643,7 +648,7 @@ def batch_delete_snapshot(params):
             event.send('snapshot', 16, names_str, False,
                        {'total': len(names)}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def rollback_snapshot(params):
@@ -658,7 +663,7 @@ def rollback_snapshot(params):
         else:
             event.send('snapshot', 18, name, False, {}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def get_snapshot_schedule(params):
