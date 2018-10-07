@@ -7,7 +7,10 @@ from api.util.socket import app
 
 @app.route('/api/syncsystemstatus', methods=['GET', 'POST'])
 def sync_status():
-    return jsonify(controller.sync_status())
+    result = controller.sync_status()
+    response = make_response(jsonify(result))
+    response.set_cookie('origin_host', request.host)
+    return response
 
 
 @app.route('/api/checkclusterenv', methods=['GET', 'POST'])
