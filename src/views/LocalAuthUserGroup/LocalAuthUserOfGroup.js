@@ -14,6 +14,7 @@ class LocalAuthUserOfGroup extends Component {
             visible: false,
             groupName: '',
             loadingList: true,
+            query: '',
             localAuthUserListOfGroup,
             localAuthUserListOfGroupBackup: localAuthUserListOfGroup,
         };
@@ -86,6 +87,7 @@ class LocalAuthUserOfGroup extends Component {
             visible: true,
             groupName,
             loadingList: true,
+            query: '',
             localAuthUserListOfGroup,
             localAuthUserListOfGroupBackup: localAuthUserListOfGroup,
         });
@@ -124,7 +126,6 @@ class LocalAuthUserOfGroup extends Component {
                 <div>
                     <Input.Search
                         style={{width: 170}}
-                        className="fs-search-table-input"
                         size="small"
                         placeholder={lang('用户名称', 'User Name')}
                         value={this.state.query}

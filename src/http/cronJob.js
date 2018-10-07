@@ -9,8 +9,9 @@ const fetchDataPer15s = () => {
 
     // main
     if (routerHash.match(main)){
+        // get cluster information and system version
         httpRequests.getClusterInfo();
-        // we use theses APIs below for checking service status and prompt user if there is any change on them
+        // check service status and prompt user if there is any change on them
         httpRequests.getMetadataNodes();
         httpRequests.getStorageNodes();
     }

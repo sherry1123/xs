@@ -15,6 +15,8 @@ export default {
         // step 3 RAID configuration
         enableRAID: true,
         enableCustomRAID: false,
+        // for the recommendedRAID and customRAID below, their data structures are not the same because of some historical
+        // reason: customRAID was done earlier, but recommendedRAID strategy gave out later, and implement with a different structure.
         recommendedRAID:  {
             metadataServerIPs: {
                 /*
@@ -153,6 +155,8 @@ export default {
             buddyGroupsForStoragePool: [
 				 // {"capacity": 21474836480, "id": 1, "targetPath": "/data/Orcafs-storage101,/data/Orcafs-storage301"}
             ],
+            // data classification setting list
+            dataClassificationList: []
         },
         // snapshot, timed snapshot schedule and setting
         snapshot: {

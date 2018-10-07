@@ -106,6 +106,12 @@ class Initialize extends Component {
         }
     }
 
+    componentDidMount (){
+        // fill up the first input box of management service with the host of current http server
+        const originHost = ckGet('origin_host');
+        this.setIP('managementServerIPs', 0, originHost);
+    }
+
     componentWillReceiveProps (nextProps){
         let {initStatus: {current, total, status}} = nextProps;
         let {initProgressStep, initProgress, initInfoList} = this.state;
@@ -211,18 +217,20 @@ class Initialize extends Component {
     }
 
     setIP (category, i, value){
+        // console.info(category, i, value);
         this.props.setIP(category, i, value);
     }
 
+    /*
     keyCodeFilter (event){
         this.keyPressFilter.do(event);
     }
+    */
 
     async setErrorArr (category, i, errorObj){
         // modify nesting object or array state is complex, move these operations into reducer may be better
         let mutation = errorObj === 'remove' ? [i, 1] : [i, 1, errorObj];
-        let updateData = {};
-        updateData[category + 'Error'] = {$splice: [mutation]};
+        let updateData = {[category + 'Error']: {$splice: [mutation]}};
         let newState = update(this.state, updateData);
         await this.setState(Object.assign(this.state, newState));
     }
@@ -419,6 +427,8 @@ class Initialize extends Component {
 
     async next (){
         let next = this.state.currentStep + 1;
+        // initStep here only use to define the initialization UI page step from define role to finish of 4 steps,
+        // not means the initialization progress after initialization starts.
         lsSet('initStep', next);
         switch (next){
             case 1:
@@ -627,8 +637,8 @@ class Initialize extends Component {
                         <div className="fs-initialize-step-content">
                             <section className="fs-step-title">
                                 {lang(
-                                    '步骤 1 - 定义角色：请定义集群中各类型服务所在节点的IP和客户端IP(可选)。',
-                                    'Step 1 - Define roles: Please define the node IP of various types of services and the client IP(optional) for the cluster.'
+                                    '步骤 1 - 定义角色：请定义集群中各类型服务所在节点的IP、客户端IP(可选)。',
+                                    'Step 1 - Define roles: Please define the node IP of various types of services, the client IP(optional) for the cluster.'
                                 )}
                                 <span style={{float: 'right'}} >
                                     {lang('配置客户端', 'Configure Client')}
@@ -754,7 +764,7 @@ class Initialize extends Component {
                                         <Switch
                                             size="small"
                                             style={{float: 'right', marginTop: 3}}
-                                            title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击开启', 'Click to enable')}
+                                            title={this.props.enableHA ? lang('点击不启用', 'Click to disabled') : lang('点击启用', 'Click to enable')}
                                             checked={this.props.enableHA}
                                             onChange={this.setEnableHA.bind(this)}
                                         />

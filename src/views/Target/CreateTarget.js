@@ -43,14 +43,16 @@ class CreateTarget extends Component {
     async serviceIPChange (currentServiceIP, option){
         this.setState({currentServiceIP});
         let currentServiceNode = Object.assign({}, option.props.option, {type: 'storage'});
+        // firstly try to get the RAID recommended configuration, if it's unavailable should set
+        // enableCustomRAID to true to make sure RecommendedRAID component is disabled.
+        await httpRequests.getRIADRecommendedConfiguration.apply(null, this.state.currentServiceRole === 'metadata' ? [[currentServiceIP], []] : [[], [currentServiceIP]]);
+        let {recommendedRAID} = this.props;
+        let noRAIDRecommendedConfiguration = !this.validateRAIDRecommendedConfiguration(recommendedRAID);
+        this.setState({
+            noRAIDRecommendedConfiguration,
+            enableCustomRAID: noRAIDRecommendedConfiguration,
+        });
         if (!this.state.enableCustomRAID){
-            await httpRequests.getRIADRecommendedConfiguration.apply(null, this.state.currentServiceRole === 'metadata' ? [[currentServiceIP], []] : [[], [currentServiceIP]]);
-            let {recommendedRAID} = this.props;
-            let noRAIDRecommendedConfiguration = !this.validateRAIDRecommendedConfiguration(recommendedRAID);
-            this.setState({
-                noRAIDRecommendedConfiguration,
-                enableCustomRAID: noRAIDRecommendedConfiguration,
-            });
             this.recommendedRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);
         } else {
             this.customRAIDWrapper.getWrappedInstance().changeServiceIP(currentServiceNode);

@@ -6,6 +6,7 @@ import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
 import TargetOfStoragePool from './TargetOfStoragePool';
 import BuddyGroupOfStoragePool from './BuddyGroupOfStoragePool';
+import DataClassificationSetting from './DataClassificationSetting';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 
 class StoragePool extends Component {
@@ -86,12 +87,16 @@ class StoragePool extends Component {
 		});
 	}
 
-	showBuddyGroup (storagePool){
-		this.showBuddyGroupWrapper.getWrappedInstance().show(storagePool);
+	showStorageTargetOfStoragePool (storagePool){
+		this.targetOfStoragePoolWrapper.getWrappedInstance().show(storagePool);
 	}
 
-	showStorageTarget (storagePool){
-		this.showStoragePoolTargetWrapper.getWrappedInstance().show(storagePool);
+	showBuddyGroupOfStoragePool (storagePool){
+		this.buddyGroupOfStoragePoolWrapper.getWrappedInstance().show(storagePool);
+	}
+
+	showDataClassificationSetting (){
+		this.dataClassificationSettingWrapper.getWrappedInstance().show();
 	}
 
     render (){
@@ -123,58 +128,56 @@ class StoragePool extends Component {
 				},
 				{
 					title: lang('操作', 'Operations'), width: 150,
-					render: (text, record, index) =>
-						<div>
-							<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
-								<Button
-									{...buttonConf}
-									onClick={this.edit.bind(this, record, index)}
-									icon="edit"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
-								<Button
-									{...buttonConf}
-									onClick={this.showStorageTarget.bind(this, record, index)}
-									icon="hdd"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
-								<Button
-									{...buttonConf}
-									onClick={this.showBuddyGroup.bind(this, record, index)}
-									icon="copy"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('用户配额', '')}>
-								<Button
-									{...buttonConf}
-									// onClick={this.showLocalAuthUser.bind(this, record, index)}
-									icon="user"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('用户组配额', '')}>
-								<Button
-									{...buttonConf}
-									//onClick={this.showStorageTarget.bind(this, record, index)}
-									icon="team"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
-								<Button
-									{...buttonConf}
-									onClick={this.delete.bind(this, record, index)}
-									icon="delete"
-								>
-								</Button>
-							</Popover>
-						</div>
-
+					render: (text, record, index) => <div>
+						<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+							<Button
+								{...buttonConf}
+								onClick={this.edit.bind(this, record, index)}
+								icon="edit"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('存储目标', 'Storage Target')}>
+							<Button
+								{...buttonConf}
+								onClick={this.showStorageTargetOfStoragePool.bind(this, record, index)}
+								icon="hdd"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('伙伴组镜像', 'Buddy Group')}>
+							<Button
+								{...buttonConf}
+								onClick={this.showBuddyGroupOfStoragePool.bind(this, record, index)}
+								icon="copy"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('用户配额', '')}>
+							<Button
+								{...buttonConf}
+								// onClick={this.showLocalAuthUser.bind(this, record, index)}
+								icon="user"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('用户组配额', '')}>
+							<Button
+								{...buttonConf}
+								//onClick={this.showStorageTarget.bind(this, record, index)}
+								icon="team"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
+							<Button
+								{...buttonConf}
+								onClick={this.delete.bind(this, record, index)}
+								icon="delete"
+							>
+							</Button>
+						</Popover>
+					</div>
 				}
             ],
         };
@@ -196,6 +199,13 @@ class StoragePool extends Component {
                         >
                             {lang('创建', 'Create')}
                         </Button>
+						<Button
+                            type="warning"
+                            size="small"
+                            onClick={this.showDataClassificationSetting.bind(this)}
+                        >
+                            {lang('数据分级', 'Data Classification')}
+                        </Button>
                     </div>
                 </div>
 				<div className="fs-main-content-wrapper">
@@ -203,8 +213,9 @@ class StoragePool extends Component {
 				</div>
 				<CreateStoragePool ref={ref => this.createStoragePoolWrapper = ref} />
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
-				<TargetOfStoragePool ref={ref => this.showStoragePoolTargetWrapper = ref} />
-				<BuddyGroupOfStoragePool ref={ref => this.showBuddyGroupWrapper = ref} />
+				<TargetOfStoragePool ref={ref => this.targetOfStoragePoolWrapper = ref} />
+				<BuddyGroupOfStoragePool ref={ref => this.buddyGroupOfStoragePoolWrapper = ref} />
+				<DataClassificationSetting ref={ref => this.dataClassificationSettingWrapper = ref} />
 			</div>
         );
     }

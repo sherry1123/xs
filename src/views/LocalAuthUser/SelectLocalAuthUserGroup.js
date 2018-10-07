@@ -108,7 +108,6 @@ class SelectLocalAuthUserGroup extends Component {
                 <div>
                     <Input.Search
                         style={{width: 170}}
-                        className="fs-search-table-input"
                         size="small"
                         placeholder={lang('用户组名称', 'Group Name')}
                         value={this.state.query}

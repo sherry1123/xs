@@ -32,9 +32,11 @@ socket.on('init status', initStatus => {
     }
     store.dispatch(initializeAction.setInitStatus(initStatus));
     if (!initStatus.status){
+        // initialization runs properly
         if (!lsGet('initStep')){
-            // exception case: open an another browser, with no initStep in localStorage
-            lsSet('initStep', 3);
+            // exception case: open an another browser, or clear the local storage, so there is no initStep
+            // in localStorage, but initialization is already started just not finished yet.
+            lsSet('initStep', 2);
             window.location.href = routerPath.Root;
         }
         // normal case

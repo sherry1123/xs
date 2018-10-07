@@ -280,17 +280,16 @@ class CreateMetadataOrStorageService extends Component {
                         </Popover>
                     </div>
                     {
-                        !enableCustomRAID ?
-                            <RecommendedRAID
-                                notInit
-                                ref={ref => this.recommendedRAIDWrapper = ref}
-                                enableCustomRAID={this.enableCustomRAID.bind(this)}
-                            /> :
-                            <CustomRAIDForService
-                                ref={ref => this.customRAIDForServiceWrapper = ref}
-                                noRAIDRecommendedConfiguration={this.state.noRAIDRecommendedConfiguration}
-                                enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
-                            />
+                        !enableCustomRAID ? <RecommendedRAID
+                            notInit
+                            ref={ref => this.recommendedRAIDWrapper = ref}
+                            enableCustomRAID={this.enableCustomRAID.bind(this)}
+                        /> :
+                        <CustomRAIDForService
+                            ref={ref => this.customRAIDForServiceWrapper = ref}
+                            noRAIDRecommendedConfiguration={this.state.noRAIDRecommendedConfiguration}
+                            enableRecommendedRAID={this.enableRecommendedRAID.bind(this)}
+                        />
                     }
                 </div>
             </Modal>

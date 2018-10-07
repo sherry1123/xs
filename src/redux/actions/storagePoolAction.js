@@ -1,5 +1,6 @@
 export const storagePoolActionTypes = {
     SET_STORAGE_POOL_LIST: 'SET_STORAGE_POOL_LIST',
+	SET_DATA_CLASSIFICATION_LIST: 'SET_DATA_CLASSIFICATION_LIST',
 	SET_TARGET_OF_STORAGE_POOL: 'SET_TARGET_OF_STORAGE_POOL',
 	SET_BUDDY_GROUP_OF_STORAGE_POOL: 'SET_BUDDY_GROUP_OF_STORAGE_POOL',
 	SET_TARGETS_FOR_STORAGE_POOL: 'SET_TARGETS_FOR_STORAGE_POOL',
@@ -10,6 +11,11 @@ export default {
     setStoragePoolList: storagePoolList => ({
         type: storagePoolActionTypes.SET_STORAGE_POOL_LIST,
         storagePoolList
+    }),
+
+	setDataClassificationList: dataClassificationList => ({
+        type: storagePoolActionTypes.SET_DATA_CLASSIFICATION_LIST,
+        dataClassificationList
     }),
 
 	setTargetsOfStoragePool: targetsOfStoragePool => ({

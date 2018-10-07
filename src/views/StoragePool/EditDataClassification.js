@@ -2,17 +2,16 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {validateFsName} from 'Services';
 import {Button, Modal, Form, Input, message} from 'antd';
 
-class EditStoragePool extends Component {
+class EditDataClassification extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
             formValid: false,
             formSubmitting: false,
-            storagePoolData: {
+            dataClassificationData: {
                 name: '',
 				description: '',
             },
@@ -23,81 +22,31 @@ class EditStoragePool extends Component {
     }
 
 	formValueChange (key, value){
-		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
-		this.setState({storagePoolData});
+		let dataClassificationData = Object.assign({}, this.state.dataClassificationData, {[key]: value});
+		this.setState({dataClassificationData});
 	}
 
-	async validationUpdateState (key, value, valid){
-		let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
-	}
-
-	async validateForm (key){
-		await this.validationUpdateState(key, {cn: '', en: ''}, true);
-		let {name} = this.state.storagePoolData;
-		if (key === 'name'){
-			if (!name){
-				// no name enter
-				await this.validationUpdateState('name', {
-					cn: '请输入存储池名称',
-					en: 'please enter storage pool name'
-				}, false);
-			} else if (!validateFsName(name)){
-				// name validate failed
-				await this.validationUpdateState('name', {
-					cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
-					en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
-				}, false);
-			} else {
-				let isNameDuplicated = this.props.storagePoolList.some(storagePool => storagePool.name === name);
-				if (isNameDuplicated){
-					// this name is duplicated with an existing storage pool's name
-					await this.validationUpdateState('name', {
-						cn: '该存储池名称已经存在',
-						en: 'The storage pool name is already existed'
-					}, false);
-				}
-			}
-		}
-
-
-		// calculate whole form validation
-		let formValid = true;
-		Object.keys(this.state.validation).forEach(key => {
-			formValid = formValid && this.state.validation[key].valid;
-		});
-		this.setState({formValid});
-	}
-
-    show (storagePoolData){
+    show (dataClassificationData){
         this.setState({
             visible: true,
             formSubmitting: false,
-            storagePoolData,
-			validation: {
+            dataClassificationData,
+            validation: {
                 name: {status: '', help: '', valid: false},
             }
         });
     }
 
-	async editStoragePool (){
-		let storagePool = Object.assign({}, this.state.storagePoolData);
+	async editDataClassification (){
+		let dataClassificationData = Object.assign({}, this.state.dataClassificationData);
 		this.setState({formSubmitting: true});
 		try {
-			await httpRequests.updateStoragePool(storagePool);
-			httpRequests.getStoragePoolList();
+			await httpRequests.updateDataClassification(dataClassificationData);
+			httpRequests.getDataClassificationList();
 			await this.hide();
-			message.success(lang(`编辑存储池 ${storagePool.name} 成功!`, `Edit storage pool ${storagePool.name} successfully!`));
+			message.success(lang(`编辑数据分级 ${dataClassificationData.name} 成功!`, `Edit data classification ${dataClassificationData.name} successfully!`));
 		} catch ({msg}){
-			message.error(lang(`编辑存储池 ${storagePool.name} 失败, 原因: `, `Edit storage pool ${storagePool.name} failed, reason: `) + msg);
+			message.error(lang(`编辑数据分级 ${dataClassificationData.name} 失败, 原因: `, `Edit data classification ${dataClassificationData.name} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}
@@ -120,7 +69,7 @@ class EditStoragePool extends Component {
         };
         return (
             <Modal
-                title={lang('编辑存储池', 'Edit Storage Pool')}
+                title={lang('编辑数据分级', 'Edit Data Classification')}
                 width={540}
                 closable={false}
                 maskClosable={false}
@@ -139,7 +88,7 @@ class EditStoragePool extends Component {
                             type="primary"
 							disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
-                            onClick={this.editStoragePool.bind(this)}
+                            onClick={this.editDataClassification.bind(this)}
                         >
                             {lang('编辑', 'Edit')}
                         </Button>
@@ -156,7 +105,7 @@ class EditStoragePool extends Component {
 						<Input
 							size="small"
 							style={{width: '100%'}}
-							value={this.state.storagePoolData.name}
+							value={this.state.dataClassificationData.name}
 							onChange={({target: {value}}) => {
 								this.formValueChange.bind(this, 'name')(value);
 								this.validateForm.bind(this)('name');
@@ -171,7 +120,7 @@ class EditStoragePool extends Component {
 							size="small"
 							autosize={{minRows: 4, maxRows: 6}}
 							placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
-							value={this.state.storagePoolData.description}
+							value={this.state.dataClassificationData.description}
 							maxLength={200}
 							onChange={({target: {value}}) => {
 								this.formValueChange.bind(this, 'description')(value);
@@ -185,8 +134,8 @@ class EditStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList}}} = state;
-    return {language, storagePoolList};
+    let {language, main: {storagePool: {dataClassificationList}}} = state;
+    return {language, dataClassificationList};
 };
 
 const mapDispatchToProps = [];
@@ -197,4 +146,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditStoragePool);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditDataClassification);

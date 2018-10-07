@@ -14,7 +14,7 @@ const Dashboard = asyncLoad(() => import('../Dashboard/Dashboard'));
 // data node
 const DataNode = asyncLoad(() => import('../DataNode/DataNode'));
 
-//storage pool
+// storage pool
 const StoragePool = asyncLoad(() => import('../StoragePool/StoragePool'));
 
 // snapshot

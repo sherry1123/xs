@@ -88,7 +88,6 @@ class SelectClient extends Component {
                 <div>
                     <Input.Search
                         style={{width: 150}}
-                        className="fs-search-table-input"
                         size="small"
                         placeholder={lang('客户端主机名/IP', 'Client Hostname/IP')}
                         value={this.state.query}

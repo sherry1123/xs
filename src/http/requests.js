@@ -7,11 +7,11 @@ import serviceAction from 'Actions/serviceAction';
 import dashboardAction from 'Actions/dashboardAction';
 import dataNodeAction from 'Actions/dataNodeAction';
 import storagePoolAction from 'Actions/storagePoolAction';
-import systemLogAction from 'Actions/systemLogAction';
 import snapshotAction from 'Actions/snapshotAction';
 import shareAction from 'Actions/shareAction';
 import localAuthUserAction from 'Actions/localAuthUserAction';
 import targetAction from 'Actions/targetAction';
+import systemLogAction from 'Actions/systemLogAction';
 
 /*
  * We send async HTTP API calls here, and after a call is finished, we make a sync action
@@ -255,9 +255,28 @@ export default  {
 		});
     },
 
+    async getDataClassificationList (){
+        requestHandler(async () => {
+            let data = await fetchGet('/api/getdatalevel');
+            !!data && store.dispatch(storagePoolAction.setDataClassificationList(data));
+        });
+    },
+
+    async createDataClassification (dataClassification){
+        await fetchPost('/api/createdataclassification', dataClassification);
+    },
+
+    async updateDataClassification (dataClassification){
+        await fetchPost('/api/createdatalevel', dataClassification);
+    },
+
+    async deleteDataClassification (dataClassification){
+        await fetchPost('/api/updatedatalevel', dataClassification);
+    },
+
     // service and client
     async createMetadataServiceToCluster (service){
-        await fetchPost('/api/addmetadatatocluster', service);
+        await fetchPost('/api/deletedatalevel', service);
     },
 
     async createStorageServiceToCluster (service){

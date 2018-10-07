@@ -59,7 +59,7 @@ class TargetOfStoragePool extends Component {
 		});
 	}
 
-	addTargetToStoragePool (storageTarget){
+	addTargetToStoragePool (){
 		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(this.state.poolName);
 	}
 
@@ -95,7 +95,6 @@ class TargetOfStoragePool extends Component {
 				>
 					{lang('添加', 'Add')}
 				</Button>
-				<AddTargetToStoragePool ref={ref => this.addTargetToStoragePoolWrapper = ref} />
 			</div>
 			),
 			rowClassName: () => 'ellipsis',
@@ -104,52 +103,52 @@ class TargetOfStoragePool extends Component {
 				{title: lang('路径', 'Mount Path'), width: 220, dataIndex: 'targetPath',},
 				{title: lang('容量', 'Capacity'), width: 170, dataIndex: 'capacity'},
 				{title: lang('操作', 'Operations'), width: 170,
-					render: (text, record, index) =>
-						<div>
-							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
-								<Button
-									{...buttonConf}
-									onClick={this.addDiskToTarget.bind(this, record, index)}
-									icon="edit"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('移除', 'Remove')}>
-								<Button
-									{...buttonConf}
-									onClick={this.delete.bind(this, record, index)}
-									icon="delete"
-								>
-								</Button>
-							</Popover>
-							<AddDiskToTarget ref={ref => this.addDiskToTargetWrapper = ref} />
-						</div>
+					render: (text, record, index) => <div>
+						<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
+							<Button
+								{...buttonConf}
+								onClick={this.addDiskToTarget.bind(this, record, index)}
+								icon="edit"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('移除', 'Remove')}>
+							<Button
+								{...buttonConf}
+								onClick={this.delete.bind(this, record, index)}
+								icon="delete"
+							>
+							</Button>
+						</Popover>
+						<AddDiskToTarget ref={ref => this.addDiskToTargetWrapper = ref} />
+					</div>
 				}
 			],
 		};
 		return (
 			<Modal
-				   width={800}
-				   title={lang(`存储池 ${poolName} 的存储目标信息`,`Storage Target of Storage Pool ${poolName}`)}
-				   closable={false}
-				   maskClosable={false}
-				   visible={this.state.visible}
-				   afterClose={this.close}
-				   footer={
-					   <div>
-						   <Button
-							   size='small'
-							   onClick={this.hide.bind(this)}
-						   >
-							   {lang('取消', 'Cancel')}
-						   </Button>
-					   </div>
-				   }
+				width={800}
+				title={lang(`存储池 ${poolName} 的存储目标信息`,`Storage Target of Storage Pool ${poolName}`)}
+				closable={false}
+				maskClosable={false}
+				visible={this.state.visible}
+				afterClose={this.close}
+				footer={
+			   		<div>
+						<Button
+							size='small'
+							onClick={this.hide.bind(this)}
+						>
+							{lang('取消', 'Cancel')}
+						</Button>
+			   		</div>
+				}
 			>
 				<div className="fs-page-content">
 					<div className="fs-main-content-wrapper">
 						<Table {...tableProps} />
 					</div>
+					<AddTargetToStoragePool ref={ref => this.addTargetToStoragePoolWrapper = ref} />
 				</div>
 			</Modal>
 		);

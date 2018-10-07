@@ -1,23 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, message, Form, Icon, Input, Select} from 'antd';
+import {Button, Modal, message, Form, Input} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {formatStorageSize, validateFsName} from 'Services';
 
-class CreateStoragePool extends Component {
+class CreateDataClassification extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
             formValid: false,
             formSubmitting: false,
-			dataPreparing: true,
-            storagePoolData: {
+            dataClassificationData: {
                 name: '',
 				description: '',
-				targets: [],
-				buddyGroups:[]
             },
             validation: {
                 name: {status: '', help: '', valid: false},
@@ -26,8 +22,8 @@ class CreateStoragePool extends Component {
     }
 
 	formValueChange (key, value){
-		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
-		this.setState({storagePoolData});
+		let dataClassificationData = Object.assign({}, this.state.dataClassificationData, {[key]: value});
+		this.setState({dataClassificationData});
 	}
 
 	async validationUpdateState (key, value, valid){
@@ -45,27 +41,20 @@ class CreateStoragePool extends Component {
 
 	async validateForm (key){
 		await this.validationUpdateState(key, {cn: '', en: ''}, true);
-		let {name} = this.state.storagePoolData;
+		let {name} = this.state.dataClassificationData;
 		if (key === 'name'){
 			if (!name){
 				// no name enter
 				await this.validationUpdateState('name', {
-					cn: '请输入存储池名称',
-					en: 'please enter storage pool name'
-				}, false);
-			} else if (!validateFsName(name)){
-				// name validate failed
-				await this.validationUpdateState('name', {
-					cn: '名称仅允许字母、数字以及下划线（下划线不得位于首位）的组合，长度3-30位',
-					en: 'Name can only contains letter, number and underscore(except for the first), length is 3-30'
+					cn: '请输入数据分级名称',
+					en: 'please enter data classification name'
 				}, false);
 			} else {
-				let isNameDuplicated = this.props.storagePoolList.some(storagePool => storagePool.name === name);
+				let isNameDuplicated = this.props.dataClassificationList.some(dataClassification => dataClassification.name === name);
 				if (isNameDuplicated){
-					// this name is duplicated with an existing storage pool's name
 					await this.validationUpdateState('name', {
-						cn: '该存储池名称已经存在',
-						en: 'The storage pool name is already existed'
+						cn: '该数据分级已经存在',
+						en: 'The data classification is already existed'
 					}, false);
 				}
 			}
@@ -80,16 +69,16 @@ class CreateStoragePool extends Component {
 		this.setState({formValid});
 	}
 
-	async createStoragePool (){
-		let storagePoolData = Object.assign({}, this.state.storagePoolData);
+	async createDataClassification (){
+		let dataClassificationData = Object.assign({}, this.state.dataClassificationData);
 		this.setState({formSubmitting: true});
 		try {
-			await httpRequests.createStoragePool(storagePoolData);
-			httpRequests.getStoragePoolList();
+			await httpRequests.createDataClassification(dataClassificationData);
+			httpRequests.getDataClassificationList();
 			await this.hide();
-			message.success(lang(`创建存储池 ${storagePoolData.name} 成功!`, `Create storage pool ${storagePoolData.name} successfully!`));
+			message.success(lang(`创建数据分级 ${dataClassificationData.name} 成功!`, `Create data classification ${dataClassificationData.name} successfully!`));
 		} catch ({msg}){
-			message.error(lang(`存储池 ${storagePoolData.name} 创建失败, 原因: `, `Create storage pool ${storagePoolData.name} failed, reason: `) + msg);
+			message.error(lang(`数据分级 ${dataClassificationData.name} 创建失败, 原因: `, `Create data classification ${dataClassificationData.name} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}
@@ -99,20 +88,14 @@ class CreateStoragePool extends Component {
             visible: true,
 			formValid: false,
             formSubmitting: false,
-			dataPreparing: true,
-			storagePoolData: {
+			dataClassificationData: {
 				name: '',
 				description: '',
-				targets: [],
-				buddyGroups:[]
 			},
 			validation: {
 				name: {status: '', help: '', valid: false},
 			}
         });
-        await httpRequests.getTargetsOfStoragePoolById();
-		await httpRequests.getBuddyGroupsOfStoragePoolById();
-		this.setState({dataPreparing: false});
     }
 
     async hide (){
@@ -121,7 +104,6 @@ class CreateStoragePool extends Component {
 
     render (){
         let isChinese = this.props.language === 'chinese';
-		let {targetsForStoragePool, buddyGroupsForStoragePool} = this.props;
         let formItemLayout = {
             labelCol: {
                 xs: {span: isChinese ? 5 : 7},
@@ -134,12 +116,7 @@ class CreateStoragePool extends Component {
         };
         return (
             <Modal
-				title={
-                    <span>
-                        {lang('创建存储池', 'Create Storage Pool')}
-                        {this.state.dataPreparing && <Icon type="loading" style={{marginLeft: 10}} />}
-                    </span>
-                }
+				title={lang('创建数据分级', 'Create Data Classification')}
                 width={480}
                 closable={false}
                 maskClosable={false}
@@ -158,7 +135,7 @@ class CreateStoragePool extends Component {
                             type="primary"
 							disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
-                            onClick={this.createStoragePool.bind(this)}
+                            onClick={this.createDataClassification.bind(this)}
                         >
                             {lang('创建', 'Create')}
                         </Button>
@@ -175,53 +152,13 @@ class CreateStoragePool extends Component {
 						<Input
 							size="small"
 							style={{width: '100%'}}
-							placeholder={lang('请输入存储池名称', 'please enter storage pool name')}
-							value={this.state.storagePoolData.name}
+							placeholder={lang('请输入数据分级名称', 'please enter data classification name')}
+							value={this.state.dataClassificationData.name}
 							onChange={({target: {value}}) => {
 								this.formValueChange.bind(this, 'name')(value);
 								this.validateForm.bind(this)('name');
 							}}
 						/>
-					</Form.Item>
-					<Form.Item
-						{...formItemLayout}
-				   		label={lang('存储目标', 'Storage Pool Target')}
-					>
-						<Select
-							size="small"
-							mode="multiple"
-							style={{width: '100%'}}
-							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
-							optionLabelProp="value"
-							value={this.state.storagePoolData.targets}
-							onChange={(value) => {
-								this.formValueChange.bind(this, 'targets')(value);
-							}}
-						>
-							{
-								targetsForStoragePool.map((target, i) => <Select.Option key={i} value={target.id}>ID: {target.id} {lang('容量', 'Capacity:')} {formatStorageSize(target.capacity)} {lang('路径:', 'Path:')} {target.targetPath} </Select.Option>)
-							}
-						</Select>
-					</Form.Item>
-					<Form.Item
-						{...formItemLayout}
-						label={lang('伙伴组镜像', 'Buddy Group')}
-					>
-						<Select
-							size="small"
-							mode="multiple"
-							style={{width: '100%'}}
-							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
-							optionLabelProp="value"
-							value={this.state.storagePoolData.buddyGroups}
-							onChange={(value, option) => {
-								this.formValueChange.bind(this, 'buddyGroups')(value);
-							}}
-						>
-							{
-								buddyGroupsForStoragePool.map((group, i) => <Select.Option key={i} value={group.id}>ID: {group.id} {lang('容量:', 'Capacity:')} {formatStorageSize(group.capacity)}</Select.Option>)
-							}
-						</Select>
 					</Form.Item>
 					<Form.Item
 						{...formItemLayout}
@@ -232,7 +169,7 @@ class CreateStoragePool extends Component {
 							style={{width: '100%'}}
                             autosize={{minRows: 4, maxRows: 6}}
                             placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
-                            value={this.state.storagePoolData.description}
+                            value={this.state.dataClassificationData.description}
                             maxLength={200}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
@@ -246,8 +183,8 @@ class CreateStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
-    return {language, storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool};
+    let {language, main: {storagePool: {dataClassificationList}}} = state;
+    return {language, dataClassificationList};
 };
 
 const mapDispatchToProps = [];
@@ -258,4 +195,4 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const options = {withRef: true};
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateStoragePool);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateDataClassification);

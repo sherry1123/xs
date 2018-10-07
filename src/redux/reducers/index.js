@@ -8,11 +8,11 @@ import serviceReducer from './serviceReducer';
 import dashboardReducer from './dashboardReducer';
 import dataNodeReducer from './dataNodeReducer';
 import storagePoolReducer from './storagePoolReducer';
-import systemLogReducer from './systemLogReducer';
 import snapshotReducer from './snapshotReducer';
 import shareReducer from './shareReducer';
 import localAuthUserReducer from './localAuthUserReducer';
 import targetReducer from './targetReducer';
+import systemLogReducer from './systemLogReducer';
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
