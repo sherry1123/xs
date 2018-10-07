@@ -527,3 +527,8 @@ def add_storage_to_cluster():
 @app.route('/api/createbuddygroup', methods=['GET', 'POST'])
 def create_buddy_group():
     return jsonify(controller.create_buddy_group(request.params))
+
+
+@app.route('/api/createtarget', methods=['GET', 'POST'])
+def create_target():
+    return jsonify(controller.create_target(request.params))

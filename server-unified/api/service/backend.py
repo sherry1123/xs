@@ -380,3 +380,7 @@ def add_metadata_to_cluster(ip, disk_group):
 
 def add_storage_to_cluster(ip, disk_group):
     return backend_handler(request.post('http://localhost:9090/cluster/addstoragenode', {'ip': ip, 'diskGroup': disk_group}, get_token()))
+
+
+def create_target(ip, disk_group):
+    return backend_handler(request.post('http://localhost:9090/cluster/addstoragetarget', {'ip': ip, 'diskGroup': disk_group}, get_token()))

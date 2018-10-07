@@ -40,7 +40,7 @@ def get_cluster_throughput_and_iops():
             total_throughput = 0
             total_iops = 0
         database.create_cluster_throughput_and_iops(
-            current_time, total_throughput, total_iops)
+            current_time, total_throughput / 15, total_iops / 15)
 
 
 def get_node_cpu_and_memory():
@@ -79,7 +79,7 @@ def get_node_throughput_and_iops():
                     wriet_throughput += throughput['write']
                 iops_list = map(lambda iops: iops['total'], iops_list)
                 total_iops = sum(iops_list)
-            return {'throughput': {'read': read_throughput, 'write': wriet_throughput}, 'iops': total_iops}
+            return {'throughput': {'read': read_throughput / 15, 'write': wriet_throughput / 15}, 'iops': total_iops / 15}
         data_list = map(get_throughput_and_iops, host_list)
         database.create_node_throughput_and_iops(
             current_time, host_list, data_list)

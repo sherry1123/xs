@@ -1497,3 +1497,31 @@ def create_buddy_group(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def create_target(params):
+    response = {}
+    try:
+        enableCustomRAID, = handler.request(params, enableCustomRAID=bool)
+        service_list = []
+        if enableCustomRAID:
+            storageServerIPs, = handler.request(params, storageServerIPs=list)
+            service_list = map(lambda server: server['ip'], storageServerIPs)
+            for server in storageServerIPs:
+                ip = server['ip']
+                raid_list = server['raidList']
+                disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['selectedDisks']), 'raidLevel': handler.replace(
+                    ' ', '', raid['arrayLevel']['name'].lower()), 'stripeSize': handler.replace('B', '', handler.replace(' ', '', raid['arrayStripeSize'])).lower()}, raid_list)
+                backend.create_target(ip, disk_group)
+        else:
+            storageServerIPs, = handler.request(params, storageServerIPs=dict)
+            service_list = storageServerIPs.keys()
+            for service in service_list:
+                ip = service
+                disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (
+                    raid['stripeSize'] / 1024)}, storageServerIPs[service])
+                backend.create_target(ip, disk_group)
+        response = handler.response(0, 'Create target successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
