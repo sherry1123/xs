@@ -274,3 +274,19 @@ def connect_database():
     except Exception as error:
         handler.log(handler.error(error), 2)
         handler.log('Connect to the database failed!')
+
+
+def add_node_to_cluster(node_ip, node_type):
+    if node_type == 'client':
+        pass
+    elif node_type == 'mgmt':
+        pass
+    else:
+        node_list = database.get_setting('NODE-LIST')
+        ip_list = node_list['mgmt'] + node_list['meta'] + node_list['storage']
+        if node_ip not in ip_list:
+            process.run('sed -i "/orcafs-gui/d" /etc/rc.local', node_ip)
+            process.run('sed -i "/nginx/d" /etc/rc.local', node_ip)
+            process.run('service orcafs-gui stop', node_ip)
+            process.run('service nginx stop', node_ip)
+    database.add_node_to_cluster(node_ip, node_type)

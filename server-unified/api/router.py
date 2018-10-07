@@ -517,3 +517,8 @@ def delete_data_level():
 @app.route('/api/addmetadatatocluster', methods=['GET', 'POST'])
 def add_metadata_to_cluster():
     return jsonify(controller.add_metadata_to_cluster(request.params))
+
+
+@app.route('/api/addstoragetocluster', methods=['GET', 'POST'])
+def add_storage_to_cluster():
+    return jsonify(controller.add_storage_to_cluster(request.params))

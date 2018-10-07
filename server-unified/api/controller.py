@@ -764,7 +764,7 @@ def add_client_to_cluster(params):
     try:
         ip, = handler.request(params, ip=str)
         backend.add_client_to_cluster(ip)
-        database.add_node_to_cluster(ip, 'client')
+        initialize.add_node_to_cluster(ip, 'client')
         response = handler.response(0, 'add client to cluster successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1459,8 +1459,28 @@ def add_metadata_to_cluster(params):
             disk_group = map(lambda raid: {'diskList': map(
                 lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (raid['stripeSize'] / 1024)}, raidList)
         backend.add_metadata_to_cluster(ip, disk_group)
-        database.add_node_to_cluster(ip, 'meta')
-        response=handler.response(0, 'Add metadata to cluster successfully!')
+        initialize.add_node_to_cluster(ip, 'meta')
+        response = handler.response(0, 'Add metadata to cluster successfully!')
     except Exception as error:
-        response=handler.response(1, handler.error(error))
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_storage_to_cluster(params):
+    response = {}
+    try:
+        enableCustomRAID, ip, raidList = handler.request(
+            params, ip=str, raidList=list, enableCustomRAID=bool)
+        disk_group = []
+        if enableCustomRAID:
+            disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['selectedDisks']), 'raidLevel': handler.replace(
+                ' ', '', raid['arrayLevel']['name'].lower()), 'stripeSize': handler.replace('B', '', handler.replace(' ', '', raid['arrayStripeSize'])).lower()}, raidList)
+        else:
+            disk_group = map(lambda raid: {'diskList': map(
+                lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (raid['stripeSize'] / 1024)}, raidList)
+        backend.add_storage_to_cluster(ip, disk_group)
+        initialize.add_node_to_cluster(ip, 'storage')
+        response = handler.response(0, 'Add storage to cluster successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
     return response
