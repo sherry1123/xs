@@ -372,3 +372,7 @@ def update_local_auth_user_setting(user_name_min_len, pass_min_len, pass_max_len
                                  {'opt': 'globaluserattrset', 'userInfo': {'gUserAttr': {'userNameMinLen': user_name_min_len}}}, get_token()))
     backend_handler(request.post('http://localhost:9090/cluster/nasusermanager', {'opt': 'globalpasswordattrset', 'userInfo': {'gUserPasswordAttr': {'passMinLen': pass_min_len, 'passMaxLen': pass_max_len,
                                                                                                                                                      'passComplexity': pass_complexity, 'passRepeatCharMax': pass_repeat_char_max, 'passAvailableDay': pass_available_day, 'passChangeIntervalMinute': pass_change_interval_minute}}}, get_token()))
+
+
+def add_metadata_to_cluster(ip, disk_group):
+    return backend_handler(request.post('http://localhost:9090/cluster/addmetanode', {'ip': ip, 'diskGroup': disk_group}, get_token()))
