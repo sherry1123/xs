@@ -522,3 +522,8 @@ def add_metadata_to_cluster():
 @app.route('/api/addstoragetocluster', methods=['GET', 'POST'])
 def add_storage_to_cluster():
     return jsonify(controller.add_storage_to_cluster(request.params))
+
+
+@app.route('/api/createbuddygroup', methods=['GET', 'POST'])
+def create_buddy_group():
+    return jsonify(controller.create_buddy_group(request.params))

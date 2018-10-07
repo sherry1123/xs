@@ -1484,3 +1484,16 @@ def add_storage_to_cluster(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def create_buddy_group(params):
+    response = {}
+    try:
+        buddyGroups, = handler.request(params, buddyGroups=list)
+        group_list = map(lambda group: {'type': 'meta' if group['serviceRole'] == 'metadata' else 'storage', 'primaryId': group[
+                         'selectedTargets'][0]['targetId'], 'secondaryId': group['selectedTargets'][1]['targetId']}, buddyGroups)
+        backend.create_buddy_group(group_list)
+        response = handler.response(0, 'Create buddy group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
