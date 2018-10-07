@@ -1,5 +1,5 @@
-from lib.module import handler
-from lib.util import initialize as initUtil
+from api.module import handler
+from api.util import initialize as initUtil
 
 initialize = False
 deinitialize = False
@@ -11,7 +11,8 @@ def get_cluster_status():
     try:
         initialize = initUtil.get_orcafs_status()
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
+        handler.log('Get cluster status failed!')
     return initialize
 
 

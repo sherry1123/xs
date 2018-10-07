@@ -1,5 +1,5 @@
 import requests
-from lib.module import handler
+from api.module import handler
 
 
 def get(url, params=None, token={}, mock=None, timeout=None):

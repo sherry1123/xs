@@ -1,7 +1,7 @@
 import threading
 import commands
 
-from lib.module import handler
+from api.module import handler
 
 
 class ProcessError(Exception):

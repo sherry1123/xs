@@ -36,13 +36,27 @@ def response(code, result):
     response = {}
     if code:
         response = {'code': code, 'msg': result}
+        log(result, 2)
     else:
         response = {'code': code, 'data': result}
     return response
 
 
 def error(error):
+    error_type = type(error)
+    if isinstance(error_type, type):
+        error_type = str(error_type).split('\'')[1].split('.').pop()
+    else:
+        error_type = 'Error'
+    if 'KeyError' in error_type:
+        error = 'Key %s is not found' % error
+    error = '[%s]%s' % (error_type, error)
     return str(error)
+
+
+def log(words, level=1):  # 1 => Info, 2 => Error
+    date = datetime.datetime.now().replace().isoformat()
+    print('[%s]%s' % (date, words if level > 1 else '[INFO]%s' % words))
 
 
 def cookie(cookie):

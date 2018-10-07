@@ -1,8 +1,10 @@
 import json
 import math
 
-from lib.module import handler, process, request
-from lib.service import backend, database
+from mongoengine import connect
+
+from api.module import handler, process, request
+from api.service import backend, database
 
 
 def get_orcafs_status():
@@ -161,6 +163,7 @@ def initialize_mongodb(param):
     if not replica_set:
         command = '/usr/bin/mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
         process.run(command)
+        process.run('sed -i "/MongoDB/ a %s" /etc/rc.local' % command)
     else:
         command = '/usr/bin/mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --replSet orcafs --bind_ip_all --fork'
 
@@ -172,19 +175,51 @@ def initialize_mongodb(param):
         config = {'_id': 'orcafs', 'members': create_members_config(ip_list)}
         for ip in ip_list:
             process.run(command, ip)
+            process.run('sed -i "/MongoDB/ a %s" /etc/rc.local' % command, ip)
         process.run('/usr/bin/mongod --quiet --eval "rs.initiate(%s)"' %
                     json.dumps(config))
     process.run('sleep 20')
 
 
 def save_initialize_information(param, node_list):
-    database.connect_database()
+    connect_database()
     database.create_setting('INITIALIZE-PARAMETER', param)
     database.create_setting('NODE-LIST', node_list)
     database.create_setting(
         'SNAPSHOT-SETTING', {'total': 64, 'manual': 25, 'auto': 39})
     database.create_user('admin', 'e10adc3949ba59abbe56e057f20f883e')
     database.create_local_auth_user_group('everyone', 'everyone')
+    database.create_data_level(1, 'high')
+    database.create_data_level(2, 'medium')
+    database.create_data_level(3, 'low')
+
+
+def disable_node_service(node_list):
+    mgmt = node_list['mgmt']
+    meta_and_storage = list(set(node_list['meta'] + node_list['storage']))
+    for ip in mgmt:
+        if ip in meta_and_storage:
+            meta_and_storage.remove(ip)
+    for ip in meta_and_storage:
+        process.run('sed -i "/orcafs-gui/d" /etc/rc.local', ip)
+        process.run('sed -i "/nginx/d" /etc/rc.local', ip)
+        process.run('service orcafs-gui stop', ip)
+        process.run('service nginx stop', ip)
+
+
+def enable_node_service(node_list):
+    mgmt = node_list['mgmt']
+    meta_and_storage = list(set(node_list['meta'] + node_list['storage']))
+    for ip in mgmt:
+        if ip in meta_and_storage:
+            meta_and_storage.remove(ip)
+        process.run('echo "" > /var/log/orcafs-gui.log', ip)
+    for ip in meta_and_storage:
+        process.run(
+            'sed -i "/OrcaFS/ a service orcafs-gui start" /etc/rc.local', ip)
+        process.run('sed -i "/Nginx/ a service nginx start" /etc/rc.local', ip)
+        process.run('service orcafs-gui start', ip)
+        process.run('service nginx start', ip)
 
 
 def deinitialize_mongodb(ip_list):
@@ -193,6 +228,7 @@ def deinitialize_mongodb(ip_list):
         process.run('sleep 5', ip)
         process.run('rm -rf /var/lib/mongo/*', ip)
         process.run('echo "" > /var/log/mongodb/mongod.log', ip)
+        process.run('sed -i "/mongod/d" /etc/rc.local', ip)
 
 
 def get_mongodb_process():
@@ -206,3 +242,51 @@ def get_mongodb_status():
         return process.run(command) == '1'
     else:
         return False
+
+
+def get_mongodb_is_master_or_not():
+    command = '/usr/bin/mongo --quiet --eval "db.isMaster().ismaster"'
+    if get_mongodb_process():
+        return process.run(command) == 'true'
+    else:
+        return False
+
+
+def get_mongodb_type():
+    command = '/usr/bin/mongo --quiet --eval "rs.status().ok"'
+    return int(process.run(command))  # 0 => single, 1 => replset
+
+
+def get_mongodb_replset_config():
+    command = '/usr/bin/mongo --quiet --eval "db.isMaster().hosts"'
+    return json.loads(process.run(command))
+
+
+def connect_database():
+    try:
+        mongodb_type = get_mongodb_type()
+        if mongodb_type:
+            mongodb_replset_config = get_mongodb_replset_config()
+            connect(host='mongodb://%s/storage?replicaSet=orcafs' %
+                    ','.join(mongodb_replset_config))
+        else:
+            connect(host='mongodb://localhost/storage')
+    except Exception as error:
+        handler.log(handler.error(error), 2)
+        handler.log('Connect to the database failed!')
+
+
+def add_node_to_cluster(node_ip, node_type):
+    if node_type == 'client':
+        pass
+    elif node_type == 'mgmt':
+        pass
+    else:
+        node_list = database.get_setting('NODE-LIST')
+        ip_list = node_list['mgmt'] + node_list['meta'] + node_list['storage']
+        if node_ip not in ip_list:
+            process.run('sed -i "/orcafs-gui/d" /etc/rc.local', node_ip)
+            process.run('sed -i "/nginx/d" /etc/rc.local', node_ip)
+            process.run('service orcafs-gui stop', node_ip)
+            process.run('service nginx stop', node_ip)
+    database.add_node_to_cluster(node_ip, node_type)

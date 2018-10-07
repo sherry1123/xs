@@ -1,6 +1,5 @@
-from lib.module import handler, request
-from lib.service import database
-from lib.util import schedule, socket, status
+from api.module import handler, request
+from api.util import initialize, schedule, socket, status
 
 
 def send(channel, code, target, result, data={}, notify=False, ip=None):
@@ -42,7 +41,7 @@ def receive(channel, code, target, result, data, notify):
     else:
         if data['current'] == 7:
             status.set_cluster_initialize_status(True)
-            database.connect_database()
+            initialize.connect_database()
             schedule.start_scheduler()
         else:
             pass

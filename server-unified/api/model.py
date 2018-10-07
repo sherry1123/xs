@@ -34,6 +34,7 @@ class StoragePool(Document):
     storage_pool_id = IntField(required=True)
     storage_pool_name = StringField(required=True)
     storage_pool_description = StringField(max_length=255)
+    storage_pool_data_classification = IntField()
     storage_pool_create_time = StringField()
 
 
@@ -72,6 +73,7 @@ class LocalAuthUser(Document):
     user_secondary_group = ListField()
     user_status = BooleanField()
 
+
 class LocalAuthUserGroup(Document):
     user_group_name = StringField(required=True)
     user_group_desc = StringField()
@@ -91,3 +93,8 @@ class CifsShare(Document):
     share_notify = BooleanField()
     share_offline_cache_mode = StringField()
     share_user_or_group_list = ListField()
+
+
+class DataLevel(Document):
+    level_name = IntField(required=True)
+    level_desc = StringField()

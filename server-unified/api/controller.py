@@ -1,7 +1,7 @@
-from lib.module import handler
-from lib.module.process import setinterval
-from lib.service import backend, database
-from lib.util import event, initialize, schedule, status
+from api.module import handler
+from api.module.process import setinterval
+from api.service import backend, database
+from api.util import event, initialize, schedule, status
 
 
 def sync_status():
@@ -51,7 +51,7 @@ def get_disk_list(params):
 
 
 def initialize_cluster(params):
-    print('start')
+    handler.log('Start initializing the cluster!')
     current = 0
     total = 8
     try:
@@ -59,6 +59,7 @@ def initialize_cluster(params):
             params, metadataServerIPs=list, storageServerIPs=list, managementServerIPs=list, clientIPs=list, enableHA=bool, floatIPs=list, hbIPs=list, enableCustomRAID=bool, recommendedRAID=dict, customRAID=dict, enableCreateBuddyGroup=bool)
         data = initialize.param_handler(metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs,
                                         enableHA, floatIPs, hbIPs, enableCustomRAID, recommendedRAID, customRAID, enableCreateBuddyGroup)
+        mgmt = data['node_list']['mgmt']
         init_res = backend.initialize_cluster(data['orcafs_param'])
         if not init_res['errorId']:
             @setinterval(2)
@@ -71,55 +72,85 @@ def initialize_cluster(params):
                 if not status_res['errorId']:
                     if status_res['data']['status']:
                         callback()
-                        event.send('cluster', 0, 'cluster', False, {
-                                   'current': current, 'status': -1, 'total': total})
+                        handler.log(handler.error(error_message), 2)
+                        handler.log('Step: %s, description: %s' % (
+                            current, 'initialization of the cluster failed'))
+                        for ip in mgmt:
+                            event.send('cluster', 0, 'cluster', False, {
+                                       'current': current, 'status': -1, 'total': total}, False, ip)
                     elif current != fs_total:
-                        print(current)
-                        event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'status': status_res['data']['status'], 'total': total})
+                        handler.log('Step: %s, description: %s' %
+                                    (current, describle))
+                        for ip in mgmt:
+                            event.send('cluster', 0, 'cluster', True, {
+                                       'current': current, 'status': status_res['data']['status'], 'total': total}, False, ip)
                     elif 'finish' in describle:
                         callback()
                         if data['enable_create_buddy_group']:
                             backend.create_buddy_group({})
                         current = 5
-                        print(current)
-                        event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'status': 0, 'total': total})
+                        handler.log('Step: %s, description: %s' %
+                                    (current, 'initialize the database'))
+                        for ip in mgmt:
+                            event.send('cluster', 0, 'cluster', True, {
+                                       'current': current, 'status': 0, 'total': total}, False, ip)
                         initialize.initialize_mongodb(data['mongodb_param'])
                         current = 6
-                        print(current)
-                        event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'status': 0, 'total': total})
+                        handler.log('Step: %s, description: %s' %
+                                    (current, 'save initialization information'))
+                        for ip in mgmt:
+                            event.send('cluster', 0, 'cluster', True, {
+                                       'current': current, 'status': 0, 'total': total}, False, ip)
                         initialize.save_initialize_information(
                             data['param'], data['node_list'])
                         current = 7
-                        print(current)
-                        event.send('cluster', 0, 'cluster', True, {
-                                   'current': current, 'status': 0, 'total': total})
-                        print('finish')
+                        handler.log('Step: %s, description: %s' %
+                                    (current, 'finish all steps'))
+                        for ip in mgmt:
+                            event.send('cluster', 0, 'cluster', True, {
+                                       'current': current, 'status': 0, 'total': total}, False, ip)
+                        initialize.disable_node_service(data['node_list'])
+                        handler.log('Complete cluster initialization!')
                 else:
                     callback()
-                    event.send('cluster', 0, 'cluster', False, {
-                               'current': current, 'status': -1, 'total': total})
+                    handler.log(handler.error(error_message), 2)
+                    handler.log('Step: %s, description: %s' % (
+                        current, 'initialization of the cluster failed'))
+                    for ip in mgmt:
+                        event.send('cluster', 0, 'cluster', False, {
+                                   'current': current, 'status': -1, 'total': total}, False, ip)
 
             def stop_get_initialize_status():
                 start_get_initialize_status.set()
             start_get_initialize_status = send_initialize_status(
                 stop_get_initialize_status)
         elif init_res['errorId'] != 111:
-            event.send('cluster', 0, 'cluster', False, {
-                       'current': current, 'status': -1, 'total': total})
+            handler.log(handler.error(init_res['message']), 2)
+            handler.log('Step: %s, description: %s' %
+                        (current, 'initialization of the cluster failed'))
+            for ip in mgmt:
+                event.send('cluster', 0, 'cluster', False, {
+                           'current': current, 'status': -1, 'total': total}, False, ip)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
+        handler.log('Step: %s, description: %s' %
+                    (current, 'initialization of the cluster failed'))
         deinitialize_cluster(2)
         event.send('cluster', 0, 'cluster', False, {
                    'current': current, 'status': -1, 'total': total})
 
 
 def deinitialize_cluster(mode):
-    print('start')
+    handler.log('Start deinitializing the cluster!')
     try:
-        event.send('cluster', 1, 'cluster', True, {}, True)
+        mongodb_status = initialize.get_mongodb_status()
+        node_list = []
+        mgmt = []
+        if mongodb_status:
+            node_list = database.get_setting('NODE-LIST')
+            mgmt = node_list['mgmt']
+            for ip in mgmt:
+                event.send('cluster', 1, 'cluster', True, {}, True, ip)
         if mode == 1:
             backend.deinitialize_cluster()
 
@@ -131,28 +162,33 @@ def deinitialize_cluster(mode):
             state = status_res['data']['status']
             error_message = status_res['data']['errorMessage']
             if not status_res['errorId']:
-                print(current)
+                handler.log('Step: %s, description: %s' % (current, describle))
                 if state:
                     callback()
-                    event.send('cluster', 2, 'cluster', False, {}, True)
+                    handler.log(handler.error(error_message), 2)
+                    handler.log('Step: %s, description: %s' % (
+                        current, 'deinitialization of the cluster failed'))
+                    for ip in mgmt:
+                        event.send('cluster', 2, 'cluster',
+                                   False, {}, True, ip)
                 elif not current and 'finish' in describle:
                     callback()
-                    mongodb_status = initialize.get_mongodb_status()
-                    node_list = ['127.0.0.1']
                     if mongodb_status:
-                        node_list = database.get_setting('NODE-LIST')
-                        node_list = node_list['mgmt'] if len(
+                        ip_list = node_list['mgmt'] if len(
                             node_list['mgmt']) == 1 else node_list['mgmt'] + node_list['meta'][0:1]
-                        initialize.deinitialize_mongodb(node_list)
-                    event.send('cluster', 2, 'cluster', True, {}, True)
-                    print('finish')
+                        initialize.deinitialize_mongodb(ip_list)
+                        initialize.enable_node_service(node_list)
+                    for ip in mgmt:
+                        event.send('cluster', 2, 'cluster', True, {}, True, ip)
+                    handler.log('Complete cluster deinitialization!')
 
         def stop_get_deinitialize_status():
             start_get_deinitialize_status.set()
         start_get_deinitialize_status = send_deinitialize_status(
             stop_get_deinitialize_status)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
+        handler.log('Deinitialization of the cluster failed!')
         event.send('cluster', 2, 'cluster', False, {}, True)
 
 
@@ -440,13 +476,14 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        buddy_groups, description, name, targets = handler.request(
-            params, name=str, description=str, targets=list, buddyGroups=list)
+        buddy_groups, data_classification, description, name, targets = handler.request(
+            params, name=str, description=str, dataClassification=int, targets=list, buddyGroups=list)
         targets = ','.join(map(lambda target: str(target), targets))
         buddy_groups = ','.join(
             map(lambda buddy_group: str(buddy_group), buddy_groups))
         pool_id = backend.create_storage_pool(name, targets, buddy_groups)
-        database.create_storage_pool(pool_id, name, description)
+        database.create_storage_pool(
+            pool_id, name, description, data_classification)
         response = handler.response(0, 'Create storagePool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -456,10 +493,12 @@ def create_storage_pool(params):
 def update_storage_pool(params):
     response = {}
     try:
-        description, name, pool_id = handler.request(
-            params, poolId=int, name=str, description=str)
+        data_classification, description, name, pool_id = handler.request(
+            params, poolId=int, name=str, description=str, dataClassification=int)
         backend.update_storage_pool_name(pool_id, name)
         database.update_storage_pool_name_and_desc(pool_id, name, description)
+        database.update_storage_pool_data_classification(
+            pool_id, data_classification)
         response = handler.response(0, 'Update storagePool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -561,11 +600,11 @@ def create_snapshot(params):
             else:
                 database.delete_snapshot(name)
                 event.send('snapshot', 12, name, False, {}, True)
-                print(response['message'])
+                handler.log(hanlder.error(response['message']), 2)
         else:
             event.send('snapshot', 12, name, False, {}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def update_snapshot(params):
@@ -591,7 +630,7 @@ def delete_snapshot(params):
             database.update_snapshot_status(name)
             event.send('snapshot', 14, name, False, {}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def batch_delete_snapshot(params):
@@ -612,7 +651,7 @@ def batch_delete_snapshot(params):
             event.send('snapshot', 16, names_str, False,
                        {'total': len(names)}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def rollback_snapshot(params):
@@ -627,7 +666,7 @@ def rollback_snapshot(params):
         else:
             event.send('snapshot', 18, name, False, {}, True)
     except Exception as error:
-        print(handler.error(error))
+        handler.log(handler.error(error), 2)
 
 
 def get_snapshot_schedule(params):
@@ -725,7 +764,7 @@ def add_client_to_cluster(params):
     try:
         ip, = handler.request(params, ip=str)
         backend.add_client_to_cluster(ip)
-        database.add_node_to_cluster(ip, 'client')
+        initialize.add_node_to_cluster(ip, 'client')
         response = handler.response(0, 'add client to cluster successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1355,6 +1394,134 @@ def update_local_auth_user_setting(params):
             userNameMinLen, passMinLen, passMaxLen, passComplexity, passRepeatCharMax, passAvailableDay, passChangeIntervalMinute)
         response = handler.response(
             0, 'Update local auth user setting successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_data_level(params):
+    response = {}
+    try:
+        if params:
+            name, = handler.request(params, name=int)
+            data = database.get_data_level(name)
+        else:
+            data = database.list_data_level()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_data_level(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=int, description=str)
+        database.create_data_level(name, description)
+        response = handler.response(0, 'Create data level successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_data_level(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=int, description=str)
+        database.update_data_level(name, description)
+        response = handler.response(0, 'Update data level successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_data_level(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=int)
+        database.delete_data_level(name)
+        response = handler.response(0, 'Delete data level successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_metadata_to_cluster(params):
+    response = {}
+    try:
+        enableCustomRAID, ip, raidList = handler.request(
+            params, ip=str, raidList=list, enableCustomRAID=bool)
+        disk_group = []
+        if enableCustomRAID:
+            disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['selectedDisks']), 'raidLevel': handler.replace(
+                ' ', '', raid['arrayLevel']['name'].lower()), 'stripeSize': handler.replace('B', '', handler.replace(' ', '', raid['arrayStripeSize'])).lower()}, raidList)
+        else:
+            disk_group = map(lambda raid: {'diskList': map(
+                lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (raid['stripeSize'] / 1024)}, raidList)
+        backend.add_metadata_to_cluster(ip, disk_group)
+        initialize.add_node_to_cluster(ip, 'meta')
+        response = handler.response(0, 'Add metadata to cluster successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_storage_to_cluster(params):
+    response = {}
+    try:
+        enableCustomRAID, ip, raidList = handler.request(
+            params, ip=str, raidList=list, enableCustomRAID=bool)
+        disk_group = []
+        if enableCustomRAID:
+            disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['selectedDisks']), 'raidLevel': handler.replace(
+                ' ', '', raid['arrayLevel']['name'].lower()), 'stripeSize': handler.replace('B', '', handler.replace(' ', '', raid['arrayStripeSize'])).lower()}, raidList)
+        else:
+            disk_group = map(lambda raid: {'diskList': map(
+                lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (raid['stripeSize'] / 1024)}, raidList)
+        backend.add_storage_to_cluster(ip, disk_group)
+        initialize.add_node_to_cluster(ip, 'storage')
+        response = handler.response(0, 'Add storage to cluster successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_buddy_group(params):
+    response = {}
+    try:
+        buddyGroups, = handler.request(params, buddyGroups=list)
+        group_list = map(lambda group: {'type': 'meta' if group['serviceRole'] == 'metadata' else 'storage', 'primaryId': group[
+                         'selectedTargets'][0]['targetId'], 'secondaryId': group['selectedTargets'][1]['targetId']}, buddyGroups)
+        backend.create_buddy_group(group_list)
+        response = handler.response(0, 'Create buddy group successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_target(params):
+    response = {}
+    try:
+        enableCustomRAID, = handler.request(params, enableCustomRAID=bool)
+        service_list = []
+        if enableCustomRAID:
+            storageServerIPs, = handler.request(params, storageServerIPs=list)
+            service_list = map(lambda server: server['ip'], storageServerIPs)
+            for server in storageServerIPs:
+                ip = server['ip']
+                raid_list = server['raidList']
+                disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['selectedDisks']), 'raidLevel': handler.replace(
+                    ' ', '', raid['arrayLevel']['name'].lower()), 'stripeSize': handler.replace('B', '', handler.replace(' ', '', raid['arrayStripeSize'])).lower()}, raid_list)
+                backend.create_target(ip, disk_group)
+        else:
+            storageServerIPs, = handler.request(params, storageServerIPs=dict)
+            service_list = storageServerIPs.keys()
+            for service in service_list:
+                ip = service
+                disk_group = map(lambda raid: {'diskList': map(lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (
+                    raid['stripeSize'] / 1024)}, storageServerIPs[service])
+                backend.create_target(ip, disk_group)
+        response = handler.response(0, 'Create target successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

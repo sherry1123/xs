@@ -1,13 +1,16 @@
 from flask import jsonify, make_response, request
 
-from lib import controller
-from lib.module import handler, process
-from lib.util.socket import app
+from api import controller
+from api.module import handler, process
+from api.util.socket import app
 
 
 @app.route('/api/syncsystemstatus', methods=['GET', 'POST'])
 def sync_status():
-    return jsonify(controller.sync_status())
+    result = controller.sync_status()
+    response = make_response(jsonify(result))
+    response.set_cookie('origin_host', request.host)
+    return response
 
 
 @app.route('/api/checkclusterenv', methods=['GET', 'POST'])
@@ -489,3 +492,43 @@ def get_local_auth_user_setting():
 @app.route('/api/updatelocalauthusersetting', methods=['GET', 'POST'])
 def update_local_auth_user_setting():
     return jsonify(controller.update_local_auth_user_setting(request.params))
+
+
+@app.route('/api/getdatalevel', methods=['GET', 'POST'])
+def get_data_level():
+    return jsonify(controller.get_data_level(request.params))
+
+
+@app.route('/api/createdatalevel', methods=['GET', 'POST'])
+def create_data_level():
+    return jsonify(controller.create_data_level(request.params))
+
+
+@app.route('/api/updatedatalevel', methods=['GET', 'POST'])
+def update_data_level():
+    return jsonify(controller.update_data_level(request.params))
+
+
+@app.route('/api/deletedatalevel', methods=['GET', 'POST'])
+def delete_data_level():
+    return jsonify(controller.delete_data_level(request.params))
+
+
+@app.route('/api/addmetadatatocluster', methods=['GET', 'POST'])
+def add_metadata_to_cluster():
+    return jsonify(controller.add_metadata_to_cluster(request.params))
+
+
+@app.route('/api/addstoragetocluster', methods=['GET', 'POST'])
+def add_storage_to_cluster():
+    return jsonify(controller.add_storage_to_cluster(request.params))
+
+
+@app.route('/api/createbuddygroup', methods=['GET', 'POST'])
+def create_buddy_group():
+    return jsonify(controller.create_buddy_group(request.params))
+
+
+@app.route('/api/createtarget', methods=['GET', 'POST'])
+def create_target():
+    return jsonify(controller.create_target(request.params))
