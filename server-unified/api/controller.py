@@ -476,13 +476,14 @@ def get_storage_pool(params):
 def create_storage_pool(params):
     response = {}
     try:
-        buddy_groups, description, name, targets = handler.request(
-            params, name=str, description=str, targets=list, buddyGroups=list)
+        buddy_groups, data_classification, description, name, targets = handler.request(
+            params, name=str, description=str, dataClassification=int, targets=list, buddyGroups=list)
         targets = ','.join(map(lambda target: str(target), targets))
         buddy_groups = ','.join(
             map(lambda buddy_group: str(buddy_group), buddy_groups))
         pool_id = backend.create_storage_pool(name, targets, buddy_groups)
-        database.create_storage_pool(pool_id, name, description)
+        database.create_storage_pool(
+            pool_id, name, description, data_classification)
         response = handler.response(0, 'Create storagePool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -492,10 +493,12 @@ def create_storage_pool(params):
 def update_storage_pool(params):
     response = {}
     try:
-        description, name, pool_id = handler.request(
-            params, poolId=int, name=str, description=str)
+        data_classification, description, name, pool_id = handler.request(
+            params, poolId=int, name=str, description=str, dataClassification=int)
         backend.update_storage_pool_name(pool_id, name)
         database.update_storage_pool_name_and_desc(pool_id, name, description)
+        database.update_storage_pool_data_classification(
+            pool_id, data_classification)
         response = handler.response(0, 'Update storagePool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1391,6 +1394,53 @@ def update_local_auth_user_setting(params):
             userNameMinLen, passMinLen, passMaxLen, passComplexity, passRepeatCharMax, passAvailableDay, passChangeIntervalMinute)
         response = handler.response(
             0, 'Update local auth user setting successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_data_level(params):
+    response = {}
+    try:
+        if params:
+            name, = handler.request(params, name=int)
+            data = database.get_data_level(name)
+        else:
+            data = database.list_data_level()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def create_data_level(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=int, description=str)
+        database.create_data_level(name, description)
+        response = handler.response(0, 'Create data level successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_data_level(params):
+    response = {}
+    try:
+        description, name = handler.request(params, name=int, description=str)
+        database.update_data_level(name, description)
+        response = handler.response(0, 'Update data level successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_data_level(params):
+    response = {}
+    try:
+        name, = handler.request(params, name=int)
+        database.delete_data_level(name)
+        response = handler.response(0, 'Delete data level successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

@@ -1,6 +1,6 @@
 import json
 
-from api.model import (CifsShare, ClusterThroughputAndIops, LocalAuthUser,
+from api.model import (CifsShare, ClusterThroughputAndIops, DataLevel, LocalAuthUser,
                        LocalAuthUserGroup, NasServer, NfsShare,
                        NodeCpuAndMemory, NodeThroughputAndIops, Setting,
                        Snapshot, SnapshotSchedule, StoragePool, User)
@@ -212,7 +212,7 @@ def list_storage_pool():
     storage_pools = []
     for storage_pool in StoragePool.objects.order_by('-id'):
         storage_pools.append({'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
-                              'createTime': storage_pool.storage_pool_create_time})
+                              'dataClassification': storage_pool.storage_pool_data_classification, 'createTime': storage_pool.storage_pool_create_time})
     return storage_pools
 
 
@@ -220,18 +220,18 @@ def get_storage_pool(name):
     storage_pool = StoragePool.objects(storage_pool_name=name).first()
     if storage_pool:
         return {'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
-                'createTime': storage_pool.storage_pool_create_time}
+                'dataClassification': storage_pool.storage_pool_data_classification, 'createTime': storage_pool.storage_pool_create_time}
     else:
         raise DatabaseError('No such storagePool!')
 
 
-def create_storage_pool(pool_id, name, description):
+def create_storage_pool(pool_id, name, description, data_classification):
     storage_pool = StoragePool.objects(storage_pool_name=name).first()
     if storage_pool:
         raise DatabaseError('StoragePool already exists!')
     else:
         StoragePool(storage_pool_id=pool_id, storage_pool_name=name, storage_pool_description=description,
-                    storage_pool_create_time=handler.current_time()).save()
+                    storage_pool_data_classification=data_classification, storage_pool_create_time=handler.current_time()).save()
 
 
 def update_storage_pool_name_and_desc(pool_id, name, description):
@@ -241,6 +241,20 @@ def update_storage_pool_name_and_desc(pool_id, name, description):
                             set__storage_pool_description=description)
     else:
         raise DatabaseError('No such storagePool!')
+
+
+def update_storage_pool_data_classification(pool_id, data_classification):
+    if pool_id:
+        storage_pool = StoragePool.objects(storage_pool_id=pool_id).first()
+        if storage_pool:
+            storage_pool.update(
+                set__storage_pool_data_classification=data_classification)
+        else:
+            raise DatabaseError('No such storagePool!')
+    else:
+        for storage_pool in StoragePool.objects():
+            storage_pool.update(
+                set__storage_pool_data_classification=data_classification)
 
 
 def delete_storage_pool(pool_id):
@@ -787,3 +801,54 @@ def update_local_auth_user_status(name, status):
         user.update(set__user_status=status)
     else:
         raise DatabaseError('No such local auth user!')
+
+
+def list_data_level():
+    levels = []
+    for level in DataLevel.objects.order_by('level_name'):
+        levels.append({'name': level.level_name,
+                       'description': level.level_desc})
+    return levels
+
+
+def get_data_level(name):
+    level = DataLevel.objects(level_name=name).first()
+    if level:
+        return {'name': level.level_name, 'description': level.level_desc}
+    else:
+        raise DatabaseError('No such data level!')
+
+
+def count_data_level():
+    return DataLevel.objects().count()
+
+
+def create_data_level(name, desc):
+    level = DataLevel.objects(level_name=name).first()
+    if level:
+        raise DatabaseError('Data level already exists!')
+    else:
+        if name == count_data_level() + 1:
+            DataLevel(level_name=name, level_desc=desc).save()
+        else:
+            raise DatabaseError('Illegal operation!')
+
+
+def update_data_level(name, desc):
+    level = DataLevel.objects(level_name=name).first()
+    if level:
+        level.update(set__level_desc=desc)
+    else:
+        raise DatabaseError('No such data level!')
+
+
+def delete_data_level(name):
+    level = DataLevel.objects(level_name=name).first()
+    if level:
+        if name == count_data_level():
+            level.delete()
+            update_storage_pool_data_classification(None, name - 1)
+        else:
+            raise DatabaseError('Illegal operation!')
+    else:
+        raise DatabaseError('No such data level!')

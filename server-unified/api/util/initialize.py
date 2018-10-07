@@ -189,6 +189,9 @@ def save_initialize_information(param, node_list):
         'SNAPSHOT-SETTING', {'total': 64, 'manual': 25, 'auto': 39})
     database.create_user('admin', 'e10adc3949ba59abbe56e057f20f883e')
     database.create_local_auth_user_group('everyone', 'everyone')
+    database.create_data_level(1, 'high')
+    database.create_data_level(2, 'medium')
+    database.create_data_level(3, 'low')
 
 
 def disable_node_service(node_list):

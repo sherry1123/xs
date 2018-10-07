@@ -492,3 +492,23 @@ def get_local_auth_user_setting():
 @app.route('/api/updatelocalauthusersetting', methods=['GET', 'POST'])
 def update_local_auth_user_setting():
     return jsonify(controller.update_local_auth_user_setting(request.params))
+
+
+@app.route('/api/getdatalevel', methods=['GET', 'POST'])
+def get_data_level():
+    return jsonify(controller.get_data_level(request.params))
+
+
+@app.route('/api/createdatalevel', methods=['GET', 'POST'])
+def create_data_level():
+    return jsonify(controller.create_data_level(request.params))
+
+
+@app.route('/api/updatedatalevel', methods=['GET', 'POST'])
+def update_data_level():
+    return jsonify(controller.update_data_level(request.params))
+
+
+@app.route('/api/deletedatalevel', methods=['GET', 'POST'])
+def delete_data_level():
+    return jsonify(controller.delete_data_level(request.params))
