@@ -138,7 +138,7 @@ class DataClassificationSetting extends Component {
             ),
             rowClassName: () => 'ellipsis',
             columns: [
-                {title: lang('名称', 'Name'), width: 80, dataIndex: 'name',},
+                {title: lang('分级名称', 'Classification Name'), width: 80, dataIndex: 'name',},
 				{title: lang('描述', 'Description'), width: 200, dataIndex: 'description',
 					render: text => text || '--'
 				},
@@ -174,7 +174,7 @@ class DataClassificationSetting extends Component {
         return (
             <Modal
 				width={500}
-				title={lang(`数据分级信息`,`Data Classification Information`)}
+				title={lang(`数据分级设置`,`Data Classification Setting`)}
 				closable={false}
 				maskClosable={false}
 				visible={this.state.visible}
