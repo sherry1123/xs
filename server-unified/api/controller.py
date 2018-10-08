@@ -332,16 +332,9 @@ def get_storage_status():
 def get_target_list(params):
     response = {}
     try:
-        ranking = params.get('ranking')
-        if ranking is not None:
-            if isinstance(ranking, basestring):
-                ranking = ranking == 'true'
-            else:
-                ranking = ranking == True
-        else:
-            ranking = False
+        ranking, = handler.request(params, ranking=[str, bool])
         target_list = backend.get_target_list()
-        if ranking:
+        if ranking or ranking == 'true':
             data = sorted(
                 target_list, key=lambda target: target['space']['usage'], reverse=True)
         else:
@@ -522,7 +515,7 @@ def get_targets_in_storage_pool(params):
     response = {}
     try:
         if params:
-            pool_id, = handler.request(params, poolId=int)
+            pool_id, = handler.request(params, poolId=[int, str])
             data = backend.get_targets_in_storage_pool(pool_id)
         else:
             data = backend.get_targets_in_storage_pool()
@@ -536,7 +529,7 @@ def get_buddy_groups_in_storage_pool(params):
     response = {}
     try:
         if params:
-            pool_id, = handler.request(params, poolId=int)
+            pool_id, = handler.request(params, poolId=[int, str])
             data = backend.get_buddy_groups_in_storage_pool(pool_id)
         else:
             data = backend.get_buddy_groups_in_storage_pool()
