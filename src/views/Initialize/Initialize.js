@@ -750,6 +750,7 @@ class Initialize extends Component {
                                                     addonBefore={this.props.enableHA ? lang(`服务 ${i + 1}`, `Service ${i + 1}`) : ''}
                                                     placeholder={lang('请输入IP', 'Please enter IP')}
                                                     value={ip}
+                                                    readOnly={i === 0}
                                                     onChange={({target: {value}}) => {
                                                         this.setIP.bind(this, 'managementServerIPs', i, value)();
                                                         this.validateIP.bind(this, 'managementServerIPs', i, value)();

@@ -276,7 +276,7 @@ export default  {
 
     // service and client
     async createMetadataServiceToCluster (service){
-        await fetchPost('/api/deletedatalevel', service);
+        await fetchPost('/api/addmetadatatocluster', service);
     },
 
     async createStorageServiceToCluster (service){
