@@ -13,7 +13,8 @@ def request(params, **kwargs):
             current_arg = arg[key]
             current_param = param.get(key)
             current_parent = '%s.%s' % (parent, key) if parent else key
-            current_type = arg[key] if isinstance(current_arg, type) else dict
+            current_type = arg[key] if isinstance(
+                current_arg, type) or isinstance(current_arg, list) else dict
             if current_param is not None:
                 if type(current_param) == current_type:
                     if isinstance(current_arg, dict):
@@ -21,6 +22,8 @@ def request(params, **kwargs):
                             current_param, current_arg, current_parent)
                     else:
                         arg[key] = current_param
+                elif type(current_param) in current_type:
+                    arg[key] = current_param
                 else:
                     raise ValueError('The type of the parameter \'%s\' should be \'%s\'!' % (
                         current_parent, type2str(current_type)))
@@ -83,7 +86,13 @@ def bytes2str(data):
 
 
 def type2str(data):
-    return eval(re.search('\'\S+\'', str(data)).group())
+    if isinstance(data, list):
+        type_list = []
+        for d in data:
+            type_list.append(type2str(d))
+        return ','.join(type_list)
+    else:
+        return eval(re.search('\'\S+\'', str(data)).group())
 
 
 def multiline2list(data):
