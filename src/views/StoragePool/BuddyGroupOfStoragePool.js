@@ -16,12 +16,12 @@ class BuddyGroupOfStoragePool extends Component {
 		};
 	}
 
-	delete (storageBuddyGroup, index){
+	delete (buddyGroup, index){
 		Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
-				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除伙伴组镜像 ID:${storageBuddyGroup.id} 的操作。`, `You are about to remove storage pool buddy group ID:${storageBuddyGroup.id} from storage pool ${this.state.poolName}.`)}</p>
-				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除伙伴组镜像 ID:${storageBuddyGroup.id}，将会导致该存储池的容量减少，并且。`, `This operation will delete storage pool buddy group ID:${storageBuddyGroup.id} from storage pool ${this.state.poolName}. `)}</p>
+				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除伙伴组镜像 ID:${buddyGroup.id} 的操作。`, `You are about to remove storage pool buddy group ID:${buddyGroup.id} from storage pool ${this.state.poolName}.`)}</p>
+				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除伙伴组镜像 ID:${buddyGroup.id}，将会导致该存储池的容量减少，并且。`, `This operation will delete storage pool buddy group ID:${buddyGroup.id} from storage pool ${this.state.poolName}. `)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的伙伴组镜像，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
 			</div>,
 			iconType: 'exclamation-circle-o',
@@ -30,13 +30,13 @@ class BuddyGroupOfStoragePool extends Component {
 			cancelText: lang('取消', 'Cancel'),
 			onOk: async () => {
 				try {
-					await httpRequests.deleteStoragePool(storageBuddyGroup);
+					await httpRequests.deleteBuddyGroupFromStoragePool(buddyGroup);
 					let buddyGroupsOfStoragePool = Object.assign([], this.state.buddyGroupsOfStoragePool);
 					buddyGroupsOfStoragePool.splice(index, 1);
 					this.setState({buddyGroupsOfStoragePool});
-					message.success(lang(`已开始删除伙伴组镜像 ID:${storageBuddyGroup.id}!`, `Start deleting storage pool buddy group ID:${storageBuddyGroup.id}!`));
+					message.success(lang(`已开始删除伙伴组镜像 ID:${buddyGroup.id}!`, `Start deleting storage pool buddy group ID:${buddyGroup.id}!`));
 				} catch ({msg}){
-					message.error(lang(`删除伙伴组镜像 ID:${storageBuddyGroup.id} 失败, 原因: `, `Delete storage pool buddy group ID:${storageBuddyGroup.id} failed, reason: `) + msg);
+					message.error(lang(`删除伙伴组镜像 ID:${buddyGroup.id} 失败, 原因: `, `Delete storage pool buddy group ID:${buddyGroup.id} failed, reason: `) + msg);
 				}
 			},
 			onCancel: () => {
@@ -64,8 +64,8 @@ class BuddyGroupOfStoragePool extends Component {
 		this.addBuddyGroupToStorageWrapper.getWrappedInstance().show(this.state.poolName);
 	}
 
-	addDiskToBuddyGroup (storageBuddyGroup){
-		this.addDiskToBuddyGroupWrapper.getWrappedInstance().show(storageBuddyGroup);
+	addDiskToBuddyGroup (buddyGroup){
+		this.addDiskToBuddyGroupWrapper.getWrappedInstance().show(buddyGroup);
 	}
 
 	render (){

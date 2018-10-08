@@ -1,15 +1,28 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import dataNodeAction from 'Actions/dataNodeAction';
 import {withRouter} from 'react-router-dom';
 import {Icon, Table, Popover} from 'antd';
 import lang from 'Components/Language/lang';
 import {formatStorageSize, getCapacityColour} from 'Services';
 import routerPath from '../routerPath';
-import dataNodeAction from 'Actions/dataNodeAction';
+import {lsGet, lsSet} from 'Services';
 
 class ClusterPhysicalNodeList extends Component {
+    componentWillReceiveProps (nextProps){
+        let {clusterPhysicalNodeList} = nextProps;
+        if (!!clusterPhysicalNodeList.length){
+            let currentPhysicalNode = lsGet('currentPhysicalNode');
+            if (!currentPhysicalNode){
+                // for fetching statistics data
+                lsSet('currentPhysicalNode', clusterPhysicalNodeList[0]);
+            }
+        }
+    }
+
     forwardDataNodePage (physicalNode){
-        console.info(physicalNode);
+        // for fetching statistics data
+        lsSet('currentPhysicalNode', physicalNode);
         this.props.setCurrentPhysicalNode(physicalNode);
         this.props.history.push(routerPath.Main + routerPath.DataNode);
     }

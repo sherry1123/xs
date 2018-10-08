@@ -32,6 +32,7 @@ class PhysicalNodeInfo extends Component {
         } else {
             // Get currentPhysicalNode from localStorage, if it's an empty object in localStorage, get it from clusterPhysicalNodeList
             let currentPhysicalNode = (!!preCurrentPhysicalNode.hostname ? preCurrentPhysicalNode : clusterPhysicalNodeList[0]) || {};
+            console.info(currentPhysicalNode);
             this.setState({currentPhysicalNode});
             lsSet('currentPhysicalNode', currentPhysicalNode);
         }

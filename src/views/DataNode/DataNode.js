@@ -19,7 +19,11 @@ class DataNode extends Component {
     }
 
     componentDidMount (){
-        httpRequests.getClusterPhysicalNodeList();
+        if (!this.props.clusterPhysicalNodeList.length){
+            httpRequests.getClusterPhysicalNodeList();
+        }
+        // when call these functions below, make sure the currentPhysicalNode is in localStorage,
+        // and it's value is available, so must set it on Dashboard page, here we set it in ClusterPhysicalNodeList.
         httpRequests.getPhysicalNodeInfo();
         httpRequests.getPhysicalNodeTargets();
         httpRequests.getPhysicalNodeCPU();
@@ -93,8 +97,8 @@ class DataNode extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {general: {menuExpand}}} = state;
-    return {language, menuExpand};
+    let {language, main: {general: {menuExpand}, dashboard: {clusterPhysicalNodeList}}} = state;
+    return {language, menuExpand, clusterPhysicalNodeList};
 };
 
 export default connect(mapStateToProps)(DataNode);
