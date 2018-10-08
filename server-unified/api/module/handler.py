@@ -47,7 +47,7 @@ def error(error):
     if isinstance(error_type, type):
         error_type = str(error_type).split('\'')[1].split('.').pop()
     else:
-        error_type = 'Error'
+        error_type = 'ERROR'
     if 'KeyError' in error_type:
         error = 'Key %s is not found' % error
     error = '[%s]%s' % (error_type, error)

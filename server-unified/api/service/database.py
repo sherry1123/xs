@@ -805,7 +805,7 @@ def update_local_auth_user_status(name, status):
 
 def list_data_level():
     levels = []
-    for level in DataLevel.objects.order_by('level_name'):
+    for level in DataLevel.objects.order_by('-level_name'):
         levels.append({'name': level.level_name,
                        'description': level.level_desc})
     return levels
@@ -845,7 +845,7 @@ def update_data_level(name, desc):
 def delete_data_level(name):
     level = DataLevel.objects(level_name=name).first()
     if level:
-        if name == count_data_level():
+        if name not in [1,2,3] and name == count_data_level():
             level.delete()
             update_storage_pool_data_classification(None, name - 1)
         else:
