@@ -137,7 +137,7 @@ class AddBuddyGroupToStoragePool extends Component {
 							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
-							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
+							placeholder={lang('请选择伙伴组镜像', 'Please select buddy group(s)')}
 							optionLabelProp="value"
 							value={this.state.buddyGroupData.buddyGroups}
 							onChange={(value) => {

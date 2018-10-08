@@ -98,14 +98,14 @@ class CreateSnapshotSchedule extends Component {
             }
         } else if (key === 'interval'){
             if (!this.state.scheduleData.intervalNumber){
-                this.validationUpdateState('interval', {cn: '请输入正整数', en: 'please enter a positive integer'}, false);
+                this.validationUpdateState('interval', {cn: '请输入正整数', en: 'Please enter a positive integer'}, false);
             }
         }
 
         if (this.state.scheduleData.autoDisable){
             // if enable delay disable schedule automatically
             if (!this.state.scheduleData.autoDisableTimeNumber){
-                this.validationUpdateState('autoDisableTime', {cn: '请输入延时关闭时间', en: 'please enter delay disable time'}, false);
+                this.validationUpdateState('autoDisableTime', {cn: '请输入延时关闭时间', en: 'Please enter delay disable time'}, false);
             }
         } else {
             this.validationUpdateState('autoDisableTime', {cn: '', en: ''}, true);
@@ -310,9 +310,9 @@ class CreateSnapshotSchedule extends Component {
                         <Input.TextArea
                             size="small"
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为选填项', 'description is optional')}
+                            placeholder={lang('描述为选填项，长度为0-200', 'Description is optional, length is 0-200')}
                             value={this.state.scheduleData.description}
-                            maxLength={255}
+                            maxLength={200}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                                 this.validateForm.bind(this)('description');

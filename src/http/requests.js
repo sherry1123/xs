@@ -263,15 +263,15 @@ export default  {
     },
 
     async createDataClassification (dataClassification){
-        await fetchPost('/api/createdataclassification', dataClassification);
-    },
-
-    async updateDataClassification (dataClassification){
         await fetchPost('/api/createdatalevel', dataClassification);
     },
 
-    async deleteDataClassification (dataClassification){
+    async updateDataClassification (dataClassification){
         await fetchPost('/api/updatedatalevel', dataClassification);
+    },
+
+    async deleteDataClassification (dataClassification){
+        await fetchPost('/api/deletedatalevel', dataClassification);
     },
 
     // service and client

@@ -52,7 +52,7 @@ class CreateClientToNFS extends Component {
             // 2.validate the enter of every hostname、IP or segment is match with IPV4 or hostname pattern
             // 3.validate if one of the enter of every hostname、IP or segment is already existed in this NFS share
             if (!this.state.clientData.ips){
-                this.validationUpdateState('ips', {cn: '请输入主机名或IP', en: 'please enter hostname or IP'}, false);
+                this.validationUpdateState('ips', {cn: '请输入主机名或IP', en: 'Please enter hostname or IP'}, false);
             }
             ips = ips.split(';').filter(ip => !!ip.trim());
             let isIPPatternError = !ips.some(ip => {
@@ -72,18 +72,18 @@ class CreateClientToNFS extends Component {
                 }
             });
             if (isIPPatternError){
-                this.validationUpdateState('ips', {cn: '主机名或IP输入有误', en: 'hostname or IP enter error'}, false);
+                this.validationUpdateState('ips', {cn: '主机名或IP输入有误', en: 'Hostname or IP enter error'}, false);
             }
             // console.info('ip pattern error', isIPPatternError);
             let isIpsDuplicated = Array.from(new Set(ips)).length !== ips.length;
             if (isIpsDuplicated){
-                this.validationUpdateState('ips', {cn: '主机名或IP输入有重复', en: 'hostname or IP enter duplicated'}, false);
+                this.validationUpdateState('ips', {cn: '主机名或IP输入有重复', en: 'Hostname or IP enter duplicated'}, false);
             }
             // console.info('ip enter duplicated', isIpsDuplicated);
             let isIPDuplicated = clientListOfNFS.some(client => ips.includes(client.ip));
             // console.info('ip duplicated', isIPDuplicated);
             if (isIPDuplicated){
-                this.validationUpdateState('ips', {cn: '主机名或IP已存在', en: 'hostname or IP already existed'}, false);
+                this.validationUpdateState('ips', {cn: '主机名或IP已存在', en: 'Hostname or IP already existed'}, false);
             }
         }
 
@@ -210,7 +210,7 @@ class CreateClientToNFS extends Component {
                         <Input.TextArea
                             style={{width: isChinese ? 300 : 300}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
-                            maxLength={255}
+                            maxLength={200}
                             placeholder={lang('支持输入多个IPv4格式的IP或者主机名，用应为分号";"隔开。', 'You can enter multiple client IP addressed with IPV4 pattern or hostname, split by ";"')}
                             value={this.state.clientData.ips}
                             onChange={({target: {value}}) => {
@@ -220,12 +220,12 @@ class CreateClientToNFS extends Component {
                                 this.validateForm.bind(this, 'ips')(value);
                             }}
                         />
-                        {/*
+                        {/* hide this item temporarily
                         // currently only allow user to enter IP
                         <Input.TextArea
                             style={{width: isChinese ? 300 : 300}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
-                            maxLength={255}
+                            maxLength={200}
                             placeholder={lang('支持输入多个hostname、IP地址或网段，用英文分号隔开。IP地址和网段输入仅支持IPV4地址格式。', 'You can enter multiple hostname, IP addresses and segments of clients, separated by semicolon. IP address and segment only supports IPv4 address pattern.')}
                             value={this.state.clientData.ips}
                             onChange={({target: {value}}) => {

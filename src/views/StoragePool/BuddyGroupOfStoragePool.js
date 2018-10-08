@@ -96,7 +96,6 @@ class BuddyGroupOfStoragePool extends Component {
 					>
 						{lang('添加', 'Add')}
 					</Button>
-					<AddBuddyGroupToStoragePool ref={ref => this.addBuddyGroupToStorageWrapper = ref} />
 				</div>
 			),
 			rowClassName: () => 'ellipsis',
@@ -105,26 +104,25 @@ class BuddyGroupOfStoragePool extends Component {
 				{title: lang('路径', 'Mount Path'), width: 220, dataIndex: 'targetPath',},
 				{title: lang('容量', 'Capacity'), width: 170, dataIndex: 'capacity'},
 				{title: lang('操作', 'Operations'), width: 170,
-					render: (text, record, index) =>
-						<div>
-							<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
-								<Button
-									{...buttonConf}
-									onClick={this.addDiskToBuddyGroup.bind(this, record, index)}
-									icon="edit"
-								>
-								</Button>
-							</Popover>
-							<Popover {...buttonPopoverConf} content={lang('移除', 'Remove')}>
-								<Button
-									{...buttonConf}
-									onClick={this.delete.bind(this, record, index)}
-									icon="delete"
-								>
-								</Button>
-							</Popover>
-							<AddDiskToBuddyGroup ref={ref => this.addDiskToBuddyGroupWrapper = ref} />
-						</div>
+					render: (text, record, index) => <div>
+						<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
+							<Button
+								{...buttonConf}
+								onClick={this.addDiskToBuddyGroup.bind(this, record, index)}
+								icon="edit"
+							>
+							</Button>
+						</Popover>
+						<Popover {...buttonPopoverConf} content={lang('移除', 'Remove')}>
+							<Button
+								{...buttonConf}
+								onClick={this.delete.bind(this, record, index)}
+								icon="delete"
+							>
+							</Button>
+						</Popover>
+						<AddDiskToBuddyGroup ref={ref => this.addDiskToBuddyGroupWrapper = ref} />
+					</div>
 				}
 			],
 		};
@@ -151,6 +149,7 @@ class BuddyGroupOfStoragePool extends Component {
 					<div className="fs-main-content-wrapper">
 						<Table {...tableProps} />
 					</div>
+					<AddBuddyGroupToStoragePool ref={ref => this.addBuddyGroupToStorageWrapper = ref} />
 				</div>
 			</Modal>
 		);

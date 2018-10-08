@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {validateFsName} from 'Services';
-import {Button, Modal, Form, Input, message} from 'antd';
+import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
 
 class EditStoragePool extends Component {
     constructor (props){
@@ -12,8 +12,10 @@ class EditStoragePool extends Component {
             visible: false,
             formValid: false,
             formSubmitting: false,
+			dataPreparing: true,
             storagePoolData: {
                 name: '',
+				dataClassification: '',
 				description: '',
             },
             validation: {
@@ -48,7 +50,7 @@ class EditStoragePool extends Component {
 				// no name enter
 				await this.validationUpdateState('name', {
 					cn: '请输入存储池名称',
-					en: 'please enter storage pool name'
+					en: 'Please enter storage pool name'
 				}, false);
 			} else if (!validateFsName(name)){
 				// name validate failed
@@ -77,15 +79,19 @@ class EditStoragePool extends Component {
 		this.setState({formValid});
 	}
 
-    show (storagePoolData){
+    async show (storagePoolData){
         this.setState({
             visible: true,
+            formValid: true,
             formSubmitting: false,
+			dataPreparing: true,
             storagePoolData,
 			validation: {
                 name: {status: '', help: '', valid: false},
             }
         });
+        await httpRequests.getDataClassificationList();
+		this.setState({dataPreparing: false});
     }
 
 	async editStoragePool (){
@@ -107,6 +113,7 @@ class EditStoragePool extends Component {
     }
 
     render (){
+    	let {dataClassificationList} = this.props;
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
@@ -120,7 +127,12 @@ class EditStoragePool extends Component {
         };
         return (
             <Modal
-                title={lang('编辑存储池', 'Edit Storage Pool')}
+                title={
+                	<span>
+                        {lang('编辑存储池', 'Edit Storage Pool')}
+                        {this.state.dataPreparing && <Icon type="loading" style={{marginLeft: 10}} />}
+                    </span>
+				}
                 width={540}
                 closable={false}
                 maskClosable={false}
@@ -165,12 +177,30 @@ class EditStoragePool extends Component {
 					</Form.Item>
 					<Form.Item
 						{...formItemLayout}
+				   		label={lang('数据分级', 'Data classification')}
+					>
+						<Select
+							size="small"
+							style={{width: 100}}
+							optionLabelProp="value"
+							value={this.state.storagePoolData.dataClassification}
+							onChange={(value) => {
+								this.formValueChange.bind(this, 'dataClassification')(value);
+							}}
+						>
+							{
+								dataClassificationList.map(({name})=> <Select.Option key={name} value={name}>{name}</Select.Option>)
+							}
+						</Select>
+					</Form.Item>
+					<Form.Item
+						{...formItemLayout}
 						label={lang('描述', 'Description')}
 					>
 						<Input.TextArea
 							size="small"
 							autosize={{minRows: 4, maxRows: 6}}
-							placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
+							placeholder={lang('描述为可选项，长度为0-200', 'Description is optional, length is 0-200')}
 							value={this.state.storagePoolData.description}
 							maxLength={200}
 							onChange={({target: {value}}) => {
@@ -185,8 +215,8 @@ class EditStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList}}} = state;
-    return {language, storagePoolList};
+    let {language, main: {storagePool: {storagePoolList, dataClassificationList}}} = state;
+    return {language, storagePoolList, dataClassificationList};
 };
 
 const mapDispatchToProps = [];
