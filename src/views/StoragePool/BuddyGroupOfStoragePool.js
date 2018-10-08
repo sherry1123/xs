@@ -5,6 +5,7 @@ import lang from 'Components/Language/lang';
 import {Button, Table, Modal, Popover, message} from 'antd';
 import AddDiskToBuddyGroup from './AddDiskToBuddyGroup';
 import AddBuddyGroupToStoragePool from './AddBuddyGroupToStoragePool';
+import {formatStorageSize} from 'Services';
 
 class BuddyGroupOfStoragePool extends Component {
 	constructor (props){
@@ -102,7 +103,9 @@ class BuddyGroupOfStoragePool extends Component {
 			columns: [
 				{title: lang('ID', 'ID'), width: 100, dataIndex: 'id',},
 				{title: lang('路径', 'Mount Path'), width: 220, dataIndex: 'targetPath',},
-				{title: lang('容量', 'Capacity'), width: 170, dataIndex: 'capacity'},
+				{title: lang('容量', 'Capacity'), width: 170, dataIndex: 'capacity',
+					render: text => formatStorageSize(text)
+				},
 				{title: lang('操作', 'Operations'), width: 170,
 					render: (text, record, index) => <div>
 						<Popover {...buttonPopoverConf} content={lang('加盘', 'Add')}>
