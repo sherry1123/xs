@@ -178,9 +178,10 @@ def deinitialize_cluster(mode):
                             node_list['mgmt']) == 1 else node_list['mgmt'] + node_list['meta'][0:1]
                         initialize.deinitialize_mongodb(ip_list)
                         initialize.enable_node_service(node_list)
-                    for ip in mgmt:
-                        event.send('cluster', 2, 'cluster', True, {}, True, ip)
                     handler.log('Complete cluster deinitialization!')
+                    for ip in mgmt:
+                        initialize.empty_log(ip)
+                        event.send('cluster', 2, 'cluster', True, {}, True, ip)
 
         def stop_get_deinitialize_status():
             start_get_deinitialize_status.set()

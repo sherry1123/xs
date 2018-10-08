@@ -217,7 +217,6 @@ def enable_node_service(node_list):
     for ip in mgmt:
         if ip in meta_and_storage:
             meta_and_storage.remove(ip)
-        process.run('echo "" > /var/log/orcafs-gui.log', ip)
     for ip in meta_and_storage:
         process.run(
             'sed -i "/OrcaFS/ a service orcafs-gui start" /etc/rc.local', ip)
@@ -231,7 +230,6 @@ def deinitialize_mongodb(ip_list):
         process.run('service mongod stop', ip)
         process.run('sleep 5', ip)
         process.run('rm -rf /var/lib/mongo/*', ip)
-        process.run('echo "" > /var/log/mongodb/mongod.log', ip)
         process.run('mv -f /etc/mongod.conf.bak /etc/mongod.conf', ip)
         process.run('sed -i "/mongod/d" /etc/rc.local', ip)
 
@@ -295,3 +293,15 @@ def add_node_to_cluster(node_ip, node_type):
             process.run('service orcafs-gui stop', node_ip)
             process.run('service nginx stop', node_ip)
     database.add_node_to_cluster(node_ip, node_type)
+
+
+def reload_mongodb():
+    mongodb_status = get_mongodb_status()
+    mongodb_need_run = bool(int(process.run('grep -c "mongod" /etc/rc.local')))
+    if not mongodb_status and mongodb_need_run:
+        process.run('service mongod start')
+
+
+def empty_log(ip):
+    process.run('echo "" > /var/log/mongodb/mongod.log', ip)
+    process.run('echo "" > /var/log/orcafs-gui.log', ip)

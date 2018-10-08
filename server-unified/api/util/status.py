@@ -10,6 +10,8 @@ def get_cluster_status():
     global initialize
     try:
         initialize = initUtil.get_orcafs_status()
+        if initialize:
+            initUtil.reload_mongodb()
     except Exception as error:
         handler.log(handler.error(error), 2)
         handler.log('Get cluster status failed!')
