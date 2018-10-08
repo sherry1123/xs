@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, message, Form, Icon, Input, Select} from 'antd';
 import lang from 'Components/Language/lang';
+import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
 import httpRequests from 'Http/requests';
 import {formatStorageSize, validateFsName} from 'Services';
 
@@ -15,6 +15,7 @@ class CreateStoragePool extends Component {
 			dataPreparing: true,
             storagePoolData: {
                 name: '',
+				dataClassification: 2,
 				description: '',
 				targets: [],
 				buddyGroups:[]
@@ -51,7 +52,7 @@ class CreateStoragePool extends Component {
 				// no name enter
 				await this.validationUpdateState('name', {
 					cn: '请输入存储池名称',
-					en: 'please enter storage pool name'
+					en: 'Please enter storage pool name'
 				}, false);
 			} else if (!validateFsName(name)){
 				// name validate failed
@@ -102,6 +103,7 @@ class CreateStoragePool extends Component {
 			dataPreparing: true,
 			storagePoolData: {
 				name: '',
+				dataClassification: 2,
 				description: '',
 				targets: [],
 				buddyGroups:[]
@@ -110,6 +112,7 @@ class CreateStoragePool extends Component {
 				name: {status: '', help: '', valid: false},
 			}
         });
+		await httpRequests.getDataClassificationList();
         await httpRequests.getTargetsOfStoragePoolById();
 		await httpRequests.getBuddyGroupsOfStoragePoolById();
 		this.setState({dataPreparing: false});
@@ -121,7 +124,7 @@ class CreateStoragePool extends Component {
 
     render (){
         let isChinese = this.props.language === 'chinese';
-		let {targetsForStoragePool, buddyGroupsForStoragePool} = this.props;
+		let {dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool} = this.props;
         let formItemLayout = {
             labelCol: {
                 xs: {span: isChinese ? 5 : 7},
@@ -175,7 +178,7 @@ class CreateStoragePool extends Component {
 						<Input
 							size="small"
 							style={{width: '100%'}}
-							placeholder={lang('请输入存储池名称', 'please enter storage pool name')}
+							placeholder={lang('请输入存储池名称', 'Please enter storage pool name')}
 							value={this.state.storagePoolData.name}
 							onChange={({target: {value}}) => {
 								this.formValueChange.bind(this, 'name')(value);
@@ -185,13 +188,31 @@ class CreateStoragePool extends Component {
 					</Form.Item>
 					<Form.Item
 						{...formItemLayout}
+				   		label={lang('数据分级', 'Data classification')}
+					>
+						<Select
+							size="small"
+							style={{width: 100}}
+							optionLabelProp="value"
+							value={this.state.storagePoolData.dataClassification}
+							onChange={(value) => {
+								this.formValueChange.bind(this, 'dataClassification')(value);
+							}}
+						>
+							{
+								dataClassificationList.map(({name})=> <Select.Option key={name} value={name}>{name}</Select.Option>)
+							}
+						</Select>
+					</Form.Item>
+					<Form.Item
+						{...formItemLayout}
 				   		label={lang('存储目标', 'Storage Pool Target')}
 					>
 						<Select
 							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
-							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
+							placeholder={lang('请选择存储目标', 'Please select storage target(s)')}
 							optionLabelProp="value"
 							value={this.state.storagePoolData.targets}
 							onChange={(value) => {
@@ -211,7 +232,7 @@ class CreateStoragePool extends Component {
 							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
-							placeholder={lang('请选择伙伴组镜像', 'please select buddy group(s)')}
+							placeholder={lang('请选择伙伴组镜像', 'Please select buddy group(s)')}
 							optionLabelProp="value"
 							value={this.state.storagePoolData.buddyGroups}
 							onChange={(value, option) => {
@@ -229,9 +250,8 @@ class CreateStoragePool extends Component {
 					>
 						<Input.TextArea
 							size="small"
-							style={{width: '100%'}}
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
+                            placeholder={lang('描述为可选项，长度为0-200', 'Description is optional, length is 0-200')}
                             value={this.state.storagePoolData.description}
                             maxLength={200}
                             onChange={({target: {value}}) => {
@@ -246,8 +266,8 @@ class CreateStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
-    return {language, storagePoolList, targetsForStoragePool, buddyGroupsForStoragePool};
+    let {language, main: {storagePool: {storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
+    return {language, storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool};
 };
 
 const mapDispatchToProps = [];

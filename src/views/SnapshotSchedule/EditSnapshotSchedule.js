@@ -107,8 +107,8 @@ class EditSnapshotSchedule extends Component {
                         <Input.TextArea
                             size="small"
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为选填项', 'description is optional')}
-                            maxLength={255}
+                            placeholder={lang('描述为选填项，长度为0-200', 'Description is optional, length is 0-200')}
+                            maxLength={200}
                             value={this.state.scheduleData.description}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);

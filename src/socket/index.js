@@ -28,7 +28,7 @@ const requestServerUpInterval = 1000 * 2;
 // initialization message
 socket.on('init status', initStatus => {
     if (process.env.NODE_ENV === 'development'){
-        console.info('%c ws message(init status): ', 'color: #f6b93f', 'init status:', initStatus);
+        console.info('%c ws message(init status): ', 'color: #0099FF', 'init status:', initStatus);
     }
     store.dispatch(initializeAction.setInitStatus(initStatus));
     if (!initStatus.status){

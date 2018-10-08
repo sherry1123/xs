@@ -94,9 +94,9 @@ class EditSnapshot extends Component {
                         <Input.TextArea
                             size='small'
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为可选项', 'description is optional')}
+                            placeholder={lang('描述为可选项，长度为0-200', 'Description is optional, length is 0-200')}
                             value={this.state.snapshotData.description}
-                            maxLength={255}
+                            maxLength={200}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                             }}

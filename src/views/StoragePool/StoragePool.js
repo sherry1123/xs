@@ -123,6 +123,7 @@ class StoragePool extends Component {
             columns: [
 				{title: lang('ID', 'ID'), width: 100, dataIndex: 'poolId',},
                 {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
+				{title: lang('数据分级', 'Data Classification'), width: 150, dataIndex: 'dataClassification',},
 				{title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
 					render: text => text || '--'
 				},

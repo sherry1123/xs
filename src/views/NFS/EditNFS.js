@@ -94,7 +94,7 @@ class EditNFS extends Component {
                             style={{width: isChinese ? 280 : 260}} size="small"
                             autosize={{minRows: 4, maxRows: 6}}
                             maxLength={200}
-                            placeholder={lang('描述为选填项，长度0-200位', 'description is optional, length is 0-200')}
+                            placeholder={lang('描述为选填项，长度为0-200', 'Description is optional, length is 0-200')}
                             value={this.state.shareData.description}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);

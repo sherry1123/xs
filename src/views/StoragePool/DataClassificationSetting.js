@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
+import {Button, Input, message, Modal, Popover, Table} from 'antd';
 import CreateDataClassification from './CreateDataClassification';
 import EditDataClassification from './EditDataClassification';
-import {Button, Input, message, Modal, Popover, Table} from 'antd';
+import httpRequests from 'Http/requests';
 
 class DataClassificationSetting extends Component {
     constructor (props){
@@ -70,7 +70,7 @@ class DataClassificationSetting extends Component {
 		Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
-				<p>{lang(`您将要执行删除数据分级 ${dataClassification.name} 的操作。`, `You are about to delete storage pool ${dataClassification.name}.`)}</p>
+				<p>{lang(`您将要执行删除数据分级 ${dataClassification.name} 的操作。`, `You are about to delete data classification ${dataClassification.name}.`)}</p>
 				<p>{lang(`该操作将会从系统中移除数据分级 ${dataClassification.name}。如果有存储池已经应用了该分级，将为其自动更换为该分级的上一个分级。`, `This operation will delete data classification ${dataClassification.name} from the system. If there is already a storage pool applies this data classification, will switch it to its higher one automatically fot it.`)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的数据分级，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right data classification and it's no longer necessary.`)}</p>
 			</div>,
@@ -104,7 +104,7 @@ class DataClassificationSetting extends Component {
             size: 'default',
             dataSource: dataClassificationList,
             pagination: dataClassificationList.length > 5 && {
-                pageSize: 12,
+                pageSize: 5,
                 showTotal: (total, range) => lang(
                     `显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`,
                     `show ${range[0]}-${range[1]} of ${total} items}`
@@ -120,7 +120,7 @@ class DataClassificationSetting extends Component {
 					<Input.Search
                         style={{width: 170}}
 						size="small"
-						placeholder={lang('存储分级名称', 'Data Classification Name')}
+						placeholder={lang('分级名称', 'Classification Name')}
 						value={this.state.query}
 						onChange={this.queryChange.bind(this)}
 						onSearch={this.searchInTable.bind(this)}
@@ -129,6 +129,7 @@ class DataClassificationSetting extends Component {
 						style={{float: 'right'}}
 						type="primary"
 						size="small"
+						disabled={!dataClassificationList.length}
 						onClick={this.create.bind(this)}
 					>
 						{lang('创建', 'Create')}
@@ -137,28 +138,34 @@ class DataClassificationSetting extends Component {
             ),
             rowClassName: () => 'ellipsis',
             columns: [
-                {title: lang('名称', 'Name'), width: 150, dataIndex: 'name',},
-				{title: lang('描述', 'Description'), width: 150, dataIndex: 'description',
+                {title: lang('名称', 'Name'), width: 80, dataIndex: 'name',},
+				{title: lang('描述', 'Description'), width: 200, dataIndex: 'description',
 					render: text => text || '--'
 				},
 				{
-					title: lang('操作', 'Operations'), width: 150,
+					title: lang('操作', 'Operations'), width: 90,
 					render: (text, record, index) => <div>
 						<Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
 							<Button
 								{...buttonConf}
 								onClick={this.edit.bind(this, record, index)}
 								icon="edit"
-							>
-							</Button>
+							/>
 						</Popover>
-						<Popover {...buttonPopoverConf} content={lang('刪除', 'Delete')}>
+						<Popover
+							{...buttonPopoverConf}
+							content={
+								record.name <= 3 ? lang('默认分级不能删除', 'Default classification can\'t be deleted') :
+									record.name < dataClassificationList.length ? lang('分级只能按顺序依次删除', 'Classification can only be deleted in order') :
+										lang('刪除', 'Delete')
+							}
+						>
 							<Button
 								{...buttonConf}
 								onClick={this.delete.bind(this, record, index)}
 								icon="delete"
-							>
-							</Button>
+								disabled={record.name <= 3 || record.name < dataClassificationList.length}
+							/>
 						</Popover>
 					</div>
 				}
@@ -166,7 +173,7 @@ class DataClassificationSetting extends Component {
         };
         return (
             <Modal
-				width={600}
+				width={500}
 				title={lang(`数据分级信息`,`Data Classification Information`)}
 				closable={false}
 				maskClosable={false}

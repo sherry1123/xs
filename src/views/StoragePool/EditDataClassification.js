@@ -1,22 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {Button, Modal, Form, Input, message} from 'antd';
+import httpRequests from 'Http/requests';
 
 class EditDataClassification extends Component {
     constructor (props){
         super(props);
         this.state = {
             visible: false,
-            formValid: false,
             formSubmitting: false,
             dataClassificationData: {
                 name: '',
 				description: '',
-            },
-            validation: {
-                name: {status: '', help: '', valid: false},
             }
         };
     }
@@ -30,10 +26,7 @@ class EditDataClassification extends Component {
         this.setState({
             visible: true,
             formSubmitting: false,
-            dataClassificationData,
-            validation: {
-                name: {status: '', help: '', valid: false},
-            }
+            dataClassificationData
         });
     }
 
@@ -59,18 +52,18 @@ class EditDataClassification extends Component {
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 5 : 7},
-                sm: {span: isChinese ? 5 : 7},
+                xs: {span: isChinese ? 5 : 5},
+                sm: {span: isChinese ? 5 : 5},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 19 : 17},
-                sm: {span: isChinese ? 19 : 17},
+                xs: {span: isChinese ? 19 : 19},
+                sm: {span: isChinese ? 19 : 19},
             }
         };
         return (
             <Modal
                 title={lang('编辑数据分级', 'Edit Data Classification')}
-                width={540}
+                width={400}
                 closable={false}
                 maskClosable={false}
                 visible={this.state.visible}
@@ -86,7 +79,6 @@ class EditDataClassification extends Component {
                         <Button
                             size="small"
                             type="primary"
-							disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.editDataClassification.bind(this)}
                         >
@@ -99,18 +91,8 @@ class EditDataClassification extends Component {
 					<Form.Item
 						{...formItemLayout}
 						label={lang('名称', 'Name')}
-						validateStatus={this.state.validation.name.status}
-						help={this.state.validation.name.help}
 					>
-						<Input
-							size="small"
-							style={{width: '100%'}}
-							value={this.state.dataClassificationData.name}
-							onChange={({target: {value}}) => {
-								this.formValueChange.bind(this, 'name')(value);
-								this.validateForm.bind(this)('name');
-							}}
-						/>
+                        <span>{this.state.dataClassificationData.name}</span>
 					</Form.Item>
 					<Form.Item
 						{...formItemLayout}
@@ -119,7 +101,7 @@ class EditDataClassification extends Component {
 						<Input.TextArea
 							size="small"
 							autosize={{minRows: 4, maxRows: 6}}
-							placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
+							placeholder={lang('描述为可选项，长度为0-200', 'Description is optional, length is 0-200')}
 							value={this.state.dataClassificationData.description}
 							maxLength={200}
 							onChange={({target: {value}}) => {

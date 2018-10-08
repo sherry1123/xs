@@ -108,7 +108,7 @@ class Login extends Component {
                 this.setState({loginErrorCode: code, doingLogin: false});
             }
         } else {
-            message.warning(lang('请正确输入用户名和密码', 'please fill login form'));
+            message.warning(lang('请正确输入用户名和密码', 'Please fill up the login form'));
         }
     }
 

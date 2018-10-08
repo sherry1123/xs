@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, message, Form, Input} from 'antd';
 import lang from 'Components/Language/lang';
+import {Button, Form, Input, Modal, message, Icon, Popover} from 'antd';
 import httpRequests from 'Http/requests';
 
 class CreateDataClassification extends Component {
@@ -9,14 +9,10 @@ class CreateDataClassification extends Component {
         super(props);
         this.state = {
             visible: false,
-            formValid: false,
             formSubmitting: false,
             dataClassificationData: {
                 name: '',
 				description: '',
-            },
-            validation: {
-                name: {status: '', help: '', valid: false},
             }
         };
     }
@@ -24,49 +20,6 @@ class CreateDataClassification extends Component {
 	formValueChange (key, value){
 		let dataClassificationData = Object.assign({}, this.state.dataClassificationData, {[key]: value});
 		this.setState({dataClassificationData});
-	}
-
-	async validationUpdateState (key, value, valid){
-		let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
-	}
-
-	async validateForm (key){
-		await this.validationUpdateState(key, {cn: '', en: ''}, true);
-		let {name} = this.state.dataClassificationData;
-		if (key === 'name'){
-			if (!name){
-				// no name enter
-				await this.validationUpdateState('name', {
-					cn: '请输入数据分级名称',
-					en: 'please enter data classification name'
-				}, false);
-			} else {
-				let isNameDuplicated = this.props.dataClassificationList.some(dataClassification => dataClassification.name === name);
-				if (isNameDuplicated){
-					await this.validationUpdateState('name', {
-						cn: '该数据分级已经存在',
-						en: 'The data classification is already existed'
-					}, false);
-				}
-			}
-		}
-
-
-		// calculate whole form validation
-		let formValid = true;
-		Object.keys(this.state.validation).forEach(key => {
-			formValid = formValid && this.state.validation[key].valid;
-		});
-		this.setState({formValid});
 	}
 
 	async createDataClassification (){
@@ -84,16 +37,17 @@ class CreateDataClassification extends Component {
 	}
 
     async show (){
+    	let {dataClassificationList} = this.props;
+    	let name = dataClassificationList.reduce(({name: prevName}, {name: currName}) => prevName > currName ? prevName : currName, {name: 1});
+    	name = typeof name === 'object' ? name.name : name;
+    	// new classification must be bigger than current biggest one
+    	name += 1;
         this.setState({
             visible: true,
-			formValid: false,
             formSubmitting: false,
 			dataClassificationData: {
-				name: '',
+				name,
 				description: '',
-			},
-			validation: {
-				name: {status: '', help: '', valid: false},
 			}
         });
     }
@@ -106,18 +60,18 @@ class CreateDataClassification extends Component {
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 5 : 7},
-                sm: {span: isChinese ? 5 : 7},
+                xs: {span: isChinese ? 5 : 5},
+                sm: {span: isChinese ? 5 : 5},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 19 : 17},
-                sm: {span: isChinese ? 19 : 17},
+                xs: {span: isChinese ? 19 : 19},
+                sm: {span: isChinese ? 19 : 19},
             }
         };
         return (
             <Modal
 				title={lang('创建数据分级', 'Create Data Classification')}
-                width={480}
+                width={400}
                 closable={false}
                 maskClosable={false}
                 visible={this.state.visible}
@@ -133,7 +87,6 @@ class CreateDataClassification extends Component {
                         <Button
                             size="small"
                             type="primary"
-							disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.createDataClassification.bind(this)}
                         >
@@ -146,19 +99,14 @@ class CreateDataClassification extends Component {
 					<Form.Item
 						{...formItemLayout}
 						label={lang('名称', 'Name')}
-						validateStatus={this.state.validation.name.status}
-						help={this.state.validation.name.help}
 					>
-						<Input
-							size="small"
-							style={{width: '100%'}}
-							placeholder={lang('请输入数据分级名称', 'please enter data classification name')}
-							value={this.state.dataClassificationData.name}
-							onChange={({target: {value}}) => {
-								this.formValueChange.bind(this, 'name')(value);
-								this.validateForm.bind(this)('name');
-							}}
-						/>
+						<span>{this.state.dataClassificationData.name}</span>
+						<Popover
+                            placement="right"
+                            content={lang('分级名称自动在现有基础上递增。', 'Classification name automatically increase on the basis of existing ones.')}
+                        >
+                            <Icon type="question-circle-o" className="fs-info-icon m-l" />
+                        </Popover>
 					</Form.Item>
 					<Form.Item
 						{...formItemLayout}
@@ -168,7 +116,7 @@ class CreateDataClassification extends Component {
 							size="small"
 							style={{width: '100%'}}
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为可选项，长度0-200位', 'description is optional, length 0-200 bits')}
+                            placeholder={lang('描述为可选项，长度为0-200', 'Description is optional, length is 0-200')}
                             value={this.state.dataClassificationData.description}
                             maxLength={200}
                             onChange={({target: {value}}) => {

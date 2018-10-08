@@ -36,7 +36,7 @@ class CreateSnapshot extends Component {
                 // no name enter
                 await this.validationUpdateState('name', {
                     cn: '请输入快照名称',
-                    en: 'please enter snapshot name'
+                    en: 'Please enter snapshot name'
                 }, false);
             } else if (!validateFsName(name)){
                 // name validate failed
@@ -144,7 +144,7 @@ class CreateSnapshot extends Component {
                         help={this.state.validation.name.help}
                     >
                         <Input size='small'
-                            placeholder={lang('请输入快照名称', 'please enter snapshot name')}
+                            placeholder={lang('请输入快照名称', 'Please enter snapshot name')}
                             value={this.state.snapshotData.name}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'name')(value);
@@ -155,9 +155,9 @@ class CreateSnapshot extends Component {
                     <Form.Item {...formItemLayout} label={lang('描述', 'Description')}>
                         <Input.TextArea size='small'
                             autosize={{minRows: 4, maxRows: 6}}
-                            placeholder={lang('描述为可选项', 'description is optional')}
+                            placeholder={lang('描述为可选项，长度为0-200', 'Description is optional, length is 0-200')}
                             value={this.state.snapshotData.description}
-                            maxLength={255}
+                            maxLength={200}
                             onChange={({target: {value}}) => {
                                 this.formValueChange.bind(this, 'description')(value);
                             }}

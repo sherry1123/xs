@@ -3,8 +3,7 @@ import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {formatStorageSize} from 'Services';
-import {Button, Modal, Form, Select} from 'antd';
-import {message} from "antd/lib/index";
+import {Button, Modal, Form, message, Select} from 'antd';
 
 class AddTargetToStoragePool extends Component {
 	constructor (props){
@@ -110,7 +109,7 @@ class AddTargetToStoragePool extends Component {
 							size="small"
 							mode="multiple"
 							style={{width: '100%'}}
-							placeholder={lang('请选择存储目标', 'please select storage target(s)')}
+							placeholder={lang('请选择存储目标', 'Please select storage target(s)')}
 							optionLabelProp="value"
 							value={this.state.targetData.targets}
 							onChange={(value) => {
