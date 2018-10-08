@@ -234,9 +234,11 @@ export default  {
     async getTargetsOfStoragePoolById (poolId){
 		requestHandler(async () => {
 			let data = await fetchGet('/api/gettargetsinstoragepool');
-			if(!!data)
-			{
-				poolId?
+			if (!!data){
+			    // if there is a pool ID, it means the targets are fetched from a custom storage pool,
+                // if not, the targets are fetched from the default storage pool, and they can be
+                // added into a custom storage pool.
+				poolId ?
 					store.dispatch(storagePoolAction.setTargetsOfStoragePool(data)):
 					store.dispatch(storagePoolAction.setTargetsForStoragePool(data));
 			}
@@ -246,9 +248,8 @@ export default  {
     async getBuddyGroupsOfStoragePoolById (poolId){
 		requestHandler(async () => {
 			let data = await fetchGet('/api/getbuddygroupsinstoragepool');
-			if(!!data)
-            {
-				poolId?
+			if (!!data){
+				poolId ?
 					store.dispatch(storagePoolAction.setBuddyGroupsOfStoragePool(data)):
 					store.dispatch(storagePoolAction.setBuddyGroupsForStoragePool(data));
             }
