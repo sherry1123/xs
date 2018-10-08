@@ -3,7 +3,7 @@ from flask_socketio import SocketIO
 
 from api.module import handler
 
-app = Flask('OrcaFS')
+app = Flask('OrcaFS-GUI')
 socketio = SocketIO(app)
 
 

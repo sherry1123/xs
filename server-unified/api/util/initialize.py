@@ -161,12 +161,12 @@ def initialize_mongodb(param):
     ip_list = param['ip_list']
     replica_set = param['replica_set']
     if not replica_set:
-        command = '/usr/bin/mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
-        process.run(command)
-        process.run('sed -i "/MongoDB/ a %s" /etc/rc.local' % command)
+        process.run('mv /etc/mongod.conf /etc/mongod.conf.bak')
+        process.run(
+            'cp /var/orcafs-gui/server-unified/conf/mongod.single.conf /etc/mongod.conf')
+        process.run('service mongod start')
+        process.run('sed -i "/MongoDB/ a service mongod start" /etc/rc.local')
     else:
-        command = '/usr/bin/mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --replSet orcafs --bind_ip_all --fork'
-
         def create_members_config(members):
             param = []
             for i in range(len(members)):
@@ -174,8 +174,12 @@ def initialize_mongodb(param):
             return param
         config = {'_id': 'orcafs', 'members': create_members_config(ip_list)}
         for ip in ip_list:
-            process.run(command, ip)
-            process.run('sed -i "/MongoDB/ a %s" /etc/rc.local' % command, ip)
+            process.run('mv /etc/mongod.conf /etc/mongod.conf.bak', ip)
+            process.run(
+                'cp /var/orcafs-gui/server-unified/conf/mongod.replset.conf /etc/mongod.conf', ip)
+            process.run('service mongod start', ip)
+            process.run(
+                'sed -i "/MongoDB/ a service mongod start" /etc/rc.local', ip)
         process.run('/usr/bin/mongod --quiet --eval "rs.initiate(%s)"' %
                     json.dumps(config))
     process.run('sleep 20')
@@ -224,10 +228,11 @@ def enable_node_service(node_list):
 
 def deinitialize_mongodb(ip_list):
     for ip in ip_list:
-        process.run('killall mongod', ip)
+        process.run('service mongod stop', ip)
         process.run('sleep 5', ip)
         process.run('rm -rf /var/lib/mongo/*', ip)
         process.run('echo "" > /var/log/mongodb/mongod.log', ip)
+        process.run('mv -f /etc/mongod.conf.bak /etc/mongod.conf', ip)
         process.run('sed -i "/mongod/d" /etc/rc.local', ip)
 
 
