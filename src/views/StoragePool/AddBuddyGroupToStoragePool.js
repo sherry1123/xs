@@ -52,14 +52,14 @@ class AddBuddyGroupToStoragePool extends Component {
 		this.setState({formValid});
 	}
 
-	show (poolName){
+	show (poolId, poolName){
 		this.setState({
 			visible: true,
 			formValid: false,
 			formSubmitting: false,
 			poolName,
 			buddyGroupData: {
-				name: '',
+				poolId,
 				buddyGroups:[],
 			},
 			validation: {
@@ -77,11 +77,12 @@ class AddBuddyGroupToStoragePool extends Component {
 		let buddyGroupData = Object.assign({}, this.state.buddyGroupData);
 		this.setState({formSubmitting: true});
 		try {
-			httpRequests.getBuddyGroupsOfStoragePoolById();
+			await httpRequests.addBuddyGroupToStoragePool(buddyGroupData);
+			httpRequests.getBuddyGroupsOfStoragePoolById(buddyGroupData.poolId);
 			await this.hide();
-			message.success(lang(`开始添加伙伴组镜像 ${buddyGroupData.name}!`, `Start adding buddy group ${buddyGroupData.name} !`));
+			message.success(lang(`为存储池 ${this.state.poolName} 添加伙伴组成功!`, `Add buddy group(s) to storage pool ${this.state.poolName} successfully!`));
 		} catch ({msg}){
-			message.error(lang(`伙伴组镜像 ${buddyGroupData.name} 添加失败, 原因: `, `Add buddy group ${buddyGroupData.name} failed, reason: `) + msg);
+			message.error(lang(`为存储池 ${this.state.poolName} 添加伙伴组失败!, 原因: `, `Add buddy group(s) to storage pool ${this.state.poolName} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}

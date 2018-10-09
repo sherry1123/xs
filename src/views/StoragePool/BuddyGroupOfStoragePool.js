@@ -60,8 +60,9 @@ class BuddyGroupOfStoragePool extends Component {
 		});
 	}
 
-	addBuddyGroup (){
-		this.addBuddyGroupToStorageWrapper.getWrappedInstance().show(this.state.poolName);
+	addBuddyGroupToStoragePool (){
+		let {poolId, poolName} = this.state;
+		this.addBuddyGroupToStorageWrapper.getWrappedInstance().show(poolId, poolName);
 	}
 
 	addDiskToBuddyGroup (buddyGroup){
@@ -93,7 +94,7 @@ class BuddyGroupOfStoragePool extends Component {
 					<Button
 						size='small'
 						style={{float: 'right'}}
-						onClick={this.addBuddyGroup.bind(this)}
+						onClick={this.addBuddyGroupToStoragePool.bind(this)}
 					>
 						{lang('添加', 'Add')}
 					</Button>

@@ -61,7 +61,8 @@ class TargetOfStoragePool extends Component {
 	}
 
 	addTargetToStoragePool (){
-		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(this.state.poolName);
+		let {poolId, poolName} = this.state;
+		this.addTargetToStoragePoolWrapper.getWrappedInstance().show(poolId, poolName);
 	}
 
 	addDiskToTarget (target){

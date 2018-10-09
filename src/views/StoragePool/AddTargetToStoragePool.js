@@ -9,16 +9,15 @@ class AddTargetToStoragePool extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
-			poolName: '',
 			visible: false,
 			formValid: false,
 			formSubmitting: false,
+			poolName: '',
 			targetData: {
-				name: '',
+				poolId: '',
 				targets: [],
 			},
 			validation: {
-				name: {status: '', help: '', valid: false},
 				targets: {status: '', help: '', valid: false},
 			}
 		};
@@ -29,14 +28,17 @@ class AddTargetToStoragePool extends Component {
 		this.setState({targetData});
 	}
 
-	show (poolName){
+	show (poolId, poolName){
 		this.setState({
 			visible: true,
 			poolName,
 			targetData: {
-				name: '',
+				poolId,
 				targets: [],
 			},
+			validation: {
+				targets: {status: '', help: '', valid: false},
+			}
 		});
 		httpRequests.getTargetsOfStoragePoolById();
 	}
@@ -49,11 +51,12 @@ class AddTargetToStoragePool extends Component {
 		let targetData = Object.assign({}, this.state.targetData);
 		this.setState({formSubmitting: true});
 		try {
-			httpRequests.getTargetsOfStoragePoolById();
+			await httpRequests.addTargetToStoragePool(targetData);
+			httpRequests.getTargetsOfStoragePoolById(targetData.poolId);
 			await this.hide();
-			message.success(lang(`开始添加存储目标 ${targetData.name}!`, `Start adding storage target ${targetData.name} !`));
+			message.success(lang(`为存储池 ${this.state.poolName} 添加存储目标成功!`, `Add target(s) to storage pool ${this.state.poolName} successfully!`));
 		} catch ({msg}){
-			message.error(lang(`存储目标 ${targetData.name} 添加失败, 原因: `, `Add storage target ${targetData.name} failed, reason: `) + msg);
+			message.error(lang(`为存储池 ${this.state.poolName} 添加存储目标失败!, 原因: `, `Add target(s) to storage pool ${this.state.poolName} failed, reason: `) + msg);
 		}
 		this.setState({formSubmitting: false});
 	}

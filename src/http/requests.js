@@ -264,12 +264,20 @@ export default  {
 		});
     },
 
-    async deleteTargetFromStoragePool (storagePoolTarget){
-
+    async addTargetToStoragePool (targetData){
+        await fetchPost('/api/addtargetstostoragepool  ', targetData);
     },
 
-    async deleteBuddyGroupFromStoragePool (storageBuddyGroup){
+    async deleteTargetFromStoragePool (targetData){
+        await fetchPost('/api/removetargetsfromstoragepool', targetData);
+    },
 
+    async addBuddyGroupToStoragePool (buddyGroupData){
+        await fetchPost('/api/addbuddygroupstostoragepool', buddyGroupData);
+    },
+
+    async deleteBuddyGroupFromStoragePool (buddyGroupData){
+        await fetchPost('/api/removebuddygroupsfromstoragepool', buddyGroupData);
     },
 
     async getDataClassificationList (){
