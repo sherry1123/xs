@@ -53,17 +53,19 @@ class LocalAuthUserOfGroup extends Component {
         if (!user.secondaryGroup.length){
             return message.warning(lang('不能将用户从所在主组中移除！', 'Can\'t remove user from its primary group!'));
         }
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行移除本地认证用户 ${user.name} 的操作。`, `You are about to remove local authentication user ${user.name}.`)}</p>
                 <p>{lang(`该操作将导致该用户无法继续访问共享数据，业务中断。`, `This operation will make the user no longer be able to access shared data and related services are interrupted..`)}</p>
                 <p>{lang(`建议：执行该操作前请确认您选择的本地认证用户是否正确，并确认它不再需要。`, `A suggestion: before removing the user ensure that the selected user is no longer necessary.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     user = Object.assign({}, user, {groupName: this.state.groupName});
                     await httpRequests.removeLocalAuthUserFromGtoup(user);
@@ -74,6 +76,7 @@ class LocalAuthUserOfGroup extends Component {
                 } catch ({msg}){
                     message.error(lang(`移除本地认证用户 ${user.name} 失败, 原因: `, `Remove local authentication user ${user.name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 

@@ -90,18 +90,20 @@ class SnapshotSchedule extends Component {
     }
 
     delete (schedule, index){
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除定时快照计划 ${schedule.name} 的操作。`, `You are about to delete timed snapshot schedule ${schedule.name}.`)}</p>
                 <p>{lang(`该操作将会从系统中删除该计划。并且如果该计划已启用，删除它可能会导致当前的定时创建快照功能失效。`, `This operation will delete this schedule from the system. If this schedule is enabled, delete it will make the time create snapshot function lose its effectiveness.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right schedule and it's no longer necessary. In order to ensure data security, you should execute another schedule after delete this one.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteSnapshotSchedule(schedule);
                     let snapshotScheduleList = Object.assign([], this.state.snapshotScheduleList);
@@ -111,6 +113,7 @@ class SnapshotSchedule extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除定时快照任务 ${schedule.name} 失败, 原因: `, `Delete snapshot schedule ${schedule.name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -120,18 +123,20 @@ class SnapshotSchedule extends Component {
 
     batchDelete (){
         let {batchDeleteNames} = this.state;
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个定时快照计划的操作。`, `You are about to delete these ${batchDeleteNames.length} timed snapshot schedule(s).`)}</p>
                 <p>{lang(`该操作将会从系统中删除这些定时快照计划。`, `This operation will delete the schedule(s) from the system. `)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的计划是否正确，并确认它们已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right schedule(s) and it's(they're) no longer necessary.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteSnapshotSchedulesInBatch(batchDeleteNames);
                     await this.setState({batchDeleteSnapshotNames: []});
@@ -140,6 +145,7 @@ class SnapshotSchedule extends Component {
                 } catch ({msg}){
                     message.error(lang('批量删除定时快照计划失败，原因：', 'Delete timed snapshot schedules in batch failed, reason: ') + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 

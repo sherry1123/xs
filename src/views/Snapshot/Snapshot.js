@@ -71,18 +71,20 @@ class Snapshot extends Component {
     }
 
     rollback (snapshot){
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行回滚快照 ${snapshot.name} 的操作。`, `You are about to rollback snapshot ${snapshot.name}.`)}</p>
                 <p>{lang(`该操作将会将系统恢复至创建该快照的那个时间点的状态，在这一过程中无法做任何操作。这需要一定时间才能完成。`, `This operation will recover system to the time point that create this snapshot at. Can't do anything in this process. This will take some time to finish it.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照的创建时间是否是想要恢复到的时间点，并确保已无业务运行在系统上。`, `A suggestion: before executing this operation, ensure that the selected snapshot's create time is what you want the system to recover to, and ensure that there's no service is running on the system.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('回滚', 'Rollback'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.rollbackSnapshot(snapshot);
                     httpRequests.getSnapshotList();
@@ -90,6 +92,7 @@ class Snapshot extends Component {
                 } catch ({msg}){
                     message.error(lang(`回滚快照 ${snapshot.name} 失败, 原因: `, `Rollback snapshot ${snapshot.name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -98,18 +101,20 @@ class Snapshot extends Component {
     }
 
     delete (snapshot){
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除快照 ${snapshot.name} 的操作。`, `You are about to delete snapshot ${snapshot.name}.`)}</p>
                 <p>{lang(`该操作将会从系统中删除该快照。`, `This operation will delete this snapshot from the system. `)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot and it's no longer necessary.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteSnapshot(snapshot);
                     httpRequests.getSnapshotList();
@@ -117,6 +122,7 @@ class Snapshot extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除快照 ${snapshot.name} 失败, 原因: `, `Delete snapshot ${snapshot.name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -126,18 +132,20 @@ class Snapshot extends Component {
 
     batchDelete (){
         let {batchDeleteNames} = this.state;
-        let batchDeleteModal = Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个快照的操作。`, `You are about to delete these ${batchDeleteNames.length} snapshot(s).`)}</p>
                 <p>{lang(`该操作将会从系统中删除这些快照。`, `This operation will delete the snapshot(s) from the system. `)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的快照是否正确，并确认它(们)已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right snapshot(s) and it's(they're) no longer necessary.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteSnapshotsInBatch(batchDeleteNames);
                     await this.setState({batchDeleteNames: []});
@@ -146,9 +154,10 @@ class Snapshot extends Component {
                 } catch ({msg}){
                     message.error(lang('批量删除快照失败，原因：', 'Delete snapshots in batch failed, reason: ') + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
-                batchDeleteModal.destroy();
+                modal.destroy();
             }
         });
     }

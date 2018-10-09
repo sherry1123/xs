@@ -60,18 +60,18 @@ class BuddyGroup extends Component {
                 ),
                 size: 'normal',
             },
-            rowKey: record => `${record.targetId}-${record.service}`,
+            rowKey: record => `${record.groupId}-${record.type}`,
             locale: {
                 emptyText: lang('暂无伙伴组', 'No Buddy Group')
             },
             title: () => (<span className="fs-table-title"><Icon type="desktop" />{lang('伙伴组', 'Buddy Group')}</span>),
             rowClassName: () => 'ellipsis',
             columns: [
-                {title: lang('组ID', 'Group ID'), width: 100, dataIndex: 'groupId',},
+                {title: lang('组ID', 'Group ID'), width: 70, dataIndex: 'groupId',},
                 {title: lang('服务角色', 'Service Role'), width: 100, dataIndex: 'type',},
-                {title: lang('主目标ID', 'Primary Target ID'), width: 80, dataIndex: 'primary.targetId',},
+                {title: lang('主目标ID', 'Primary Target ID'), width: 90, dataIndex: 'primary.targetId',},
                 {title: lang('主目标路径', 'Primary Target Path'), width: 220, dataIndex: 'primary.mountPath',},
-                {title: lang('从目标ID', 'Secondary Target ID'), width: 80, dataIndex: 'secondary.targetId',},
+                {title: lang('从目标ID', 'Secondary Target ID'), width: 100, dataIndex: 'secondary.targetId',},
                 {title: lang('从目标路径', 'Secondary Target Path'), width: 220, dataIndex: 'secondary.mountPath',},
             ],
         };

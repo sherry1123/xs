@@ -56,18 +56,20 @@ class LocalAuthUser extends Component {
 
     enableLocalAuthUser (userData){
         let {name} = userData;
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行启用本地认证用户 ${name} 的操作。`, `You are about to enable local authentication user ${name}.`)}</p>
                 <p>{lang(`该操作将该用户处于可用状态，在未过期状态下可以访问共享数据。`, `This operation will let user available, and can access share data without overdue status.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认是否需要启用他。`, `A suggestion: before executing this operation, determine whether the local authentication user needs to be enabled.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'warning',
             okText: lang('启用', 'Enable'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.updateLocalAuthUserStatus(name, true);
                     httpRequests.getLocalAuthUserList();
@@ -75,6 +77,7 @@ class LocalAuthUser extends Component {
                 } catch ({msg}){
                     message.error(lang(`启用本地认证用户 ${name} 失败, 原因: `, `Enable local authentication user ${name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -84,18 +87,20 @@ class LocalAuthUser extends Component {
 
     disableLocalAuthUser (userData){
         let {name} = userData;
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行禁用本地认证用户 ${name} 的操作。`, `You are about to disable local authentication user ${name}.`)}</p>
                 <p>{lang(`该操作将该用户处于不可用状态，不可以访问共享数据。`, `This operation will let user available, and can't access share data any more.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认是否需要禁用他。`, `A suggestion: before executing this operation, determine whether the local authentication user needs to be disabled.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'warning',
             okText: lang('禁用', 'Disable'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.updateLocalAuthUserStatus(name, false);
                     httpRequests.getLocalAuthUserList();
@@ -103,6 +108,7 @@ class LocalAuthUser extends Component {
                 } catch ({msg}){
                     message.error(lang(`禁用本地认证用户 ${name} 失败, 原因: `, `Disable local authentication user ${name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -111,18 +117,20 @@ class LocalAuthUser extends Component {
     }
 
     delete (userData){
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除本地认证用户 ${userData.name} 的操作。`, `You are about to delete local authentication user ${userData.name}.`)}</p>
                 <p>{lang(`该操作将导致该用户无法继续访问共享数据，业务中断。`, `This operation will cause access exceptions on this user.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认它不再需要。`, `A suggestion: before executing this operation, determine whether the local authentication user is necessary.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteLocalAuthUser(userData);
                     httpRequests.getLocalAuthUserList();
@@ -130,6 +138,7 @@ class LocalAuthUser extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除本地认证用户 ${userData.name} 失败, 原因: `, `Delete local authentication user ${userData.name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -139,26 +148,29 @@ class LocalAuthUser extends Component {
 
     batchDelete (){
         let {batchDeleteNames} = this.state;
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个本地认证用户的操作。`, `You are about to delete these ${batchDeleteNames.length} local authentication users.`)}</p>
                 <p>{lang(`该操作将导致这些用户无法继续访问共享数据，业务中断`, `This operation will cause access exceptions on these users.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保您选择的本地认证用户是否正确，并确认它不再需要。`, `A suggestion: before executing this operation, determine whether the local authentication users are necessary.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteLocalAuthUserInBatch(batchDeleteNames);
-                    await this.setState({batchDeleteNames: []});
+                    this.setState({batchDeleteNames: []});
                     httpRequests.getLocalAuthUserList();
                     message.success(lang('批量删除本地认证用户成功！', 'Delete local authentication users in batch successfully!'));
                 } catch ({msg}){
                     message.error(lang('批量删除本地认证用户成功，原因：', 'Delete local authentication users in batch, reason: ') + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 

@@ -17,18 +17,20 @@ class TargetOfStoragePool extends Component {
 	}
 
 	delete (target, index){
-		Modal.confirm({
+		const modal = Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
 				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除存储目标 ID:${target.id} 的操作。`, `You are about to remove target ID:${target.id} from storage pool ${this.state.poolName}.`)}</p>
 				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除存储目标 ID:${target.id}，将会导致该存储池的容量减少，并且。`, `This operation will delete target ID:${target.id} from storage pool ${this.state.poolName}. `)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储目标，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right target and it's no longer necessary.`)}</p>
 			</div>,
+			keyboard: false,
 			iconType: 'exclamation-circle-o',
 			okType: 'danger',
 			okText: lang('删除', 'Delete'),
 			cancelText: lang('取消', 'Cancel'),
 			onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
 				try {
 					await httpRequests.deleteTargetFromStoragePool(target);
 					let targetsOfStoragePool = Object.assign([], this.state.targetsOfStoragePool);
@@ -38,6 +40,7 @@ class TargetOfStoragePool extends Component {
 				} catch ({msg}){
 					message.error(lang(`删除存储池目标 ID:${target.id} 失败, 原因: `, `Delete storage pool target ${target.id} failed, reason: `) + msg);
 				}
+                modal.update({cancelButtonProps: {disabled: false}});
 			},
 			onCancel: () => {
 

@@ -58,18 +58,20 @@ class StoragePool extends Component {
 	}
 
 	delete (storagePool, index){
-		Modal.confirm({
+		const modal = Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
 				<p>{lang(`您将要执行删除存储池 ${storagePool.name}(ID: ${storagePool.poolId}) 的操作。`, `You are about to delete storage pool ${storagePool.name}(ID: ${storagePool.poolId}).`)}</p>
 				<p>{lang(`该操作将会从系统中移除存储池${storagePool.name}。`, `This operation will delete storage pool ${storagePool.name} from the system. `)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储池，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
 			</div>,
+			keyboard: false,
 			iconType: 'exclamation-circle-o',
 			okType: 'danger',
 			okText: lang('删除', 'Delete'),
 			cancelText: lang('取消', 'Cancel'),
 			onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
 				try {
 					await httpRequests.deleteStoragePool(storagePool);
 					let storagePoolList = Object.assign([], this.state.storagePoolList);
@@ -80,6 +82,7 @@ class StoragePool extends Component {
 				} catch ({msg}){
 					message.error(lang(`删除存储池 ${storagePool.name} 失败, 原因: `, `Delete storage pool ${storagePool.name} failed, reason: `) + msg);
 				}
+                modal.update({cancelButtonProps: {disabled: false}});
 			},
 			onCancel: () => {
 

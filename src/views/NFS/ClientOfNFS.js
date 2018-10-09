@@ -57,18 +57,20 @@ class ClientOfNFS extends Component {
     }
 
     delete (client, index){
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除客户端 ${client.ip} 的操作。`, `You are about to delete client ${client.ip}`)}</p>
                 <p>{lang(`该操作将导致正在使用该客户端访问的业务中断。`, `This operation will interrupt services that are being accessed through this client.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在该客户端上。`, `A suggestion: before deleting this client, ensure that there's no service is running on this share.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     client = Object.assign({}, client, {path: this.state.path});
                     await httpRequests.deleteClientInNFSShare(client);
@@ -79,6 +81,7 @@ class ClientOfNFS extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除客户端 ${client.ip} 失败, 原因: `, `Delete client ${client.ip} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 

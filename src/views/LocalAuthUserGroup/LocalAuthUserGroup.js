@@ -61,18 +61,20 @@ class LocalAuthUserGroup extends Component {
         if (!!userList.length){
             return message.warning(lang(`本地认证用户组 ${name} 含有本地认证用户，无法被删除！`, `Local authentication user group ${name} includes local authentication users, so it can not be deleted!`));
         }
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除本地认证用户组 ${name} 的操作。`, `You are about to delete NFS share ${name}`)}</p>
                 <p>{lang(`该操作将导致该用户组被销毁且不能再提供分组功能。`, `This operation will destroy the group and it can not provide a grouping feature any more.`)}</p>
                 <p>{lang(`建议：执行该操作前请确认您选择的本地认证用户组是否正确，并确认它不再需要。`, `A suggestion: before deleting this group, ensure that the selected user group is no longer necessary..`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteLocalAuthUserGroup(groupData);
                     let localAuthUserGroupList = Object.assign([], this.state.localAuthUserGroupList);
@@ -82,6 +84,7 @@ class LocalAuthUserGroup extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除本地认证用户组 ${name} 失败, 原因: `, `Delete local authentication group ${name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 

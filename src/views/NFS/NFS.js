@@ -63,18 +63,20 @@ class NFS extends Component {
         if (!!clientList.length){
             return message.warning(lang('该NFS共享存在有客户端，无法删除！', 'This NFS share includes client(s), it can not be deleted!'));
         }
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除NFS共享 ${path} 的操作。`, `You are about to delete NFS share ${path}`)}</p>
                 <p>{lang(`该操作将导致共享不可用，并且断开正在访问该共享目录的用户的连接。`, `This operation will make the share unavailable and interrupt the connections of the users to this directory.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在该共享上。`, `A suggestion: before deleting this share, ensure that there's no service is running on this share.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okText: lang('删除', 'Delete'),
             okType: 'danger',
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteNFSShare(shareData);
                     let NFSList = Object.assign([], this.state.NFSList);
@@ -84,6 +86,7 @@ class NFS extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除共享 ${path} 失败, 原因: `, `Delete NFS share ${path} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -102,18 +105,20 @@ class NFS extends Component {
             let shareNames = hasUsersOrUserGroupsShares.map(share => share.name).toString();
             return message.warning(lang(`NFS共享 ${shareNames} 存在有客户端，无法删除！`, `NFS share(s) ${shareNames} include(s) client(s), can not be deleted.`));
         }
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个NFS共享的操作。`, `You are about to delete these ${batchDeleteNames.length} NFS share(s).`)}</p>
                 <p>{lang(`该操作将导致这些共享不可用，并且断开正在访问这些共享目录的用户的连接。`, `This operation will make these shares unavailable and interrupt the connections of the users to these directories.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在这些共享上。`, `A suggestion: before deleting this share, ensure that there's no service is running on these shares.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteNFSShareInBatch(batchDeleteNames);
                     httpRequests.getNFSShareList();
@@ -121,6 +126,7 @@ class NFS extends Component {
                 } catch ({msg}){
                     message.error(lang('批量删除NFS共享失败，原因：', 'Delete NFS shares in batch failed, reason: ') + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
