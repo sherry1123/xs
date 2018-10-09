@@ -5,11 +5,12 @@ import CreateMetadataOrStorageService from './CreateMetadataOrStorageService';
 import CreateManagementService from './CreateManagementService';
 import CreateClient from './CreateClient';
 import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
+// import httpRequests from 'Http/requests';
 
 class ServiceAndClient extends Component {
     componentDidMount (){
-        httpRequests.getClusterServiceAndClientIPs();
+        // fetch in cronJob immediately instead
+        // httpRequests.getClusterServiceAndClientIPs();
     }
 
     createMetadataService (){
@@ -22,10 +23,10 @@ class ServiceAndClient extends Component {
 
     createManagementService (){
         let {managementServerIPs} = this.props;
-        // Management service creation policy:
-        // 1. If there is already a existing management service, prompt user that create a new one should
-        //    enable the HA feature, and a additional float IP and two heartbeat IPs are demanded.
-        // 2. If there are already two management services existing, should not create any more.
+        // Management service creation strategy:
+        // 1. If there is already an existing management service, prompt user that create a new one should
+        //    enable the HA feature, and an additional float IP and two heartbeat IPs are required.
+        // 2. If there are already two management services existing, could not create any more.
         if (managementServerIPs.length >= 2){
             return message.warning(lang('当前已有2个管理服务，不能再创建了。', 'There are already two management services existing, can not create any more.'));
         }
