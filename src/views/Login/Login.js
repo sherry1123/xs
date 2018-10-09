@@ -72,7 +72,7 @@ class Login extends Component {
     async validateUsername (value){
         await this.setState({
             usernameStatus: !value ? 'error' : '',
-            usernameHelp: !value ? 1 : '',
+            usernameHelp: !value ? 2 : '',
             loginErrorCode: ''
         });
     }
@@ -85,7 +85,7 @@ class Login extends Component {
     async validatePassword (value){
         await this.setState({
             passwordStatus: !value ? 'error' : '',
-            passwordHelp: !value ? 2 : '',
+            passwordHelp: !value ? 3 : '',
             loginErrorCode: ''
         });
     }
@@ -114,9 +114,9 @@ class Login extends Component {
 
     render (){
         let errorTipMap = {
-            1: lang('请输入用户名', 'Please enter password'),
-            2: lang('请输入密码', 'Please enter password'),
-            51: lang('用户名或密码错误', 'username or password error'),
+            2: lang('请输入用户名', 'Please enter username'),
+            3: lang('请输入密码', 'Please enter password'),
+            1: lang('用户名或密码错误', 'Username or password error'),
         };
         return (
             <section className="fs-login-wrapper">

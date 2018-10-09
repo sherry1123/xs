@@ -152,8 +152,10 @@ class CreateClient extends Component {
                             size="small"
                             placeholder={lang('请输入客户端IP', 'Please enter client IP')}
                             value={this.state.clientData.ip}
-                            onChange={({target: {value}}) => this.formValueChange.bind(this, 'ip')(value)}
-                            onBlur={() => this.validateForm.bind(this)('ip')}
+                            onChange={({target: {value}}) => {
+                                this.formValueChange.bind(this, 'ip')(value);
+                                this.validateForm.bind(this)('ip');
+                            }}
                         />
                     </Form.Item>
                 </Form>

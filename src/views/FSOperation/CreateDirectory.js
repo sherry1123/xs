@@ -101,6 +101,10 @@ class CreateDirectory extends Component {
                 parentPath,
                 name: '',
                 noMirror: 0
+            },
+            validation: {
+                parentPath: {status: '', help: '', valid: false},
+                name: {status: '', help: '', valid: false},
             }
         });
         this.exitedPathnames = (await httpRequests.getFiles(parentPath)).map(dir => dir.name);
