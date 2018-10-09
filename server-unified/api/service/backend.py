@@ -384,3 +384,19 @@ def add_storage_to_cluster(ip, disk_group):
 
 def create_target(ip, disk_group):
     return backend_handler(request.post('http://localhost:9090/cluster/addstoragetarget', {'ip': ip, 'diskGroup': disk_group}, get_token()))
+
+
+def add_targets_to_storage_pool(pool_id, targets):
+    return backend_handler(request.post('http://localhost:9090/cluster/poolexpand', {'poolId': pool_id, 'targets': targets}, get_token()))
+
+
+def remove_targets_from_storage_pool(pool_id, targets):
+    return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': pool_id, 'targets': targets}, get_token()))
+
+
+def add_buddy_groups_to_storage_pool(pool_id, buddy_groups):
+    return backend_handler(request.post('http://localhost:9090/cluster/poolexpand', {'poolId': pool_id, 'buddyGroups': buddy_groups}, get_token()))
+
+
+def remove_buddy_groups_from_storage_pool(pool_id, buddy_groups):
+    return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': pool_id, 'buddyGroups': buddy_groups}, get_token()))

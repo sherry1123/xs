@@ -472,9 +472,8 @@ def create_storage_pool(params):
     try:
         buddy_groups, data_classification, description, name, targets = handler.request(
             params, name=str, description=str, dataClassification=int, targets=list, buddyGroups=list)
-        targets = ','.join(map(lambda target: str(target), targets))
-        buddy_groups = ','.join(
-            map(lambda buddy_group: str(buddy_group), buddy_groups))
+        targets = handler.list2str(targets)
+        buddy_groups = handler.list2str(buddy_groups)
         pool_id = backend.create_storage_pool(name, targets, buddy_groups)
         database.create_storage_pool(
             pool_id, name, description, data_classification)
@@ -632,7 +631,7 @@ def batch_delete_snapshot(params):
         names, = handler.request(params, names=list)
         for name in names:
             database.update_snapshot_status(name, False, True, False)
-        names_str = ','.join(names)
+        names_str = handler.list2str(names)
         response = backend.batch_delete_snapshot(names_str)
         if not response['errorId']:
             for name in names:
@@ -1516,6 +1515,56 @@ def create_target(params):
                     raid['stripeSize'] / 1024)}, storageServerIPs[service])
                 backend.create_target(ip, disk_group)
         response = handler.response(0, 'Create target successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_targets_to_storage_pool(params):
+    response = {}
+    try:
+        pool_id, targets = handler.request(params, poolId=int, targets=list)
+        targets = handler.list2str(targets)
+        backend.add_targets_to_storage_pool(pool_id, targets)
+        response = handler.response(0, 'Add targets to storage pool successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def remove_targets_from_storage_pool(params):
+    response = {}
+    try:
+        pool_id, = handler.request(params, poolId=int, targets=list)
+        targets = handler.list2str(targets)
+        backend.remove_targets_from_storage_pool(pool_id, targets)
+        response = handler.response(0, 'remove targets from storage pool successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def add_buddy_groups_to_storage_pool(params):
+    response = {}
+    try:
+        buddy_groups, pool_id = handler.request(
+            params, poolId=int, buddyGroups=list)
+        buddy_groups = handler.list2str(buddy_groups)
+        backend.add_buddy_groups_to_storage_pool(pool_id, buddy_groups)
+        response = handler.response(0, 'Add buddy groups to storage pool successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def remove_buddy_groups_from_storage_pool(params):
+    response = {}
+    try:
+        buddy_groups, pool_id = handler.request(
+            params, poolId=int, buddyGroups=list)
+        buddy_groups = handler.list2str(buddy_groups)
+        backend.remove_buddy_groups_from_storage_pool(pool_id, buddy_groups)
+        response = handler.response(0, 'Remove buddy groups from storage pool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

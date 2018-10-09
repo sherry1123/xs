@@ -532,3 +532,23 @@ def create_buddy_group():
 @app.route('/api/createtarget', methods=['GET', 'POST'])
 def create_target():
     return jsonify(controller.create_target(request.params))
+
+
+@app.route('/api/addtargetstostoragepool', methods=['GET', 'POST'])
+def add_targets_to_storage_pool():
+    return jsonify(controller.add_targets_to_storage_pool(request.params))
+
+
+@app.route('/api/removetargetsfromstoragepool', methods=['GET', 'POST'])
+def remove_targets_from_storage_pool():
+    return jsonify(controller.remove_targets_from_storage_pool(request.params))
+
+
+@app.route('/api/addbuddygroupstostoragepool', methods=['GET', 'POST'])
+def add_buddy_groups_to_storage_pool():
+    return jsonify(controller.add_buddy_groups_to_storage_pool(request.params))
+
+
+@app.route('/api/removebuddygroupsfromstoragepool', methods=['GET', 'POST'])
+def remove_buddy_groups_from_storage_pool():
+    return jsonify(controller.remove_buddy_groups_from_storage_pool(request.params))

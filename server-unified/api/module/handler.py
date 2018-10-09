@@ -90,7 +90,7 @@ def type2str(data):
         type_list = []
         for d in data:
             type_list.append(type2str(d))
-        return ','.join(type_list)
+        return list2str(type_list)
     else:
         return eval(re.search('\'\S+\'', str(data)).group())
 
@@ -140,3 +140,7 @@ def iso2stamp(iso):
 
 def check_root(path, root):
     return path.split('/')[1] == root.split('/')[1]
+
+
+def list2str(data):
+    return ','.join(map(lambda d: d if isinstance(d, str) else str(d), data))
