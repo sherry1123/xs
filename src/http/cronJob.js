@@ -34,11 +34,17 @@ const fetchDataPer15s = () => {
         httpRequests.getPhysicalNodeIOPS();
     }
 
+    // service and client
+    if (routerHash.match(main + routerPath.ServiceAndClient)){
+        httpRequests.getClusterServiceAndClientIPs();
+    }
+
     //storage pool
 	if (routerHash.match(main + routerPath.StoragePool)){
 		httpRequests.getStoragePoolList();
 	}
 
+	/*
     // snapshot
     if (routerHash.match(main + routerPath.Snapshot)){
         httpRequests.getSnapshotList();
@@ -49,6 +55,7 @@ const fetchDataPer15s = () => {
     if (routerHash.match(main + routerPath.SnapshotSchedule)){
         httpRequests.getSnapshotScheduleList();
     }
+    */
 
     // nas server
     if (routerHash.match(main + routerPath.NASServer)){
