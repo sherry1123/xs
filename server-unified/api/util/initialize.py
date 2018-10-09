@@ -271,7 +271,7 @@ def connect_database():
         if mongodb_type:
             mongodb_replset_config = get_mongodb_replset_config()
             connect(host='mongodb://%s/storage?replicaSet=orcafs' %
-                    ','.join(mongodb_replset_config))
+                    handler.list2str(mongodb_replset_config))
         else:
             connect(host='mongodb://localhost/storage')
     except Exception as error:
