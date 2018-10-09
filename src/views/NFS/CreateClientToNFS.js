@@ -182,17 +182,18 @@ class CreateClientToNFS extends Component {
                     <div>
                         <Button
                             size="small"
+                            disabled={this.state.formSubmitting}
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small"
                             disabled={!this.state.formValid}
                             loading={this.state.formSubmitting}
                             onClick={this.create.bind(this)}
                         >
                             {lang('创建', 'Create')}
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={this.hide.bind(this)}
-                        >
-                            {lang('取消', 'Cancel')}
                         </Button>
                     </div>
                 }

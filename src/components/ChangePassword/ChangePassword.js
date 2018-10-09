@@ -163,8 +163,11 @@ class ChangePassword  extends Component {
                 footer={
                     <div>
                         {
-                            !isAdmin &&
-                            <Button size='small' onClick={this.hide.bind(this)}>
+                            !isAdmin && <Button
+                                size='small'
+                                disabled={this.state.formSubmitting}
+                                onClick={this.hide.bind(this)}
+                            >
                                 {lang('取消', 'Cancel')}
                             </Button>
                         }

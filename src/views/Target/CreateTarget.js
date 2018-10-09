@@ -205,6 +205,7 @@ class CreateTarget extends Component {
                     <div>
                         <Button
                             size="small"
+                            disabled={this.state.formSubmitting}
                             onClick={this.hide.bind(this)}
                         >
                             {lang('取消', 'Cancel')}

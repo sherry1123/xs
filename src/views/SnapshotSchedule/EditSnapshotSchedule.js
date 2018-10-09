@@ -66,29 +66,31 @@ class EditSnapshotSchedule extends Component {
         };
 
         return (
-            <Modal title={lang('编辑定时快照计划', 'Edit Timed Snapshot Schedule')}
-                   width={400}
-                   closable={false}
-                   maskClosable={false}
-                   visible={this.state.visible}
-                   afterClose={this.close}
-                   footer={
-                       <div>
-                           <Button
-                               size="small"
-                               onClick={this.hide.bind(this)}
-                           >
-                               {lang('取消', 'Cancel')}
-                           </Button>
-                           <Button
-                               size="small" type="primary"
-                               loading={this.state.formSubmitting}
-                               onClick={this.editSnapshotSchedule.bind(this)}
-                           >
-                               {lang('编辑', 'Edit')}
-                           </Button>
-                       </div>
-                   }
+            <Modal
+                title={lang('编辑定时快照计划', 'Edit Timed Snapshot Schedule')}
+                width={400}
+                closable={false}
+                maskClosable={false}
+                visible={this.state.visible}
+                afterClose={this.close}
+                footer={
+                    <div>
+                        <Button
+                            size="small"
+                            disabled={this.state.formSubmitting}
+                            onClick={this.hide.bind(this)}
+                        >
+                            {lang('取消', 'Cancel')}
+                        </Button>
+                        <Button
+                            size="small" type="primary"
+                            loading={this.state.formSubmitting}
+                            onClick={this.editSnapshotSchedule.bind(this)}
+                        >
+                            {lang('编辑', 'Edit')}
+                        </Button>
+                    </div>
+                }
             >
                 <Form>
                     <Form.Item {...formItemLayout} label={lang('名称', 'Name')}>
