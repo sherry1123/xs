@@ -1,5 +1,3 @@
-import time
-
 import event
 from api.module import handler, process
 from api.service import backend, database
@@ -27,7 +25,7 @@ def send_change_password_message():
 def get_cluster_throughput_and_iops():
     try:
         if do_or_not_do():
-            current_time = int(time.time()) * 1000
+            current_time = handler.current_stamp()
             data = backend.get_cluster_throughput_and_iops()
             throughput_list = data['throughput'] or []
             iops_list = data['iops'] or []
@@ -54,7 +52,7 @@ def get_cluster_throughput_and_iops():
 def get_node_cpu_and_memory():
     try:
         if do_or_not_do():
-            current_time = int(time.time()) * 1000
+            current_time = handler.current_stamp()
             node_list = database.get_setting('NODE-LIST')
             node_list = node_list['mgmt'] + \
                 node_list['meta'] + node_list['storage']
@@ -71,7 +69,7 @@ def get_node_cpu_and_memory():
 def get_node_throughput_and_iops():
     try:
         if do_or_not_do():
-            current_time = int(time.time()) * 1000
+            current_time = handler.current_stamp()
             node_list = database.get_setting('NODE-LIST')
             node_list = node_list['mgmt'] + \
                 node_list['meta'] + node_list['storage']

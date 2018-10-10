@@ -2,6 +2,7 @@ from api.module import handler
 from api.module.process import setinterval
 from api.service import backend, database
 from api.util import event, initialize, schedule, status
+from api.util.cache import cache
 
 
 def sync_status():
@@ -292,7 +293,18 @@ def get_cluster_info():
     response = {}
     try:
         version = backend.get_version()
-        node_list = backend.get_node_list()
+        node_list = []
+        node_list_cache = cache.inspect('node-list')
+        if node_list_cache:
+            current_stamp = handler.current_stamp()
+            if current_stamp - node_list_cache['stamp'] > 60000:
+                node_list = backend.get_node_list()
+                cache.update('node-list', node_list)
+            else:
+                node_list = node_list_cache['value']
+        else:
+            node_list = backend.get_node_list()
+            cache.update('node-list', node_list)
         total = len(node_list)
         normal = len(filter(lambda node: node['status'], node_list))
         status = True if total == normal else False
@@ -368,6 +380,7 @@ def get_node_list():
     response = {}
     try:
         data = backend.get_node_list()
+        cache.update('node-list', data)
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -756,6 +769,8 @@ def add_client_to_cluster(params):
         ip, = handler.request(params, ip=str)
         backend.add_client_to_cluster(ip)
         initialize.add_node_to_cluster(ip, 'client')
+        node_list = backend.get_node_list()
+        cache.update('node-list', node_list)
         response = handler.response(0, 'add client to cluster successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1451,6 +1466,8 @@ def add_metadata_to_cluster(params):
                 lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (raid['stripeSize'] / 1024)}, raidList)
         backend.add_metadata_to_cluster(ip, disk_group)
         initialize.add_node_to_cluster(ip, 'meta')
+        node_list = backend.get_node_list()
+        cache.update('node-list', node_list)
         response = handler.response(0, 'Add metadata to cluster successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1471,6 +1488,8 @@ def add_storage_to_cluster(params):
                 lambda disk: disk['diskName'], raid['diskList']), 'raidLevel': '%sraid' % raid['raidLevel'], 'stripeSize': '%sk' % (raid['stripeSize'] / 1024)}, raidList)
         backend.add_storage_to_cluster(ip, disk_group)
         initialize.add_node_to_cluster(ip, 'storage')
+        node_list = backend.get_node_list()
+        cache.update('node-list', node_list)
         response = handler.response(0, 'Add storage to cluster successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1524,7 +1543,8 @@ def add_targets_to_storage_pool(params):
         pool_id, targets = handler.request(params, poolId=int, targets=list)
         targets = handler.list2str(targets)
         backend.add_targets_to_storage_pool(pool_id, targets)
-        response = handler.response(0, 'Add targets to storage pool successfully!')
+        response = handler.response(
+            0, 'Add targets to storage pool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -1536,7 +1556,8 @@ def remove_targets_from_storage_pool(params):
         pool_id, = handler.request(params, poolId=int, targets=list)
         targets = handler.list2str(targets)
         backend.remove_targets_from_storage_pool(pool_id, targets)
-        response = handler.response(0, 'remove targets from storage pool successfully!')
+        response = handler.response(
+            0, 'remove targets from storage pool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -1549,7 +1570,8 @@ def add_buddy_groups_to_storage_pool(params):
             params, poolId=int, buddyGroups=list)
         buddy_groups = handler.list2str(buddy_groups)
         backend.add_buddy_groups_to_storage_pool(pool_id, buddy_groups)
-        response = handler.response(0, 'Add buddy groups to storage pool successfully!')
+        response = handler.response(
+            0, 'Add buddy groups to storage pool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -1562,7 +1584,8 @@ def remove_buddy_groups_from_storage_pool(params):
             params, poolId=int, buddyGroups=list)
         buddy_groups = handler.list2str(buddy_groups)
         backend.remove_buddy_groups_from_storage_pool(pool_id, buddy_groups)
-        response = handler.response(0, 'Remove buddy groups from storage pool successfully!')
+        response = handler.response(
+            0, 'Remove buddy groups from storage pool successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response

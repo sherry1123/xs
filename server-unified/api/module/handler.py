@@ -147,3 +147,7 @@ def check_root(path, root):
 
 def list2str(data):
     return ','.join(map(lambda d: d if isinstance(d, str) else str(d), data))
+
+
+def current_stamp():
+    return int(time.time()) * 1000
