@@ -8,7 +8,7 @@ import RecommendedRAID from 'Components/DiskConfiguration/RecommendedRAID';
 import CustomRAID from 'Components/DiskConfiguration/CustomRAID';
 import initializeAction from 'Actions/initializeAction';
 import lang from 'Components/Language/lang';
-import {validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from 'Services';
+import {debounce, validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGet} from 'Services';
 import httpRequests from 'Http/requests';
 import routerPath from '../routerPath';
 
@@ -235,6 +235,7 @@ class Initialize extends Component {
         await this.setState(Object.assign(this.state, newState));
     }
 
+    @debounce(500)
     async validateIP (category, i, value){
         // validate ipv4 address pattern
         if (!validateIpv4(value)){

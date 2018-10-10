@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Divider, Form, Icon, InputNumber, message, Modal, Popover, Select, Spin, Switch} from 'antd';
 import lang from 'Components/Language/lang';
+import {debounce} from 'Services';
 import httpRequests from 'Http/requests';
 
 class SecurityStrategySetting extends Component {
@@ -31,6 +32,7 @@ class SecurityStrategySetting extends Component {
         this.setState({strategyData});
     }
 
+    @debounce(500)
     async validateForm (key){
         let validation = Object.assign({}, this.state.validation, {[key]: {status: '', help: '', valid: true}});
         await this.setState({validation});

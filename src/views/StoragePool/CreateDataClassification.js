@@ -38,9 +38,9 @@ class CreateDataClassification extends Component {
 
     async show (){
     	let {dataClassificationList} = this.props;
-    	let name = dataClassificationList.reduce(({name: prevName}, {name: currName}) => prevName > currName ? prevName : currName, {name: 1});
+    	let name = dataClassificationList.reduce((prev, curr) => prev.name > curr.name ? prev : curr, {name: 1});
     	name = typeof name === 'object' ? name.name : name;
-    	// new classification must be bigger than current biggest one
+    	// new classification must be bigger than the current biggest one
     	name += 1;
         this.setState({
             visible: true,

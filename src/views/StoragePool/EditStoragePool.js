@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {validateFsName} from 'Services';
+import {debounce, validateFsName} from 'Services';
 import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
 
 class EditStoragePool extends Component {
@@ -42,6 +42,7 @@ class EditStoragePool extends Component {
 		await this.setState({validation});
 	}
 
+	@debounce(500)
 	async validateForm (key){
 		await this.validationUpdateState(key, {cn: '', en: ''}, true);
 		let {name} = this.state.storagePoolData;

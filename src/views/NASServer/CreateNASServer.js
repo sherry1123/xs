@@ -4,7 +4,7 @@ import {Button, Form, Icon, Input, message, Modal} from 'antd';
 import SelectClient from './SelectClient';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import lang from 'Components/Language/lang';
-import {validateIpv4} from 'Services';
+import {debounce, validateIpv4} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateNASServer extends Component {
@@ -67,6 +67,7 @@ class CreateNASServer extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {ip, path} = this.state.NASServerData;

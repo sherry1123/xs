@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
 import httpRequests from 'Http/requests';
-import {formatStorageSize, validateFsName} from 'Services';
+import {debounce, formatStorageSize, validateFsName} from 'Services';
 
 class CreateStoragePool extends Component {
     constructor (props){
@@ -44,6 +44,7 @@ class CreateStoragePool extends Component {
 		await this.setState({validation});
 	}
 
+	@debounce(500)
 	async validateForm (key){
 		await this.validationUpdateState(key, {cn: '', en: ''}, true);
 		let {name} = this.state.storagePoolData;
@@ -71,7 +72,6 @@ class CreateStoragePool extends Component {
 				}
 			}
 		}
-
 
 		// calculate whole form validation
 		let formValid = true;

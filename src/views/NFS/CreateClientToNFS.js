@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, Radio, Select, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
-import {validateIpv4, /*validateIpv4Segment*/} from 'Services';
+import {debounce, validateIpv4, /*validateIpv4Segment*/} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateClientToNFS extends Component {
@@ -43,6 +43,7 @@ class CreateClientToNFS extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {clientListOfNFS, clientData: {ips}} = this.state;

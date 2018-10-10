@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
+import {debounce} from 'Services';
 import {validateIpv4} from 'Services';
 
 class CreateClient extends Component {
@@ -39,6 +40,7 @@ class CreateClient extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {ip} = this.state.clientData;

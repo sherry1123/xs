@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
-import {formatStorageSize} from 'Services';
 import {Button, Modal, message, Form, Select} from 'antd';
+import lang from 'Components/Language/lang';
+import {debounce, formatStorageSize} from 'Services';
+import httpRequests from 'Http/requests';
 
 class AddBuddyGroupToStoragePool extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
-			poolName: '',
 			visible: false,
 			formValid: false,
 			formSubmitting: false,
+			poolName: '',
 			buddyGroupData: {
 				name: '',
 				buddyGroups:[],
@@ -41,8 +41,18 @@ class AddBuddyGroupToStoragePool extends Component {
 		await this.setState({validation});
 	}
 
+	@debounce(500)
 	async validateForm (key){
 		await this.validationUpdateState(key, {cn: '', en: ''}, true);
+		let {buddyGroups} = this.state.buddyGroupData;
+		if (key === 'buddyGroups'){
+			if (!buddyGroups.length){
+				await this.validationUpdateState('buddyGroups', {
+					cn: '请至少选择一个伙伴组',
+					en: 'Please select one buddy group at least'
+				}, false);
+			}
+		}
 
 		// calculate whole form validation
 		let formValid = true;
@@ -144,6 +154,7 @@ class AddBuddyGroupToStoragePool extends Component {
 							value={this.state.buddyGroupData.buddyGroups}
 							onChange={(value) => {
 								this.formValueChange.bind(this, 'buddyGroups')(value);
+								this.validateForm.bind(this)('buddyGroups');
 							}}
 						>
 							{

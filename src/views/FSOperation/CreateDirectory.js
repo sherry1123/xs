@@ -4,7 +4,7 @@ import {Button, Form, Icon, Input, Modal, message, Popover, Switch} from 'antd';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {validatePathname} from 'Services';
+import {debounce, validatePathname} from 'Services';
 
 class CreateDirectory extends Component {
     constructor (props){
@@ -45,6 +45,7 @@ class CreateDirectory extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {parentPath, name} = this.state.dirData;
