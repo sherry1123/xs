@@ -46,15 +46,18 @@ def response(code, result):
 
 
 def error(error):
-    error_type = type(error)
-    if isinstance(error_type, type):
-        error_type = str(error_type).split('\'')[1].split('.').pop()
+    if error:
+        error_type = type(error)
+        if isinstance(error, Exception):
+            error_type = str(error_type).split('\'')[1].split('.').pop()
+        else:
+            error_type = 'ERROR'
+        if 'KeyError' in error_type:
+            error = 'Key %s is not found' % error
+        error = '[%s]%s' % (error_type, error)
+        return str(error)
     else:
-        error_type = 'ERROR'
-    if 'KeyError' in error_type:
-        error = 'Key %s is not found' % error
-    error = '[%s]%s' % (error_type, error)
-    return str(error)
+        return '[Error]The error message is empty'
 
 
 def log(words, level=1):  # 1 => Info, 2 => Error
@@ -144,3 +147,7 @@ def check_root(path, root):
 
 def list2str(data):
     return ','.join(map(lambda d: d if isinstance(d, str) else str(d), data))
+
+
+def current_stamp():
+    return int(time.time()) * 1000

@@ -23,7 +23,7 @@ def start_scheduler():
     scheduler.start()
 
 
-def stop_sheduler():
+def stop_scheduler():
     global scheduler
     scheduler.shutdown()
     scheduler = None

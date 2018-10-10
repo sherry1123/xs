@@ -21,13 +21,13 @@ def receive(channel, code, target, result, data, notify):
     if code:
         if code == 1:
             status.set_cluster_deinitialize_status(True)
-            schedule.stop_sheduler()
+            schedule.stop_scheduler()
         elif code == 2:
             status.set_cluster_deinitialize_status(False)
             if result:
                 status.set_cluster_initialize_status(False)
             else:
-                schedule.start_sheduler()
+                schedule.start_scheduler()
         elif code == 15 or code == 16 or code == 21:
             target = data
         elif code == 17:

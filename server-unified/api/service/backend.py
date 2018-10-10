@@ -400,3 +400,7 @@ def add_buddy_groups_to_storage_pool(pool_id, buddy_groups):
 
 def remove_buddy_groups_from_storage_pool(pool_id, buddy_groups):
     return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': pool_id, 'buddyGroups': buddy_groups}, get_token()))
+
+
+def delete_nas_server(ip, path):
+    return backend_handler(request.post('http://localhost:9090/cluster/nasmanager', {'opt': 'nasDelete', 'nasServerList': [{'clientIp': ip, 'nasRoot': path}]}, get_token()))

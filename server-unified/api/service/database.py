@@ -845,10 +845,19 @@ def update_data_level(name, desc):
 def delete_data_level(name):
     level = DataLevel.objects(level_name=name).first()
     if level:
-        if name not in [1,2,3] and name == count_data_level():
+        if name not in [1, 2, 3] and name == count_data_level():
             level.delete()
             update_storage_pool_data_classification(None, name - 1)
         else:
             raise DatabaseError('Illegal operation!')
     else:
         raise DatabaseError('No such data level!')
+
+
+def delete_nas_server(ip, path):
+    nas_server = NasServer.objects(
+        nas_server_ip=ip, nas_server_path=path).first()
+    if nas_server:
+        nas_server.delete()
+    else:
+        raise DatabaseError('No such nas server!')
