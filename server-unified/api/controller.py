@@ -297,11 +297,11 @@ def get_cluster_info():
         node_list_cache = cache.inspect('node-list')
         if node_list_cache:
             current_stamp = handler.current_stamp()
-            if current_stamp - node_list_cache['stamp'] > 60000:
+            if current_stamp - node_list_cache['stamp'] < 60000:
+                node_list = node_list_cache['value']
+            else:
                 node_list = backend.get_node_list()
                 cache.update('node-list', node_list)
-            else:
-                node_list = node_list_cache['value']
         else:
             node_list = backend.get_node_list()
             cache.update('node-list', node_list)
@@ -323,6 +323,12 @@ def get_meta_status():
     response = {}
     try:
         data = backend.get_meta_status()
+        meta_status_cache = cache.inspect('meta-status')
+        if meta_status_cache:
+            if len(meta_status_cache['value']) == len(data) and len(filter(lambda meta: meta['status'], meta_status_cache['value'])) != len(filter(lambda meta: meta['status'], data)):
+                node_list = backend.get_node_list()
+                cache.update('node-list', node_list)
+        cache.update('meta-status', data)
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -333,6 +339,12 @@ def get_storage_status():
     response = {}
     try:
         data = backend.get_storage_status()
+        storage_status_cache = cache.inspect('storage-status')
+        if storage_status_cache:
+            if len(storage_status_cache['value']) == len(data) and len(filter(lambda storage: storage['status'], storage_status_cache['value'])) != len(filter(lambda storage: storage['status'], data)):
+                node_list = backend.get_node_list()
+                cache.update('node-list', node_list)
+        cache.update('storage-status', data)
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -379,8 +391,19 @@ def get_cluster_iops():
 def get_node_list():
     response = {}
     try:
-        data = backend.get_node_list()
-        cache.update('node-list', data)
+        node_list = []
+        node_list_cache = cache.inspect('node-list')
+        if node_list_cache:
+            current_stamp = handler.current_stamp()
+            if current_stamp - node_list_cache['stamp'] < 10000:
+                node_list = node_list_cache['value']
+            else:
+                node_list = backend.get_node_list()
+                cache.update('node-list', node_list)
+        else:
+            node_list = backend.get_node_list()
+            cache.update('node-list', node_list)
+        data = node_list
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))
