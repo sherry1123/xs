@@ -1566,3 +1566,15 @@ def remove_buddy_groups_from_storage_pool(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def delete_nas_server(params):
+    response = {}
+    try:
+        ip, path = handler.request(params, ip=str, path=str)
+        backend.delete_nas_server(ip, path)
+        database.delete_nas_server(ip, path)
+        response = handler.response(0, 'Delete nas server successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

@@ -552,3 +552,8 @@ def add_buddy_groups_to_storage_pool():
 @app.route('/api/removebuddygroupsfromstoragepool', methods=['GET', 'POST'])
 def remove_buddy_groups_from_storage_pool():
     return jsonify(controller.remove_buddy_groups_from_storage_pool(request.params))
+
+
+@app.route('/api/deletenasserver', methods=['GET', 'POST'])
+def delete_nas_server():
+    return jsonify(controller.delete_nas_server(request.params))
