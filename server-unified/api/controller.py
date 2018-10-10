@@ -32,9 +32,15 @@ def get_raid(params):
     try:
         metadataServerIPs, storageServerIPs = handler.request(
             params, metadataServerIPs=list, storageServerIPs=list)
-        data = initialize.get_recommended_raid_configuration(
+        check_env_result = initialize.check_cluster_env(
             metadataServerIPs, storageServerIPs)
-        response = handler.response(0, data)
+        if check_env_result['result']:
+            data = initialize.get_recommended_raid_configuration(
+                metadataServerIPs, storageServerIPs)
+            response = handler.response(0, data)
+        else:
+            response = handler.response(1, handler.error(
+                'This node has no OrcaFS service!'))
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
