@@ -25,23 +25,23 @@ def create_app():
             if api in api_always_pass:
                 pass
             elif 'snapshot' in api:
-                return jsonify(handler.response(1, 'The cluster does not support the snapshot function at this time!'))
+                return jsonify(handler.response(1, handler.error('The cluster does not support the snapshot function at this time!')))
             elif rollback:
-                return jsonify(handler.response(1, 'The cluster is rollbacking!'))
+                return jsonify(handler.response(1, handler.error('The cluster is rollbacking!')))
             elif deinitialize:
-                return jsonify(handler.response(1, 'The cluster is de-initializing!'))
+                return jsonify(handler.response(1, handler.error('The cluster is de-initializing!')))
             elif api in api_login + api_after_initialize or login:
                 if api not in api_before_initialize:
                     pass
                 else:
-                    return jsonify(handler.response(1, 'The cluster has been initialized!'))
+                    return jsonify(handler.response(1, handler.error('The cluster has been initialized!')))
             else:
-                return jsonify(handler.response(1, 'The current user is not logged in!'))
+                return jsonify(handler.response(1, handler.error('The current user is not logged in!')))
         else:
             if api in api_always_pass + api_before_initialize:
                 pass
             else:
-                return jsonify(handler.response(1, 'The cluster is not initialized!'))
+                return jsonify(handler.response(1, handler.error('The cluster is not initialized!')))
 
     @app.before_request
     def handle_parameter():

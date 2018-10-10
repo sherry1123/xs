@@ -165,9 +165,7 @@ def deinitialize_cluster(mode):
                 handler.log('Step: %s, description: %s' % (current, describle))
                 if state:
                     callback()
-                    handler.log(handler.error(error_message), 2)
-                    handler.log('Step: %s, description: %s' % (
-                        current, 'deinitialization of the cluster failed'))
+                    handler.log('Deinitialization of the cluster failed!')
                     for ip in mgmt:
                         event.send('cluster', 2, 'cluster',
                                    False, {}, True, ip)
