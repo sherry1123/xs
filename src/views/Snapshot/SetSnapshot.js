@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover, Slider} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {validateNotZeroInteger} from 'Services';
+import {debounce, validateNotZeroInteger} from 'Services';
 
 class SetSnapshot extends Component {
     constructor (props){
@@ -81,6 +81,7 @@ class SetSnapshot extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         let {totalLimitation, totalSnapshotNumber, timedSnapshotNumber, manualSnapshotNumber, settingData: {total, auto, manual}} = this.state;
         if (key === 'total'){

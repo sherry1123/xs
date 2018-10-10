@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
-import {validateFsName} from 'Services';
+import {debounce, validateFsName} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateLocalAuthUserGroup extends Component {
@@ -41,6 +41,7 @@ class CreateLocalAuthUserGroup extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {name} = this.state.groupData;

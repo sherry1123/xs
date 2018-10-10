@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import update from 'react-addons-update';
 import {Button, Checkbox, Col, Form, Icon, Input, message, Modal, Row, Popover, Select, Switch} from 'antd';
 import lang from 'Components/Language/lang';
-import {validateNotZeroInteger, validateFsName, timeUnitMilliSecond} from 'Services';
+import {debounce, validateNotZeroInteger, validateFsName, timeUnitMilliSecond} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateSnapshotSchedule extends Component {
@@ -73,6 +73,7 @@ class CreateSnapshotSchedule extends Component {
         await this.setState(Object.assign(this.state, newState));
     }
 
+    @debounce(500)
     async validateForm (key){
         // reset current form field validation
         let validation = Object.assign({}, this.state.validation);

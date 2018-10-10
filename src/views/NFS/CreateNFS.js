@@ -4,6 +4,7 @@ import {Button, Form, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import CreateClientToNFS from './CreateClientToNFS';
 import lang from 'Components/Language/lang';
+import {debounce} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateNFS extends Component {
@@ -52,6 +53,7 @@ class CreateNFS extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {path} = this.state.shareData;

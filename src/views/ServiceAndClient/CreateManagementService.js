@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Divider, Form, Icon, Input, message, Modal, Popover} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
+import {debounce} from 'Services';
 import {validateIpv4, lsSet} from 'Services';
 
 class CreateManagementService extends Component {
@@ -55,6 +56,7 @@ class CreateManagementService extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {serviceData} = this.state;

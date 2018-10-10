@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover} from 'antd';
 import SelectLocalAuthUserGroup from './SelectLocalAuthUserGroup';
 import lang from 'Components/Language/lang';
+import {debounce} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateLocalAuthUser extends Component {
@@ -104,6 +105,7 @@ class CreateLocalAuthUser extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {name, password, rePassword, primaryGroup} = this.state.userData;

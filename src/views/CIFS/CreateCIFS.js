@@ -5,7 +5,7 @@ import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
 import lang from 'Components/Language/lang';
-import {validateFsName} from 'Services';
+import {debounce, validateFsName} from 'Services';
 import httpRequests from 'Http/requests';
 
 class CreateCIFS extends Component {
@@ -69,6 +69,7 @@ class CreateCIFS extends Component {
         await this.setState({validation});
     }
 
+    @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
         let {path, name} = this.state.shareData;

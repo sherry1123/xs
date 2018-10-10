@@ -27,3 +27,6 @@ export {validateIpv4, validateIpv4Segment, validateFsName, validatePathname, val
 
 // key press filter
 export {KeyPressFilter} from './keyPressFilter';
+
+// decorator
+export {throttle, debounce} from './decorator';

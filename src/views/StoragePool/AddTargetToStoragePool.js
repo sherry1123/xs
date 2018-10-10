@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
-import {formatStorageSize} from 'Services';
 import {Button, Modal, Form, message, Select} from 'antd';
+import lang from 'Components/Language/lang';
+import {debounce, formatStorageSize} from 'Services';
+import httpRequests from 'Http/requests';
 
 class AddTargetToStoragePool extends Component {
 	constructor (props){
@@ -26,6 +26,40 @@ class AddTargetToStoragePool extends Component {
 	formValueChange (key, value){
 		let targetData = Object.assign({}, this.state.targetData, {[key]: value});
 		this.setState({targetData});
+	}
+
+	async validationUpdateState (key, value, valid){
+		let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: lang(cn, en),
+				valid
+			}
+		};
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
+	}
+
+	@debounce(500)
+	async validateForm (key){
+		await this.validationUpdateState(key, {cn: '', en: ''}, true);
+		let {targets} = this.state.targetData;
+		if (key === 'targets'){
+			if (!targets.length){
+				await this.validationUpdateState('targets', {
+					cn: '请至少选择一个存储目标',
+					en: 'Please select one target at least'
+				}, false);
+			}
+		}
+
+		// calculate whole form validation
+		let formValid = true;
+		Object.keys(this.state.validation).forEach(key => {
+			formValid = formValid && this.state.validation[key].valid;
+		});
+		this.setState({formValid});
 	}
 
 	show (poolId, poolName){
@@ -118,6 +152,7 @@ class AddTargetToStoragePool extends Component {
 							value={this.state.targetData.targets}
 							onChange={(value) => {
 								this.formValueChange.bind(this, 'targets')(value);
+								this.validateForm.bind(this)('targets');
 							}}
 						>
 							{

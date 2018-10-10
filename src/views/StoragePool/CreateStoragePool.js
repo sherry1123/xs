@@ -72,7 +72,6 @@ class CreateStoragePool extends Component {
 			}
 		}
 
-
 		// calculate whole form validation
 		let formValid = true;
 		Object.keys(this.state.validation).forEach(key => {

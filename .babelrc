@@ -15,6 +15,7 @@
                 "libraryName": "antd",
                 "style": "css"
             }
-        ]
+        ],
+        "transform-decorators-legacy"
     ]
 }
