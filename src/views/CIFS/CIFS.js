@@ -23,6 +23,7 @@ class CIFS extends Component {
 
     componentDidMount (){
         httpRequests.getCIFSShareList();
+        httpRequests.getNASServerList();
     }
 
     async componentWillReceiveProps (nextProps){
@@ -47,6 +48,10 @@ class CIFS extends Component {
     }
 
     create (){
+        let {NASServerList} = this.props;
+        if (!NASServerList.length){
+            return message.warning(lang('请先创建NAS服务器！', 'Please create the NAS server first!'));
+        }
         this.createCIFSWrapper.getWrappedInstance().show();
     }
 
@@ -229,8 +234,8 @@ class CIFS extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {share: {CIFSList}}} = state;
-    return {language, CIFSList};
+    const {language, main: {share: {NASServerList, CIFSList}}} = state;
+    return {language, NASServerList, CIFSList};
 };
 
 export default connect(mapStateToProps)(CIFS);

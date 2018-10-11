@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Icon, Input, Table, Popover} from 'antd';
+import {Button, Icon, Input, Table, Popover, Modal, message} from 'antd';
 import CreateNASServer from './CreateNASServer';
 import EditNASServer from './EditNASServer';
 import lang from 'Components/Language/lang';
@@ -13,6 +13,7 @@ class NASServer extends Component {
         this.state = {
             // table
             query: '',
+            dataPreparing: true,
             NASServerList,
             NASServerListBackup: NASServerList,
             // table items batch delete
@@ -20,8 +21,16 @@ class NASServer extends Component {
         };
     }
 
-    componentDidMount (){
+    async componentDidMount (){
         httpRequests.getNASServerList();
+        let {NFSList, CIFSList} = this.props;
+        if (!NFSList.length){
+            await httpRequests.getNFSShareList();
+        }
+        if (!CIFSList.length){
+            await httpRequests.getCIFSShareList();
+        }
+        this.setState({dataPreparing: false});
     }
 
     async componentWillReceiveProps (nextProps){
@@ -53,10 +62,53 @@ class NASServer extends Component {
         this.editNASServerWrapper.getWrappedInstance().show(NASServerData);
     }
 
+    delete (NASServer, index){
+        let {NFSList, CIFSList} = this.props;
+        let {path: NASServerPath} = NASServer;
+        // if a NAS server has any NFS or CIFS share inside, it can't be deleted.
+        if (
+            NFSList.some(({path}) => path.match(NASServerPath) && path.match(NASServerPath).index === 0) ||
+            CIFSList.some(({path}) => path.match(NASServerPath) && path.match(NASServerPath).index === 0)
+        ){
+            return message.warning(lang(`NAS服务器 ${NASServer.path}@${NASServer.ip} 含有NFS或者CIFS共享，无法被删除！`, `NAS server ${NASServer.path}@${NASServer.ip} has NFS or CIFS share inside, it can't be deleted!`));
+        }
+
+        const modal = Modal.confirm({
+			title: lang('警告', 'Warning'),
+			content: <div style={{fontSize: 12}}>
+				<p>{lang(`您将要执行删除NAS服务器 ${NASServer.path}@${NASServer.ip} 的操作。`, `You are about to delete NAS server ${NASServer.path}@${NASServer.ip}.`)}</p>
+				<p>{lang(`该操作将会从系统中移除NAS服务器 ${NASServer.path}@${NASServer.ip}。`, `This operation will delete NAS server ${NASServer.path}@${NASServer.ip} from the system. `)}</p>
+				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的NAS服务器，并确认它已不再需要。`, `A suggestion: before executing this operation, ensure that you select the right NAS server and it's no longer necessary.`)}</p>
+			</div>,
+			keyboard: false,
+			iconType: 'exclamation-circle-o',
+			okType: 'danger',
+			okText: lang('删除', 'Delete'),
+			cancelText: lang('取消', 'Cancel'),
+			onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
+				try {
+					await httpRequests.deleteNASServer(NASServer);
+					let NASServerList = Object.assign([], this.state.NASServerList);
+					NASServerList.splice(index, 1);
+					this.setState({NASServerList});
+					message.success(lang(`NAS服务器 ${NASServer.path}@${NASServer.ip} 删除成功!`, `Delete NAS server ${NASServer.path}@${NASServer.ip} successfully!`));
+					httpRequests.getNASServerList();
+				} catch ({msg}){
+					message.error(lang(`删除NAS 服务器 ${NASServer.path}@${NASServer.ip} 失败, 原因: `, `Delete NAS server ${NASServer.path}@${NASServer.ip} failed, reason: `) + msg);
+				}
+                modal.update({cancelButtonProps: {disabled: false}});
+			},
+			onCancel: () => {
+
+			}
+		});
+    }
+
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
         let buttonConf = {size: 'small', shape: 'circle', style: {marginRight: 5}};
-        let {NASServerList} = this.state;
+        let {NASServerList, dataPreparing} = this.state;
         let tableProps = {
             size: 'normal',
             dataSource: NASServerList,
@@ -82,13 +134,23 @@ class NASServer extends Component {
                 },
                 {title: lang('操作', 'Operations'), width: 80,
                     render: (text, record, index) => {
-                        return <Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
-                            <Button
-                                {...buttonConf}
-                                onClick={this.edit.bind(this, record, index)}
-                                icon="edit"
-                            />
-                        </Popover>;
+                        return  <div>
+                            <Popover {...buttonPopoverConf} content={lang('编辑', 'Edit')}>
+                                <Button
+                                    {...buttonConf}
+                                    onClick={this.edit.bind(this, record, index)}
+                                    icon="edit"
+                                />
+                            </Popover>
+                            <Popover {...buttonPopoverConf} content={lang('删除', 'Delete')}>
+                                <Button
+                                    {...buttonConf}
+                                    disabled={dataPreparing}
+                                    onClick={this.delete.bind(this, record, index)}
+                                    icon="delete"
+                                />
+                            </Popover>
+                        </div>
                     }
                 }
             ],
@@ -124,8 +186,8 @@ class NASServer extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {share: {NASServerList}}} = state;
-    return {language, NASServerList};
+    const {language, main: {share: {NASServerList, NFSList, CIFSList}}} = state;
+    return {language, NASServerList, NFSList, CIFSList};
 };
 
 export default connect(mapStateToProps)(NASServer);
