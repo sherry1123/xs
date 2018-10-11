@@ -12,6 +12,7 @@ class BuddyGroupOfStoragePool extends Component {
 		super(props);
 		this.state = {
 			visible: false,
+			poolId: '',
 			poolName: '',
 		};
 	}
@@ -21,7 +22,7 @@ class BuddyGroupOfStoragePool extends Component {
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
 				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除伙伴组镜像 ID:${buddyGroup.id} 的操作。`, `You are about to remove storage pool buddy group ID:${buddyGroup.id} from storage pool ${this.state.poolName}.`)}</p>
-				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除伙伴组镜像 ID:${buddyGroup.id}，将会导致该存储池的容量减少，并且。`, `This operation will delete storage pool buddy group ID:${buddyGroup.id} from storage pool ${this.state.poolName}. `)}</p>
+				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除伙伴组镜像 ID:${buddyGroup.id}，将会导致该存储池的容量减少。`, `This operation will delete storage pool buddy group ID:${buddyGroup.id} from storage pool ${this.state.poolName}. `)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的伙伴组镜像，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right storage pool and it's no longer necessary.`)}</p>
 			</div>,
 			keyboard: false,
@@ -32,10 +33,8 @@ class BuddyGroupOfStoragePool extends Component {
 			onOk: async () => {
                 modal.update({cancelButtonProps: {disabled: true}});
 				try {
-					await httpRequests.deleteBuddyGroupFromStoragePool(buddyGroup);
-					let buddyGroupsOfStoragePool = Object.assign([], this.state.buddyGroupsOfStoragePool);
-					buddyGroupsOfStoragePool.splice(index, 1);
-					this.setState({buddyGroupsOfStoragePool});
+					await httpRequests.deleteBuddyGroupFromStoragePool({poolId: this.state.poolId, buddyGroups:[buddyGroup.id]});
+					httpRequests.getBuddyGroupsOfStoragePoolById(this.state.poolId);
 					message.success(lang(`已开始删除伙伴组镜像 ID:${buddyGroup.id}!`, `Start deleting storage pool buddy group ID:${buddyGroup.id}!`));
 				} catch ({msg}){
 					message.error(lang(`删除伙伴组镜像 ID:${buddyGroup.id} 失败, 原因: `, `Delete storage pool buddy group ID:${buddyGroup.id} failed, reason: `) + msg);

@@ -65,6 +65,8 @@ class AddTargetToStoragePool extends Component {
 	show (poolId, poolName){
 		this.setState({
 			visible: true,
+            formValid: false,
+            formSubmitting: false,
 			poolName,
 			targetData: {
 				poolId,

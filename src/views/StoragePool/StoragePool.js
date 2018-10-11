@@ -157,18 +157,16 @@ class StoragePool extends Component {
 							>
 							</Button>
 						</Popover>
-						<Popover {...buttonPopoverConf} content={lang('用户配额', '')}>
+						<Popover {...buttonPopoverConf} content={lang('用户配额', 'User Quota')}>
 							<Button
 								{...buttonConf}
-								// onClick={this.showLocalAuthUser.bind(this, record, index)}
 								icon="user"
 							>
 							</Button>
 						</Popover>
-						<Popover {...buttonPopoverConf} content={lang('用户组配额', '')}>
+						<Popover {...buttonPopoverConf} content={lang('用户组配额', 'Group Quota')}>
 							<Button
 								{...buttonConf}
-								//onClick={this.showStorageTarget.bind(this, record, index)}
 								icon="team"
 							>
 							</Button>

@@ -76,7 +76,7 @@ class AddBuddyGroupToStoragePool extends Component {
 				buddyGroups: {status: '', help: '', valid: false},
 			}
 		});
-		httpRequests.getTargetsOfStoragePoolById();
+		httpRequests.getBuddyGroupsOfStoragePoolById();
 	}
 
 	async hide (){
