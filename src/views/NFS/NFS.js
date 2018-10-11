@@ -84,9 +84,7 @@ class NFS extends Component {
                 modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteNFSShare(shareData);
-                    let NFSList = Object.assign([], this.state.NFSList);
-                    NFSList.splice(index, 1);
-                    this.setState({NFSList});
+                    httpRequests.getNFSShareList();
                     message.success(lang(`删除NFS共享 ${path} 成功!`, `Delete NFS share ${path} successfully!`));
                 } catch ({msg}){
                     message.error(lang(`删除共享 ${path} 失败, 原因: `, `Delete NFS share ${path} failed, reason: `) + msg);

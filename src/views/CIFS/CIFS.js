@@ -82,9 +82,7 @@ class CIFS extends Component {
             onOk: async () => {
                 try {
                     await httpRequests.deleteCIFSShare(shareData);
-                    let CIFSList = Object.assign([], this.state.CIFSList);
-                    CIFSList.splice(index, 1);
-                    this.setState({CIFSList});
+                    httpRequests.getCIFSShareList();
                     message.success(lang(`删除CIFS共享 ${name} 成功!`, `Delete CIFS share ${name} successfully!`));
                 } catch ({msg}){
                     message.error(lang(`删除CIFS共享 ${name} 失败, 原因: `, `Delete CIFS share ${name} failed, reason: `) + msg);
