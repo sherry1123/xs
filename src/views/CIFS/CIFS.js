@@ -68,18 +68,20 @@ class CIFS extends Component {
         if (!!userOrGroupList.length){
             return message.warning(lang('该CIFS共享存在有用户或用户组，无法删除！', 'This CFIS share includes user(s) or user group(s), it can not be deleted!'));
         }
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除CIFS共享 ${name} 的操作。`, `You are about to delete CIFS share ${name}`)}</p>
                 <p>{lang(`该操作将导致共享不可用，并且断开正在访问该共享目录的用户的连接。`, `This operation will make the share unavailable and interrupt the connections of the users to this directory.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在该共享上。`, `A suggestion: before deleting this share, ensure that there's no service is running on this share.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteCIFSShare(shareData);
                     httpRequests.getCIFSShareList();
@@ -87,6 +89,7 @@ class CIFS extends Component {
                 } catch ({msg}){
                     message.error(lang(`删除CIFS共享 ${name} 失败, 原因: `, `Delete CIFS share ${name} failed, reason: `) + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
@@ -105,18 +108,20 @@ class CIFS extends Component {
             let shareNames = hasUsersOrUserGroupsShares.map(share => share.name).toString();
             return message.warning(lang(`CIFS共享 ${shareNames} 存在有用户或用户组，无法删除！`, `CIFS share(s) ${shareNames} include(s) user(s) or user group(s), can not be deleted.`));
         }
-        Modal.confirm({
+        const modal = Modal.confirm({
             title: lang('警告', 'Warning'),
             content: <div style={{fontSize: 12}}>
                 <p>{lang(`您将要执行删除这 ${batchDeleteNames.length} 个CIFS共享的操作。`, `You are about to delete these ${batchDeleteNames.length} CIFS share(s).`)}</p>
                 <p>{lang(`该操作将导致这些共享不可用，并且断开正在访问这些共享目录的用户的连接。`, `This operation will make these shares unavailable and interrupt the connections of the users to these directories.`)}</p>
                 <p>{lang(`建议：在执行该操作前先确保无任何业务运行在这些共享上。`, `A suggestion: before deleting this share, ensure that there's no service is running on these shares.`)}</p>
             </div>,
+            keyboard: false,
             iconType: 'exclamation-circle-o',
             okType: 'danger',
             okText: lang('删除', 'Delete'),
             cancelText: lang('取消', 'Cancel'),
             onOk: async () => {
+                modal.update({cancelButtonProps: {disabled: true}});
                 try {
                     await httpRequests.deleteCIFSShareInBatch(shares);
                     httpRequests.getCIFSShareList();
@@ -124,6 +129,7 @@ class CIFS extends Component {
                 } catch ({msg}){
                     message.error(lang('批量删除CIFS共享失败，原因：', 'Delete CIFS shares in batch failed, reason: ') + msg);
                 }
+                modal.update({cancelButtonProps: {disabled: false}});
             },
             onCancel: () => {
 
