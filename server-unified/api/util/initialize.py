@@ -303,5 +303,5 @@ def reload_mongodb():
 
 
 def empty_log(ip):
-    process.run('echo "" > /var/log/mongodb/mongod.log', ip)
-    process.run('echo "" > /var/log/orcafs-gui.log', ip)
+    process.run('> /var/log/mongodb/mongod.log', ip)
+    process.run('> /var/log/orcafs-gui.log', ip)
