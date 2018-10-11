@@ -410,6 +410,10 @@ export default  {
         await fetchPost('/api/updatenasserver', NASServer);
     },
 
+    async deleteNASServer (NASServer){
+        await fetchPost('/api/deletenasserver', NASServer);
+    },
+
     // NFS share
     async getNFSShareList (){
         requestHandler(async () => {

@@ -23,6 +23,7 @@ class NFS extends Component {
 
     componentDidMount (){
         httpRequests.getNFSShareList();
+        httpRequests.getNASServerList();
     }
 
     async componentWillReceiveProps (nextProps){
@@ -51,6 +52,10 @@ class NFS extends Component {
     }
 
     create (){
+        let {NASServerList} = this.props;
+        if (!NASServerList.length){
+            return message.warning(lang('请先创建NAS服务器！', 'Please create the NAS server first!'));
+        }
         this.createNFSWrapper.getWrappedInstance().show();
     }
 
@@ -234,8 +239,8 @@ class NFS extends Component {
 }
 
 const mapStateToProps = state => {
-    const {language, main: {share: {NFSList}}} = state;
-    return {language, NFSList};
+    const {language, main: {share: {NASServerList, NFSList}}} = state;
+    return {language, NASServerList, NFSList};
 };
 
 export default connect(mapStateToProps)(NFS);

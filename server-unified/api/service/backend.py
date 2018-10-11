@@ -17,7 +17,7 @@ def backend_handler(response):
 
 
 def get_token():
-    return request.get('http://localhost:9090/token/get', {})
+    return request.get('http://localhost:9090/token/get', {}, {}, {'tokenId': '4a2d34ad-399e-4591-a55b-18acf8cf8712'})
 
 
 def get_create_status():
@@ -114,7 +114,7 @@ def get_node_service(hostname):
 
 def get_node_cpu_and_memory(hostname):
     node_cpu_and_memory = backend_handler(request.get(
-        'http://localhost:9090/cluster/getphysicresource', {'hostname': hostname}, get_token()))
+        'http://localhost:9090/cluster/getphysicresource', {'hostname': hostname}, get_token(), {'errorId': 0, 'data': {'cpu': 0, 'memory': 0}}))
     return {'cpu': round(node_cpu_and_memory['cpu'], 2), 'memory': round(node_cpu_and_memory['memory'], 2)}
 
 
@@ -387,19 +387,19 @@ def create_target(ip, disk_group):
 
 
 def add_targets_to_storage_pool(pool_id, targets):
-    return backend_handler(request.post('http://localhost:9090/cluster/poolexpand', {'poolId': pool_id, 'targets': targets}, get_token()))
+    return backend_handler(request.post('http://localhost:9090/cluster/poolexpand', {'poolId': str(pool_id), 'targets': targets, 'buddyGroups': ''}, get_token()))
 
 
 def remove_targets_from_storage_pool(pool_id, targets):
-    return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': pool_id, 'targets': targets}, get_token()))
+    return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': str(pool_id), 'targets': targets, 'buddyGroups': ''}, get_token()))
 
 
 def add_buddy_groups_to_storage_pool(pool_id, buddy_groups):
-    return backend_handler(request.post('http://localhost:9090/cluster/poolexpand', {'poolId': pool_id, 'buddyGroups': buddy_groups}, get_token()))
+    return backend_handler(request.post('http://localhost:9090/cluster/poolexpand', {'poolId': str(pool_id), 'targets': '', 'buddyGroups': buddy_groups}, get_token()))
 
 
 def remove_buddy_groups_from_storage_pool(pool_id, buddy_groups):
-    return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': pool_id, 'buddyGroups': buddy_groups}, get_token()))
+    return backend_handler(request.post('http://localhost:9090/cluster/poolshrink', {'poolId': str(pool_id), 'targets': '', 'buddyGroups': buddy_groups}, get_token()))
 
 
 def delete_nas_server(ip, path):

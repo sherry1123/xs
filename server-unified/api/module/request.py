@@ -8,6 +8,8 @@ def get(url, params=None, token={}, mock=None, timeout=None):
             url, params=params, headers=token, timeout=timeout)
         if response.status_code == requests.codes.ok:
             return handler.unicode2str(response.json())
+        elif mock is not None:
+            return mock
         else:
             response.raise_for_status()
     except Exception as error:

@@ -32,9 +32,15 @@ def get_raid(params):
     try:
         metadataServerIPs, storageServerIPs = handler.request(
             params, metadataServerIPs=list, storageServerIPs=list)
-        data = initialize.get_recommended_raid_configuration(
+        check_env_result = initialize.check_cluster_env(
             metadataServerIPs, storageServerIPs)
-        response = handler.response(0, data)
+        if check_env_result['result']:
+            data = initialize.get_recommended_raid_configuration(
+                metadataServerIPs, storageServerIPs)
+            response = handler.response(0, data)
+        else:
+            response = handler.response(1, handler.error(
+                'This node has no OrcaFS service!'))
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
@@ -1576,7 +1582,7 @@ def add_targets_to_storage_pool(params):
 def remove_targets_from_storage_pool(params):
     response = {}
     try:
-        pool_id, = handler.request(params, poolId=int, targets=list)
+        pool_id, targets = handler.request(params, poolId=int, targets=list)
         targets = handler.list2str(targets)
         backend.remove_targets_from_storage_pool(pool_id, targets)
         response = handler.response(
