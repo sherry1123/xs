@@ -4,7 +4,7 @@ import {Icon, Radio, Table, Popover} from 'antd';
 import lang from 'Components/Language/lang';
 import {formatStorageSize, getCapacityColour} from 'Services';
 
-class PhysicalNodeTargetList extends Component {
+class PhysicalNodeTargets extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -90,4 +90,4 @@ const mapStateToProps = state => {
     return {language, physicalNodeInfo, physicalNodeTargets};
 };
 
-export default connect(mapStateToProps)(PhysicalNodeTargetList);
+export default connect(mapStateToProps)(PhysicalNodeTargets);
