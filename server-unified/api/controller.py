@@ -1582,7 +1582,7 @@ def add_targets_to_storage_pool(params):
 def remove_targets_from_storage_pool(params):
     response = {}
     try:
-        pool_id, = handler.request(params, poolId=int, targets=list)
+        pool_id, targets = handler.request(params, poolId=int, targets=list)
         targets = handler.list2str(targets)
         backend.remove_targets_from_storage_pool(pool_id, targets)
         response = handler.response(

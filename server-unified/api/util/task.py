@@ -54,8 +54,8 @@ def get_node_cpu_and_memory():
         if do_or_not_do():
             current_time = handler.current_stamp()
             node_list = database.get_setting('NODE-LIST')
-            node_list = node_list['mgmt'] + \
-                node_list['meta'] + node_list['storage']
+            node_list = list(set(node_list['mgmt'] + \
+                node_list['meta'] + node_list['storage']))
             host_list = map(lambda node: process.run(
                 'hostname', node), node_list)
             data_list = map(backend.get_node_cpu_and_memory, host_list)
@@ -71,8 +71,8 @@ def get_node_throughput_and_iops():
         if do_or_not_do():
             current_time = handler.current_stamp()
             node_list = database.get_setting('NODE-LIST')
-            node_list = node_list['mgmt'] + \
-                node_list['meta'] + node_list['storage']
+            node_list = list(set(node_list['mgmt'] + \
+                node_list['meta'] + node_list['storage']))
             host_list = map(lambda node: process.run(
                 'hostname', node), node_list)
 
