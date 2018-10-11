@@ -17,7 +17,7 @@ def backend_handler(response):
 
 
 def get_token():
-    return request.get('http://localhost:9090/token/get', {}, {}, {'tokenId': '4a2d34ad-399e-4591-a55b-18acf8cf8712'})
+    return request.get('http://localhost:9090/token/get', {}, {}, {'tokenId': ''})
 
 
 def get_create_status():
