@@ -210,7 +210,7 @@ def get_node_iops(hostname):
 
 def list_storage_pool():
     storage_pools = []
-    for storage_pool in StoragePool.objects.order_by('-id'):
+    for storage_pool in StoragePool.objects.order_by('storage_pool_id'):
         storage_pools.append({'poolId': storage_pool.storage_pool_id, 'name': storage_pool.storage_pool_name, 'description': storage_pool.storage_pool_description,
                               'dataClassification': storage_pool.storage_pool_data_classification, 'createTime': storage_pool.storage_pool_create_time})
     return storage_pools
