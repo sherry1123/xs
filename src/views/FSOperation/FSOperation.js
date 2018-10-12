@@ -28,9 +28,13 @@ class FSOperation extends Component {
     }
 
     async getFilesByPath (dirPath, needBackIfError){
-        await this.setState({queryingDirectory: true});
+        // if the fetching takes more than 500ms, then show the loading.
+        const timer = setTimeout(async () => {
+            await this.setState({queryingDirectory: true});
+        }, 500);
         try {
             let files = await httpRequests.getFiles(dirPath);
+            clearTimeout(timer);
             // if the directory stack goes deeper, should add a back upper directory placeholder
             if (this.directoryStack.length > 1){
                 files.unshift({name: '..', path: '..'});
