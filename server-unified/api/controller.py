@@ -1649,10 +1649,12 @@ def get_users_quota(params):
 def update_users_quota(params):
     response = {}
     try:
-        inode_limit, name, pool_id, size_limit = handler.request(params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
+        inode_limit, name, pool_id, size_limit = handler.request(
+            params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
         id_type = 'uid'
         size_limit = handler.from_byte(sizeLimit)
-        backend.update_users_or_groups_quota(pool_id, id_type, name, size_limit, inode_limit)
+        backend.update_users_or_groups_quota(
+            pool_id, id_type, name, size_limit, inode_limit)
         response = handler.response(0, 'Update users quota successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
@@ -1690,10 +1692,12 @@ def get_groups_quota(params):
 def update_users_quota(params):
     response = {}
     try:
-        inode_limit, name, pool_id, size_limit = handler.request(params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
+        inode_limit, name, pool_id, size_limit = handler.request(
+            params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
         id_type = 'gid'
         size_limit = handler.from_byte(sizeLimit)
-        backend.update_users_or_groups_quota(pool_id, id_type, name, size_limit, inode_limit)
+        backend.update_users_or_groups_quota(
+            pool_id, id_type, name, size_limit, inode_limit)
         response = handler.response(0, 'Update groups quota successfully!')
     except Exception as error:
         response = handler.response(1, handler.error(error))
