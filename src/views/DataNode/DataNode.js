@@ -5,7 +5,7 @@ import PhysicalNodeCPU from './PhysicalNodeCPU';
 import PhysicalNodeDRAM from './PhysicalNodeDRAM';
 import PhysicalNodeTPS from './PhysicalNodeTPS';
 import PhysicalNodeIOPS from './PhysicalNodeIOPS';
-import PhysicalNodeTargetList from './PhysicalNodeTargetList';
+import PhysicalNodeTargetList from './PhysicalNodeTargets';
 import httpRequests from 'Http/requests';
 
 class DataNode extends Component {
