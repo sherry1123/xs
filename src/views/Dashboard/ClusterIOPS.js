@@ -25,7 +25,7 @@ class IOPSStatistics extends Component {
         };
         return (
             <div className="fs-statistics-chart-wrapper">
-                <header><Icon type="line-chart" />{lang('集群IOPS', 'Cluster IOPS')}</header>
+                <header><Icon type="line-chart" />{lang('集群 IOPS', 'Cluster IOPS')}</header>
                 <FSLineChart option={option} />
             </div>
         );

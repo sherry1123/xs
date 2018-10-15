@@ -17,12 +17,13 @@ class TargetOfStoragePool extends Component {
 		};
 	}
 
-	delete (target, index){
+	delete (target){
+		let {poolId, poolName} = this.state;
 		const modal = Modal.confirm({
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
-				<p>{lang(`您将要执行从存储池 ${this.state.poolName} 移除存储目标 ID:${target.id} 的操作。`, `You are about to remove target ID:${target.id} from storage pool ${this.state.poolName}.`)}</p>
-				<p>{lang(`该操作将会从存储池 ${this.state.poolName} 中移除存储目标 ID:${target.id}，将会导致该存储池的容量减少。`, `This operation will delete target ID:${target.id} from storage pool ${this.state.poolName}. `)}</p>
+				<p>{lang(`您将要执行从存储池 ${poolName} 移除存储目标 ID:${target.id} 的操作。`, `You are about to remove target ID:${target.id} from storage pool ${poolName}.`)}</p>
+				<p>{lang(`该操作将会从存储池 ${poolName} 中移除存储目标 ID:${target.id}，将会导致该存储池的容量减少。`, `This operation will delete target ID:${target.id} from storage pool ${poolName}. `)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的的存储目标，并确认该存储池它已不再需要它。`, `A suggestion: before executing this operation, ensure that you select the right target and it's no longer necessary.`)}</p>
 			</div>,
 			keyboard: false,
@@ -33,11 +34,11 @@ class TargetOfStoragePool extends Component {
 			onOk: async () => {
                 modal.update({cancelButtonProps: {disabled: true}});
 				try {
-					await httpRequests.deleteTargetFromStoragePool({poolId: this.state.poolId, targets: [target.id]});
-					httpRequests.getTargetsOfStoragePoolById(this.state.poolId);
-					message.success(lang(`已开始删除存储池目标 ID:${target.id}!`, `Start deleting storage pool ${target.id}!`));
+					await httpRequests.deleteTargetFromStoragePool({poolId, targets: [target.id]});
+					httpRequests.getTargetsOfStoragePoolById(poolId);
+					message.success(lang(`从存储池 ${poolName} 删除存储目标 ID:${target.id} 成功!`, `Delete target ${target.id} from storage pool ${poolName} successfully !`));
 				} catch ({msg}){
-					message.error(lang(`删除存储池目标 ID:${target.id} 失败, 原因: `, `Delete storage pool target ${target.id} failed, reason: `) + msg);
+					message.error(lang(`从存储池 ${poolName} 删除存储目标 ID:${target.id} 失败, 原因: `, `Delete target ${target.id} from storage pool ${poolName} failed, reason: `) + msg);
 				}
                 modal.update({cancelButtonProps: {disabled: false}});
 			},
@@ -87,7 +88,7 @@ class TargetOfStoragePool extends Component {
 				),
 				size: 'normal',
 			},
-			rowKey: record => `${record.targetId}-${record.service}`,
+			rowKey: record => `${record.targetPath}`,
 			locale: {
 				emptyText: lang('暂无存储目标', 'No Storage Target')
 			},
@@ -163,7 +164,7 @@ class TargetOfStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-	const {language, main: { storagePool: {targetsOfStoragePool}}} = state;
+	const {language, main: {storagePool: {targetsOfStoragePool}}} = state;
 	return {language, targetsOfStoragePool};
 };
 

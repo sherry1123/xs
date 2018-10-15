@@ -996,7 +996,7 @@ class Initialize extends Component {
                                     {lang('初始化进度信息', 'Initialization Progress Information')}
                                 </div>
                                 {
-                                    this.state.initInfoList.map((info, i) => info.step === -1 ?
+                                    (this.state.initInfoList || []).map((info, i) => info.step === -1 ?
                                         <div className="fs-initialization-info-item failed" key={i}>
                                             {initTipsMap[-1]}
                                         </div> :

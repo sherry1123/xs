@@ -5,12 +5,17 @@ import CreateMetadataOrStorageService from './CreateMetadataOrStorageService';
 import CreateManagementService from './CreateManagementService';
 import CreateClient from './CreateClient';
 import lang from 'Components/Language/lang';
-// import httpRequests from 'Http/requests';
+import httpRequests from 'Http/requests';
 
 class ServiceAndClient extends Component {
     componentDidMount (){
-        // fetch in cronJob immediately instead
-        // httpRequests.getClusterServiceAndClientIPs();
+        // will first fetch in cronJob immediately, but if the system is not inited, won't fetch,
+        // so still needs to do a check here, if don't fetch in cron job when accessing web, should
+        // fetch it here.
+        let {metadataServerIPs} = this.props;
+        if (!metadataServerIPs.length){
+            httpRequests.getClusterServiceAndClientIPs();
+        }
     }
 
     createMetadataService (){

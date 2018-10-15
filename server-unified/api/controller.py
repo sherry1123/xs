@@ -1630,3 +1630,88 @@ def delete_nas_server(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def get_users_quota(params):
+    response = {}
+    try:
+        pool_id, = handler.request(params, poolId=[int, str])
+        id_type = 'uid'
+        users = database.list_local_auth_user()
+        names = handler.list2str(map(lambda user: user['name'], users))
+        data = backend.get_users_or_groups_quota(pool_id, id_type, names)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_users_quota(params):
+    response = {}
+    try:
+        inode_limit, name, pool_id, size_limit = handler.request(
+            params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
+        id_type = 'uid'
+        size_limit = handler.from_byte(sizeLimit)
+        backend.update_users_or_groups_quota(
+            pool_id, id_type, name, size_limit, inode_limit)
+        response = handler.response(0, 'Update users quota successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_users_quota(params):
+    response = {}
+    try:
+        names, pool_id = handler.request(params, poolId=int, names=list)
+        id_type = 'uid'
+        names = handler.list2str(names)
+        backend.delete_users_or_groups_quota(pool_id, id_type, names)
+        response = handler.response(0, 'Delete users quota successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_groups_quota(params):
+    response = {}
+    try:
+        pool_id, = handler.request(params, poolId=[int, str])
+        id_type = 'gid'
+        groups = database.list_local_auth_user_group()
+        groups = filter(lambda group: group['name'] != 'everyone', group_list)
+        names = handler.list2str(map(lambda group: group['name'], group_list))
+        data = backend.get_users_or_groups_quota(pool_id, id_type, names)
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def update_users_quota(params):
+    response = {}
+    try:
+        inode_limit, name, pool_id, size_limit = handler.request(
+            params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
+        id_type = 'gid'
+        size_limit = handler.from_byte(sizeLimit)
+        backend.update_users_or_groups_quota(
+            pool_id, id_type, name, size_limit, inode_limit)
+        response = handler.response(0, 'Update groups quota successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def delete_users_quota(params):
+    response = {}
+    try:
+        names, pool_id = handler.request(params, poolId=int, names=list)
+        id_type = 'gid'
+        names = handler.list2str(names)
+        backend.delete_users_or_groups_quota(pool_id, id_type, names)
+        response = handler.response(0, 'Delete groups quota successfully!')
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response

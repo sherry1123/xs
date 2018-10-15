@@ -138,9 +138,7 @@ export default {
         },
         // storage pool
         storagePool: {
-            storagePoolList: [
-                {poolId: "1", name: "pool_1"}
-            ],
+            storagePoolList: [],
             // targets or buddy groups in one storage pool
             targetsOfStoragePool: [
 				 // {"capacity": 21474836480, "id": 201, "targetPath": "/data/Orcafs-storage201"},
@@ -160,6 +158,7 @@ export default {
             userQuotasOfStoragePool: [
                 {name:"zhang", sizeLimit:"21474836480", sizeUsed:"1073741824", inodeLimit: "10000", inodeUsed:"1000"}
                 ],
+            groupQuotasOfStoragePool: [],
             // data classification setting list
             dataClassificationList: []
         },

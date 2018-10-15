@@ -2,7 +2,7 @@ import State from '../state';
 import {storagePoolActionTypes} from 'Actions/storagePoolAction';
 
 const storagePoolReducer = (state = State.main.storagePool, action) => {
-    let {storagePoolList, dataClassificationList, targetsOfStoragePool, buddyGroupsOfStoragePool, targetsForStoragePool, buddyGroupsForStoragePool, userQuotasOfStoragePool} = action;
+    let {storagePoolList, dataClassificationList, targetsOfStoragePool, buddyGroupsOfStoragePool, targetsForStoragePool, buddyGroupsForStoragePool, userQuotasOfStoragePool, groupQuotasOfStoragePool} = action;
     switch (action.type){
         case storagePoolActionTypes.SET_STORAGE_POOL_LIST:
             return Object.assign({}, state, {storagePoolList});
@@ -24,6 +24,9 @@ const storagePoolReducer = (state = State.main.storagePool, action) => {
 
 		case storagePoolActionTypes.SET_USER_QUOTAS_OF_STORAGE_POOL:
 			return Object.assign({}, state, {userQuotasOfStoragePool});
+
+		case storagePoolActionTypes.SET_GROUP_QUOTAS_OF_STORAGE_POOL:
+			return Object.assign({}, state, {groupQuotasOfStoragePool});
 
         default:
             return state;
