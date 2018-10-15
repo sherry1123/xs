@@ -138,7 +138,9 @@ export default {
         },
         // storage pool
         storagePool: {
-            storagePoolList: [],
+            storagePoolList: [
+                {poolId: "1", name: "pool_1"}
+            ],
             // targets or buddy groups in one storage pool
             targetsOfStoragePool: [
 				 // {"capacity": 21474836480, "id": 201, "targetPath": "/data/Orcafs-storage201"},
@@ -155,6 +157,9 @@ export default {
             buddyGroupsForStoragePool: [
 				 // {"capacity": 21474836480, "id": 1, "targetPath": "/data/Orcafs-storage101,/data/Orcafs-storage301"}
             ],
+            userQuotasOfStoragePool: [
+                {name:"zhang", sizeLimit:"21474836480", sizeUsed:"1073741824", inodeLimit: "10000", inodeUsed:"1000"}
+                ],
             // data classification setting list
             dataClassificationList: []
         },

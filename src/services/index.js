@@ -5,7 +5,7 @@ export {lsGet, lsSet, lsRemove, lsClearAll} from './localStorage';
 export {ckGet, ckSet, ckRemove} from './cookie';
 
 // reference mapping
-export {timeUnitMilliSecond, metadataStaticsItems, storageStaticsItems,} from './localData';
+export {timeUnitMilliSecond, metadataStaticsItems, storageStaticsItems, capacityUnitSize} from './localData';
 
 // format digit to Byte, KByte, MByte, GByte, TByte, PByte, EByte, ZByte .etc
 export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';
