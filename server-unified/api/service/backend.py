@@ -47,7 +47,10 @@ def deinitialize_cluster():
 
 
 def create_buddy_group(param):
-    return backend_handler(request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token()))
+    if param:
+        return backend_handler(request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token()))
+    else:
+        return request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token())
 
 
 def get_version():
