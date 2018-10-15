@@ -418,8 +418,9 @@ def get_users_or_groups_quota(pool_id, id_type, id_list):
         if limit_or_used == 'unlimited':
             return 0
         else:
-            value = float(handler.replace('\s?\Si?B', '', limit_or_used))
-            unit = handler.replace('\S+\d\s?', '', limit_or_used)[0]
+            value = float(handler.replace(
+                '\s?[A-Z]?i?B(yte)?', '', limit_or_used))
+            unit = handler.replace('\S*\d\s?', '', limit_or_used)[0]
             return int(handler.to_byte(value, unit))
     quotas = map(lambda quota: {'name': quota['name'], 'id': quota['id'], 'sizeUsed': modify_limit_or_used(quota['sizeUsed']), 'sizeLimit': modify_limit_or_used(
         quota['sizeLimit']), 'inodeUsed': quota['inodeUsed'], 'inodeLimit': modify_limit_or_used(quota['inodeLimit'])}, quotas)

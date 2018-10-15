@@ -126,7 +126,7 @@ def to_byte(value, unit):
 
 
 def from_byte(value):
-    unit_list = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+    unit_list = ['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     unit = 0
     while (value / 1024):
         value = value / 1024

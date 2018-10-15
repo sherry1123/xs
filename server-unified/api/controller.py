@@ -1652,7 +1652,7 @@ def update_users_quota(params):
         inode_limit, name, pool_id, size_limit = handler.request(
             params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
         id_type = 'uid'
-        size_limit = handler.from_byte(sizeLimit)
+        size_limit = handler.from_byte(size_limit)
         backend.update_users_or_groups_quota(
             pool_id, id_type, name, size_limit, inode_limit)
         response = handler.response(0, 'Update users quota successfully!')
@@ -1680,8 +1680,8 @@ def get_groups_quota(params):
         pool_id, = handler.request(params, poolId=[int, str])
         id_type = 'gid'
         groups = database.list_local_auth_user_group()
-        groups = filter(lambda group: group['name'] != 'everyone', group_list)
-        names = handler.list2str(map(lambda group: group['name'], group_list))
+        groups = filter(lambda group: group['name'] != 'everyone', groups)
+        names = handler.list2str(map(lambda group: group['name'], groups))
         data = backend.get_users_or_groups_quota(pool_id, id_type, names)
         response = handler.response(0, data)
     except Exception as error:
@@ -1689,13 +1689,13 @@ def get_groups_quota(params):
     return response
 
 
-def update_users_quota(params):
+def update_groups_quota(params):
     response = {}
     try:
         inode_limit, name, pool_id, size_limit = handler.request(
             params, poolId=int, name=str, sizeLimit=int, inodeLimit=int)
         id_type = 'gid'
-        size_limit = handler.from_byte(sizeLimit)
+        size_limit = handler.from_byte(size_limit)
         backend.update_users_or_groups_quota(
             pool_id, id_type, name, size_limit, inode_limit)
         response = handler.response(0, 'Update groups quota successfully!')
@@ -1704,7 +1704,7 @@ def update_users_quota(params):
     return response
 
 
-def delete_users_quota(params):
+def delete_groups_quota(params):
     response = {}
     try:
         names, pool_id = handler.request(params, poolId=int, names=list)
