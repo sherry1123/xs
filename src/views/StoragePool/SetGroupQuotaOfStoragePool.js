@@ -97,7 +97,7 @@ class SetGroupQuotaOfStoragePool extends Component {
 		quotaData.sizeLimit = quotaData.sizeLimitNumber * capacityUnitSize[quotaData.sizeLimitUnit];
 		this.setState({formSubmitting: true});
 		try {
-			await httpRequests.setGroupQuotaOfStoragePool({quotaData});
+			await httpRequests.setGroupQuotaOfStoragePool(quotaData);
 			httpRequests.getGroupQuotasOfStoragePoolById(quotaData.poolId);
 			await this.hide();
 			message.success(lang(`设置本地认证用户组 ${quotaData.name} 在存储池 ${poolName} 的配额成功!`, `Set the quota of local authentication user group ${quotaData.name} in storage pool ${poolName} successfully!`));
