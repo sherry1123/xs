@@ -557,3 +557,33 @@ def remove_buddy_groups_from_storage_pool():
 @app.route('/api/deletenasserver', methods=['GET', 'POST'])
 def delete_nas_server():
     return jsonify(controller.delete_nas_server(request.params))
+
+
+@app.route('/api/getusersquota', methods=['GET', 'POST'])
+def get_users_quota():
+    return jsonify(controller.get_users_quota(request.params))
+
+
+@app.route('/api/updateusersquota', methods=['GET', 'POST'])
+def update_users_quota():
+    return jsonify(controller.update_users_quota(request.params))
+
+
+@app.route('/api/deleteusersquota', methods=['GET', 'POST'])
+def delete_users_quota():
+    return jsonify(controller.delete_users_quota(request.params))
+
+
+@app.route('/api/getgroupsquota', methods=['GET', 'POST'])
+def get_groups_quota():
+    return jsonify(controller.get_groups_quota(request.params))
+
+
+@app.route('/api/updategroupsquota', methods=['GET', 'POST'])
+def update_groups_quota():
+    return jsonify(controller.update_groups_quota(request.params))
+
+
+@app.route('/api/deletegroupsquota', methods=['GET', 'POST'])
+def delete_groups_quota():
+    return jsonify(controller.delete_groups_quota(request.params))

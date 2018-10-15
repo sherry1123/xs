@@ -125,6 +125,15 @@ def to_byte(value, unit):
     return math.floor(value * math.pow(1024, unit_list.index(unit)))
 
 
+def from_byte(value):
+    unit_list = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+    unit = 0
+    while (value / 1024):
+        value = value / 1024
+        unit += 1
+    return '%s%s' % (value, unit_list[unit])
+
+
 def replace(pattern, repl, string):
     return re.sub(pattern, repl, string)
 

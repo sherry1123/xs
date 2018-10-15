@@ -17,7 +17,7 @@ def backend_handler(response):
 
 
 def get_token():
-    return request.get('http://localhost:9090/token/get', {}, {}, {'tokenId': '4a2d34ad-399e-4591-a55b-18acf8cf8712'})
+    return request.get('http://localhost:9090/token/get', {}, {}, {'tokenId': ''})
 
 
 def get_create_status():
@@ -47,7 +47,10 @@ def deinitialize_cluster():
 
 
 def create_buddy_group(param):
-    return backend_handler(request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token()))
+    if param:
+        return backend_handler(request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token()))
+    else:
+        return request.post('http://localhost:9090/cluster/createbuddymirror', param, get_token())
 
 
 def get_version():
@@ -404,3 +407,28 @@ def remove_buddy_groups_from_storage_pool(pool_id, buddy_groups):
 
 def delete_nas_server(ip, path):
     return backend_handler(request.post('http://localhost:9090/cluster/nasmanager', {'opt': 'nasDelete', 'nasServerList': [{'clientIp': ip, 'nasRoot': path}]}, get_token()))
+
+
+def get_users_or_groups_quota(pool_id, id_type, id_list):
+    data = backend_handler(request.get('http://localhost:9090/cluster/showquota', {
+                           'poolId': pool_id, 'idType': id_type, 'idList': id_list}, get_token()))
+    quotas = data['quotaInfoList']
+
+    def modify_limit_or_used(limit_or_used):
+        if limit_or_used == 'unlimited':
+            return 0
+        else:
+            value = float(handler.replace('\s?\Si?B', '', limit_or_used))
+            unit = handler.replace('\S+\d\s?', '', limit_or_used)[0]
+            return int(handler.to_byte(value, unit))
+    quotas = map(lambda quota: {'name': quota['name'], 'id': quota['id'], 'sizeUsed': modify_limit_or_used(quota['sizeUsed']), 'sizeLimit': modify_limit_or_used(
+        quota['sizeLimit']), 'inodeUsed': quota['inodeUsed'], 'inodeLimit': modify_limit_or_used(quota['inodeLimit'])}, quotas)
+    return quotas
+
+
+def update_users_or_groups_quota(pool_id, id_type, name, size_limit, inode_limit):
+    return backend_handler(request.post('http://localhost:9090/cluster/modifyquota', {'poolId': pool_id, 'idType': id_type, 'name': name, 'sizeLimit': size_limit, 'inodeLimit': inode_limit}, get_token()))
+
+
+def delete_users_or_groups_quota(pool_id, id_type, names):
+    return backend_handler(request.post('http://localhost:9090/cluster/deletequota', {'poolId': pool_id, 'idType': id_type, 'names': names}, get_token()))
