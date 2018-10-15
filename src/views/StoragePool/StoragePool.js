@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
+import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
 import TargetOfStoragePool from './TargetOfStoragePool';
 import BuddyGroupOfStoragePool from './BuddyGroupOfStoragePool';
 import DataClassificationSetting from './DataClassificationSetting';
-import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
+import GroupQuotaOfStoragePool from './GroupQuotaOfStoragePool';
+import httpRequests from 'Http/requests';
 
 class StoragePool extends Component {
     constructor (props){
@@ -102,6 +103,10 @@ class StoragePool extends Component {
 		this.dataClassificationSettingWrapper.getWrappedInstance().show();
 	}
 
+	showGroupQuotaOfStoragePoolWrapper (storagePool){
+    	this.groupQuotaOfStoragePoolWrapper.getWrappedInstance().show(storagePool);
+	}
+
     render (){
         let {storagePoolList} = this.state;
 		let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0};
@@ -168,6 +173,7 @@ class StoragePool extends Component {
 							<Button
 								{...buttonConf}
 								icon="team"
+								onClick={this.showGroupQuotaOfStoragePoolWrapper.bind(this, record, index)}
 							>
 							</Button>
 						</Popover>
@@ -218,6 +224,7 @@ class StoragePool extends Component {
 				<TargetOfStoragePool ref={ref => this.targetOfStoragePoolWrapper = ref} />
 				<BuddyGroupOfStoragePool ref={ref => this.buddyGroupOfStoragePoolWrapper = ref} />
 				<DataClassificationSetting ref={ref => this.dataClassificationSettingWrapper = ref} />
+				<GroupQuotaOfStoragePool ref={ref => this.groupQuotaOfStoragePoolWrapper = ref} />
 			</div>
         );
     }
