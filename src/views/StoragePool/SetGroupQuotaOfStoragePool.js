@@ -198,6 +198,9 @@ class SetGroupQuotaOfStoragePool extends Component {
                         validateStatus={validation.sizeLimit.status}
                         help={validation.sizeLimit.help}
                     >
+                        {
+                            // hope antd will support addon for InputNumber, so we won't need to use this dirty way instead.
+                        }
                         <Row style={{height: 32}}>
                             <Col span={5}>
                                 <Form.Item validateStatus={validation.sizeLimit.status}>
@@ -260,7 +263,7 @@ class SetGroupQuotaOfStoragePool extends Component {
 						{...formItemLayout}
 						label={lang('索引节点配额已使用', 'Used Inode Quota')}
 					>
-						<span>{formatStorageSize(quotaData.inodeUsed)}</span>
+						<span>{quotaData.inodeUsed}</span>
 					</Form.Item>
 				</Form>
             </Modal>
