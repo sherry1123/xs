@@ -6,6 +6,7 @@ import EditStoragePool from './EditStoragePool';
 import CreateStoragePool from './CreateStoragePool';
 import TargetOfStoragePool from './TargetOfStoragePool';
 import BuddyGroupOfStoragePool from './BuddyGroupOfStoragePool';
+import UserQuotaOfStoragePool from './UserQuotaOfStoragePool'
 import DataClassificationSetting from './DataClassificationSetting';
 import GroupQuotaOfStoragePool from './GroupQuotaOfStoragePool';
 import httpRequests from 'Http/requests';
@@ -99,6 +100,10 @@ class StoragePool extends Component {
 		this.buddyGroupOfStoragePoolWrapper.getWrappedInstance().show(storagePool);
 	}
 
+	showUserQuotaOfStoragePool (storagePool){
+    	this.userQuotaOfStoragePoolWrapper.getWrappedInstance().show(storagePool);
+	}
+
 	showDataClassificationSetting (){
 		this.dataClassificationSettingWrapper.getWrappedInstance().show();
 	}
@@ -165,6 +170,7 @@ class StoragePool extends Component {
 						<Popover {...buttonPopoverConf} content={lang('用户配额', 'User Quota')}>
 							<Button
 								{...buttonConf}
+								onClick={this.showUserQuotaOfStoragePool.bind(this, record, index)}
 								icon="user"
 							>
 							</Button>
@@ -223,6 +229,7 @@ class StoragePool extends Component {
 				<EditStoragePool ref={ref => this.editStoragePoolWrapper = ref} />
 				<TargetOfStoragePool ref={ref => this.targetOfStoragePoolWrapper = ref} />
 				<BuddyGroupOfStoragePool ref={ref => this.buddyGroupOfStoragePoolWrapper = ref} />
+				<UserQuotaOfStoragePool ref={ref => this.userQuotaOfStoragePoolWrapper = ref} />
 				<DataClassificationSetting ref={ref => this.dataClassificationSettingWrapper = ref} />
 				<GroupQuotaOfStoragePool ref={ref => this.groupQuotaOfStoragePoolWrapper = ref} />
 			</div>
