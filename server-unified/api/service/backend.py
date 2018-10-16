@@ -433,3 +433,25 @@ def update_users_or_groups_quota(pool_id, id_type, name, size_limit, inode_limit
 
 def delete_users_or_groups_quota(pool_id, id_type, id_list):
     return backend_handler(request.post('http://localhost:9090/cluster/deletequota', {'poolId': pool_id, 'idType': id_type, 'idList': id_list}, get_token()))
+
+
+def file_system_check():
+    return backend_handler(request.post('http://localhost:9090/cluster/fscheck', {'opt': 'orcafschcmd', 'orcaCheckFS': {'checkFS': True, 'readonly': True, 'overwriteDbFile': True, 'forceRestart': True, 'quotaEnabled': True}}, get_token()))
+
+
+def file_system_check():
+    return backend_handler(request.post('http://localhost:9090/cluster/fscheck', {'opt': 'orcafschcmd', 'orcaCheckFS': {'checkFS': True, 'overwriteDbFile': True, 'forceRestart': True, 'quotaEnabled': True, 'automatic': True}}, get_token()))
+
+
+def get_file_system_status():
+    data = backend_handler(request.post('http://localhost:9090/cluster/fscheck', {
+                           'opt': 'orcafsquery', 'orcaFsCKStatus': {'Opt': 'orcafsckquerystatus'}}, get_token()))
+    status = data['OrcaFsCheckStatus']
+    return {'step': status['Step'], 'status': status['Status']}
+
+
+def get_file_system_log():
+    data = backend_handler(request.post('http://localhost:9090/cluster/fscheck', {
+                           'opt': 'orcafsquery', 'orcaFsCKStatus': {'Opt': 'orcafsckquerylog'}}, get_token()))
+    status = data['OrcaFsCheckStatus']
+    return status['Logs']
