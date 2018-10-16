@@ -587,3 +587,20 @@ def update_groups_quota():
 @app.route('/api/deletegroupsquota', methods=['GET', 'POST'])
 def delete_groups_quota():
     return jsonify(controller.delete_groups_quota(request.params))
+
+
+@app.route('/api/filesystemcheck', methods=['GET', 'POST'])
+def file_system_check():
+    process.do(controller.file_system_check)
+    return jsonify(handler.response(0, 'Start to check the file system!'))
+
+
+@app.route('/api/filesystemrepair', methods=['GET', 'POST'])
+def file_system_repair():
+    process.do(controller.file_system_repair)
+    return jsonify(handler.response(0, 'Start to repair the file system!'))
+
+
+@app.route('/api/getfilesystemlog', methods=['GET', 'POST'])
+def get_file_system_log():
+    return jsonify(controller.get_file_system_log())

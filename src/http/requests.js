@@ -280,6 +280,23 @@ export default  {
         await fetchPost('/api/removebuddygroupsfromstoragepool', buddyGroupData);
     },
 
+    async getUserQuotasOfStoragePoolById (poolId){
+        requestHandler(async () => {
+			let data = await fetchPost('/api/getusersquota ', {poolId});
+			if (!!data){
+				store.dispatch(storagePoolAction.setUserQuotasOfStoragePool(data))
+            }
+		});
+    },
+
+    async setUserQuotaOfStoragePool (quotaData){
+        await fetchPost('/api/updateusersquota', quotaData);
+    },
+
+    async deleteUserQuotaFromStoragePool (quotaData){
+        await fetchPost('/api/deleteusersquota', quotaData);
+    },
+
     async getGroupQuotasOfStoragePoolById (poolId){
         requestHandler(async () => {
 			let data = await fetchPost('/api/getgroupsquota ', {poolId});

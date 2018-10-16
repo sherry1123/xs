@@ -1715,3 +1715,61 @@ def delete_groups_quota(params):
     except Exception as error:
         response = handler.response(1, handler.error(error))
     return response
+
+
+def file_system_check():
+    try:
+        backend.file_system_check()
+
+        @setinterval(2)
+        def send_file_system_check_status(callback):
+            data = backend.get_file_system_status()
+            step = data['step']
+            status = data['status']
+            event.send('cluster', 22, 'cluster', True, {
+                       'current': step, 'status': 0 if status else -1, 'total': 5})
+            if not status:
+                callback()
+            elif step == 5:
+                callback()
+
+        def stop_get_file_system_check_status():
+            start_get_file_system_check_status.set()
+        start_get_file_system_check_status = send_file_system_check_status(
+            stop_get_file_system_check_status)
+    except Exception as error:
+        handler.log(handler.error(error), 2)
+
+
+def file_system_repair():
+    try:
+        backend.file_system_repair()
+
+        @setinterval(2)
+        def send_file_system_repair_status(callback):
+            data = backend.get_file_system_status()
+            step = data['step']
+            status = data['status']
+            event.send('cluster', 23, 'cluster', True, {
+                       'current': step, 'status': 0 if status else -1, 'total': 5})
+            if not status:
+                callback()
+            elif step == 5:
+                callback()
+
+        def stop_get_file_system_repair_status():
+            start_get_file_system_repair_status.set()
+        start_get_file_system_repair_status = send_file_system_repair_status(
+            stop_get_file_system_repair_status)
+    except Exception as error:
+        handler.log(handler.error(error), 2)
+
+
+def get_file_system_log():
+    response = {}
+    try:
+        data = backend.get_file_system_log()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
