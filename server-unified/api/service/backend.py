@@ -431,5 +431,5 @@ def update_users_or_groups_quota(pool_id, id_type, name, size_limit, inode_limit
     return backend_handler(request.post('http://localhost:9090/cluster/modifyquota', {'poolId': pool_id, 'idType': id_type, 'name': name, 'sizeLimit': size_limit, 'inodeLimit': inode_limit}, get_token()))
 
 
-def delete_users_or_groups_quota(pool_id, id_type, names):
-    return backend_handler(request.post('http://localhost:9090/cluster/deletequota', {'poolId': pool_id, 'idType': id_type, 'names': names}, get_token()))
+def delete_users_or_groups_quota(pool_id, id_type, id_list):
+    return backend_handler(request.post('http://localhost:9090/cluster/deletequota', {'poolId': pool_id, 'idType': id_type, 'idList': id_list}, get_token()))
