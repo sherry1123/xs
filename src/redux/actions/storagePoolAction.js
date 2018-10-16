@@ -39,4 +39,14 @@ export default {
 		type: storagePoolActionTypes.SET_BUDDY_GROUPS_FOR_STORAGE_POOL,
 		buddyGroupsForStoragePool
 	}),
+
+	setUserQuotasOfStoragePool: userQuotasOfStoragePool => ({
+		type: storagePoolActionTypes.SET_USER_QUOTAS_OF_STORAGE_POOL,
+		userQuotasOfStoragePool
+	}),
+
+	setGroupQuotasOfStoragePool: groupQuotasOfStoragePool => ({
+		type: storagePoolActionTypes.SET_GROUP_QUOTAS_OF_STORAGE_POOL,
+		groupQuotasOfStoragePool
+	}),
 };

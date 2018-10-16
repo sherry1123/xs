@@ -155,9 +155,7 @@ export default {
             buddyGroupsForStoragePool: [
 				 // {"capacity": 21474836480, "id": 1, "targetPath": "/data/Orcafs-storage101,/data/Orcafs-storage301"}
             ],
-            userQuotasOfStoragePool: [
-                {name:"zhang", sizeLimit:"21474836480", sizeUsed:"1073741824", inodeLimit: "10000", inodeUsed:"1000"}
-                ],
+            userQuotasOfStoragePool: [],
             groupQuotasOfStoragePool: [],
             // data classification setting list
             dataClassificationList: []

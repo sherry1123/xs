@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Button, Col, Form, InputNumber, Modal, message, Row, Select} from 'antd';
-import {debounce, validateNotZeroInteger, capacityUnitSize, formatStorageSize} from 'Services';
+import {debounce, capacityUnitSize, formatStorageSize} from 'Services';
 import httpRequests from 'Http/requests';
 
 class SetGroupQuotaOfStoragePool extends Component {
@@ -16,7 +16,9 @@ class SetGroupQuotaOfStoragePool extends Component {
                 poolId: '',
                 name: '',
                 sizeLimit: '', sizeLimitNumber: '', sizeLimitUnit: '',
+                sizeUsed: '',
                 inodeLimit: '',
+                inodeUsed: ''
             },
             validation: {
                 sizeLimit: {status: '', help: '', valid: false},
@@ -26,11 +28,6 @@ class SetGroupQuotaOfStoragePool extends Component {
     }
 
     formValueChange (key, value){
-        if (key === 'sizeLimitNumber'){
-            if (!validateNotZeroInteger(value)){
-                value = value.length > 0 ? this.state.quotaData.sizeLimitNumber : '';
-            }
-        }
         let quotaData = Object.assign({}, this.state.quotaData, {[key]: value});
         this.setState({quotaData});
     }
@@ -51,10 +48,10 @@ class SetGroupQuotaOfStoragePool extends Component {
     @debounce(500)
     async validateForm (key){
         await this.validationUpdateState(key, {cn: '', en: ''}, true);
-		let {sizeNumber, sizeUnit, sizeUsed, inodeLimit, inodeUsed} = this.state.quotaData;
-        if (key === 'sizeNumber' || key === 'sizeUnit'){
-            if (sizeNumber && sizeUnit){
-                let sizeLimit = sizeNumber * capacityUnitSize[sizeUnit];
+		let {sizeLimitNumber, sizeLimitUnit, sizeUsed, inodeLimit, inodeUsed} = this.state.quotaData;
+        if (key === 'sizeLimit'){
+            if (sizeLimitNumber && sizeLimitUnit){
+                let sizeLimit = sizeLimitNumber * capacityUnitSize[sizeLimitUnit];
                 if (sizeLimit <= sizeUsed){
                     await this.validationUpdateState('sizeLimit', {
                         cn: '大小配额必须设置为大于当前已使用的额度',
@@ -71,7 +68,7 @@ class SetGroupQuotaOfStoragePool extends Component {
         if (key === 'inodeLimit'){
             if (inodeLimit){
                 if (inodeLimit <= inodeUsed){
-                    await this.validationUpdateState('sizeLimit', {
+                    await this.validationUpdateState('inodeLimit', {
                         cn: '索引节点配额必须设置为大于当前已使用的额度',
                         en: 'Inode quota must be bigger than currently used value.'
                     }, false);
@@ -136,7 +133,11 @@ class SetGroupQuotaOfStoragePool extends Component {
                     sizeLimitUnit,
                     ...quotaData
                 }
-            }
+            },
+            validation: {
+                sizeLimit: {status: '', help: '', valid: false},
+                inodeLimit: {status: '', help: '', valid: false}
+            },
         });
     }
 
@@ -204,6 +205,7 @@ class SetGroupQuotaOfStoragePool extends Component {
                                     <InputNumber
                                         type="text" size="small"
                                         value={quotaData.sizeLimitNumber}
+                                        min={0}
                                         onChange={value => {
                                             this.formValueChange.bind(this, 'sizeLimitNumber')(value);
                                             this.validateForm.bind(this)('sizeLimit');
@@ -248,6 +250,7 @@ class SetGroupQuotaOfStoragePool extends Component {
 					>
 						<InputNumber
 							size="small"
+                            min={0}
 							placeholder={lang('请输入索引节点配额', 'Please enter inode quota')}
 							value={quotaData.inodeLimit}
 							onChange={value => {
@@ -269,8 +272,8 @@ class SetGroupQuotaOfStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-    let {language, main: {storagePool: {dataClassificationList}}} = state;
-    return {language, dataClassificationList};
+    let {language} = state;
+    return {language};
 };
 
 const mapDispatchToProps = [];

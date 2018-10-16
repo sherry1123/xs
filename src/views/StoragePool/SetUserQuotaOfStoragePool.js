@@ -1,22 +1,21 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-// import httpRequests from 'Http/requests';
+import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {Button, Col, Form, Input, Modal, Row, Select} from "antd";
-import {formatStorageSize} from 'Services';
-import update from 'react-addons-update';
-import {debounce, validateNotZeroInteger, capacityUnitSize} from 'Services';
+import {Button, Col, Form, InputNumber, message, Modal, Row, Select} from 'antd';
+import {formatStorageSize, debounce, capacityUnitSize} from 'Services';
 
 class SetUserQuotaOfStoragePool extends Component {
     constructor(props) {
         super(props);
         this.state = {
             visible: false,
-            poolId: '',
+            formSubmitting: false,
             poolName: '',
 			userQuotaData: {
+                poolId: '',
 				name: '',
-				sizeLimit: '', sizeNumber: '', sizeUnit: '',
+				sizeLimit: '', sizeLimitNumber: '', sizeLimitUnit: '',
 				sizeUsed: '',
 				inodeLimit: '',
 				inodeUsed: '',
@@ -28,61 +27,74 @@ class SetUserQuotaOfStoragePool extends Component {
         };
     }
 
-    getQuotaNumAndUnit (sizeLimit){
-        for ( var k in capacityUnitSize){
-            if (sizeLimit % capacityUnitSize[k] === 0){
-                this.setState({userQuotaData: {
-                    sizeNumber : sizeLimit % capacityUnitSize[k],
-                    sizeUnit : k,
-                    }
-                });
-                break;
+    getQuotaNumAndUnit (value, unitSizeMap){
+        let units = Object.keys(unitSizeMap);
+        if (value === 0){
+            return {sizeLimitNumber: value, sizeLimitUnit: units[units.length - 1]};
+        }
+        for (let i = 0; i < units.length; i ++){
+            let sizeLimitUnit = units[i];
+            let byteValue = unitSizeMap[sizeLimitUnit];
+            let sizeLimitNumber = value / byteValue;
+            if (sizeLimitNumber > 1){
+                return {sizeLimitNumber, sizeLimitUnit};
             }
         }
     }
 
-    formValueChange (key, value, target = 'userQuotaData'){
-        let newUserQuotaData = Object.assign({}, this.state[target]);
-        if (key === 'sizeNumber'){
-            if (!validateNotZeroInteger(value)){
-                value = value.length > 0 ? this.state.userQuotaData.sizeNumber : '';
-            }
-        }
-        newUserQuotaData[key] = value;
-        let newState = update(this.state, {userQuotaData: {$set: newUserQuotaData}});
-        this.setState(Object.assign(this.state, newState));
+    formValueChange (key, value){
+        let userQuotaData = Object.assign({}, this.state.userQuotaData, {[key]: value});
+        this.setState({userQuotaData});
     }
 
     async validationUpdateState (key, value, valid){
-        let obj = {validation: {}};
-        obj.validation[key] = {
-            status: {$set: (value.cn || value.en) ? 'error' : ''},
-            help: {$set: lang(value.cn, value.en)},
-            valid: {$set: valid}
-        };
-        let newState = update(this.state, obj);
-        await this.setState(Object.assign(this.state, newState));
+        let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: lang(cn, en),
+				valid
+			}
+		};
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
     }
 
     @debounce(500)
     async validateForm (key){
-        // reset current form field validation
-        let validation = Object.assign({}, this.state.validation);
-        validation[key] = {status: '', help: '', valid: true};
-        let newState = update(this.state, {
-            formValid: {$set: false},
-            validation: {$set: validation}
-        });
-        await this.setState(Object.assign(this.state, newState));
-
+        await this.validationUpdateState(key, {cn: '', en: ''}, true);
+        let {sizeLimitNumber, sizeLimitUnit, sizeUsed, inodeLimit, inodeUsed} = this.state.userQuotaData;
         if (key === 'sizeLimit'){
-            if (this.state.userQuotaData.sizeLimit < this.state.userQuotaData.sizeUsed){
-                this.validationUpdateState('sizeLimit', {cn: '请输入大于已使用的大小配额的正整数', en: ''}, false);
+            if (sizeLimitNumber && sizeLimitUnit){
+                let sizeLimit = sizeLimitNumber * capacityUnitSize[sizeLimitUnit];
+                if (sizeLimit <= sizeUsed){
+                    await this.validationUpdateState('sizeLimit', {
+                        cn: '大小配额必须设置为大于当前已使用的额度',
+                        en: 'Size quota must be bigger than currently used value.'
+                    }, false);
+                }
+            } else {
+                await this.validationUpdateState('sizeLimit', {
+                    cn: '请设置大小配额',
+                    en: 'Please set size quota'
+                }, false);
             }
-        } else if (key === 'inodeLimit'){
-            if(this.state.userQuotaData.inodeLimit < this.state.userQuotaData.inodeUsed){
-                this.validationUpdateState('inodeLimit', {cn: '请输入大于已使用的索引节点配额的正整数', en: ''}, false);
-			}
+        }
+
+        if (key === 'inodeLimit'){
+            if (inodeLimit){
+                if (inodeLimit <= inodeUsed){
+                    await this.validationUpdateState('inodeLimit', {
+                        cn: '索引节点配额必须设置为大于当前已使用的额度',
+                        en: 'Inode quota must be bigger than currently used value.'
+                    }, false);
+                }
+            } else {
+                await this.validationUpdateState('inodeLimit', {
+                    cn: '请设置索引节点配额',
+                    en: 'Please set inode quota'
+                }, false);
+            }
         }
 
         // calculate whole form validation
@@ -93,62 +105,84 @@ class SetUserQuotaOfStoragePool extends Component {
         this.setState({formValid});
     }
 
-    editUserQuota (){
-        let userQuota = Object.assign({}, this.state.userQuotaData);
-        userQuota.sizeLimit = capacityUnitSize[userQuota.sizeUnit] * userQuota.sizeNumber;
-        this.setState({formSubmitting: true});
-
+    async setUserQuota (){
+        let {poolName, userQuotaData} = Object.assign({}, this.state);
+		userQuotaData.sizeLimit = userQuotaData.sizeLimitNumber * capacityUnitSize[userQuotaData.sizeLimitUnit];
+		this.setState({formSubmitting: true});
+		try {
+			await httpRequests.setUserQuotaOfStoragePool(userQuotaData);
+			httpRequests.getUserQuotasOfStoragePoolById(userQuotaData.poolId);
+			await this.hide();
+			message.success(lang(`设置本地认证用户 ${userQuotaData.name} 在存储池 ${poolName} 的配额成功!`, `Set the quota of local authentication user ${userQuotaData.name} in storage pool ${poolName} successfully!`));
+		} catch ({msg}){
+			message.error(lang(`设置本地认证用户 ${userQuotaData.name} 在存储池 ${poolName} 的配额失败, 原因: `, `Set the quota of local authentication user ${userQuotaData.name} in storage pool ${poolName} failed, reason: `) + msg);
+		}
+		this.setState({formSubmitting: false});
     }
 
-    show (poolId, poolName, userQuotaData){
+    async show ({poolId, poolName}, userQuotaData){
+        let {sizeLimitNumber, sizeLimitUnit} = this.getQuotaNumAndUnit(userQuotaData.sizeLimit, capacityUnitSize);
 		this.setState({
 			visible: true,
-			poolId,
-			poolName,
-			userQuotaData,
+            poolName,
+			userQuotaData: {
+			    poolId,
+				...{
+                    sizeLimitNumber,
+                    sizeLimitUnit,
+                    ...userQuotaData
+                }
+			},
+            validation: {
+                sizeLimit: {status: '', help: '', valid: false},
+                inodeLimit: {status: '', help: '', valid: false}
+            },
 		});
 	}
 
-	hide (){
+	async hide (){
 		this.setState({
 			visible: false,
 		});
 	}
 
     render (){
-        let {poolName, userQuotaData} = this.state;
+        let {poolName, userQuotaData, visible, validation, formSubmitting} = this.state;
         let isChinese = this.props.language === 'chinese';
         let formItemLayout = {
             labelCol: {
-                xs: {span: isChinese ? 5 : 7},
-                sm: {span: isChinese ? 5 : 7},
+                xs: {span: isChinese ? 9 : 9},
+                sm: {span: isChinese ? 9 : 9},
             },
             wrapperCol: {
-                xs: {span: isChinese ? 19 : 17},
-                sm: {span: isChinese ? 19 : 17},
+                xs: {span: isChinese ? 15 : 15},
+                sm: {span: isChinese ? 15 : 15},
             }
         };
         return (
 			<Modal
-				width={600}
-				title={lang(`设置本地认证用户 ${userQuotaData.name} 在存储池 ${poolName} 的配额`,`Setting User Quota ${userQuotaData.name} of Storage Pool ${poolName}`)}
+				width={400}
+				title={lang(`设置本地认证用户 ${userQuotaData.name}的配额`,`Set Quota Of Local Authentication User ${userQuotaData.name}`)}
 				closable={false}
 				maskClosable={false}
-				visible={this.state.visible}
+				visible={visible}
 				afterClose={this.close}
 				footer={
 			   		<div>
 						<Button
-							size='small'
+							size="small"
+                            disabled={formSubmitting}
 							onClick={this.hide.bind(this)}
 						>
 							{lang('取消', 'Cancel')}
 						</Button>
                         <Button
-							size='small'
-							onClick={this.editUserQuota.bind(this)}
+							size="small"
+                            type="primary"
+                            loading={formSubmitting}
+							onClick={this.setUserQuota.bind(this)}
 						>
-							{lang('编辑', 'Edit')}
+							{lang('设置', 'Set')}
 						</Button>
 			   		</div>
 				}
@@ -163,31 +197,32 @@ class SetUserQuotaOfStoragePool extends Component {
 					<Form.Item
 						{...formItemLayout}
 						label={lang('大小配额', 'Size Limit')}
-                        validateStatus={this.state.validation.sizeLimit.status}
-                        help={this.state.validation.sizeLimit.help}
+                        validateStatus={validation.sizeLimit.status}
+                        help={validation.sizeLimit.help}
 					>
 						<Row style={{height: 32}}>
-                            <Col span={6}>
-                                <Form.Item validateStatus={this.state.validation.sizeLimit.status}>
-                                    <Input
+                            <Col span={5}>
+                                <Form.Item validateStatus={validation.sizeLimit.status}>
+                                    <InputNumber
                                         type="text" size="small"
-                                        value={this.state.userQuotaData.sizeNumber}
-                                        onChange={({target: {value}}) => {
-                                            this.formValueChange.bind(this, 'sizeNumber')(value);
+                                        min={0}
+                                        value={userQuotaData.sizeLimitNumber}
+                                        onChange={value => {
+                                            this.formValueChange.bind(this, 'sizeLimitNumber')(value);
                                             this.validateForm.bind(this)('sizeLimit');
                                         }}
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col span={1}>
-                                <p className="ant-form-split"></p>
+                            <Col span={5}>
+                                <p className="ant-form-split" />
                             </Col>
                             <Col span={4}>
                                 <Form.Item>
                                     <Select style={{width: 80}} size="small"
-                                        value={this.state.userQuotaData.sizeUnit}
+                                        value={userQuotaData.sizeLimitUnit}
                                         onChange={value => {
-                                            this.formValueChange.bind(this, 'sizeUnit')(value);
+                                            this.formValueChange.bind(this, 'sizeLimitUnit')(value);
                                             this.validateForm.bind(this)('sizeLimit');
                                         }}
                                     >
@@ -211,12 +246,15 @@ class SetUserQuotaOfStoragePool extends Component {
 					<Form.Item
 						{...formItemLayout}
 						label={lang('索引节点配额', 'Inode Quota')}
+                        validateStatus={validation.inodeLimit.status}
+						help={validation.inodeLimit.help}
 					>
-						<Input
+						<InputNumber
 							size="small"
-							style={{width: 150}}
+                            min={0}
+							placeholder={lang('请输入索引节点配额', 'Please enter inode quota')}
 							value={userQuotaData.inodeLimit}
-							onChange={({target: {value}}) => {
+							onChange={value => {
 								this.formValueChange.bind(this, 'inodeLimit')(value);
 								this.validateForm.bind(this)('inodeLimit');
 							}}
@@ -235,8 +273,8 @@ class SetUserQuotaOfStoragePool extends Component {
 }
 
 const mapStateToProps = state => {
-	const {language, main: { storagePool: {userQuotasOfStoragePool}}} = state;
-	return {language, userQuotasOfStoragePool};
+	const {language} = state;
+	return {language};
 };
 
 const mapDispatchToProps = [];
