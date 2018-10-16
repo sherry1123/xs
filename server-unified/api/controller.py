@@ -1726,7 +1726,7 @@ def file_system_check():
             data = backend.get_file_system_status()
             step = data['step']
             status = data['status']
-            event.send('cluster', 21, 'cluster', True, {
+            event.send('cluster', 22, 'cluster', True, {
                        'current': step, 'status': 0 if status else -1, 'total': 5})
             if not status:
                 callback()
@@ -1750,7 +1750,7 @@ def file_system_repair():
             data = backend.get_file_system_status()
             step = data['step']
             status = data['status']
-            event.send('cluster', 22, 'cluster', True, {
+            event.send('cluster', 23, 'cluster', True, {
                        'current': step, 'status': 0 if status else -1, 'total': 5})
             if not status:
                 callback()
