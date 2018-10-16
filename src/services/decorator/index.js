@@ -1,3 +1,6 @@
+// consider to the point of 'this' in decorator, we must be cautious of the
+// using of 'function' and 'arrow function'.
+
 export function throttle (time){
 	const instanceMap = new Map();
 	return function (target, key, descriptor){
@@ -20,15 +23,16 @@ export function debounce (time){
 	// console.info(this); // undefined
 	const instanceMap = new Map();
 	return function (target, key, descriptor){
-		// console.info(target); // => Component instance
-		// console.info(this); // => undefined
+		// target point to the class extends from React origin Component
+		// key point to the member property name
+		// descriptor point the member property method
 		return Object.assign({}, descriptor, {
 			value: function (...args){
-				// console.info(target); // => Component instance
-				// console.info(this); // => Component instance's class(constructor)
+				// console.info(target); // => class extends from React origin Component
+				// console.info(this); // => custom React component instance
 				clearTimeout(instanceMap.get(this));
 				instanceMap.set(this, setTimeout(() => {
-					descriptor.value.apply(this, args);
+					descriptor.value.apply(this, args); // correct the context to custom React component instance
 					// instanceMap.set(this, null);
                     instanceMap.delete(this);
 				}, time));
@@ -36,3 +40,19 @@ export function debounce (time){
 		});
 	}
 }
+
+export function validationUpdateState (target){
+	target.prototype.validationUpdateState = async function (key, value, valid){
+		let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: cn,
+				valid
+			}
+		};
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
+	};
+}
+
