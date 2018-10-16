@@ -16,6 +16,7 @@ export function throttle (time){
 }
 
 export function debounce (time){
+	// we need the parameter time, so use a currying here.
 	// console.info(this); // undefined
 	const instanceMap = new Map();
 	return function (target, key, descriptor){
