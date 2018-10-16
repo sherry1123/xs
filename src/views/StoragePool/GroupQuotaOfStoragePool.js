@@ -28,7 +28,7 @@ class GroupQuotaOfStoragePool extends Component {
 			title: lang('警告', 'Warning'),
 			content: <div style={{fontSize: 12}}>
 				<p>{lang(`您将要执行删除本地认证用户组 ${groupQuota.name} 在存储池 ${poolName} 中的配额的操作。`, `You are about to delete the quota of local authentication user group ${groupQuota.name} from storage pool ${poolName}.`)}</p>
-				<p>{lang(`该操作将会使本地认证用户组 ${groupQuota.name} 在存储池 ${poolName} 中的配额重置为无限制的初始状态，不会影响该用户组在该存储池中已写入的数据`, `This operation will reset the quota of local authenticated user group ${groupQuota.name} in ${poolName} to an unlimited state without affecting the data that the group has written in the storage pool.`)}</p>
+				<p>{lang(`该操作将会使本地认证用户组 ${groupQuota.name} 在存储池 ${poolName} 中的配额重置为无限制的初始状态，不会影响该用户组在该存储池中已写入的数据。`, `This operation will reset the quota of local authenticated user group ${groupQuota.name} in ${poolName} to an unlimited state without affecting the data that the group has written in the storage pool.`)}</p>
 				<p>{lang(`建议：在执行该操作前，请确保您选择了正确的本地认证用户组和存储池，并且该用户在该存储池下确实已不需要做配额限制。`, `A suggestion: before executing this operation, ensure that you select the right local authentication user group and it's not to be limited any more in this storage pool.`)}</p>
 			</div>,
 			keyboard: false,
