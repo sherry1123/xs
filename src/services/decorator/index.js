@@ -23,9 +23,9 @@ export function debounce (time){
 	// console.info(this); // undefined
 	const instanceMap = new Map();
 	return function (target, key, descriptor){
-		// target point to the class extends from React origin Component
-		// key point to the member property name
-		// descriptor point the member property method
+		// target point to the class extends from React origin Component.
+		// key point to the member property name.
+		// descriptor point the member property method.
 		return Object.assign({}, descriptor, {
 			value: function (...args){
 				// console.info(target); // => class extends from React origin Component
@@ -41,18 +41,20 @@ export function debounce (time){
 	}
 }
 
-export function validationUpdateState (target){
-	target.prototype.validationUpdateState = async function (key, value, valid){
-		let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: cn,
-				valid
-			}
+export function validationUpdateState (lang){
+	return function (target){
+		target.prototype.validationUpdateState = async function (key, value, valid){
+			let {cn, en} = value;
+			let validation = {
+				[key]: {
+					status: (cn || en) ? 'error' : '',
+					help: lang(cn, en),
+					valid
+				}
+			};
+			validation = Object.assign({}, this.state.validation, validation);
+			await this.setState({validation});
 		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
-	};
+	}
 }
 

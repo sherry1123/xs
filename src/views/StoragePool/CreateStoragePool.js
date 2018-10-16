@@ -19,7 +19,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 const options = {withRef: true};
 
 @connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
-@validationUpdateState
+@validationUpdateState(lang)
 export default class CreateStoragePool extends Component {
     constructor (props){
         super(props);
