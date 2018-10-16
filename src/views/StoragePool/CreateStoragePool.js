@@ -3,9 +3,24 @@ import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
 import httpRequests from 'Http/requests';
-import {debounce, formatStorageSize, validateFsName} from 'Services';
+import {debounce, validationUpdateState, formatStorageSize, validateFsName} from 'Services';
 
-class CreateStoragePool extends Component {
+const mapStateToProps = state => {
+    let {language, main: {storagePool: {storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
+    return {language, storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	return Object.assign({}, stateProps, ownProps);
+};
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState
+export default class CreateStoragePool extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -29,19 +44,6 @@ class CreateStoragePool extends Component {
 	formValueChange (key, value){
 		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
 		this.setState({storagePoolData});
-	}
-
-	async validationUpdateState (key, value, valid){
-		let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
 	}
 
 	@debounce(500)
@@ -265,18 +267,3 @@ class CreateStoragePool extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
-    return {language, storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateStoragePool);
