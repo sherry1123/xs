@@ -28,7 +28,7 @@ class ClusterTPS extends Component {
         };
         return (
             <div className="fs-statistics-chart-wrapper">
-                <header><Icon type="area-chart" />{lang('集群吞吐量', 'Cluster Throughput')}</header>
+                <header><Icon type="bar-chart" />{lang('集群 TPS', 'Cluster TPS')}</header>
                 <FSLineChart option={option} />
             </div>
         );

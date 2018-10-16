@@ -14,7 +14,7 @@ class AddBuddyGroupToStoragePool extends Component {
 			formSubmitting: false,
 			poolName: '',
 			buddyGroupData: {
-				name: '',
+				poolId: '',
 				buddyGroups:[],
 			},
 			validation: {

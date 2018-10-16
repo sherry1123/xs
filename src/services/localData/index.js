@@ -3,7 +3,8 @@ export const capacityUnitSize = {
     'TB': 1024 * 1024 * 1024 * 1024,
     'GB': 1024 * 1024 * 1024,
     'MB': 1024 * 1024,
-    'KB': 1024
+    'KB': 1024,
+    'B': 1
 };
 
 export const timeUnitMilliSecond = {

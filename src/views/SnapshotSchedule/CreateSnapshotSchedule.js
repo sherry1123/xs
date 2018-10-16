@@ -49,40 +49,32 @@ class CreateSnapshotSchedule extends Component {
         }
     }
 
-    formValueChange (key, value, target = 'scheduleData'){
-        let newScheduleData = Object.assign({}, this.state[target]);
+    formValueChange (key, value){
         if (key === 'intervalNumber'){
             if (!validateNotZeroInteger(value)){
                 value = value.length > 0 ? this.state.scheduleData.intervalNumber : '';
             }
         }
-        newScheduleData[key] = value;
-        let newState = update(this.state, {scheduleData: {$set: newScheduleData}});
-        this.setState(Object.assign(this.state, newState));
-        // console.info(this.state.scheduleData);
+        let scheduleData = Object.assign({}, this.state.scheduleData, {[key]: value});
+        this.setState({scheduleData});
     }
 
     async validationUpdateState (key, value, valid){
-        let obj = {validation: {}};
-        obj.validation[key] = {
-            status: {$set: (value.cn || value.en) ? 'error' : ''},
-            help: {$set: lang(value.cn, value.en)},
-            valid: {$set: valid}
-        };
-        let newState = update(this.state, obj);
-        await this.setState(Object.assign(this.state, newState));
+        let {cn, en} = value;
+		let validation = {
+			[key]: {
+				status: (cn || en) ? 'error' : '',
+				help: lang(cn, en),
+				valid
+			}
+		};
+		validation = Object.assign({}, this.state.validation, validation);
+		await this.setState({validation});
     }
 
     @debounce(500)
     async validateForm (key){
-        // reset current form field validation
-        let validation = Object.assign({}, this.state.validation);
-        validation[key] = {status: '', help: '', valid: true};
-        let newState = update(this.state, {
-            formValid: {$set: false},
-            validation: {$set: validation}
-        });
-        await this.setState(Object.assign(this.state, newState));
+        await this.validationUpdateState(key, {cn: '', en: ''}, true);
 
         if (key === 'name'){
             // validate schedule name
@@ -237,7 +229,7 @@ class CreateSnapshotSchedule extends Component {
                                 </Form.Item>
                             </Col>
                             <Col span={1}>
-                                <p className="ant-form-split"></p>
+                                <p className="ant-form-split" />
                             </Col>
                             <Col span={4}>
                                 <Form.Item>

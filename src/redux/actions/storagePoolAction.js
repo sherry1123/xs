@@ -4,7 +4,8 @@ export const storagePoolActionTypes = {
 	SET_TARGET_OF_STORAGE_POOL: 'SET_TARGET_OF_STORAGE_POOL',
 	SET_BUDDY_GROUP_OF_STORAGE_POOL: 'SET_BUDDY_GROUP_OF_STORAGE_POOL',
 	SET_TARGETS_FOR_STORAGE_POOL: 'SET_TARGETS_FOR_STORAGE_POOL',
-	SET_BUDDY_GROUPS_FOR_STORAGE_POOL: 'SET_BUDDY_GROUPS_FOR_STORAGE_POOL'
+	SET_BUDDY_GROUPS_FOR_STORAGE_POOL: 'SET_BUDDY_GROUPS_FOR_STORAGE_POOL',
+	SET_GROUP_QUOTAS_OF_STORAGE_POOL: 'SET_GROUP_QUOTAS_OF_STORAGE_POOL',
 };
 
 export default {
@@ -36,5 +37,10 @@ export default {
 	setBuddyGroupsForStoragePool: buddyGroupsForStoragePool => ({
 		type: storagePoolActionTypes.SET_BUDDY_GROUPS_FOR_STORAGE_POOL,
 		buddyGroupsForStoragePool
+	}),
+
+	setGroupQuotasOfStoragePool: groupQuotasOfStoragePool => ({
+		type: storagePoolActionTypes.SET_GROUP_QUOTAS_OF_STORAGE_POOL,
+		groupQuotasOfStoragePool
 	}),
 };
