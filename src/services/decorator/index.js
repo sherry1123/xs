@@ -52,14 +52,13 @@ export function validationUpdateState (lang){
 	return function (target){
 		target.prototype.validationUpdateState = async function (key, value, valid){
 			let {cn, en} = value;
-			let validation = {
+			let validation = Object.assign({}, this.state.validation, {
 				[key]: {
 					status: (cn || en) ? 'error' : '',
 					help: lang(cn, en),
 					valid
 				}
-			};
-			validation = Object.assign({}, this.state.validation, validation);
+			});
 			await this.setState({validation});
 		};
 	}
