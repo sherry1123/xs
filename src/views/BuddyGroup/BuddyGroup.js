@@ -1,11 +1,17 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, Input, Table} from 'antd';
 import CreateBuddyGroup from './CreateBuddyGroup';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class BuddyGroup extends Component {
+const mapStateToProps = state => {
+    const {language, main: {target: {buddyGroupList}}} = state;
+    return {language, buddyGroupList};
+};
+
+@connect(mapStateToProps)
+export default class BuddyGroup extends Component {
     constructor (props){
         super(props);
         let {buddyGroupList} = this.props;
@@ -103,10 +109,3 @@ class BuddyGroup extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {target: {buddyGroupList}}} = state;
-    return {language, buddyGroupList};
-};
-
-export default connect(mapStateToProps)(BuddyGroup);

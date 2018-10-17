@@ -4,7 +4,19 @@ import {Button, Input, message, Modal, Table} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class SelectLocalAuthUserGroup extends Component {
+const mapStateToProps = state => {
+    let {language, main: {localAuthUser: {localAuthUserGroupList}}} = state;
+    return {language, localAuthUserGroupList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class SelectLocalAuthUserGroup extends Component {
     constructor (props){
         super(props);
         let {localAuthUserGroupList} = this.props;
@@ -155,18 +167,3 @@ class SelectLocalAuthUserGroup extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {localAuthUser: {localAuthUserGroupList}}} = state;
-    return {language, localAuthUserGroupList};
-};
-
-const mapDispatchToProps = {};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SelectLocalAuthUserGroup);

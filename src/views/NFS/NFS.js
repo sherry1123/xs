@@ -7,7 +7,13 @@ import ClientOfNFS from './ClientOfNFS';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class NFS extends Component {
+const mapStateToProps = state => {
+    const {language, main: {share: {NASServerList, NFSList}}} = state;
+    return {language, NASServerList, NFSList};
+};
+
+@connect(mapStateToProps)
+export default class NFS extends Component {
     constructor (props){
         super(props);
         let {NFSList} = this.props;
@@ -235,10 +241,3 @@ class NFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {share: {NASServerList, NFSList}}} = state;
-    return {language, NASServerList, NFSList};
-};
-
-export default connect(mapStateToProps)(NFS);

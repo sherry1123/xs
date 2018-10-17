@@ -4,7 +4,19 @@ import {Button, Icon, Input, Modal, Table} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class SelectClient extends Component {
+const mapStateToProps = state => {
+    let {language, main: {share: {clientListForNASServer}, target: {targetList}}} = state;
+    return {language, clientListForNASServer, targetList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class SelectClient extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -137,18 +149,3 @@ class SelectClient extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {share: {clientListForNASServer}, target: {targetList}}} = state;
-    return {language, clientListForNASServer, targetList};
-};
-
-const mapDispatchToProps = {};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SelectClient);

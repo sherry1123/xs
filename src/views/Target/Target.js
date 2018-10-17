@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, Input, Popover, Table} from 'antd';
 import CreateTarget from './CreateTarget';
-import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
 import {formatStorageSize, getCapacityColour} from 'Services';
+import httpRequests from 'Http/requests';
 
-class Target extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}, target: {targetList}}} = state;
+    return {language, metadataServerIPs, storageServerIPs, targetList};
+};
+
+@connect(mapStateToProps)
+export default class Target extends Component {
     constructor (props){
         super(props);
         let {targetList} = this.props;
@@ -133,10 +139,3 @@ class Target extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}, target: {targetList}}} = state;
-    return {language, metadataServerIPs, storageServerIPs, targetList};
-};
-
-export default connect(mapStateToProps)(Target);

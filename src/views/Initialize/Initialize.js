@@ -12,7 +12,22 @@ import {debounce, validateIpv4, /*KeyPressFilter, */lsGet, lsSet, lsRemove, ckGe
 import httpRequests from 'Http/requests';
 import routerPath from '../routerPath';
 
-class Initialize extends Component {
+const mapStateToProps = state => {
+    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID}} = state;
+    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID};
+};
+
+const mapDispatchToProps = dispatch => ({
+    addIP: category => dispatch(initializeAction.addIP(category)),
+    removeIP: (category, index) => dispatch(initializeAction.removeIP(category, index)),
+    setIP: (category, index, ip) => dispatch(initializeAction.setIP(category, index, ip)),
+    setEnableHA: enableHA => dispatch(initializeAction.setEnableHA(enableHA)),
+    setEnableRAID: enableRAID => dispatch(initializeAction.setEnableRAID(enableRAID)),
+    setEnableCreateBuddyGroup: enableCreateBuddyGroup => dispatch(initializeAction.setEnableCreateBuddyGroup(enableCreateBuddyGroup)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class Initialize extends Component {
     constructor (props){
         super(props);
         // this.keyPressFilter = new KeyPressFilter();
@@ -1074,21 +1089,3 @@ class Initialize extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, initialize: {metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID}} = state;
-    return {language, metadataServerIPs, storageServerIPs, clientIPs, managementServerIPs, enableHA, floatIPs, hbIPs, enableRAID, enableCreateBuddyGroup, initStatus, defaultUser, recommendedRAID, customRAID};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        addIP: category => dispatch(initializeAction.addIP(category)),
-        removeIP: (category, index) => dispatch(initializeAction.removeIP(category, index)),
-        setIP: (category, index, ip) => dispatch(initializeAction.setIP(category, index, ip)),
-        setEnableHA: enableHA => dispatch(initializeAction.setEnableHA(enableHA)),
-        setEnableRAID: enableRAID => dispatch(initializeAction.setEnableRAID(enableRAID)),
-        setEnableCreateBuddyGroup: enableCreateBuddyGroup => dispatch(initializeAction.setEnableCreateBuddyGroup(enableCreateBuddyGroup)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Initialize);

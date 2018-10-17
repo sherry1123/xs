@@ -5,7 +5,13 @@ import lang from 'Components/Language/lang';
 import {ckGet} from 'Services';
 import routerPath from '../routerPath';
 
-class RollingBack extends PureComponent {
+const mapStateToProps = state => {
+    const {language} = state;
+    return {language};
+};
+
+@connect(mapStateToProps)
+export default class RollingBack extends PureComponent {
     componentWillMount (){
         let isRollingBack = ckGet('rollbacking');
         if (isRollingBack !== 'true'){
@@ -50,10 +56,3 @@ class RollingBack extends PureComponent {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
-};
-
-export default connect(mapStateToProps)(RollingBack);

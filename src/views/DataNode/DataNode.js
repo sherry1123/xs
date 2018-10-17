@@ -8,7 +8,13 @@ import PhysicalNodeIOPS from './PhysicalNodeIOPS';
 import PhysicalNodeTargetList from './PhysicalNodeTargets';
 import httpRequests from 'Http/requests';
 
-class DataNode extends Component {
+const mapStateToProps = state => {
+    let {language, main: {general: {menuExpand}, dashboard: {clusterPhysicalNodeList}}} = state;
+    return {language, menuExpand, clusterPhysicalNodeList};
+};
+
+@connect(mapStateToProps)
+export default class DataNode extends Component {
     constructor (props){
         super(props);
         let {menuExpand} = this.props;
@@ -95,10 +101,3 @@ class DataNode extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {general: {menuExpand}, dashboard: {clusterPhysicalNodeList}}} = state;
-    return {language, menuExpand, clusterPhysicalNodeList};
-};
-
-export default connect(mapStateToProps)(DataNode);

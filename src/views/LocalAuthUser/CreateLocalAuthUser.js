@@ -3,10 +3,23 @@ import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover} from 'antd';
 import SelectLocalAuthUserGroup from './SelectLocalAuthUserGroup';
 import lang from 'Components/Language/lang';
-import {debounce} from 'Services';
+import {debounce, validationUpdateState} from 'Services';
 import httpRequests from 'Http/requests';
 
-class CreateLocalAuthUser extends Component {
+const mapStateToProps = state => {
+    let {language, main: {localAuthUser: {localAuthUserList}}} = state;
+    return {language, localAuthUserList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateLocalAuthUser extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -90,19 +103,6 @@ class CreateLocalAuthUser extends Component {
         }
         // validate length
         return password.length >= passMinLen && password.length <= passMaxLen;
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -410,18 +410,3 @@ class CreateLocalAuthUser extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {localAuthUser: {localAuthUserList}}} = state;
-    return {language, localAuthUserList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateLocalAuthUser);

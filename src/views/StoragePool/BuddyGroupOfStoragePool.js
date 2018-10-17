@@ -7,7 +7,19 @@ import AddDiskToBuddyGroup from './AddDiskToBuddyGroup';
 import AddBuddyGroupToStoragePool from './AddBuddyGroupToStoragePool';
 import {formatStorageSize} from 'Services';
 
-class BuddyGroupOfStoragePool extends Component {
+const mapStateToProps = state => {
+	const {language, main: {storagePool: {buddyGroupsOfStoragePool}}} = state;
+	return {language, buddyGroupsOfStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class BuddyGroupOfStoragePool extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
@@ -161,20 +173,4 @@ class BuddyGroupOfStoragePool extends Component {
 			</Modal>
 		);
 	}
-
 }
-
-const mapStateToProps = state => {
-	const {language, main: {storagePool: {buddyGroupsOfStoragePool}}} = state;
-	return {language, buddyGroupsOfStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(BuddyGroupOfStoragePool);

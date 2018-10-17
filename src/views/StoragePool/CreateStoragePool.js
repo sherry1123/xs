@@ -2,19 +2,17 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
-import httpRequests from 'Http/requests';
 import {debounce, validationUpdateState, formatStorageSize, validateFsName} from 'Services';
+import httpRequests from 'Http/requests';
 
 const mapStateToProps = state => {
     let {language, main: {storagePool: {storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool}}} = state;
     return {language, storagePoolList, dataClassificationList, targetsForStoragePool, buddyGroupsForStoragePool};
 };
 
-const mapDispatchToProps = [];
+const mapDispatchToProps = {};
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
 
 const options = {withRef: true};
 

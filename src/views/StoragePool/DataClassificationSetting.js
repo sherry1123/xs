@@ -6,7 +6,19 @@ import CreateDataClassification from './CreateDataClassification';
 import EditDataClassification from './EditDataClassification';
 import httpRequests from 'Http/requests';
 
-class DataClassificationSetting extends Component {
+const mapStateToProps = state => {
+    let {language, main: {storagePool: {dataClassificationList}}} = state;
+    return {language, dataClassificationList};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class DataClassificationSetting extends Component {
     constructor (props){
         super(props);
         let {dataClassificationList} = this.props;
@@ -201,18 +213,3 @@ class DataClassificationSetting extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {storagePool: {dataClassificationList}}} = state;
-    return {language, dataClassificationList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(DataClassificationSetting);

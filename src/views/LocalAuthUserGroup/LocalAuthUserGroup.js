@@ -7,7 +7,13 @@ import LocalAuthUserOfGroup from './LocalAuthUserOfGroup';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class LocalAuthUserGroup extends Component {
+const mapStateToProps = state => {
+    const {language, main: {localAuthUser: {localAuthUserGroupList}}} = state;
+    return {language, localAuthUserGroupList};
+};
+
+@connect(mapStateToProps)
+export default class LocalAuthUserGroup extends Component {
     constructor (props){
         super(props);
         let {localAuthUserGroupList} = this.props;
@@ -178,10 +184,3 @@ class LocalAuthUserGroup extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {localAuthUser: {localAuthUserGroupList}}} = state;
-    return {language, localAuthUserGroupList};
-};
-
-export default connect(mapStateToProps)(LocalAuthUserGroup);

@@ -1,13 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import CreateClientToNFS from './CreateClientToNFS';
-import lang from 'Components/Language/lang';
-import {debounce} from 'Services';
+import {debounce, validationUpdateState} from 'Services';
 import httpRequests from 'Http/requests';
 
-class CreateNFS extends Component {
+const mapStateToProps = state => {
+    let {language, main: {share: {NFSList}}} = state;
+    return {language, NFSList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateNFS extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -38,19 +51,6 @@ class CreateNFS extends Component {
         let shareData = {[key]: value};
         shareData = Object.assign({}, this.state.shareData, shareData);
         this.setState({shareData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -307,18 +307,3 @@ class CreateNFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {share: {NFSList}}} = state;
-    return {language, NFSList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateNFS);

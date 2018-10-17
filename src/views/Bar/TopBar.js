@@ -1,13 +1,29 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import generalAction from '../../redux/actions/generalAction';
 import {Affix, Icon, Popover, notification} from 'antd';
 import UserSettingPopover from './UserSettingPopover';
 import LanguageButton from 'Components/Language/LanguageButton';
-import lang from 'Components/Language/lang';
 import {lsGet, lsSet} from 'Services';
 
-class TopBar extends Component {
+const mapStateToProps = state => {
+    let {language, main: {general: {version, menuExpand, user}, service: {metadataServiceList, storageServiceList}}} = state;
+    return {language, version, menuExpand, user, metadataServiceList, storageServiceList};
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changeMenuExpand: menuExpand => dispatch(generalAction.changeMenuExpand(menuExpand)),
+    };
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class TopBar extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -136,22 +152,3 @@ class TopBar extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {general: {version, menuExpand, user}, service: {metadataServiceList, storageServiceList}}} = state;
-    return {language, version, menuExpand, user, metadataServiceList, storageServiceList};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        changeMenuExpand: menuExpand => dispatch(generalAction.changeMenuExpand(menuExpand)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(TopBar);

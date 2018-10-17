@@ -4,7 +4,19 @@ import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class EditSnapshotSchedule extends Component {
+const mapStateToProps = state => {
+    let {language, main: {snapshot: {snapshotScheduleList}}} = state;
+    return {language, snapshotScheduleList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class EditSnapshotSchedule extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -122,18 +134,3 @@ class EditSnapshotSchedule extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {snapshot: {snapshotScheduleList}}} = state;
-    return {language, snapshotScheduleList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditSnapshotSchedule);

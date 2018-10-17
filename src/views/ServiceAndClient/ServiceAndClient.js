@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Icon, message} from 'antd';
 import CreateMetadataOrStorageService from './CreateMetadataOrStorageService';
 import CreateManagementService from './CreateManagementService';
 import CreateClient from './CreateClient';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class ServiceAndClient extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs}}}} = state;
+    return {language, metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs};
+};
+
+@connect(mapStateToProps)
+export default class ServiceAndClient extends Component {
     componentDidMount (){
         // will first fetch in cronJob immediately, but if the system is not inited, won't fetch,
         // so still needs to do a check here, if don't fetch in cron job when accessing web, should
@@ -124,10 +130,3 @@ class ServiceAndClient extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs}}}} = state;
-    return {language, metadataServerIPs, storageServerIPs, managementServerIPs, clientIPs};
-};
-
-export default connect(mapStateToProps)(ServiceAndClient);

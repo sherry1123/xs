@@ -1,13 +1,30 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
+import initializeAction from 'Actions/initializeAction';
 import {Button, message, Modal, Select} from 'antd';
 import RecommendedRAID from 'Components/DiskConfiguration/RecommendedRAID';
 import CustomRAID from 'Components/DiskConfiguration/CustomRAID';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import initializeAction from 'Actions/initializeAction';
 
-class CreateTarget extends Component {
+const mapStateToProps = state => {
+    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterPhysicalNodeList, clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}}} = state;
+    return {language, recommendedRAID, customRAID, clusterPhysicalNodeList, metadataServerIPs, storageServerIPs};
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
+        setCustomRAID: customRAID => dispatch(initializeAction.setCustomRAID(customRAID)),
+    };
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class CreateTarget extends Component {
     constructor (props){
         super(props);
         let {metadataServerIPs = [], storageServerIPs = []} = this.props;
@@ -273,23 +290,3 @@ class CreateTarget extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, initialize: {recommendedRAID, customRAID}, main: {dashboard: {clusterPhysicalNodeList, clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}}}} = state;
-    return {language, recommendedRAID, customRAID, clusterPhysicalNodeList, metadataServerIPs, storageServerIPs};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
-        setCustomRAID: customRAID => dispatch(initializeAction.setCustomRAID(customRAID)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateTarget);

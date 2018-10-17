@@ -2,10 +2,23 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Divider, Form, Icon, InputNumber, message, Modal, Popover, Select, Spin, Switch} from 'antd';
 import lang from 'Components/Language/lang';
-import {debounce} from 'Services';
+import {debounce, validationUpdateState} from 'Services';
 import httpRequests from 'Http/requests';
 
-class SecurityStrategySetting extends Component {
+const mapStateToProps = state => {
+    let {language, main: {localAuthUser: {localAuthUserList}}} = state;
+    return {language, localAuthUserList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class SecurityStrategySetting extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -106,11 +119,6 @@ class SecurityStrategySetting extends Component {
             formValid = formValid && this.state.validation[key].valid;
         });
         this.setState({formValid});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: (value.cn || value.en) ? 'error' : '', help: lang(value.cn, value.en), valid: valid}});
-        await this.setState({validation});
     }
 
     async setStrategy (){
@@ -378,18 +386,3 @@ class SecurityStrategySetting extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {localAuthUser: {localAuthUserList}}} = state;
-    return {language, localAuthUserList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SecurityStrategySetting);

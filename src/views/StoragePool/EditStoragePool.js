@@ -1,11 +1,24 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
-import {debounce, validateFsName} from 'Services';
 import {Button, Form, Icon, Input, Modal, message, Select} from 'antd';
+import {debounce, validationUpdateState, validateFsName} from 'Services';
+import httpRequests from 'Http/requests';
 
-class EditStoragePool extends Component {
+const mapStateToProps = state => {
+    let {language, main: {storagePool: {storagePoolList, dataClassificationList}}} = state;
+    return {language, storagePoolList, dataClassificationList};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class EditStoragePool extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -27,19 +40,6 @@ class EditStoragePool extends Component {
 	formValueChange (key, value){
 		let storagePoolData = Object.assign({}, this.state.storagePoolData, {[key]: value});
 		this.setState({storagePoolData});
-	}
-
-	async validationUpdateState (key, value, valid){
-		let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
 	}
 
 	@debounce(500)
@@ -215,18 +215,3 @@ class EditStoragePool extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList, dataClassificationList}}} = state;
-    return {language, storagePoolList, dataClassificationList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditStoragePool);

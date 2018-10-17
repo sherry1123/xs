@@ -1,10 +1,22 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
+import {Button, Form, Input, message, Modal} from 'antd';
 import httpRequests from 'Http/requests';
 
-class EditSnapshot extends Component {
+const mapStateToProps = state => {
+    const {language, main: {snapshot: {snapshotList}}} = state;
+    return {language, snapshotList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class EditSnapshot extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -108,18 +120,3 @@ class EditSnapshot extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList}}} = state;
-    return {language, snapshotList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditSnapshot);

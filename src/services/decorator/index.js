@@ -1,5 +1,15 @@
-// consider to the point of 'this' in decorator, we must be cautious of the
+// Consider to the point of 'this' in decorator, we must be cautious of the
 // using of 'function' and 'arrow function'.
+
+// When using the decorator to decorate a member method of a class, then:
+// 'target' point to the class extends from React origin Component,
+// 'key' point to the member property name,
+// 'descriptor' point to the member property method.
+
+// Another way, to decorate a class, then:
+// 'target' point to the class,
+// 'key' point to undefined,
+// 'descriptor' point to undefined.
 
 export function throttle (time){
 	const instanceMap = new Map();
@@ -20,16 +30,13 @@ export function throttle (time){
 
 export function debounce (time){
 	// we need the parameter time, so use a currying here.
-	// console.info(this); // undefined
+	// this => undefined
 	const instanceMap = new Map();
 	return function (target, key, descriptor){
-		// target point to the class extends from React origin Component.
-		// key point to the member property name.
-		// descriptor point the member property method.
 		return Object.assign({}, descriptor, {
 			value: function (...args){
-				// console.info(target); // => class extends from React origin Component
-				// console.info(this); // => custom React component instance
+				// target => class extends from React origin Component
+				// this => custom React component instance
 				clearTimeout(instanceMap.get(this));
 				instanceMap.set(this, setTimeout(() => {
 					descriptor.value.apply(this, args); // correct the context to custom React component instance

@@ -9,7 +9,22 @@ import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 import {validateIpv4} from 'Services';
 
-class CreateMetadataOrStorageService extends Component {
+const mapStateToProps = state => {
+    let {language, initialize: {recommendedRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}, customRAIDList}}} = state;
+    return {language, recommendedRAID, metadataServerIPs, storageServerIPs, customRAIDList};
+};
+
+const mapDispatchToProps = dispatch => ({
+    setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
+    setCustomRAIDList: customRAIDList => dispatch(dashboardAction.setCustomRAIDList(customRAIDList)),
+});
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class CreateMetadataOrStorageService extends Component {
     constructor (props){
         super(props);
         let {metadataServerIPs = [], storageServerIPs = []} = this.props;
@@ -297,23 +312,3 @@ class CreateMetadataOrStorageService extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, initialize: {recommendedRAID}, main: {dashboard: {clusterServiceAndClientIPs: {metadataServerIPs, storageServerIPs}, customRAIDList}}} = state;
-    return {language, recommendedRAID, metadataServerIPs, storageServerIPs, customRAIDList};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
-        setCustomRAIDList: customRAIDList => dispatch(dashboardAction.setCustomRAIDList(customRAIDList)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateMetadataOrStorageService);

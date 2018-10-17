@@ -1,14 +1,20 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
 import SetSnapshot from './SetSnapshot';
-import lang from 'Components/Language/lang';
 import {timeFormat} from 'Services';
 import httpRequests from 'Http/requests';
 
-class Snapshot extends Component {
+const mapStateToProps = state => {
+    const {language, main: {snapshot: {snapshotList, snapshotSetting}}} = state;
+    return {language, snapshotList, snapshotSetting};
+};
+
+@connect(mapStateToProps)
+export default class Snapshot extends Component {
     constructor (props){
         super(props);
         let {snapshotList} = this.props;
@@ -291,10 +297,3 @@ class Snapshot extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList, snapshotSetting}}} = state;
-    return {language, snapshotList, snapshotSetting};
-};
-
-export default connect(mapStateToProps)(Snapshot);

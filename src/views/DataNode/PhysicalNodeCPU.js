@@ -4,7 +4,13 @@ import {Icon} from 'antd';
 import FSLineChart from 'Components/FSLineChart/FSLineChart';
 import lang from 'Components/Language/lang';
 
-class PhysicalNodeCPU extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dataNode: {physicalNodeCPU}}} = state;
+    return {language, physicalNodeCPU};
+};
+
+@connect(mapStateToProps)
+export default class PhysicalNodeCPU extends Component {
     render (){
         let {physicalNodeCPU: {total, time}} = this.props;
         let option = {
@@ -35,10 +41,3 @@ class PhysicalNodeCPU extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dataNode: {physicalNodeCPU}}} = state;
-    return {language, physicalNodeCPU};
-};
-
-export default connect(mapStateToProps)(PhysicalNodeCPU);

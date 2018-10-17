@@ -6,7 +6,19 @@ import lang from 'Components/Language/lang';
 import {lsGet, lsSet} from 'Services';
 import httpRequests from 'Http/requests';
 
-class PhysicalNodeInfo extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterPhysicalNodeList}, dataNode: {physicalNodeInfo, currentPhysicalNode}}} = state;
+    return {language, clusterPhysicalNodeList, physicalNodeInfo, currentPhysicalNode};
+};
+
+const mapDispatchToProps = dispatch => ({
+    setCurrentPhysicalNode: currentPhysicalNode => dispatch(dataNodeAction.setCurrentPhysicalNode(currentPhysicalNode)),
+});
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps)
+export default class PhysicalNodeInfo extends Component {
     constructor (props){
         super(props);
         let currentPhysicalNode = lsGet('currentPhysicalNode') || {};
@@ -143,20 +155,3 @@ class PhysicalNodeInfo extends Component {
         );
     };
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterPhysicalNodeList}, dataNode: {physicalNodeInfo, currentPhysicalNode}}} = state;
-    return {language, clusterPhysicalNodeList, physicalNodeInfo, currentPhysicalNode};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setCurrentPhysicalNode: currentPhysicalNode => dispatch(dataNodeAction.setCurrentPhysicalNode(currentPhysicalNode)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(PhysicalNodeInfo);

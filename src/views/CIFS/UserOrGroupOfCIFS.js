@@ -1,14 +1,29 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import shareAction from 'Actions/shareAction';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import EditUserOrGroupOfCIFS from './EditUserOrGroupOfCIFS';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class UserOrGroupOfCIFS extends Component {
+const mapStateToProps = state => {
+    let {language, main: {share: {localAuthUserOrGroupListOfCIFS}}} = state;
+    return {language, localAuthUserOrGroupListOfCIFS};
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setLocalAuthUserOrGroupListOfCIFS: clientList => dispatch(shareAction.setLocalAuthUserOrGroupListOfCIFS(clientList)),
+    };
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class UserOrGroupOfCIFS extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -232,22 +247,3 @@ class UserOrGroupOfCIFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {share: {localAuthUserOrGroupListOfCIFS}}} = state;
-    return {language, localAuthUserOrGroupListOfCIFS};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setLocalAuthUserOrGroupListOfCIFS: clientList => dispatch(shareAction.setLocalAuthUserOrGroupListOfCIFS(clientList)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(UserOrGroupOfCIFS);

@@ -3,10 +3,23 @@ import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Switch} from 'antd';
 import SelectLocalAuthUserGroup from './SelectLocalAuthUserGroup';
 import lang from 'Components/Language/lang';
-import {debounce, validateFsName, validatePassword} from 'Services';
+import {debounce, validationUpdateState, validateFsName, validatePassword} from 'Services';
 import httpRequests from 'Http/requests';
 
-class EditLocalAuthUser extends Component {
+const mapStateToProps = state => {
+    let {language} = state;
+    return {language};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class EditLocalAuthUser extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -27,19 +40,6 @@ class EditLocalAuthUser extends Component {
         let userData = {[key]: value};
         userData = Object.assign({}, this.state.userData, userData);
         this.setState({userData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -287,18 +287,3 @@ class EditLocalAuthUser extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditLocalAuthUser);

@@ -1,12 +1,25 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, Modal, message, Popover, Switch} from 'antd';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
-import lang from 'Components/Language/lang';
+import {debounce, validationUpdateState, validatePathname} from 'Services';
 import httpRequests from 'Http/requests';
-import {debounce, validatePathname} from 'Services';
 
-class CreateDirectory extends Component {
+const mapStateToProps = state => {
+    const {language} = state;
+    return {language};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateDirectory extends Component {
     constructor (props){
         super(props);
         this.exitedPathnames = [];
@@ -38,11 +51,6 @@ class CreateDirectory extends Component {
     formValueChange (key, value){
         let dirData = Object.assign({}, this.state.dirData, {[key]: value});
         this.setState({dirData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: (value.cn || value.en) ? 'error' : '', help: lang(value.cn, value.en), valid: valid}});
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -210,18 +218,3 @@ class CreateDirectory extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateDirectory);

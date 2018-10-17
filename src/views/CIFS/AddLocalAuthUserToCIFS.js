@@ -4,7 +4,19 @@ import {Button, Icon, Input, message, Modal, Select, Popover, Table} from 'antd'
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class AddLocalAuthUserToCIFS extends Component {
+const mapStateToProps = state => {
+    let {language, main: {localAuthUser: {localAuthUserList}}} = state;
+    return {language, localAuthUserList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class AddLocalAuthUserToCIFS extends Component {
     constructor (props){
         super(props);
         let {localAuthUserList} = this.props;
@@ -205,18 +217,3 @@ class AddLocalAuthUserToCIFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {localAuthUser: {localAuthUserList}}} = state;
-    return {language, localAuthUserList};
-};
-
-const mapDispatchToProps = {};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(AddLocalAuthUserToCIFS);

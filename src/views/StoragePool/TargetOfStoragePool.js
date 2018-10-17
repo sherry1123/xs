@@ -7,7 +7,19 @@ import AddTargetToStoragePool from './AddTargetToStoragePool';
 import AddDiskToTarget from './AddDiskToTarget';
 import {formatStorageSize} from 'Services';
 
-class TargetOfStoragePool extends Component {
+const mapStateToProps = state => {
+	const {language, main: {storagePool: {targetsOfStoragePool}}} = state;
+	return {language, targetsOfStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class TargetOfStoragePool extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
@@ -160,20 +172,4 @@ class TargetOfStoragePool extends Component {
 			</Modal>
 		);
 	}
-
 }
-
-const mapStateToProps = state => {
-	const {language, main: {storagePool: {targetsOfStoragePool}}} = state;
-	return {language, targetsOfStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(TargetOfStoragePool);

@@ -1,16 +1,25 @@
 import React, {Component} from 'react';
-import {Tabs, Table, Button} from 'antd';
+import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
-import {TABLE_LOCALE, timeFormat} from 'Services';
+import {Tabs, Table, Button} from 'antd';
+import {timeFormat} from 'Services';
 
+const mapStateToProps = state => {
+    let {language,} = state;
+    return {language};
+};
+
+@connect(mapStateToProps)
 export default class WarningPopover extends Component {
     readEventLog (){
-
+        //
     }
 
     render (){
         let tableProps = {
-            locale: TABLE_LOCALE,
+            locale: {
+                emptyText: lang('暂无告警', 'No Warning')
+            },
             style: {maxWidth: '350px', cursor: 'pointer'},
             size: 'small',
             scroll: {y: 245},

@@ -5,7 +5,13 @@ import FSLineChart from 'Components/FSLineChart/FSLineChart';
 import lang from 'Components/Language/lang';
 import {formatStorageSize} from 'Services';
 
-class ClusterTPS extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterTPS}}} = state;
+    return {language, clusterTPS};
+};
+
+@connect(mapStateToProps)
+export default class ClusterTPS extends Component {
     render (){
         let {clusterTPS: {total, time}} = this.props;
         let option = {
@@ -34,10 +40,3 @@ class ClusterTPS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterTPS}}} = state;
-    return {language, clusterTPS};
-};
-
-export default connect(mapStateToProps)(ClusterTPS);

@@ -1,11 +1,24 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import httpRequests from 'Http/requests';
 import lang from 'Components/Language/lang';
 import {Button, Col, Form, InputNumber, message, Modal, Row, Select} from 'antd';
-import {formatStorageSize, debounce, capacityUnitSize} from 'Services';
+import {debounce, validationUpdateState, formatStorageSize, capacityUnitSize} from 'Services';
+import httpRequests from 'Http/requests';
 
-class SetUserQuotaOfStoragePool extends Component {
+const mapStateToProps = state => {
+	const {language} = state;
+	return {language};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class SetUserQuotaOfStoragePool extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -45,19 +58,6 @@ class SetUserQuotaOfStoragePool extends Component {
     formValueChange (key, value){
         let userQuotaData = Object.assign({}, this.state.userQuotaData, {[key]: value});
         this.setState({userQuotaData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
     }
 
     @debounce(500)
@@ -271,18 +271,3 @@ class SetUserQuotaOfStoragePool extends Component {
 		);
 	}
 }
-
-const mapStateToProps = state => {
-	const {language} = state;
-	return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SetUserQuotaOfStoragePool);

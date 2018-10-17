@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateCIFS from './CreateCIFS';
 import EditCIFS from './EditCIFS';
 import UserOrGroupOfCIFS from './UserOrGroupOfCIFS';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class CIFS extends Component {
+const mapStateToProps = state => {
+    const {language, main: {share: {NASServerList, CIFSList}}} = state;
+    return {language, NASServerList, CIFSList};
+};
+
+@connect(mapStateToProps)
+export default class CIFS extends Component {
     constructor (props){
         super(props);
         let {CIFSList} = this.props;
@@ -236,10 +242,3 @@ class CIFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {share: {NASServerList, CIFSList}}} = state;
-    return {language, NASServerList, CIFSList};
-};
-
-export default connect(mapStateToProps)(CIFS);

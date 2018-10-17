@@ -1,10 +1,22 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Form, Radio, Select, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
+import {Button, Form, Radio, Select, message, Modal} from 'antd';
 import httpRequests from 'Http/requests';
 
-class EditClient extends Component {
+const mapStateToProps = state => {
+    let {language} = state;
+    return {language};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class EditClient extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -159,18 +171,3 @@ class EditClient extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditClient);

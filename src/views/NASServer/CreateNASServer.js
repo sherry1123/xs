@@ -1,13 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, message, Modal} from 'antd';
 import SelectClient from './SelectClient';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
-import lang from 'Components/Language/lang';
-import {debounce, validateIpv4} from 'Services';
+import {debounce, validationUpdateState, validateIpv4} from 'Services';
 import httpRequests from 'Http/requests';
 
-class CreateNASServer extends Component {
+const mapStateToProps = state => {
+    let {language, main: {share: {NASServerList}}} = state;
+    return {language, NASServerList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateNASServer extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -52,19 +65,6 @@ class CreateNASServer extends Component {
         let NASServerData = {[key]: value};
         NASServerData = Object.assign({}, this.state.NASServerData, NASServerData);
         this.setState({NASServerData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -241,18 +241,3 @@ class CreateNASServer extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {share: {NASServerList}}} = state;
-    return {language, NASServerList};
-};
-
-const mapDispatchToProps = {};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateNASServer);

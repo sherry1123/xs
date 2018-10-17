@@ -6,7 +6,19 @@ import {Button, Table, Modal, Popover, message} from 'antd';
 import SetGroupQuotaOfStoragePool from './SetGroupQuotaOfStoragePool';
 import {formatStorageSize} from 'Services';
 
-class GroupQuotaOfStoragePool extends Component {
+const mapStateToProps = state => {
+	const {language, main: {storagePool: {groupQuotasOfStoragePool}}} = state;
+	return {language, groupQuotasOfStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class GroupQuotaOfStoragePool extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
@@ -197,20 +209,4 @@ class GroupQuotaOfStoragePool extends Component {
 			</Modal>
 		);
 	}
-
 }
-
-const mapStateToProps = state => {
-	const {language, main: {storagePool: {groupQuotasOfStoragePool}}} = state;
-	return {language, groupQuotasOfStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(GroupQuotaOfStoragePool);

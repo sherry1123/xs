@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, Input, message, Modal, Popover, Switch, Table} from 'antd';
 import CreateSnapshotSchedule from './CreateSnapshotSchedule';
 import EditSnapshotSchedule from './EditSnapshotSchedule';
-import lang from 'Components/Language/lang';
 import {timeLeftFormat, timeFormat} from 'Services';
 import httpRequests from 'Http/requests';
 
-class SnapshotSchedule extends Component {
+const mapStateToProps = state => {
+    let {language, main: {snapshot: {snapshotScheduleList}}} = state;
+    return {language, snapshotScheduleList};
+};
+
+@connect(mapStateToProps)
+export default class SnapshotSchedule extends Component {
     constructor (props){
         super(props);
         let {snapshotScheduleList} = this.props;
@@ -263,10 +269,3 @@ class SnapshotSchedule extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {snapshot: {snapshotScheduleList}}} = state;
-    return {language, snapshotScheduleList};
-};
-
-export default connect(mapStateToProps)(SnapshotSchedule);

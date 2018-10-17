@@ -1,11 +1,17 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Icon, Radio, Table} from 'antd';
 import lang from 'Components/Language/lang';
+import {Icon, Radio, Table} from 'antd';
 import {timeFormat} from 'Services';
 import httpRequests from 'Http/requests';
 
-class SystemLog extends Component {
+const mapStateToProps = state => {
+    let {language, main: {systemLog: {eventLogs, auditLogs}}} = state;
+    return {language, eventLogs, auditLogs};
+};
+
+@connect(mapStateToProps)
+export default class SystemLog extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -106,10 +112,3 @@ class SystemLog extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {systemLog: {eventLogs, auditLogs}}} = state;
-    return {language, eventLogs, auditLogs};
-};
-
-export default connect(mapStateToProps)(SystemLog);

@@ -6,7 +6,21 @@ import AddLocalAuthUserToGroup from './AddLocalAuthUserToGroup';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class LocalAuthUserOfGroup extends Component {
+const mapStateToProps = state => {
+    let {language, main: {localAuthUser: {localAuthUserListOfGroup}}} = state;
+    return {language, localAuthUserListOfGroup};
+};
+
+const mapDispatchToProps = dispatch => ({
+    setLocalAuthUserListOfGroup: localAuthUserListOfGroup => dispatch(localAuthUserAction.setLocalAuthUserListOfGroup(localAuthUserListOfGroup)),
+});
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class LocalAuthUserOfGroup extends Component {
     constructor (props){
         super(props);
         let {localAuthUserListOfGroup} = this.props;
@@ -197,22 +211,3 @@ class LocalAuthUserOfGroup extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {localAuthUser: {localAuthUserListOfGroup}}} = state;
-    return {language, localAuthUserListOfGroup};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setLocalAuthUserListOfGroup: localAuthUserListOfGroup => dispatch(localAuthUserAction.setLocalAuthUserListOfGroup(localAuthUserListOfGroup)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(LocalAuthUserOfGroup);

@@ -6,7 +6,13 @@ import CreateDirectory from './CreateDirectory';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class FSOperation extends Component {
+const mapStateToProps = state => {
+    const {language} = state;
+    return {language};
+};
+
+@connect(mapStateToProps)
+export default class FSOperation extends Component {
     constructor (props){
         super(props);
         this.minChunkSize = 65536;
@@ -219,10 +225,3 @@ class FSOperation extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
-};
-
-export default connect(mapStateToProps)(FSOperation);

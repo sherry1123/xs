@@ -2,10 +2,23 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
-import {debounce, validateFsName} from 'Services';
+import {debounce, validationUpdateState, validateFsName} from 'Services';
 import httpRequests from 'Http/requests';
 
-class CreateLocalAuthUserGroup extends Component {
+const mapStateToProps = state => {
+    let {language, main: {localAuthUser: {localAuthUserGroupList}}} = state;
+    return {language, localAuthUserGroupList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateLocalAuthUserGroup extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -26,19 +39,6 @@ class CreateLocalAuthUserGroup extends Component {
         let groupData = {[key]: value};
         groupData = Object.assign({}, this.state.groupData, groupData);
         this.setState({groupData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -189,18 +189,3 @@ class CreateLocalAuthUserGroup extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {localAuthUser: {localAuthUserGroupList}}} = state;
-    return {language, localAuthUserGroupList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateLocalAuthUserGroup);

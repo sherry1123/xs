@@ -4,7 +4,13 @@ import {Icon, Radio, Table, Popover} from 'antd';
 import lang from 'Components/Language/lang';
 import {formatStorageSize, getCapacityColour} from 'Services';
 
-class PhysicalNodeTargets extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dataNode: {physicalNodeInfo, physicalNodeTargets}}} = state;
+    return {language, physicalNodeInfo, physicalNodeTargets};
+};
+
+@connect(mapStateToProps)
+export default class PhysicalNodeTargets extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -84,10 +90,3 @@ class PhysicalNodeTargets extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dataNode: {physicalNodeInfo, physicalNodeTargets}}} = state;
-    return {language, physicalNodeInfo, physicalNodeTargets};
-};
-
-export default connect(mapStateToProps)(PhysicalNodeTargets);

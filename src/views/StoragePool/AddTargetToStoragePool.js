@@ -2,10 +2,23 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Modal, Form, message, Select} from 'antd';
 import lang from 'Components/Language/lang';
-import {debounce, formatStorageSize} from 'Services';
+import {debounce, validationUpdateState, formatStorageSize} from 'Services';
 import httpRequests from 'Http/requests';
 
-class AddTargetToStoragePool extends Component {
+const mapStateToProps = state => {
+	let {language, main: {storagePool: {storagePoolList, targetsForStoragePool}}} = state;
+	return {language, storagePoolList, targetsForStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class AddTargetToStoragePool extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
@@ -26,19 +39,6 @@ class AddTargetToStoragePool extends Component {
 	formValueChange (key, value){
 		let targetData = Object.assign({}, this.state.targetData, {[key]: value});
 		this.setState({targetData});
-	}
-
-	async validationUpdateState (key, value, valid){
-		let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
 	}
 
 	@debounce(500)
@@ -167,18 +167,3 @@ class AddTargetToStoragePool extends Component {
 		);
 	}
 }
-
-const mapStateToProps = state => {
-	let {language, main: {storagePool: {storagePoolList, targetsForStoragePool}}} = state;
-	return {language, storagePoolList, targetsForStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(AddTargetToStoragePool);

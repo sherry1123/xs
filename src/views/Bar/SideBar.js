@@ -6,7 +6,25 @@ import generalAction from 'Actions/generalAction';
 import lang from 'Components/Language/lang';
 import routerPath, {pathToMenu} from '../routerPath';
 
-class SideBar extends Component {
+const mapStateToProps = state => {
+    let {language, main: {general: {activeMenu, activePage, menuExpand}}} = state;
+    return {language, activeMenu, activePage, menuExpand};
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changeActiveMenu: key => dispatch(generalAction.changeActiveMenu(key)),
+        changeActivePage: key => dispatch(generalAction.changeActivePage(key)),
+    };
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@withRouter
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class SideBar extends Component {
     componentWillMount (){
         let {pathname} = this.props.history.location;
         let key = pathname.replace(routerPath.Main, '');
@@ -156,23 +174,3 @@ class SideBar extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {general: {activeMenu, activePage, menuExpand}}} = state;
-    return {language, activeMenu, activePage, menuExpand};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        changeActiveMenu: key => dispatch(generalAction.changeActiveMenu(key)),
-        changeActivePage: key => dispatch(generalAction.changeActivePage(key)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SideBar));

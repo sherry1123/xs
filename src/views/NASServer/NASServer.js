@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, Input, Table, Popover, Modal, message} from 'antd';
 import CreateNASServer from './CreateNASServer';
 import EditNASServer from './EditNASServer';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class NASServer extends Component {
+const mapStateToProps = state => {
+    const {language, main: {share: {NASServerList, NFSList, CIFSList}}} = state;
+    return {language, NASServerList, NFSList, CIFSList};
+};
+
+@connect(mapStateToProps)
+export default class NASServer extends Component {
     constructor (props){
         super(props);
         let {NASServerList} = this.props;
@@ -184,10 +190,3 @@ class NASServer extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {share: {NASServerList, NFSList, CIFSList}}} = state;
-    return {language, NASServerList, NFSList, CIFSList};
-};
-
-export default connect(mapStateToProps)(NASServer);

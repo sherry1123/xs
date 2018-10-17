@@ -4,7 +4,13 @@ import {Button, Icon, Modal, Popover} from 'antd';
 import TargetList from 'Components/TargetList/TargetList';
 import lang from 'Components/Language/lang';
 
-class ClusterTargetsRanking extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterTargets}}} = state;
+    return {language, clusterTargets};
+};
+
+@connect(mapStateToProps)
+export default class ClusterTargetsRanking extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -63,10 +69,3 @@ class ClusterTargetsRanking extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterTargets}}} = state;
-    return {language, clusterTargets};
-};
-
-export default connect(mapStateToProps)(ClusterTargetsRanking);

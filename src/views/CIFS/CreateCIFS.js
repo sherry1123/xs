@@ -1,14 +1,27 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Form, Icon, Input, message, Modal, Popover, Select, Switch, Table} from 'antd';
 import DirectoryTree from 'Components/DirectoryTree/DirectoryTree';
 import AddLocalAuthUserToCIFS from './AddLocalAuthUserToCIFS';
 import AddLocalAuthUserGroupToCIFS from './AddLocalAuthUserGroupToCIFS';
-import lang from 'Components/Language/lang';
-import {debounce, validateFsName} from 'Services';
+import {debounce, validationUpdateState, validateFsName} from 'Services';
 import httpRequests from 'Http/requests';
 
-class CreateCIFS extends Component {
+const mapStateToProps = state => {
+    let {language, main: {share: {CIFSList}}} = state;
+    return {language, CIFSList};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateCIFS extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -54,19 +67,6 @@ class CreateCIFS extends Component {
         let shareData = {[key]: value};
         shareData = Object.assign({}, this.state.shareData, shareData);
         this.setState({shareData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -426,18 +426,3 @@ class CreateCIFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {share: {CIFSList}}} = state;
-    return {language, CIFSList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateCIFS);

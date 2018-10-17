@@ -2,10 +2,23 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
-import {debounce, validateFsName} from 'Services';
+import {debounce, validationUpdateState, validateFsName} from 'Services';
 import httpRequests from 'Http/requests';
 
-class CreateSnapshot extends Component {
+const mapStateToProps = state => {
+    const {language, main: {snapshot: {snapshotList}}} = state;
+    return {language, snapshotList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateSnapshot extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -62,11 +75,6 @@ class CreateSnapshot extends Component {
             formValid = formValid && this.state.validation[key].valid;
         });
         this.setState({formValid});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let validation = Object.assign({}, this.state.validation, {[key]: {status: (value.cn || value.en) ? 'error' : '', help: lang(value.cn, value.en), valid: valid}});
-        await this.setState({validation});
     }
 
     async createSnapshot (){
@@ -170,18 +178,3 @@ class CreateSnapshot extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList}}} = state;
-    return {language, snapshotList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateSnapshot);

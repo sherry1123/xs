@@ -4,7 +4,19 @@ import {Button, Form, Icon, Input, Modal, message, Select, Spin, Popover} from '
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class StripeSetting extends Component {
+const mapStateToProps = state => {
+    const {language} = state;
+    return {language};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class StripeSetting extends Component {
     constructor (props){
         super(props);
         this.minChunkSize = 65536;
@@ -165,18 +177,3 @@ class StripeSetting extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(StripeSetting);

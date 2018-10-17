@@ -3,10 +3,23 @@ import {connect} from 'react-redux';
 import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {debounce} from 'Services';
+import {debounce, validationUpdateState} from 'Services';
 import {validateIpv4} from 'Services';
 
-class CreateClient extends Component {
+const mapStateToProps = state => {
+    let {language, main: {dashboard: {clusterServiceAndClientIPs: {managementServerIPs, clientIPs}}}} = state;
+    return {language, managementServerIPs, clientIPs};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class CreateClient extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -25,19 +38,6 @@ class CreateClient extends Component {
     formValueChange (key, value){
         let clientData = Object.assign({}, this.state.clientData, {[key]: value});
         this.setState({clientData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-        let validation = {
-            [key]: {
-                status: (cn || en) ? 'error' : '',
-                help: lang(cn, en),
-                valid
-            }
-        };
-        validation = Object.assign({}, this.state.validation, validation);
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -165,18 +165,3 @@ class CreateClient extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {dashboard: {clusterServiceAndClientIPs: {managementServerIPs, clientIPs}}}} = state;
-    return {language, managementServerIPs, clientIPs};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateClient);

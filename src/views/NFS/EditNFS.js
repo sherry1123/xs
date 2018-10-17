@@ -4,7 +4,19 @@ import {Button, Form, Input, message, Modal} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class EditNFS extends Component {
+const mapStateToProps = state => {
+    let {language} = state;
+    return {language};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class EditNFS extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -107,18 +119,3 @@ class EditNFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditNFS);

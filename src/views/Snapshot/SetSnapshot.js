@@ -3,9 +3,22 @@ import {connect} from 'react-redux';
 import {Button, Form, Icon, Input, message, Modal, Popover, Slider} from 'antd';
 import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
-import {debounce, validateNotZeroInteger} from 'Services';
+import {debounce, validationUpdateState, validateNotZeroInteger} from 'Services';
 
-class SetSnapshot extends Component {
+const mapStateToProps = state => {
+    const {language, main: {snapshot: {snapshotList, snapshotSetting}}} = state;
+    return {language, snapshotSetting, snapshotList};
+};
+
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class SetSnapshot extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -69,16 +82,6 @@ class SetSnapshot extends Component {
             settingData.manual = settingData.total - value;
         }
         this.setState({settingData});
-    }
-
-    async validationUpdateState (key, value, valid) {
-        let validation = Object.assign({}, this.state.validation);
-        validation[key] = {
-            status: (value.cn || value.en) ? 'error' : '',
-            help: lang(value.cn, value.en),
-            valid
-        };
-        await this.setState({validation});
     }
 
     @debounce(500)
@@ -296,18 +299,3 @@ class SetSnapshot extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {snapshot: {snapshotList, snapshotSetting}}} = state;
-    return {language, snapshotSetting, snapshotList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SetSnapshot);

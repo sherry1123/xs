@@ -4,7 +4,19 @@ import lang from 'Components/Language/lang';
 import {Button, Modal, Form, Input, message} from 'antd';
 import httpRequests from 'Http/requests';
 
-class EditDataClassification extends Component {
+const mapStateToProps = state => {
+    let {language, main: {storagePool: {dataClassificationList}}} = state;
+    return {language, dataClassificationList};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class EditDataClassification extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -115,18 +127,3 @@ class EditDataClassification extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {storagePool: {dataClassificationList}}} = state;
-    return {language, dataClassificationList};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(EditDataClassification);

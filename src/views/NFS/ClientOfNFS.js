@@ -1,13 +1,27 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import shareAction from 'Actions/shareAction';
 import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateClientToNFS from './CreateClientToNFS';
 import EditClient from './EditClient';
-import lang from 'Components/Language/lang';
 import httpRequests from 'Http/requests';
 
-class ClientOfNFS extends Component {
+const mapStateToProps = state => {
+    let {language, main: {share: {clientListOfNFS}}} = state;
+    return {language, clientListOfNFS};
+};
+
+const mapDispatchToProps = dispatch => ({
+    setClientListOfNFS: clientList => dispatch(shareAction.setClientListOfNFS(clientList)),
+});
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class ClientOfNFS extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -212,22 +226,3 @@ class ClientOfNFS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {share: {clientListOfNFS}}} = state;
-    return {language, clientListOfNFS};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setClientListOfNFS: clientList => dispatch(shareAction.setClientListOfNFS(clientList)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(ClientOfNFS);

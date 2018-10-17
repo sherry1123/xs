@@ -6,7 +6,13 @@ import ClusterImage from 'Images/cluster.png';
 import lang from 'Components/Language/lang';
 import {formatStorageSize} from 'Services';
 
-class ClusterBasicInfo extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterStatus, clusterCapacity}}} = state;
+    return {language, clusterStatus, clusterCapacity};
+};
+
+@connect(mapStateToProps)
+export default class ClusterBasicInfo extends Component {
     formatSizeAndSmallerUnit (size){
         let [value, unit] = formatStorageSize(size).split(' ');
         return <span>{value} <span className="fs-cluster-info-unit">{unit}</span></span>;
@@ -103,10 +109,3 @@ class ClusterBasicInfo extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterStatus, clusterCapacity}}} = state;
-    return {language, clusterStatus, clusterCapacity};
-};
-
-export default connect(mapStateToProps)(ClusterBasicInfo);

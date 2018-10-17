@@ -11,7 +11,13 @@ import DataClassificationSetting from './DataClassificationSetting';
 import GroupQuotaOfStoragePool from './GroupQuotaOfStoragePool';
 import httpRequests from 'Http/requests';
 
-class StoragePool extends Component {
+const mapStateToProps = state => {
+    let {language, main: {storagePool: {storagePoolList}}} = state;
+    return {language, storagePoolList};
+};
+
+@connect(mapStateToProps)
+export default class StoragePool extends Component {
     constructor (props){
         super(props);
         let {storagePoolList} = this.props;
@@ -236,10 +242,3 @@ class StoragePool extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {storagePool: {storagePoolList}}} = state;
-    return {language, storagePoolList};
-};
-
-export default connect(mapStateToProps)(StoragePool);

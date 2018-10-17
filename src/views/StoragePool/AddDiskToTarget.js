@@ -5,7 +5,19 @@ import lang from 'Components/Language/lang';
 // import {formatStorageSize} from 'Services';
 import {Button, Modal, } from 'antd';
 
-class AddDiskToTarget extends Component {
+const mapStateToProps = state => {
+	let {language, main: {storagePool: {buddyGroupsForStoragePool}}} = state;
+	return {language, buddyGroupsForStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class AddDiskToTarget extends Component {
 	constructor (props){
 		super(props);
 		this.state = {
@@ -63,18 +75,3 @@ class AddDiskToTarget extends Component {
 		);
 	}
 }
-
-const mapStateToProps = state => {
-	let {language, main: {storagePool: {buddyGroupsForStoragePool}}} = state;
-	return {language, buddyGroupsForStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(AddDiskToTarget);

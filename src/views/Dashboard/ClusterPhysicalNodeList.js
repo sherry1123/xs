@@ -8,7 +8,20 @@ import {formatStorageSize, getCapacityColour} from 'Services';
 import routerPath from '../routerPath';
 import {lsGet, lsSet} from 'Services';
 
-class ClusterPhysicalNodeList extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterPhysicalNodeList}}} = state;
+    return {language, clusterPhysicalNodeList};
+};
+
+const mapDispatchToProps = dispatch => ({
+    setCurrentPhysicalNode: currentPhysicalNode => dispatch(dataNodeAction.setCurrentPhysicalNode(currentPhysicalNode)),
+});
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+@withRouter
+@connect(mapStateToProps, mapDispatchToProps, mergeProps)
+export default class ClusterPhysicalNodeList extends Component {
     componentWillReceiveProps (nextProps){
         let {clusterPhysicalNodeList} = nextProps;
         if (!!clusterPhysicalNodeList.length){
@@ -96,20 +109,3 @@ class ClusterPhysicalNodeList extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterPhysicalNodeList}}} = state;
-    return {language, clusterPhysicalNodeList};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setCurrentPhysicalNode: currentPhysicalNode => dispatch(dataNodeAction.setCurrentPhysicalNode(currentPhysicalNode)),
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(ClusterPhysicalNodeList));

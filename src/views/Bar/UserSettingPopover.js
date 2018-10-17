@@ -1,12 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button} from 'antd';
-import ChangePassword from 'Components/ChangePassword/ChangePassword';
 import lang from 'Components/Language/lang';
 import mainAction from 'Actions/generalAction';
+import {Button} from 'antd';
+import ChangePassword from 'Components/ChangePassword/ChangePassword';
 import httpRequests from 'Http/requests';
 
-class UserSettingPopover extends Component {
+const mapStateToProps = state => {
+    let {language, main: {general: {user}}} = state;
+    return {language, user};
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changeActivePage: key => dispatch(mainAction.changeActivePage(key))
+    };
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps)
+export default class UserSettingPopover extends Component {
     show (){
         this.changePasswordWrapper.getWrappedInstance().show();
     }
@@ -32,20 +46,3 @@ class UserSettingPopover extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {general: {user}}} = state;
-    return {language, user};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        changeActivePage: key => dispatch(mainAction.changeActivePage(key))
-    };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(UserSettingPopover);

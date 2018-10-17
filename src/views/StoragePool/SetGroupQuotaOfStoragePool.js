@@ -2,10 +2,23 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Button, Col, Form, InputNumber, Modal, message, Row, Select} from 'antd';
-import {debounce, capacityUnitSize, formatStorageSize} from 'Services';
+import {debounce, validationUpdateState, capacityUnitSize, formatStorageSize} from 'Services';
 import httpRequests from 'Http/requests';
 
-class SetGroupQuotaOfStoragePool extends Component {
+const mapStateToProps = state => {
+    let {language} = state;
+    return {language};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+@validationUpdateState(lang)
+export default class SetGroupQuotaOfStoragePool extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -30,19 +43,6 @@ class SetGroupQuotaOfStoragePool extends Component {
     formValueChange (key, value){
         let quotaData = Object.assign({}, this.state.quotaData, {[key]: value});
         this.setState({quotaData});
-    }
-
-    async validationUpdateState (key, value, valid){
-        let {cn, en} = value;
-		let validation = {
-			[key]: {
-				status: (cn || en) ? 'error' : '',
-				help: lang(cn, en),
-				valid
-			}
-		};
-		validation = Object.assign({}, this.state.validation, validation);
-		await this.setState({validation});
     }
 
     @debounce(500)
@@ -273,18 +273,3 @@ class SetGroupQuotaOfStoragePool extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language} = state;
-    return {language};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(SetGroupQuotaOfStoragePool);

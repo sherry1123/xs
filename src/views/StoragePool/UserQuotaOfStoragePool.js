@@ -6,7 +6,19 @@ import {formatStorageSize} from 'Services';
 import SetUserQuotaOfStoragePool from './SetUserQuotaOfStoragePool';
 import {Button, message, Modal, Popover, Table} from 'antd';
 
-class UserQuotaOfStoragePool extends Component {
+const mapStateToProps = state => {
+	const {language, main: { storagePool: {userQuotasOfStoragePool}}} = state;
+	return {language, userQuotasOfStoragePool};
+};
+
+const mapDispatchToProps = [];
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class UserQuotaOfStoragePool extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -198,18 +210,3 @@ class UserQuotaOfStoragePool extends Component {
 		);
 	}
 }
-
-const mapStateToProps = state => {
-	const {language, main: { storagePool: {userQuotasOfStoragePool}}} = state;
-	return {language, userQuotasOfStoragePool};
-};
-
-const mapDispatchToProps = [];
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-	return Object.assign({}, stateProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(UserQuotaOfStoragePool);

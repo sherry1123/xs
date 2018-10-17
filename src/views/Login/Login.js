@@ -1,16 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import generalAction from 'Actions/generalAction';
 import {Button, Form, Icon, Input, message} from 'antd';
 import LanguageButton from 'Components/Language/LanguageButton';
-import lang from 'Components/Language/lang';
 import routerPath from '../routerPath';
-import {ckGet} from 'Services';
 import MD5 from 'crypto-js/md5';
 // import TripleDES from 'crypto-js/tripledes';
+import {ckGet} from 'Services';
 import httpRequests from 'Http/requests';
 
-class Login extends Component {
+const mapStateToProps = state => {
+    const {language, main: {general: {version}}} = state;
+    return {language, version};
+};
+
+const mapDispatchToProps = dispatch => ({
+    setUser: user => dispatch(generalAction.setUser(user)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class Login extends Component {
     constructor (props){
         super(props);
         this.state = {
@@ -196,16 +206,3 @@ class Login extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {general: {version}}} = state;
-    return {language, version};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setUser: user => dispatch(generalAction.setUser(user)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);

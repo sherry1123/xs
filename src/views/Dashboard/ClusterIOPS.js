@@ -4,7 +4,13 @@ import {Icon} from 'antd';
 import FSLineChart from 'Components/FSLineChart/FSLineChart';
 import lang from 'Components/Language/lang';
 
-class IOPSStatistics extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dashboard: {clusterIOPS}}} = state;
+    return {language, clusterIOPS};
+};
+
+@connect(mapStateToProps)
+export default class IOPSStatistics extends Component {
     render (){
         let {clusterIOPS: {total, time}} = this.props;
         let option = {
@@ -31,10 +37,3 @@ class IOPSStatistics extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dashboard: {clusterIOPS}}} = state;
-    return {language, clusterIOPS};
-};
-
-export default connect(mapStateToProps)(IOPSStatistics);

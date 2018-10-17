@@ -5,7 +5,13 @@ import FSLineChart from 'Components/FSLineChart/FSLineChart';
 import lang from 'Components/Language/lang';
 import {formatStorageSize} from 'Services';
 
-class physicalNodeTPS extends Component {
+const mapStateToProps = state => {
+    const {language, main: {dataNode: {physicalNodeTPS}}} = state;
+    return {language, physicalNodeTPS};
+};
+
+@connect(mapStateToProps)
+export default class physicalNodeTPS extends Component {
     render (){
         let {physicalNodeTPS: {read, write, time}} = this.props;
         let option = {
@@ -50,10 +56,3 @@ class physicalNodeTPS extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language, main: {dataNode: {physicalNodeTPS}}} = state;
-    return {language, physicalNodeTPS};
-};
-
-export default connect(mapStateToProps)(physicalNodeTPS);

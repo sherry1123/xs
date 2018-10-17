@@ -1,25 +1,25 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import lang from 'Components/Language/lang';
 import {Button, Icon, message, Modal, Popover, Select} from 'antd';
 import pImg from 'Images/primary_target.png';
 import sImg from 'Images/secondary_target.png';
-import lang from 'Components/Language/lang';
-import httpRequests from 'Http/requests';
 import {formatStorageSize} from 'Services';
+import httpRequests from 'Http/requests';
 
-/*
-let availableTargets = [
-    {targetId: 101, mountPath: "/data/Orcafs-meta", node: "orcadt1", service: "metadata", nodeId: 101, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-    {targetId: 102, mountPath: "/data/Orcafs-meta", node: "orcadt1", service: "metadata", nodeId: 102, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-    {targetId: 103, mountPath: "/data/Orcafs-meta", node: "orcadt2", service: "metadata", nodeId: 103, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-    {targetId: 104, mountPath: "/data/Orcafs-storage", node: "orcadt3", service: "storage", nodeId: 104, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-    {targetId: 105, mountPath: "/data/Orcafs-storage", node: "orcadt3", service: "storage", nodeId: 105, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-    {targetId: 106, mountPath: "/data/Orcafs-meta", node: "orcadt2", service: "metadata", nodeId: 106, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-    {targetId: 107, mountPath: "/data/Orcafs-meta", node: "orcadt1", service: "metadata", nodeId: 107, isUsed: false, space: {total: 10415295488, used: 107373568, free: 10307921920, usage: "0.01%"}},
-];
-*/
+const mapStateToProps = state => {
+    let {language, main: {target: {targetList: availableTargets}}} = state;
+    return {language, availableTargets};
+};
 
-class CreateBuddyGroup extends Component {
+const mapDispatchToProps = {};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
+const options = {withRef: true};
+
+@connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
+export default class CreateBuddyGroup extends Component {
     constructor (props){
         super(props);
         let {availableTargets} = this.props;
@@ -277,18 +277,3 @@ class CreateBuddyGroup extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    let {language, main: {target: {targetList: availableTargets}}} = state;
-    return {language, availableTargets};
-};
-
-const mapDispatchToProps = {};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    return Object.assign({}, stateProps, dispatchProps, ownProps);
-};
-
-const options = {withRef: true};
-
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps, options)(CreateBuddyGroup);

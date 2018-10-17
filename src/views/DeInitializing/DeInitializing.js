@@ -5,7 +5,13 @@ import lang from 'Components/Language/lang';
 import {ckGet} from 'Services';
 import routerPath from '../routerPath';
 
-class DeInitializing extends PureComponent {
+const mapStateToProps = state => {
+    const {language} = state;
+    return {language};
+};
+
+@connect(mapStateToProps)
+export default class DeInitializing extends PureComponent {
     componentWillMount (){
         let isDeInit = ckGet('deinit');
         let isInitialized = ckGet('init');
@@ -50,10 +56,3 @@ class DeInitializing extends PureComponent {
         );
     }
 }
-
-const mapStateToProps = state => {
-    const {language} = state;
-    return {language};
-};
-
-export default connect(mapStateToProps)(DeInitializing);
