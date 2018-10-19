@@ -13,6 +13,7 @@ import shareReducer from './shareReducer';
 import localAuthUserReducer from './localAuthUserReducer';
 import targetReducer from './targetReducer';
 import systemLogReducer from './systemLogReducer';
+import systemConfigurationReducer from './systemConfigurationReducer'
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
 State.language = lsGet('language') || 'chinese';
@@ -78,6 +79,10 @@ export default combineReducers({
 
                 case 'target':
                     state[key] = targetReducer(main[key], action);
+                    break;
+
+                case 'systemConfiguration':
+                    state[key] = systemConfigurationReducer(main[key], action);
                     break;
 
                 default:

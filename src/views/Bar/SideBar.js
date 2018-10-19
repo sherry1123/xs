@@ -169,6 +169,9 @@ export default class SideBar extends Component {
                     <Menu.Item key={routerPath.SystemLog}>
                         <Icon type="file-text" />{lang('系统日志', 'System Log')}
                     </Menu.Item>
+                    <Menu.Item key={routerPath.SystemConfiguration}>
+                        <Icon type="setting" />{lang('系统参数配置 ', 'System parameter configuration')}
+                    </Menu.Item>
                 </Menu>
             </aside>
         );

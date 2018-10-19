@@ -1,7 +1,7 @@
 import State from '../state';
 import {localAuthUserActionTypes} from 'Actions/localAuthUserAction';
 
-const shareReducer = (state = State.main.localAuthUser, action) => {
+const localAuthUserReducer = (state = State.main.localAuthUser, action) => {
     let {localAuthUserList, localAuthUserGroupList, localAuthUserListOfGroup} = action;
     switch (action.type){
         case localAuthUserActionTypes.SET_LOCAL_AUTH_USER_LIST:
@@ -18,4 +18,4 @@ const shareReducer = (state = State.main.localAuthUser, action) => {
     }
 };
 
-export default shareReducer;
+export default localAuthUserReducer;

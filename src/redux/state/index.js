@@ -191,5 +191,12 @@ export default {
             eventLogs: [],
             auditLogs: [],
         },
+        // System parameter configuration
+        SystemConfiguration: {
+            systemParameterList: [
+                {name:"是否开启配额", currentValue:"false", description:"quotaEnableEnforcement", },
+                // {name:"日志类型", currentValue:"helperd", description:"logType"}
+            ],
+        },
     }
 }
