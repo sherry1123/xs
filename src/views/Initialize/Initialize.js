@@ -606,7 +606,7 @@ export default class Initialize extends Component {
 
     render (){
         let buttonPopoverConf = {mouseEnterDelay: 0.8, mouseLeaveDelay: 0, placement: 'top'};
-        let initTipsMap = {
+        let initProgressTipsMap = {
             '-1': lang('初始化失败，请联系运维人员寻求帮助！', 'Initialization failed, please ask operation and maintenance staff for help!'),
             0: lang('初始化已开始，请稍候', 'Initialization started, please wait for a moment'),
             1: lang('正在初始化管理服务器', 'Initializing management server'),
@@ -976,8 +976,8 @@ export default class Initialize extends Component {
                                     <Popover
                                         {...buttonPopoverConf}
                                         content={lang(
-                                            '伙伴组是在跨节点间保证集群各同类型服务的数据安全的功能。伙伴组的生效需要各类型的服务数量为偶数个。如果您在这里不开启创建伙伴组，在系统初始化期间将不会创建伙伴组。您可以在系统初始化成功后登录到业务界面再进行创建。',
-                                            'Buddy group is the feature that ensure the data security of the various same types of services cross nodes. Should make various types of services\' number is even to ensure buddy group(s) take(s) effect. If you don\'t enable create Buddy Group here, it will not create Buddy Group during system initialization. And you can login to the business page to do create Buddy Group operation after the system is initialized successfully.')
+                                            '伙伴组是在跨节点间保证集群各同类型服务的数据安全的功能。伙伴组的生效需要各类型的服务数量为偶数个，如果不符合这个要求，即使您开启了该项，系统也不会再初始化期间为您自动创建伙伴组。如果您在这里不开启创建伙伴组，在系统初始化期间将不会创建伙伴组。您可以在系统初始化成功后登录到业务界面再进行创建。',
+                                            'Buddy group is the feature that ensure the data security of the various same types of services cross nodes. Should make various types of services\' number is even to ensure buddy group(s) take(s) effect. If does not meet the requirement, system will not create buddy group for you automatically. If you don\'t enable create Buddy Group here, it will not create Buddy Group during system initialization. And you can login to the business page to do create Buddy Group operation after the system is initialized successfully.')
                                         }
                                     >
                                         <Icon type="question-circle-o" className="fs-info-icon m-l" />
@@ -995,12 +995,12 @@ export default class Initialize extends Component {
                                     'Step 3 - Initialization: Initialization has just begun! Please keep the equipment network unblocked, do not turn off the power supply.'
                                 )}
                             </section>
-                            <div className="fs-initialization-progress-gear-wrapper">
-                                <i className={`fs-initialization-gear-big ${this.state.initStatusNum !== -1 ? 'running' : ''}`} />
-                                <i className={`fs-initialization-gear-small ${this.state.initStatusNum !== -1 ? 'running' : ''}`}/>
+                            <div className="fs-progress-gear-wrapper">
+                                <i className={`fs-gear-big ${this.state.initStatusNum !== -1 ? 'running' : ''}`} />
+                                <i className={`fs-gear-small ${this.state.initStatusNum !== -1 ? 'running' : ''}`}/>
                             </div>
                             <Progress
-                                className="fs-initialization-progress-bar"
+                                className="fs-progress-bar"
                                 showInfo={false}
                                 percent={this.state.initProgress}
                                 status={this.state.initStatusNum === 0 ? (this.state.initProgress === 100 ? 'success' : 'active') : 'exception'}
@@ -1013,11 +1013,11 @@ export default class Initialize extends Component {
                                 {
                                     (this.state.initInfoList || []).map((info, i) => info.step === -1 ?
                                         <div className="fs-initialization-info-item failed" key={i}>
-                                            {initTipsMap[-1]}
+                                            {initProgressTipsMap[-1]}
                                         </div> :
                                         <div className="fs-initialization-info-item" key={i}>
                                             <span>{lang('完成百分比：', 'Completion Percentage: ') + info.initProgress + '%'}</span>
-                                            <span>{lang('当前阶段: ', 'Current Phase: ') + initTipsMap[info.step]}</span>
+                                            <span>{lang('当前阶段: ', 'Current Phase: ') + initProgressTipsMap[info.step]}</span>
                                         </div>)
                                 }
                             </section>

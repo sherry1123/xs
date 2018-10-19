@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from api.module import handler, request
 
 
@@ -435,23 +437,75 @@ def delete_users_or_groups_quota(pool_id, id_type, id_list):
     return backend_handler(request.post('http://localhost:9090/cluster/deletequota', {'poolId': pool_id, 'idType': id_type, 'idList': id_list}, get_token()))
 
 
-def file_system_check():
-    return backend_handler(request.post('http://localhost:9090/cluster/fscheck', {'opt': 'orcafschcmd', 'orcaCheckFS': {'checkFS': True, 'readonly': True, 'overwriteDbFile': True, 'forceRestart': True, 'quotaEnabled': True}}, get_token()))
+def check_file_system():
+    return backend_handler(request.post('http://localhost:9090/cluster/fscheck', {'opt': 'orcafsckcmd', 'orcaCheckFS': {'checkFS': True, 'readonly': True, 'overwriteDbFile': True, 'forceRestart': True, 'quotaEnabled': True}}, get_token()))
 
 
-def file_system_check():
-    return backend_handler(request.post('http://localhost:9090/cluster/fscheck', {'opt': 'orcafschcmd', 'orcaCheckFS': {'checkFS': True, 'overwriteDbFile': True, 'forceRestart': True, 'quotaEnabled': True, 'automatic': True}}, get_token()))
+def repair_file_system():
+    return backend_handler(request.post('http://localhost:9090/cluster/fscheck', {'opt': 'orcafsckcmd', 'orcaCheckFS': {'checkFS': True, 'overwriteDbFile': True, 'forceRestart': True, 'quotaEnabled': True, 'automatic': True}}, get_token()))
 
 
 def get_file_system_status():
     data = backend_handler(request.post('http://localhost:9090/cluster/fscheck', {
-                           'opt': 'orcafsquery', 'orcaFsCKStatus': {'Opt': 'orcafsckquerystatus'}}, get_token()))
+                           'opt': 'orcafsckquery', 'orcaFsCKStatus': {'Opt': 'orcafsckquerystatus'}}, get_token()))
     status = data['OrcaFsCheckStatus']
-    return {'step': status['Step'], 'status': status['Status']}
+    return {'step': status['Step'], 'status': status['Status'], 'log': status['Logs'], 'date': status['Dates']}
 
 
 def get_file_system_log():
     data = backend_handler(request.post('http://localhost:9090/cluster/fscheck', {
-                           'opt': 'orcafsquery', 'orcaFsCKStatus': {'Opt': 'orcafsckquerylog'}}, get_token()))
-    status = data['OrcaFsCheckStatus']
-    return status['Logs']
+                           'opt': 'orcafsckquery', 'orcaFsCKStatus': {'Opt': 'orcafsckquerylogs'}}, get_token()))
+    log = data['OrcaFsCheckStatus']['Logs']
+    log_map = {
+        'Duplicated inode IDs': '重复的索引节点IDs',
+        'Duplicated chunks': '重复的块',
+        'Duplicated content directores': '重复的内容目录',
+        'Bad target mirror information in dentry': '目录项中坏的目标镜像信息',
+        'Bad content mirror information in dir inode': '目录索引节点中坏的内容镜像信息',
+        'Bad content mirror information in file inode': '文件索引节点中坏的内容镜像信息',
+        'Malformed chunk': '畸形的块',
+        'File has a missing target in stripe pattern': '文件在条带模式中缺少目标',
+        'Dentry-by-ID file is present, but no corresponding dentry': 'ID目录项文件缺少对应目录项',
+        'Dentry-by-ID file is broken or missing': 'ID目录项文件损坏或丢失',
+        'Chunk without an inode pointing to it (orphaned chunk)': '没有索引节点指向块(孤立的块)',
+        'Chunk is saved in wrong path': '块被保存在了错误的路径上',
+        'Wrong owner node saved in inode': '保存在索引节点中的错误所有者节点',
+        'Dentry points to inode on wrong node': '目录项指向错误节点上的索引节点',
+        'Content directory without an inode': '内容目录缺少索引节点',
+        'Dir inode without a dentry pointing to it (orphaned inode)': '没有目录项指向目录索引节点(孤立的索引节点)',
+        'File inode without a dentry pointing to it (orphaned inode)': '没有目录项指向文件索引节点(孤立的索引节点)',
+        'Dangling directory entry': '悬空的目录入口',
+        'Directory inode without a content directory': '目录索引节点没有内容目录',
+        'Attributes of file inode are wrong': '文件的索引节点属性错误',
+        'Attributes of dir inode are wrong': '目录的索引节点属性错误',
+        'Chunk has wrong permissions': '块有错误的权限',
+    }
+
+    def beautify(ugly_log):
+        ugly_log = filter(lambda log: log, ugly_log.split('\n'))
+        index = 0
+        for i in range(len(ugly_log)):
+            if 'Step 4' in ugly_log[i]:
+                index = i
+                break
+        ugly_log = ugly_log[index + 1:]
+        ugly_log.pop()
+        ugly_log_length = len(ugly_log)
+        item_list = []
+        result_list = []
+        for i in range(ugly_log_length):
+            if i % 2:
+                result = handler.replace('>>> ', '', ugly_log[i])
+                result = True if result == 'None found' else result
+                result_list.append(result)
+            else:
+                item = handler.replace('\s?...\s?$', '', handler.replace(
+                    '\* Checking: ', '', ugly_log[i]))
+
+                item_list.append(item)
+        beautiful_log = []
+        for i in range(len(item_list)):
+            beautiful_log.append(
+                {'item': item_list[i], 'result': result_list[i]})
+        return beautiful_log
+    return {'report': beautify(log), 'reportItemMap': log_map}

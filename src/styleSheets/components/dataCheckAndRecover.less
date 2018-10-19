@@ -1,0 +1,87 @@
+.fs-data-checking-wrapper {
+    .fs-main-content-wrapper {
+        text-align: center;
+        .fs-data-checking-step-wrapper {
+            padding-top: 30px;
+            &.description {
+                margin: 50px auto 0;
+                display: inline-block;
+                text-align: left;
+                div {
+                    margin-top: 20px;
+                }
+            }
+            .fs-data-checking-progress-wrapper {
+                margin: 10px auto 0;
+                width: 80%;
+                min-width: 900px;
+                min-height: 350px;
+                text-align: left;
+                .fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+                .fs-data-checking-progress-title {
+                    padding: 0 25px;
+                    height: 40px;
+                    line-height: 40px;
+                    background: @table-row-stripe-bg-opacity;
+                }
+                .fs-data-checking-progress-info-item {
+                    padding: 0 25px;
+                    height: 32px;
+                    line-height: 32px;
+                    font-size: @smallFont;
+                    &:nth-child(odd) {
+                        background: @table-row-stripe-bg-opacity;
+                    }
+                    &.failed {
+                        color: @red;
+                    }
+                    span {
+                        margin-right: 20px;
+                    }
+                }
+            }
+            .fs-data-checking-report-title-wrapper {
+                font-size: 12px;
+                .fs-data-checking-report-result {
+                    margin-bottom: 20px;
+                }
+            }
+            .fs-data-checking-report-content-wrapper {
+                margin: 10px auto 0;
+                width: 80%;
+                min-width: 1000px;
+                text-align: left;
+                min-height: 600px;
+                font-size: 12px;
+                .fs-box-shadow(0, 0, 5px, 1px, #f3f3f3);
+                .fs-clear-fix();
+                .fs-data-checking-report-content-result,
+                .fs-data-checking-report-content-title {
+                    padding: 15px 20px;
+                    border-bottom: 1px solid @table-row-stripe-bg-opacity;
+                }
+                .fs-data-checking-report-item {
+                    float: left;
+                    display: inline-block;
+                    padding: 15px 20px;
+                    width: 50%;
+                    &:nth-child(4n-2) {
+                        background: @table-row-stripe-bg-opacity;
+                    }
+                    &:nth-child(4n-1) {
+                        background: @table-row-stripe-bg-opacity;
+                    }
+                    .fs-data-checking-report-item-result {
+                        padding-left: 10px;
+                        &.error {
+                            color: @red;
+                        }
+                        i {
+                            padding-right: 10px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

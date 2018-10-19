@@ -12,12 +12,10 @@ const mapStateToProps = state => {
     return {language, recommendedRAID, customRAID, clusterPhysicalNodeList, metadataServerIPs, storageServerIPs};
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
-        setCustomRAID: customRAID => dispatch(initializeAction.setCustomRAID(customRAID)),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    setRecommendedRAID: recommendedRAID => dispatch(initializeAction.setRecommendedRAID(recommendedRAID)),
+    setCustomRAID: customRAID => dispatch(initializeAction.setCustomRAID(customRAID)),
+});
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
 

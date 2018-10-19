@@ -86,3 +86,71 @@
 .fs-red {
     color: @red;
 }
+
+.fs-blue {
+    color: @blue;
+}
+
+.fs-ml-10 {
+    margin-left: 10px;
+}
+
+.fs-mr-10 {
+    margin-right: 10px;
+}
+
+.fs-pl-10 {
+    padding-left: 10px;
+}
+
+.fs-pr-10 {
+    padding-right: 10px;
+}
+
+.fs-progress-gear-wrapper {
+    position: relative;
+    margin: 30px auto;
+    width: 116px;
+    height: 92px;
+    i {
+        display: block;
+        &.fs-gear-big {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 75px;
+            height: 75px;
+            background: url(../../images/gear_big.png) 0 0 no-repeat;
+            background-size: 100% 100%;
+            &.running {
+                animation: clockwise-rotate 3s linear infinite .2s;
+            }
+        }
+        &.fs-gear-small {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 45px;
+            height: 45px;
+            background: url(../../images/gear_small.png) 0 0 no-repeat;
+            background-size: 100% 100%;
+            &.running {
+                animation: anticlockwise-rotate 2s linear infinite .2s;
+            }
+        }
+    }
+}
+.fs-progress-bar {
+    display: block !important;
+    margin: 0 auto 30px !important;
+    width: 450px !important;
+    .ant-progress-outer {
+        .ant-progress-inner {
+            background: linear-gradient(#b8b9ba, #e0e1e2) !important;
+            .ant-progress-bg {
+                height: 8px !important;
+                background: linear-gradient(#7bcbff, #3385ff) !important;
+            }
+        }
+    }
+}

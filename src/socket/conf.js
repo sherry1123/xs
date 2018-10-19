@@ -13,6 +13,16 @@ export const socketEventChannel = {
         chinese: '用户警告',
         english: 'User Warning'
     }),
+
+    dataChecking: () => ({
+        chinese: '数据检查',
+        english: 'Data Checking'
+    }),
+
+    dataRecovery: () => ({
+        chinese: '数据恢复',
+        english: 'Data Recovery'
+    }),
 };
 
 export const eventCodeForEventChannel = {
@@ -92,4 +102,21 @@ export const socketEventCode = {
         english: (target) => `The default password of administrators user ${target.username} needs to be changed to ensure the security of system.`
     }),
 
+    // data checking and recovery
+    31: () => ({
+        chinese: () => `数据检查已开始！`,
+        english: () => `Data checking is started！`
+    }),
+    32: () => ({
+        chinese: () => `数据检查已完成！`,
+        english: () => `Data checking is completed！`
+    }),
+    33: () => ({
+        chinese: () => `数据恢复已开始！`,
+        english: () => `Data recovery is started！`
+    }),
+    34: () => ({
+        chinese: () => `数据恢复已完成！`,
+        english: () => `Data recovery is completed！`
+    }),
 };

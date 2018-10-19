@@ -1,7 +1,8 @@
 import json
 
-from api.model import (CifsShare, ClusterThroughputAndIops, DataLevel, LocalAuthUser,
-                       LocalAuthUserGroup, NasServer, NfsShare,
+from api.model import (CifsShare, ClusterThroughputAndIops,
+                       DataCheckingAndRecoveryHistory, DataLevel,
+                       LocalAuthUser, LocalAuthUserGroup, NasServer, NfsShare,
                        NodeCpuAndMemory, NodeThroughputAndIops, Setting,
                        Snapshot, SnapshotSchedule, StoragePool, User)
 from api.module import handler
@@ -861,3 +862,31 @@ def delete_nas_server(ip, path):
         nas_server.delete()
     else:
         raise DatabaseError('No such nas server!')
+
+
+def list_data_checking_and_recovery_history():
+    historys = []
+    for history in DataCheckingAndRecoveryHistory.objects.order_by('-id'):
+        historys.append({'type': history.data_operation_type, 'startTime': history.data_operation_start_time,
+                         'endTime': history.data_operation_end_time, 'result': history.data_operation_result})
+    return historys
+
+
+def create_data_checking_and_recovery_history(operation_type, operation_start_time, operation_result):
+    history = DataCheckingAndRecoveryHistory.objects(
+        data_operation_start_time=operation_start_time).first()
+    if history:
+        raise DatabaseError('History already exists!')
+    else:
+        DataCheckingAndRecoveryHistory(data_operation_type=operation_type, data_operation_start_time=operation_start_time,
+                                       data_operation_end_time=operation_start_time, data_operation_result=operation_result).save()
+
+
+def update_data_checking_and_recovery_history(operation_type, operation_start_time, operation_result):
+    history = DataCheckingAndRecoveryHistory.objects(
+        data_operation_type=operation_type, data_operation_start_time=operation_start_time).first()
+    if history:
+        history.update(set__data_operation_end_time=handler.current_time(
+        ), set__data_operation_result=operation_result)
+    else:
+        raise DatabaseError('No such history!')

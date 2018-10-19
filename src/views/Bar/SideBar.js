@@ -11,12 +11,10 @@ const mapStateToProps = state => {
     return {language, activeMenu, activePage, menuExpand};
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        changeActiveMenu: key => dispatch(generalAction.changeActiveMenu(key)),
-        changeActivePage: key => dispatch(generalAction.changeActivePage(key)),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    changeActiveMenu: key => dispatch(generalAction.changeActiveMenu(key)),
+    changeActivePage: key => dispatch(generalAction.changeActivePage(key)),
+});
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
 
@@ -168,6 +166,9 @@ export default class SideBar extends Component {
                     </Menu.Item>
                     <Menu.Item key={routerPath.SystemLog}>
                         <Icon type="file-text" />{lang('系统日志', 'System Log')}
+                    </Menu.Item>
+                    <Menu.Item key={routerPath.DataChecking}>
+                        <Icon type="security-scan" />{lang('数据检查', 'Data Checking')}
                     </Menu.Item>
                     <Menu.Item key={routerPath.SystemConfiguration}>
                         <Icon type="setting" />{lang('系统参数配置 ', 'System parameter configuration')}

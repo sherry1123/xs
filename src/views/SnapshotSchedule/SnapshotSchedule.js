@@ -4,7 +4,7 @@ import lang from 'Components/Language/lang';
 import {Button, Icon, Input, message, Modal, Popover, Switch, Table} from 'antd';
 import CreateSnapshotSchedule from './CreateSnapshotSchedule';
 import EditSnapshotSchedule from './EditSnapshotSchedule';
-import {timeLeftFormat, timeFormat} from 'Services';
+import {formatTimeLeft, formatTime} from 'Services';
 import httpRequests from 'Http/requests';
 
 const mapStateToProps = state => {
@@ -191,19 +191,19 @@ export default class SnapshotSchedule extends Component {
                     render: text => text ? lang('是', 'Yes') : lang('否', 'No')
                 },
                 {title: lang('执行时间', 'Execute Time'), dataIndex: 'startTime', width: 180,
-                    render: (text, record) => record.isRunning ? timeFormat(text) : lang('还未执行', 'Not Executed')
+                    render: (text, record) => record.isRunning ? formatTime(text) : lang('还未执行', 'Not Executed')
                 },
                 {title: lang('间隔时间', 'Interval Time'), dataIndex: 'interval', width: 120,
-                    render: text => timeLeftFormat(text)
+                    render: text => formatTimeLeft(text)
                 },
                 {title: lang('延时关闭', 'Delay Disable'), dataIndex: 'autoDisableTime', width: 100,
-                    render: text => text !== 0 ? timeLeftFormat(text) : lang('永不', 'Never')
+                    render: text => text !== 0 ? formatTimeLeft(text) : lang('永不', 'Never')
                 },
                 {title: lang('描述', 'Description'), width: 200, dataIndex: 'description',
                     render: text => text || '--'
                 },
                 {title: lang('创建时间', 'Create Time'), dataIndex: 'createTime', width: 150,
-                    render: text => timeFormat(text)
+                    render: text => formatTimeLeft(text)
                 },
                 {title: lang('操作', 'Operations'), width: 120,
                     render: (text, record, index) => <div>

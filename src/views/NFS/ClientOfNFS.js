@@ -141,7 +141,7 @@ export default class ClientOfNFS extends Component {
                 spinning: loadingList,
                 indicator: <Icon type="loading" />
             },
-            pagination: {
+            pagination: clientListOfNFS.length > 10 && {
                 size: 'normal',
                 pageSize: 10,
                 showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),

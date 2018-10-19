@@ -33,18 +33,17 @@ export default class physicalNodeTPS extends Component {
             yAxisLabelFormatter: value => formatStorageSize(value),
             series: [
                 {
-                    data: read,
-                    name: lang('读', 'Read'),
-                    type: 'line',
-                    itemStyle: {normal: {color: '#f9c9c0', lineStyle: {width: 1}}},
-                    area: ['#f8ada1', '#fdeedf'],
-                },
-                {
                     data: write,
                     name: lang('写', 'Write'),
                     type: 'line',
                     itemStyle: {normal: {color: '#f8a7a6', lineStyle: {width: 1}}},
                     area: ['#fc8a8b', '#eef3ff'],
+                }, {
+                    data: read,
+                    name: lang('读', 'Read'),
+                    type: 'line',
+                    itemStyle: {normal: {color: '#f9c9c0', lineStyle: {width: 1}}},
+                    area: ['#f8ada1', '#fdeedf'],
                 },
             ]
         };

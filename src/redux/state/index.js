@@ -191,6 +191,12 @@ export default {
             eventLogs: [],
             auditLogs: [],
         },
+        // data checking and recovery
+        dataChecking: {
+            dataCheckingStatus: {current: 0, total: 0, status: 0},
+            dataRecoveryStatus: {current: 0, total: 0, status: 0},
+            dataCheckingAndRecoveryHistory: [],
+        },
         // System parameter configuration
         SystemConfiguration: {
             systemParameterList: [

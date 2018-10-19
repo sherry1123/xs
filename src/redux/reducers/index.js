@@ -13,6 +13,7 @@ import shareReducer from './shareReducer';
 import localAuthUserReducer from './localAuthUserReducer';
 import targetReducer from './targetReducer';
 import systemLogReducer from './systemLogReducer';
+import dataCheckingReducer from './dataCheckingReducer';
 import systemConfigurationReducer from './systemConfigurationReducer'
 
 // firstly correct State with data from environmental parameters and persistent data from localStorage
@@ -79,6 +80,10 @@ export default combineReducers({
 
                 case 'target':
                     state[key] = targetReducer(main[key], action);
+                    break;
+
+                case 'dataChecking':
+                    state[key] = dataCheckingReducer(main[key], action);
                     break;
 
                 case 'systemConfiguration':

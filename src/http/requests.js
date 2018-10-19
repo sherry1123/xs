@@ -12,6 +12,7 @@ import shareAction from 'Actions/shareAction';
 import localAuthUserAction from 'Actions/localAuthUserAction';
 import targetAction from 'Actions/targetAction';
 import systemLogAction from 'Actions/systemLogAction';
+import dataCheckingAction from 'Actions/dataCheckingAction';
 
 /*
  * We send async HTTP API calls here, and after a call is finished, we make a sync action
@@ -639,12 +640,11 @@ export default  {
     },
 
     async saveEntryInfo (data){
-        await fetchPost('/api/setpattern', data)
+        await fetchPost('/api/setpattern', data);
     },
 
     async createDirectory (dirData){
-        console.info(dirData);
-        await fetchPost('/api/createdir', dirData)
+        await fetchPost('/api/createdir', dirData);
     },
 
     // system log
@@ -661,4 +661,24 @@ export default  {
             !!data && store.dispatch(systemLogAction.setSystemAuditLogs(data));
         });
     },
+
+    // data check and recover
+    async checkData (){
+        await fetchPost('/api/checkfilesystem');
+    },
+
+    async recoverData (){
+        return await fetchPost('/api/repairfilesystem');
+    },
+
+    async getDataCheckingOrRecoveryReport (){
+        return await fetchPost('/api/getfilesystemlog');
+    },
+
+    async getDataCheckingAndRecoveryHistory (){
+        requestHandler(async () => {
+            let data = await fetchGet('/api/getdatacheckingandrecoveryhistory');
+            !!data && store.dispatch(dataCheckingAction.setDataCheckingAndRecoveryHistory(data));
+        });
+    }
 };

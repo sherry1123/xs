@@ -1,11 +1,12 @@
 import io from 'socket.io-client';
 import store from '../redux';
-import initializeAction from '../redux/actions/initializeAction';
+import initializeAction from 'Actions/initializeAction';
+import dataCheckingAction from 'Actions/dataCheckingAction';
 import {notification} from 'antd';
 import {lsGet, lsSet, lsRemove, lsClearAll, ckRemove} from '../services';
 import {socketEventChannel, socketEventCode, eventCodeForEventChannel} from './conf';
 import httpRequests from '../http/requests';
-import lang from '../components/Language/lang';
+import lang from 'Components/Language/lang';
 import routerPath from '../views/routerPath';
 
 // Consider to the http load balancing policy provided by node.js cluster module on server side,
@@ -20,12 +21,12 @@ import routerPath from '../views/routerPath';
 
 const socket = io();
 
-// some pre-configs
-const {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd, reInitializationStart, reInitializationEnd} = eventCodeForEventChannel;
+// pre-configs
+const {snapshot, snapshotRollBackStart, snapshotRollBackFinish, deInitializationStart, deInitializationEnd, reInitializationStart, reInitializationEnd,} = eventCodeForEventChannel;
 const waitForServerUpTimeThreshold = 1000 * 60 * 5;
 const requestServerUpInterval = 1000 * 2;
 
-// initialization message
+// initialization status
 socket.on('init status', initStatus => {
     if (process.env.NODE_ENV === 'development'){
         console.info('%c ws message(init status): ', 'color: #0099FF', 'init status:', initStatus);
@@ -46,7 +47,23 @@ socket.on('init status', initStatus => {
     }
 });
 
-// business operations message after initialization and login
+// data check status
+socket.on('data check status', dataCheckStatus => {
+    if (process.env.NODE_ENV === 'development'){
+        console.info('%c ws message(data check status): ', 'color: #0099FF', 'data check status:', dataCheckStatus);
+    }
+    store.dispatch(dataCheckingAction.setDataCheckingStatus(dataCheckStatus));
+});
+
+// data recover status
+socket.on('data recover status', dataRecoverStatus => {
+    if (process.env.NODE_ENV === 'development'){
+        console.info('%c ws message(data recover status): ', 'color: #0099FF', 'data recover status:', dataRecoverStatus);
+    }
+    store.dispatch(dataCheckingAction.setDataRecoveryStatus(dataRecoverStatus));
+});
+
+// other no progress business operations message after initialization and login
 socket.on('event status', ({channel, code, target, result, notify}) => {
     if (process.env.NODE_ENV === 'development'){
         console.info('%c ws message(event status): ', 'color: #00cc00', 'channel:', channel, ', code:', code, ', target:',target, ', result:', result, ', notify:', notify);

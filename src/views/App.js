@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {HashRouter, Switch, Route, Redirect} from 'react-router-dom';
 import {LocaleProvider} from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
@@ -16,6 +17,12 @@ const DeInitializing = asyncLoad(() => import('./DeInitializing/DeInitializing')
 const ReInitializing = asyncLoad(() => import('./ReInitializing/ReInitializing'));
 const Error = asyncLoad(() => import('./Error/Error'));
 
+const mapStateToProps = state => {
+    let {language} = state;
+    return {language};
+};
+
+@connect(mapStateToProps)
 export default class App extends Component {
     constructor (props){
         super(props);

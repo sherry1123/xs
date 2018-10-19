@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Icon, Radio, Table} from 'antd';
-import {timeFormat} from 'Services';
+import {formatTime} from 'Services';
 import httpRequests from 'Http/requests';
 
 const mapStateToProps = state => {
@@ -55,7 +55,7 @@ export default class SystemLog extends Component {
                     render: (text, record) => record.level * 1 === 1 ? lang('低', 'Low') : (record.level * 1 === 2 ? lang('中', 'Warn') : lang('高', 'Fatal'))
                 },
                 {width: '20%', title: lang('上报时间', 'Reported Time'), dataIndex: 'time', key: 'time',
-                    render: text => timeFormat(text)
+                    render: text => formatTime(text)
                 }
             ]
         };
@@ -87,7 +87,7 @@ export default class SystemLog extends Component {
                     render: text => text[language]
                 },
                 {width: '15%', title: lang('上报时间', 'Reported Time'), dataIndex: 'time', key: 'time',
-                    render: text => timeFormat(text)
+                    render: text => formatTime(text)
                 }
             ]
         };

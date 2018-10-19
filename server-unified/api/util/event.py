@@ -18,7 +18,15 @@ def send(channel, code, target, result, data={}, notify=False, ip=None):
 
 
 def receive(channel, code, target, result, data, notify):
-    if code:
+    if code == 0:
+        if data['current'] == 7:
+            status.set_cluster_initialize_status(True)
+            initialize.connect_database()
+            schedule.start_scheduler()
+        else:
+            pass
+        socket.emit('init status', data)
+    elif code > 0:
         if code == 1:
             status.set_cluster_deinitialize_status(True)
             schedule.stop_scheduler()
@@ -39,10 +47,19 @@ def receive(channel, code, target, result, data, notify):
         socket.emit('event status', {'channel': channel, 'code': code,
                                      'target': target, 'result': result, 'notify': notify})
     else:
-        if data['current'] == 7:
-            status.set_cluster_initialize_status(True)
-            initialize.connect_database()
-            schedule.start_scheduler()
-        else:
-            pass
-        socket.emit('init status', data)
+        if code == -1:
+            if data['current'] == 0:
+                socket.emit('event status', {
+                            'channel': channel, 'code': 31, 'target': target, 'result': result, 'notify': notify})
+            elif data['current'] == 5 or data['status'] == -1:
+                socket.emit('event status', {
+                            'channel': channel, 'code': 32, 'target': target, 'result': result, 'notify': notify})
+            socket.emit('data check status', data)
+        elif code == -2:
+            if data['current'] == 0:
+                socket.emit('event status', {
+                            'channel': channel, 'code': 33, 'target': target, 'result': result, 'notify': notify})
+            elif data['current'] == 5 or data['status'] == -1:
+                socket.emit('event status', {
+                            'channel': channel, 'code': 34, 'target': target, 'result': result, 'notify': notify})
+            socket.emit('data recover status', data)

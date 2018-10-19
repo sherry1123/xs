@@ -43,6 +43,12 @@ const SystemLog = asyncLoad(() => import('../SystemLog/SystemLog'));
 // fs operation
 const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
+// system log
+const SystemLog = asyncLoad(() => import('../SystemLog/SystemLog'));
+
+// data check and recover
+const DataChecking = asyncLoad(() => import('../DataChecking/DataChecking'));
+
 // System parameter configuration
 const SystemConfiguration = asyncLoad(() => import('../SystemConfiguration/SystemConfiguration'));
 
@@ -109,9 +115,11 @@ export default class Main extends Component {
 
                         <Route path={`${Main}${routerPath.BuddyGroup}`} component={BuddyGroup} />
 
+                        <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
+
                         <Route path={`${Main}${routerPath.SystemLog}`} component={SystemLog} />
 
-                        <Route path={`${Main}${routerPath.FSOperation}`} component={FSOperation} />
+                        <Route path={`${Main}${routerPath.DataChecking}`} component={DataChecking} />
 
                         <Route path={`${Main}${routerPath.SystemConfiguration}`} component={SystemConfiguration} />
                     </main>

@@ -47,7 +47,9 @@ export default class ClusterBasicInfo extends Component {
 
         return (
             <div className="fs-cluster-information-wrapper">
-                <header><Icon type="profile" />{lang('集群基本信息', 'Cluster Basic Information')}</header>
+                <header>
+                    <Icon type="cluster" />{lang('集群基本信息', 'Cluster Basic Information')}
+                </header>
                 <div className="fs-cluster-information-content">
                     <div className="fs-cluster-machine-image-wrapper">
                         <img alt={lang('集群', 'Cluster')} src={ClusterImage} />

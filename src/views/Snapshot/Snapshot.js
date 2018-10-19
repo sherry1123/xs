@@ -5,7 +5,7 @@ import {Button, Icon, Input, message, Modal, Popover, Table} from 'antd';
 import CreateSnapshot from './CreateSnapshot';
 import EditSnapshot from './EditSnapshot';
 import SetSnapshot from './SetSnapshot';
-import {timeFormat} from 'Services';
+import {formatTime} from 'Services';
 import httpRequests from 'Http/requests';
 
 const mapStateToProps = state => {
@@ -207,7 +207,7 @@ export default class Snapshot extends Component {
                     render: text => text || '--'
                 },
                 {title: lang('创建时间', 'Create Time'), width: 150, dataIndex: 'createTime',
-                    render: (text, record) => record.creating ? '--' : timeFormat(text)
+                    render: (text, record) => record.creating ? '--' : formatTime(text)
                 },
                 {title: lang('操作', 'Operations'), width: 80,
                     render: (text, record, index) => {

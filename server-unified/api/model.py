@@ -98,3 +98,10 @@ class CifsShare(Document):
 class DataLevel(Document):
     level_name = IntField(required=True)
     level_desc = StringField()
+
+
+class DataCheckingAndRecoveryHistory(Document):
+    data_operation_type = StringField(required=True)
+    data_operation_start_time = StringField()
+    data_operation_end_time = StringField()
+    data_operation_result = BooleanField()

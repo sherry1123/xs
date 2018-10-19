@@ -2,6 +2,7 @@ from flask import jsonify, make_response, request
 
 from api import controller
 from api.module import handler, process
+from api.util.cache import cache
 from api.util.socket import app
 
 
@@ -589,18 +590,31 @@ def delete_groups_quota():
     return jsonify(controller.delete_groups_quota(request.params))
 
 
-@app.route('/api/filesystemcheck', methods=['GET', 'POST'])
-def file_system_check():
-    process.do(controller.file_system_check)
-    return jsonify(handler.response(0, 'Start to check the file system!'))
+@app.route('/api/checkfilesystem', methods=['GET', 'POST'])
+def check_file_system():
+    flag = cache.inspect('file-system-flag')
+    if flag and flag['value']:
+        return jsonify(handler.response(1, handler.error('Check or repair file system is running!')))
+    else:
+        process.do(controller.check_file_system)
+        return jsonify(handler.response(0, 'Start to check the file system!'))
 
 
-@app.route('/api/filesystemrepair', methods=['GET', 'POST'])
-def file_system_repair():
-    process.do(controller.file_system_repair)
-    return jsonify(handler.response(0, 'Start to repair the file system!'))
+@app.route('/api/repairfilesystem', methods=['GET', 'POST'])
+def repair_file_system():
+    flag = cache.inspect('file-system-flag')
+    if flag and flag['value']:
+        return jsonify(handler.response(1, handler.error('Check or repair file system is running!')))
+    else:
+        process.do(controller.repair_file_system)
+        return jsonify(handler.response(0, 'Start to repair the file system!'))
 
 
 @app.route('/api/getfilesystemlog', methods=['GET', 'POST'])
 def get_file_system_log():
     return jsonify(controller.get_file_system_log())
+
+
+@app.route('/api/getdatacheckingandrecoveryhistory', methods=['GET', 'POST'])
+def get_data_checking_and_recovery_history():
+    return jsonify(controller.get_data_checking_and_recovery_history())

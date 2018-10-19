@@ -11,7 +11,7 @@ export {timeUnitMilliSecond, capacityUnitSize, metadataStaticsItems, storageStat
 export {formatStorageSize, formatNetworkSize} from './format/bytesToSize';
 
 // format digit to time, date
-export {timeLeftFormat, timeFormat} from './format/time';
+export {formatTimeLeft, formatTime} from './format/time';
 
 // calculate capacity bar color
 export {getCapacityColour} from './format/capacityColour';

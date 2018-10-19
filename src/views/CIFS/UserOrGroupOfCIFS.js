@@ -13,13 +13,12 @@ const mapStateToProps = state => {
     return {language, localAuthUserOrGroupListOfCIFS};
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        setLocalAuthUserOrGroupListOfCIFS: clientList => dispatch(shareAction.setLocalAuthUserOrGroupListOfCIFS(clientList)),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    setLocalAuthUserOrGroupListOfCIFS: clientList => dispatch(shareAction.setLocalAuthUserOrGroupListOfCIFS(clientList)),
+});
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps);
+
 const options = {withRef: true};
 
 @connect(mapStateToProps, mapDispatchToProps, mergeProps, options)
@@ -153,7 +152,7 @@ export default class UserOrGroupOfCIFS extends Component {
                 spinning: loadingList,
                 indicator: <Icon type="loading" />
             },
-            pagination: {
+            pagination: localAuthUserOrGroupListOfCIFS.length > 10 && {
                 size: 'normal',
                 pageSize: 10,
                 showTotal: (total, range) => lang(`显示 ${range[0]}-${range[1]} 项，总共 ${total} 项`, `show ${range[0]}-${range[1]} of ${total} items`),

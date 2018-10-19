@@ -1717,58 +1717,152 @@ def delete_groups_quota(params):
     return response
 
 
-def file_system_check():
+def check_file_system(params):
+    start_time = handler.current_time()
     try:
-        backend.file_system_check()
+        cache.update('file-system-flag', True)
+        cache.update('file-system-step', 0)
+        handler.log('Start checking the file system!')
+        database.create_data_checking_and_recovery_history(
+            'checking', start_time, 'uncompleted')
+        event.send('dataChecking', -1, 'cluster', True,
+                   {'current': 0, 'status': 0, 'total': 5}, True)
+        backend.check_file_system()
 
-        @setinterval(2)
+        @setinterval(1)
         def send_file_system_check_status(callback):
+            check_list = ['check reachability of nodes', 'delete unused files from disposal', 'gather data from nodes',
+                          'check for errors', 'check file system finished']
             data = backend.get_file_system_status()
-            step = data['step']
+            current = data['step']
             status = data['status']
-            event.send('cluster', 22, 'cluster', True, {
-                       'current': step, 'status': 0 if status else -1, 'total': 5})
+            date = data['date']
+            step_cache = cache.inspect('file-system-step')
+            step_cache_value = step_cache['value']
+            while current - step_cache_value > 1:
+                step_cache_value += 1
+                handler.log('Step: %s, description: %s' %
+                            (step_cache_value, check_list[step_cache_value - 1]))
+                event.send('dataChecking', -1, 'cluster', True,
+                           {'current': step_cache_value, 'status': 0, 'total': 5}, True)
+                cache.update('file-system-step', step_cache_value)
+            handler.log('Step: %s, description: %s' %
+                        (current, check_list[current - 1]))
             if not status:
                 callback()
-            elif step == 5:
+                database.update_data_checking_and_recovery_history(
+                    'checking', start_time, False)
+                event.send('dataChecking', -1, 'cluster', False, {
+                           'current': current, 'status': -1, 'total': 5}, True)
+                handler.log('Check the file system failed!')
+                cache.update('file-system-flag', False)
+            elif date:
                 callback()
+                database.update_data_checking_and_recovery_history(
+                    'checking', start_time, True)
+                while current <= 5:
+                    event.send('dataChecking', -1, 'cluster', True,
+                               {'current': current, 'status': 0, 'total': 5}, True)
+                    current += 1
+                handler.log('Check the file system completed!')
+                cache.update('file-system-flag', False)
+            else:
+                event.send('dataChecking', -1, 'cluster', True, {
+                           'current': current, 'status': 0, 'total': 5}, True)
+            cache.update('file-system-step', current)
 
         def stop_get_file_system_check_status():
             start_get_file_system_check_status.set()
         start_get_file_system_check_status = send_file_system_check_status(
             stop_get_file_system_check_status)
     except Exception as error:
+        database.update_data_checking_and_recovery_history(
+            'checking', start_time, False)
         handler.log(handler.error(error), 2)
+        handler.log('Check the file system failed!')
+        cache.update('file-system-flag', False)
 
 
-def file_system_repair():
+def repair_file_system(params):
+    start_time = handler.current_time()
     try:
-        backend.file_system_repair()
+        cache.update('file-system-flag', True)
+        cache.update('file-system-step', 0)
+        handler.log('Start repairing the file system!')
+        database.create_data_checking_and_recovery_history(
+            'recovery', start_time, 'uncompleted')
+        event.send('dataRecovery', -2, 'cluster', True,
+                   {'current': 0, 'status': 0, 'total': 5}, True)
+        backend.repair_file_system()
 
-        @setinterval(2)
+        @setinterval(1)
         def send_file_system_repair_status(callback):
+            repair_list = ['check reachability of nodes', 'delete unused files from disposal', 'gather data from nodes',
+                           'check for errors', 'repair file system finished']
             data = backend.get_file_system_status()
-            step = data['step']
+            current = data['step']
             status = data['status']
-            event.send('cluster', 23, 'cluster', True, {
-                       'current': step, 'status': 0 if status else -1, 'total': 5})
+            date = data['date']
+            step_cache = cache.inspect('file-system-step')
+            step_cache_value = step_cache['value']
+            while current - step_cache_value > 1:
+                step_cache_value += 1
+                handler.log('Step: %s, description: %s' %
+                            (step_cache_value, repair_list[step_cache_value - 1]))
+                event.send('dataRecovery', -2, 'cluster', True,
+                           {'current': step_cache_value, 'status': 0, 'total': 5}, True)
+                cache.update('file-system-step', step_cache_value)
+            handler.log('Step: %s, description: %s' %
+                        (current, repair_list[current - 1]))
             if not status:
                 callback()
-            elif step == 5:
+                database.update_data_checking_and_recovery_history(
+                    'recovery', start_time, False)
+                event.send('dataRecovery', -2, 'cluster', False, {
+                           'current': current, 'status': -1, 'total': 5}, True)
+                handler.log('Repair the file system failed!')
+                cache.update('file-system-flag', False)
+            elif date:
                 callback()
+                database.update_data_checking_and_recovery_history(
+                    'recovery', start_time, True)
+                while current <= 5:
+                    event.send('dataRecovery', -2, 'cluster', True,
+                               {'current': current, 'status': 0, 'total': 5}, True)
+                    current += 1
+                handler.log('Repair the file system completed!')
+                cache.update('file-system-flag', False)
+            else:
+                event.send('dataRecovery', -2, 'cluster', True, {
+                           'current': current, 'status': 0, 'total': 5}, True)
+            cache.update('file-system-step', current)
 
         def stop_get_file_system_repair_status():
             start_get_file_system_repair_status.set()
         start_get_file_system_repair_status = send_file_system_repair_status(
             stop_get_file_system_repair_status)
     except Exception as error:
+        database.update_data_checking_and_recovery_history(
+            'recovery', start_time, False)
         handler.log(handler.error(error), 2)
+        handler.log('Repair the file system failed!')
+        cache.update('file-system-flag', False)
 
 
 def get_file_system_log():
     response = {}
     try:
         data = backend.get_file_system_log()
+        response = handler.response(0, data)
+    except Exception as error:
+        response = handler.response(1, handler.error(error))
+    return response
+
+
+def get_data_checking_and_recovery_history():
+    response = {}
+    try:
+        data = database.list_data_checking_and_recovery_history()
         response = handler.response(0, data)
     except Exception as error:
         response = handler.response(1, handler.error(error))

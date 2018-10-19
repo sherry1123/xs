@@ -50,9 +50,11 @@ const routerPath = {
 
     BuddyGroup: '/buddy-group',
 
+    FSOperation: '/fs-operation',
+
     SystemLog: '/system-log',
 
-    FSOperation: '/fs-operation',
+    DataChecking: '/data-checking',
 
     SystemConfiguration: '/system-parameter-configuration'
 };
@@ -68,8 +70,10 @@ export const pathToMenu = {
     ServiceAndClient: [routerPath.ServiceAndClient],
     UserAndGroup: [routerPath.LocalAuthUser, routerPath.LocalAuthUserGroup],
     TargetAndBuddyGroup: [routerPath.Target, routerPath.BuddyGroup],
-    SystemLog: [routerPath.SystemLog],
     FSOperation: [routerPath.FSOperation],
+    SystemLog: [routerPath.SystemLog],
+    DataChecking: [routerPath.DataChecking],
+    SystemConfiguration: [routerPath.SystemConfiguration]
 };
 
 /**

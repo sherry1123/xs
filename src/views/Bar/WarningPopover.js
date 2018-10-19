@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import lang from 'Components/Language/lang';
 import {Tabs, Table, Button} from 'antd';
-import {timeFormat} from 'Services';
+import {formatTime} from 'Services';
 
 const mapStateToProps = state => {
     let {language,} = state;
@@ -48,7 +48,7 @@ export default class WarningPopover extends Component {
                 width: 100,
                 dataIndex: 'time',
                 key: 'time',
-                render: (text, record) => record.read ? timeFormat(text) : <b>{timeFormat(text)}</b>
+                render: (text, record) => record.read ? formatTime(text) : <b>{formatTime(text)}</b>
             }],
             footer: () => {
                 return (
