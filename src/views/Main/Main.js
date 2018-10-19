@@ -37,9 +37,6 @@ const ServiceAndClient = asyncLoad(() => import('../ServiceAndClient/ServiceAndC
 const Target  = asyncLoad(() => import('../Target/Target'));
 const BuddyGroup  = asyncLoad(() => import('../BuddyGroup/BuddyGroup'));
 
-// system log
-const SystemLog = asyncLoad(() => import('../SystemLog/SystemLog'));
-
 // fs operation
 const FSOperation = asyncLoad(() => import('../FSOperation/FSOperation'));
 
